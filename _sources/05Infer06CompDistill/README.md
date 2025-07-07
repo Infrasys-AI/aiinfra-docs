@@ -1,4 +1,4 @@
-<!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
 # 大模型压缩
 
@@ -18,7 +18,7 @@ xxx
 
 ## 备注
 
-系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
+系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源课程中，先给 github 点赞，然后 B 站给 ZOMI 留言哦！
 >

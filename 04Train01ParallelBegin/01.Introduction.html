@@ -7,12 +7,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="<no title>" />
+<meta property="og:title" content="分布式并行基础" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train01ParallelBegin/01.Introduction.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="在人工智能的浩瀚星空中，大模型犹如一颗璀璨的新星，散发着无与伦比的光芒。它以惊人的智慧和能力，不断拓展着我们对机器认知的边界，为各个领域书写着前所未有的壮丽篇章。然而，大模型的成功并非偶然，其背后蕴含着复杂而精妙的技术体系。分布式并行技术作为其基石，支撑着大模型的训练与优化，使其能够在海量数据和复杂计算中高效运转，展现出非凡的智能。本节将带您走进分布式并行的世界，探索其在大模型训练中的重要作..." />
+<meta name="description" content="在人工智能的浩瀚星空中，大模型犹如一颗璀璨的新星，散发着无与伦比的光芒。它以惊人的智慧和能力，不断拓展着我们对机器认知的边界，为各个领域书写着前所未有的壮丽篇章。然而，大模型的成功并非偶然，其背后蕴含着复杂而精妙的技术体系。分布式并行技术作为其基石，支撑着大模型的训练与优化，使其能够在海量数据和复杂计算中高效运转，展现出非凡的智能。本节将带您走进分布式并行的世界，探索其在大模型训练中的重要作..." />
 
-    <title>&lt;no title&gt; &#8212; AI System</title>
+    <title>分布式并行基础 &#8212; AI Infra</title>
   
   
   
@@ -66,15 +68,18 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '04Train01ParallelBegin/01.Introduction';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="单设备高效训练" href="02.single_device.html" />
     <link rel="prev" title="分布式并行基础" href="README.html" /> 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Jun 10, 2025"/> 
+    <meta name="docbuild:last-update" content="Jul 07, 2025"/> 
 <link
   rel="alternate"
   type="application/atom+xml"
@@ -166,8 +171,14 @@
   
   
   
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AI Infra - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AI Infra - Home"/>`);</script>
   
-    <p class="title logo__title">AI System</p>
   
 </a></div>
         <div class="sidebar-primary-item"><ul class="navbar-icon-links"
@@ -181,7 +192,7 @@
           
           
           
-          <a href="https://github.com/chenzomi12/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
             <span class="sr-only">GitHub</span></a>
         </li>
         <li class="nav-item">
@@ -231,12 +242,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算HPC定义</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02TypicalRepresent/README.html">集群建设之巅</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03Analysis/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
 </ul>
 </details></li>
 </ul>
@@ -246,29 +257,44 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">网络通信进阶</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">大模型集合通信介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">为什么需要集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">大模型集群互联技术</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
 </ul>
 </details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">容器时代</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">容器时代</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -279,19 +305,24 @@
 </details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">分布式并行基础</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">分布式并行基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02.single_device.html">单设备高效训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04.data_parallel_implement.html">数据并行实现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05.ZeRO.html">分布式优化器</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -303,24 +334,25 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train07Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+
+
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -329,32 +361,38 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeekOptimize/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer09Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
 </ul>
 </details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Transformer/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MOECore_summary.html">《09MOECore》解读 by【AI布道Mr.Jin】</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/11MOECode_summary.html">《11MOECode》解读 by【AI布道Mr.Jin】</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/11MOECode.html">单机单卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/13MOEVMOE.html">MoE 性能分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/14MOESoft-MOE.html">视觉 MoE 模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：线性 Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">CLIP 模型原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -363,10 +401,11 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
 </ul>
 </details></li>
 </ul>
@@ -379,7 +418,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -602,7 +641,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1><no title></h1>
+    <h1>分布式并行基础</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -611,9 +650,20 @@ document.write(`
                 <h2> Contents </h2>
             </div>
             <nav aria-label="Page">
-                <ul class="simple visible nav section-nav flex-column">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">分布式并行框架介绍</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">硬件体系的支持</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">大模型使能层介绍</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">加速库简介</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#deepspeed">DeepSpeed</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#megatron-lm">Megatron-LM</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#colossal-ai-bmtrain">Colossal-AI &amp; BMTrain</a></li>
 </ul>
-
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">总结：分布式加速库/分布式加速框架</a></li>
+</ul>
+</li>
+</ul>
             </nav>
         </div>
     </div>
@@ -623,7 +673,93 @@ document.write(`
                 
 <div id="searchbox"></div>
                 <article class="bd-article">
-                   
+                   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
+<section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>分布式并行基础<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<p>在人工智能的浩瀚星空中，大模型犹如一颗璀璨的新星，散发着无与伦比的光芒。它以惊人的智慧和能力，不断拓展着我们对机器认知的边界，为各个领域书写着前所未有的壮丽篇章。然而，大模型的成功并非偶然，其背后蕴含着复杂而精妙的技术体系。分布式并行技术作为其基石，支撑着大模型的训练与优化，使其能够在海量数据和复杂计算中高效运转，展现出非凡的智能。本节将带您走进分布式并行的世界，探索其在大模型训练中的重要作用和深远意义。</p>
+<section id="id2">
+<h2>分布式并行框架介绍<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>随着人工智能技术的飞速发展，数据规模呈爆炸式增长，模型复杂度也在不断提高，这给传统的单机训练模式带来了严峻的挑战。单机训练面临着计算资源有限、训练速度缓慢、难以处理大规模数据等诸多棘手问题，严重制约了大模型性能的提升和应用的拓展。面对这些瓶颈，分布式并行技术成为了大模型训练的破局之路。
+分布式并行技术的核心思想是将大规模的计算任务分解为多个子任务，分配到多个计算节点上进行并行处理，通过高效的通信和协调机制，将各个节点的计算结果整合起来，从而实现整体任务的快速完成。在大模型训练中，数据规模庞大、模型参数众多，单机难以承载如此庞大的计算量，分布式并行技术为解决这一难题提供了有效的途径。
+为了更好地理解分布式并行在大模型训练中的意义，首先我们要明晰深度学习中的训练耗时公式组成：</p>
+<!-- $训练耗时 = 训练数据规模 × 单步计算量 / 计算速率$ -->
+<div class="math notranslate nohighlight">
+\[\text{训练耗时} = \frac{\text{训练数据规模} \times \text{单步计算量}}{\text{计算速率}}\]</div>
+<!-- ![训练耗时公式](1.png "book") -->
+<div class="math notranslate nohighlight">
+\[\text{计算速率} = \text{单设备计算速率} \times \text{设备数} \times \text{多设备并行效率（加速比）}\]</div>
+<p>从公式中我们可以直观地看出，训练耗时是和训练数据规模、单步计算量和计算速率是强相关的，而在实际应用中，我们拥有的数据规模通常是固定的，模型也是已经选型好的，单步计算量相对固定，那么我们能改变的就只有计算速率，计算速率越高，训练耗时就越短。计算速率由单设备计算速率、设备数和多设备并行效率（简称加速比）共同决定。
+其中，单设备计算速率主要由Moore定律（处理器的性能大约每两年翻一倍，同时价格下降为之前的一半）、制成工艺、封装工艺等因素决定，这一部分相对固定，但可以通过优化算法进行优化。也就是说，在提高计算速率上，我们能控制的可变因素有优化算法、设备数和多设备并行效率。</p>
+<ol class="arabic simple">
+<li><p>对于单设备的计算速率，我们可以通过混合精度、算子融合和梯度累加等方法来提高</p></li>
+<li><p>因为单个设备无法容纳我们的大模型，所以我们要增加设备数，使之成为一个集群，进而提升计算速率。</p></li>
+<li><p>在引入集群之后，我们面临着新的问题——并行的效率问题。其中，比较典型的并行有数据并行、模型并行、流水并行等，这些内容会在后续详细展开。</p></li>
+</ol>
+<section id="id3">
+<h3>硬件体系的支持<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>提及大模型的分布式并行训练，首先要介绍的就是硬件体系对分布式的支持。
+<img alt="" src="../_images/01Introduction01.png" /></p>
+<center>AI系统+大模型全栈架构图（可能需要更换图源）</center>
+<ul class="simple">
+<li><p><strong>硬件接口抽象：</strong> GPU/TPU/NPU和各种DSA。统一硬件接口抽象可以服用编译优化策略，让优化与具体底层设备和体系结构适当解耦。</p></li>
+<li><p><strong>可扩展网络：</strong> RDMA，InifiBand，NVLink等。提供高效NPU到NPU互联，更高带宽，更灵活通信原语与搞笑的通信聚合算法。</p></li>
+<li><p><strong>集群硬件体系结构：</strong> 负责集群的建设，包括存储、网络和程序的执行，互联与加速。</p></li>
+<li><p><strong>作业调度和资源管理：</strong> 在更广的层面，作业与作业间需要平台提供调度，运行期资源分配与环境隔离，异构资源集群管理等。将服务器资源池化，通过高效的调度器结合深度学习作业特点和异构硬件拓扑进行高效调度。</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>大模型使能层介绍<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>在AI框架之上，我们构建了一层使能层，在本书中我们更多指分布式训练框架。对于推理，出于对速度的追求，我们通常不愿意采用分布式的方式。当然，随着大模型规模的不断增大，分布式推理也逐渐成为一种必然选择。
+<strong>解决大模型分布式训练：</strong></p>
+<ol class="arabic simple">
+<li><p>部署和训练Transformer类型结构的大模型；</p></li>
+<li><p>提供数据并行、模型并行和流水并行等分布式并行模式，也就是我们俗称的PTT多维并行的并行模式；</p></li>
+<li><p>以集合通信和参数服务器方式进行资源整合。</p></li>
+</ol>
+</section>
+<section id="id5">
+<h3>加速库简介<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>随着模型的不断增大，并行已经成为一种在有限硬件资源上训练大型模型、提升训练速度的关键策略。HuggingFace创建的加速库，能够帮助用户实现在单台机器的多个GPU或者多台机器的多个GPU上轻松训练Transformers模型。下面我们将对部分加速库进行总览介绍。</p>
+<section id="deepspeed">
+<h4>DeepSpeed<a class="headerlink" href="#deepspeed" title="Link to this heading">#</a></h4>
+<p>DeepSpeed是<strong>微软</strong>开发的一款致力于提升<strong>大模型训练效率</strong>和可扩展性的优秀工具。其优势在于提供了多种强大的加速训练手段：</p>
+<ol class="arabic simple">
+<li><p><font color=Red>加速训练手段：</font>DeepSpeed涵盖数据并行（ZeRO系列）、模型并行（PP）、梯度累积、动态缩放、混合精度等技术，高效加速模型训练，提升速度与效率，助理模型快速收敛；</p></li>
+<li><p><font color=Red>辅助工具：</font>提供分布式训练管理、内存优化和模型压缩等功能，全方位满足开发者需求，帮助开发者更好管理和优化大模型训练任务；</p></li>
+<li><p><font color=Red>快速迁移：</font>通过Python Warp方式基于PyTorch来构建，开发者可直接调用接口，轻松实现从单机到分布式环境的快速迁移，方便快捷。</p></li>
+</ol>
+<p>DeepSpeed广泛应用于大模型训练，其优势在预训练环节及与HuggingFace Transformers 框架结合使用时尤为显著，但在其他场景下的应用相对有限。</p>
+</section>
+<section id="megatron-lm">
+<h4>Megatron-LM<a class="headerlink" href="#megatron-lm" title="Link to this heading">#</a></h4>
+<p>Megatron-LM是<strong>NVIDIA</strong>开发的利器，专注于提高<strong>大模型分布式并行训练效率和线性度：</strong></p>
+<ol class="arabic simple">
+<li><p><font color=Red>加速训练手段：</font>通过综合数据并行（Data Parallelism），张量并行（Tensor Parallelism）和流水线并行（Pipeline Parallelism）来复现GPT-3，有效提升大规模模型的训练效率，加快模型收敛速度；</p></li>
+<li><p><font color=Red>辅助工具：</font>配备了强大的数据处理和Tokenizer功能，能够高效地处理和转换数据，为基于Transformer结构的LLM（大型语言模型）和VLM（视觉语言模型）等大模型提供有力支持，确保模型可以准确理解和生成高质量的内容。</p></li>
+</ol>
+<p>然而，Megatron-LM的工程实现不够优雅，存在版本管理问题，实际使用中可能给用户带来不便。</p>
+</section>
+<section id="colossal-ai-bmtrain">
+<h4>Colossal-AI &amp; BMTrain<a class="headerlink" href="#colossal-ai-bmtrain" title="Link to this heading">#</a></h4>
+<p><strong>Colossal-AI</strong>凭借多种优化策略高效提升训练效率并<strong>降低显存需求</strong>：</p>
+<ol class="arabic simple">
+<li><p><font color=Red>加速训练手段：</font>其拥有更加丰富的张量并行策略，包括 1D/2D/2.5D/3D-TP等，为大模型训练提供了多样化的并行计算方案，能够充分挖掘硬件的并行计算能力，加快训练速度；</p></li>
+<li><p><font color=Red>丰富案例：</font>Colossal-AI还提供了20+大模型DEMO和配置文件，这些资源融入了最新的MOE（Mix of Experts）技术和SORA（一种优化方法），为开发者提供了宝贵的实践参考和应用范例，助力快速上手和深入探索大模型训练。</p></li>
+</ol>
+<p><strong>BMTrain</strong>则专注于训练数<strong>百亿规模参数</strong>大模型：</p>
+<ol class="arabic simple">
+<li><p><font color=Red>模型支持：</font>BMTrain 主要支持智源研究院Aquila系列的模型分布式并行框架，为该系列模型的高效训练和优化提供了强大的支持；</p></li>
+<li><p><font color=Red>加速训练手段：</font>支持对DeepSpeed中的并行策略进行深度优化，进一步提升了模型训练的效率和性能，使得大规模模型的训练更加高效、稳定。</p></li>
+</ol>
+</section>
+</section>
+<section id="id6">
+<h3>总结：分布式加速库/分布式加速框架<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>分布式加速库和框架在大模型的训练与推理中扮演着至关重要的角色。它们不仅赋予了大模型多维分布式并行的能力，使其能够在AI集群上实现高效的训练和推理，更极大地提升了模型和算力的利用率，增强了AI集群的线性度。随着大模型的不断发展，分布式加速技术将继续发挥其关键作用，为人工智能领域带来更多突破和创新。</p>
+</section>
+</section>
+</section>
+
     <script type="text/x-thebe-config">
     {
         requestKernel: true,
@@ -690,9 +826,20 @@ document.write(`
     <i class="fa-solid fa-list"></i> Contents
   </div>
   <nav class="bd-toc-nav page-toc">
-    <ul class="simple visible nav section-nav flex-column">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">分布式并行框架介绍</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">硬件体系的支持</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">大模型使能层介绍</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">加速库简介</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#deepspeed">DeepSpeed</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#megatron-lm">Megatron-LM</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#colossal-ai-bmtrain">Colossal-AI &amp; BMTrain</a></li>
 </ul>
-
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">总结：分布式加速库/分布式加速框架</a></li>
+</ul>
+</li>
+</ul>
   </nav></div>
 
 </div></div>
@@ -718,7 +865,7 @@ By Author name not set
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jun 10, 2025.
+  Last updated on Jul 07, 2025.
   <br/>
 </p>
   </div>

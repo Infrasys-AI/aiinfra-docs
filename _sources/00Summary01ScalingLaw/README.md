@@ -1,8 +1,8 @@
-<!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
 # 大模型系统概述
 
-本章内容聚焦大模型领域，全面深入地探讨了Scaling Law在不同场景如标准、推理时间、并行及扩散等方面的解读，详尽阐述了大模型从训练到推理的全流程，涵盖训练业务流与软硬件栈的各个环节，以及推理业务流的优化策略。同时，剖析了AI系统与大模型系统在通用性、资源需求和软件栈变化上的显著区别，并展望了大模型系统的未来发展趋势，包括技术演进、应用场景爆发以及算力底座和生态的持续升级等多方面内容。
+本章内容聚焦大模型领域，全面深入地探讨了 Scaling Law 在不同场景如标准、推理时间、并行及扩散等方面的解读，详尽阐述了大模型从训练到推理的全流程，涵盖训练业务流与软硬件栈的各个环节，以及推理业务流的优化策略。同时，剖析了 AI 系统与大模型系统在通用性、资源需求和软件栈变化上的显著区别，并展望了大模型系统的未来发展趋势，包括技术演进、应用场景爆发以及算力底座和生态的持续升级等多方面内容。
 
 ## 课程位置
 
@@ -24,7 +24,7 @@
 
 ## 备注
 
-系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
+系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源课程中，先给 github 点赞，然后 B 站给 ZOMI 留言哦！
 >

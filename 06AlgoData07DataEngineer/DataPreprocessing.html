@@ -1,0 +1,1011 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="预训练数据预处理" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData07DataEngineer/DataPreprocessing.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="数据预处理概览: 大语言模型的卓越能力在很大程度上归功于其在海量、多样化的文本数据上的预训练。然而，原始数据的质量参差不齐，直接使用未经处理的数据进行训练，不仅会严重影响模型的最终性能，还可能引入偏见、安全风险和法律问题。因此，系统化、工程化的预训练数据处理是构建高性能、高安全、高可靠性大模型的基石。本文将对数据处理流程进行全面梳理，涵盖从数据提取，去重，打分，质量验证的全过程 数据提取: ..." />
+<meta name="description" content="数据预处理概览: 大语言模型的卓越能力在很大程度上归功于其在海量、多样化的文本数据上的预训练。然而，原始数据的质量参差不齐，直接使用未经处理的数据进行训练，不仅会严重影响模型的最终性能，还可能引入偏见、安全风险和法律问题。因此，系统化、工程化的预训练数据处理是构建高性能、高安全、高可靠性大模型的基石。本文将对数据处理流程进行全面梳理，涵盖从数据提取，去重，打分，质量验证的全过程 数据提取: ..." />
+
+    <title>预训练数据预处理 &#8212; AI Infra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData07DataEngineer/DataPreprocessing';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="数据源概述" href="DataSources.html" />
+    <link rel="prev" title="数据工程" href="README.html" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Jul 07, 2025"/> 
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+  
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AI Infra - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AI Infra - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. 大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算HPC定义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">网络通信进阶</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">大模型集合通信介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">为什么需要集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">容器时代</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud05Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01.Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/11MOECode.html">单机单卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/13MOEVMOE.html">MoE 性能分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/14MOESoft-MOE.html">视觉 MoE 模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：线性 Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">CLIP 模型原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">数据工程</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Pretraining.html">预训练数据处理概览</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 八. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/blob/master/06AlgoData07DataEngineer/DataPreprocessing.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/edit/master/06AlgoData07DataEngineer/DataPreprocessing.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/issues/new?title=Issue%20on%20page%20%2F06AlgoData07DataEngineer/DataPreprocessing.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData07DataEngineer/DataPreprocessing.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>预训练数据预处理</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">预训练数据预处理</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">数据预处理概览</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">数据提取</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">网页数据提取</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">多模态数据提取</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">数据质量评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">安全过滤</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">质量打分</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">数据去重</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">数据去重的目标</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">数据去重的挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">数据去重的基本原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">基于文本相似性</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">基于哈希算法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">基于聚类分析</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">基于自然语言处理（NLP）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">数据去重技术的优化与扩展</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">数据质量评估</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                   <section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>预训练数据预处理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+</section>
+<section class="tex2jax_ignore mathjax_ignore" id="id2">
+<h1>数据预处理概览<a class="headerlink" href="#id2" title="Link to this heading">#</a></h1>
+<p>大语言模型的卓越能力在很大程度上归功于其在海量、多样化的文本数据上的预训练。然而，原始数据的质量参差不齐，直接使用未经处理的数据进行训练，不仅会严重影响模型的最终性能，还可能引入偏见、安全风险和法律问题。因此，系统化、工程化的预训练数据处理是构建高性能、高安全、高可靠性大模型的基石。本文将对数据处理流程进行全面梳理，涵盖从数据提取，去重，打分，质量验证的全过程</p>
+<section id="id3">
+<h2>数据提取<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>数据提取的目标是从多样化的来源中获取海量、广泛且信息丰富的原始数据。随着大数据时代的到来，数据提取技术已成为人工智能、商业智能和科学研究的基础环节。有效的数据提取不仅能提高后续数据分析的质量，还能为模型训练提供更加全面和多样化的数据支持。</p>
+<section id="id4">
+<h3>网页数据提取<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>网页数据提取（Web Scraping）是指从网页中自动抓取和解析所需信息的过程。常见的网页数据提取方法包括：</p>
+<ol class="arabic simple">
+<li><p>基于规则的提取：</p>
+<ul class="simple">
+<li><p>使用 XPath 或 CSS 选择器定位特定 HTML 元素，比如用于提取 body，title 等关键信息。</p></li>
+</ul>
+</li>
+<li><p>动态网页处理：</p>
+<ul class="simple">
+<li><p>采用 Headless 浏览器（如 Puppeteer、Selenium）处理 JavaScript 渲染内容</p></li>
+</ul>
+</li>
+<li><p>API 反向工程：</p>
+<ul class="simple">
+<li><p>分析网站后台 API 接口，直接调用 API 获取结构化数据</p></li>
+</ul>
+</li>
+<li><p>智能提取技术：</p>
+<ul class="simple">
+<li><p>基于机器学习的网页结构理解，自动识别和提取关键信息字段</p></li>
+</ul>
+</li>
+</ol>
+<p>网页数据抓取也要注意以下事项</p>
+<p>合法性与伦理：在进行网页数据提取时，必须遵守法律法规，并尊重网站的隐私政策。许多网站的 robots.txt 文件中会列出哪些页面可以被抓取，哪些页面不能被抓取。</p>
+<p>频率限制：过于频繁的抓取可能会给目标网站带来压力，甚至可能被封禁。因此，建议使用适当的抓取间隔，避免对网站造成负担。</p>
+</section>
+<section id="id5">
+<h3>多模态数据提取<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>文本数据提取：</p>
+<ul class="simple">
+<li><p>自然语言处理（NLP）技术：用于从文本中提取有价值的信息，如情感分析、实体识别、主题建模等。</p></li>
+<li><p>关键词提取：通过算法从文档中提取出关键词，进行信息概括。</p></li>
+</ul>
+</li>
+<li><p>图像数据提取：</p>
+<ul class="simple">
+<li><p>计算机视觉技术：如对象检测、图像分类和图像描述，用于从图像中提取可识别的元素。</p></li>
+<li><p>深度学习模型：卷积神经网络（CNN）等模型用于识别图像中的特征。</p></li>
+</ul>
+</li>
+<li><p>音频数据提取：</p>
+<ul class="simple">
+<li><p>语音识别：将音频转化为文字，以便后续分析和处理。</p></li>
+<li><p>音频特征提取：通过提取音频中的频谱特征，进行音频分类或情感分析。</p></li>
+</ul>
+</li>
+<li><p>视频数据提取：</p>
+<ul class="simple">
+<li><p>视频帧分析：将视频分解为单独的帧，然后使用图像处理技术进行分析。</p></li>
+<li><p>视频内容识别：结合视频中的图像和音频，提取事件、动作或物体信息。</p></li>
+</ul>
+</li>
+<li><p>多模态融合：</p>
+<ul class="simple">
+<li><p>跨模态学习：通过模型学习不同模态之间的关联，如通过文本描述生成图像，或通过图像生成文字说明。</p></li>
+<li><p>多模态嵌入：将不同模态的数据转换为统一的向量表示，便于进一步分析和推理。</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="id6">
+<h2>数据质量评估<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<p>数据质量评估旨在剔除掉不安全，低价值的数据，并选出高知识，高价值的数据。</p>
+<section id="id7">
+<h3>安全过滤<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>基于 URL 的过滤：在数据采集初期，可以通过 URL 黑名单机制，过滤掉赌博，成人，诈骗等网站。比如最近开源的小红书大模型 dots.llm1 就采用了这种方法。</p>
+<p>PII 隐私保护：隐私保护是在数据处理中避免泄露个人身份信息（PII），比如身份证号，邮箱，电话号码等。使用正则表达式和命名实体识别（NER）模型，可以自动检测并移除包含敏感个人信息的文本数据，确保符合隐私保护的要求。</p>
+<p>版权过滤：在处理数据时，需要确保不侵犯他人的版权和知识产权。尊重 DMCA（Digital Millennium Copyright Act）和处理代码时移除许可证头信息是常见的做法，尤其是在使用网络上的公开数据进行训练时。</p>
+<p>基于模型的过滤：通过训练模型来用于自动识别数据中的仇恨言论、暴力、色情等不良信息，一般可以使用如 BERT、RoBERTa 等模型。</p>
+</section>
+<section id="id8">
+<h3>质量打分<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p>利用大模型来评估数据质量是现在的常见方式之一。比如使用 GPT4.1 或者 DeepSeek-V3 来对已有数据来进行质量打分，通过设置阈值来进行数据筛选，下面是在利用大模型进行打分时一些需要注意的点：</p>
+<ol class="arabic simple">
+<li><p>数据完整性：
+完整的数据通常被赋予较高的分数。例如，缺失关键字段或存在大量空值的记录会降低其质量评分。</p></li>
+<li><p>数据一致性：
+如果数据的一致性较好（如数据没有冲突或矛盾），则质量分数较高。反之，如果数据中存在明显的冲突或不一致，质量分数会较低。</p></li>
+<li><p>数据准确性：
+评估数据是否准确反映真实世界的情况。低准确度的数据（例如错误的标签或噪声数据）会影响数据质量。</p></li>
+<li><p>数据来源可靠性：
+数据来源的可靠性是评估数据质量的一个重要因素。来自可信来源的数据质量通常较高。</p></li>
+<li><p>数据的合法性：
+如果数据遵守法律和道德标准，如隐私保护、版权合规等，将获得较高的质量评分。</p></li>
+</ol>
+</section>
+<section id="id9">
+<h3>数据去重<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p>在大规模预训练模型的训练中，数据去重（Deduplication）是一个至关重要的环节。通过去重，可以有效避免模型在训练过程中多次学习相同的信息，从而提高训练效率，减少不必要的计算和内存开销，同时避免模型出现过拟合或学到冗余知识。接下来将详细介绍预训练数据去重的原理、技术以及相关的深入技术原理。</p>
+</section>
+<section id="id10">
+<h3>数据去重的目标<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>数据去重的主要目标是：</p>
+<ul class="simple">
+<li><p><strong>去除重复样本</strong>：避免在同一训练集内重复的样本导致重复训练，浪费计算资源。</p></li>
+<li><p><strong>提高数据质量</strong>：去除无效、冗余或低质量的数据，保留有代表性的信息，提高数据集的多样性。</p></li>
+<li><p><strong>减少过拟合风险</strong>：如果训练数据中存在大量的重复样本，模型可能会过度拟合这些样本，从而影响模型的泛化能力。</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>数据去重的挑战<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<p>去重在大规模预训练数据集中的应用面临一系列挑战：</p>
+<ul class="simple">
+<li><p><strong>规模庞大</strong>：大规模数据集通常包含数亿甚至数十亿条数据，人工去重不可行，因此需要高效的算法进行去重。</p></li>
+<li><p><strong>相似性判定</strong>：数据可能不是完全相同，而是经过变换、不同的格式或语言表达，如何判断这些数据是重复的变得更为复杂。</p></li>
+<li><p><strong>高效计算</strong>：去重过程中需要高效的计算资源和存储，尤其是在分布式训练或大规模数据处理的情况下。</p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>数据去重的基本原理<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<p>数据去重的核心问题是<strong>相似性计算</strong>，即如何有效地度量数据样本之间的相似度，并据此判断是否为重复数据。常见的去重方法有基于<strong>文本相似性</strong>、<strong>哈希算法</strong>、<strong>聚类分析</strong>等。</p>
+<section id="id13">
+<h4>基于文本相似性<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<p>一种常见的去重方法是通过计算文本之间的相似度来识别重复数据。可以使用以下几种技术：</p>
+<ul class="simple">
+<li><p><strong>Jaccard 相似度</strong>：计算两个文本的交集与并集之比。常用于基于词袋模型的相似度计算。</p></li>
+<li><p><strong>余弦相似度</strong>：基于文本的词向量表示，计算两个向量之间的夹角，常用于高维稀疏向量空间的相似度度量。</p></li>
+<li><p><strong>编辑距离（Levenshtein Distance）</strong>：计算从一个字符串转化为另一个字符串所需的最小编辑操作数（插入、删除、替换）。该方法适用于检测两个文本是否是轻微修改的变体。</p></li>
+</ul>
+</section>
+<section id="id14">
+<h4>基于哈希算法<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<p>另一种常用的去重方法是使用哈希算法对文本进行散列，常见的有以下几种：</p>
+<ul>
+<li><p><strong>SimHash</strong>：通过将文本转换为固定长度的哈希值，计算文本之间的哈希值差异。如果两个文本的哈希值非常相近，则认为它们是重复的。SimHash 广泛应用于大规模数据的去重。</p>
+<p>其原理基于将文本中每个词或特征映射为一个哈希值，并通过聚合（如加权平均或按位异或）生成最终的哈希值。通过计算哈希值之间的汉明距离，判断文本是否重复。</p>
+</li>
+<li><p><strong>MinHash</strong>：常用于集合相似度计算，尤其是<strong>局部敏感哈希</strong>（LSH）中的一种实现。MinHash 可以高效地估计两个集合的 Jaccard 相似度，适用于去重任务中的快速估算。</p></li>
+</ul>
+</section>
+<section id="id15">
+<h4>基于聚类分析<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<p>聚类分析是将数据样本根据相似度分成多个组的方法。通过聚类，我们可以识别出重复样本，并将它们归为一类，从而避免重复训练。</p>
+<ul class="simple">
+<li><p><strong>K-means 聚类</strong>：对于大规模文本数据，可以通过 K-means 聚类将相似的样本聚集到一起。如果一个簇中的样本之间相似度较高，则可以认为它们是重复的。通过设定合理的簇数和相似度阈值，可以高效地进行去重。</p></li>
+<li><p><strong>DBSCAN</strong>：密度聚类方法，能够识别任意形状的簇，并且不需要预先指定簇的个数。DBSCAN 可以自动将密度较低的噪声数据去除，从而有助于去除无意义的重复数据。</p></li>
+</ul>
+</section>
+<section id="nlp">
+<h4>基于自然语言处理（NLP）<a class="headerlink" href="#nlp" title="Link to this heading">#</a></h4>
+<p>现代自然语言处理技术能够有效地捕捉文本间的语义相似度，因此可以通过深度学习模型计算文本之间的相似性，尤其是在文本不完全相同的情况下。常用方法包括：</p>
+<ul class="simple">
+<li><p><strong>词向量</strong>：如 Word2Vec、GloVe、FastText 等，通过将每个单词映射为向量，在向量空间中计算词汇间的相似度。</p></li>
+<li><p><strong>句子向量</strong>：通过预训练模型（如 BERT、RoBERTa、Sentence-BERT）获取句子的向量表示，进而计算句子级别的相似度。BERT 等模型能够理解文本的上下文信息，因此对于复杂语句和同义替换的检测效果更好。</p></li>
+<li><p><strong>语义匹配模型</strong>：例如通过训练一个文本匹配模型（如 Siamese Network），直接进行句子对之间的相似度评估，判断两个文本是否是重复的。</p></li>
+</ul>
+</section>
+<section id="id16">
+<h4>数据去重技术的优化与扩展<a class="headerlink" href="#id16" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>增量去重</strong>：对于动态数据集，可以通过增量去重来持续优化数据去重过程。当新数据加入时，通过更新哈希值或重新计算相似度，及时发现并去除重复数据。</p></li>
+<li><p><strong>分布式去重</strong>：大规模数据集的去重往往需要分布式计算框架（如 Hadoop、Spark）来处理。使用 MapReduce 或分布式数据流处理框架，可以将数据划分为多个部分并并行计算，从而提高去重效率。</p></li>
+<li><p><strong>增量训练去重</strong>：当数据量较大时，使用全量去重可能非常耗时。可以通过增量训练来进行去重，只在新数据或变化的数据上进行去重计算，而不必对所有数据进行重新计算。</p></li>
+</ul>
+</section>
+</section>
+<section id="id17">
+<h3>数据质量评估<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<p>上面的流程能够剔除掉对模型有危害的数据，并通过打分使得能够筛选一些高质量数据。但上面的流程都是一些经验性的，比较通用的流程，真正要检测数据质量必须要真正的训练模型，通过模型的表现来判断数据质量的好坏，可以通过如下实验验证。</p>
+<p>实验设计：在相同的训练条件下，使用相同量的数据，通过查看 Loss 或者是 PPL 来判断数据质量的好坏，一般而言，Loss 越低，PPL 越小，数据质量越高。也可以看稳定收敛到相同位置时，训练的数据量多少，训练的数据量越小，数据质量越大，有实验说明高质量数据可以加快收敛。</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData07DataEngineer"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+   
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="README.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">数据工程</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="DataSources.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">数据源概述</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">预训练数据预处理</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">数据预处理概览</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">数据提取</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">网页数据提取</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">多模态数据提取</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">数据质量评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">安全过滤</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">质量打分</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">数据去重</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">数据去重的目标</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">数据去重的挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">数据去重的基本原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">基于文本相似性</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">基于哈希算法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">基于聚类分析</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">基于自然语言处理（NLP）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">数据去重技术的优化与扩展</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">数据质量评估</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 07, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,926 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="揭秘容器隔离性：从进程到 Namespace" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="03DockCloud01Roadmap/02Container.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author by: 张柯帆 注：以下讨论基于 Linux 在上一篇文章中，我介绍了容器化作为技术的先进性，其主要体现在两方面： 环境的一致性, 隔离性. 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到操作系统里的技术细节。 容器化 VS 虚拟化: 如果你之前学习过容器化技术，你可能经常会听到“沙箱”、“集装箱”之类的类比。这确实是两个非常好的比喻：“集装箱”试图说明不同容器之..." />
+<meta name="description" content="Author by: 张柯帆 注：以下讨论基于 Linux 在上一篇文章中，我介绍了容器化作为技术的先进性，其主要体现在两方面： 环境的一致性, 隔离性. 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到操作系统里的技术细节。 容器化 VS 虚拟化: 如果你之前学习过容器化技术，你可能经常会听到“沙箱”、“集装箱”之类的类比。这确实是两个非常好的比喻：“集装箱”试图说明不同容器之..." />
+
+    <title>揭秘容器隔离性：从进程到 Namespace &#8212; AI Infra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '03DockCloud01Roadmap/02Container';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Docker 与 K8S 初体验" href="../03DockCloud02DockerK8s/README.html" />
+    <link rel="prev" title="容器的诞生" href="01Introduction.html" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Jul 07, 2025"/> 
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+  
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AI Infra - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AI Infra - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. 大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算HPC定义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">网络通信进阶</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">大模型集合通信介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">为什么需要集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">容器时代</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">揭秘容器隔离性：从进程到 Namespace</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud05Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01.Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/11MOECode.html">单机单卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/13MOEVMOE.html">MoE 性能分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/14MOESoft-MOE.html">视觉 MoE 模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：线性 Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">CLIP 模型原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 八. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/blob/master/03DockCloud01Roadmap/02Container.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/edit/master/03DockCloud01Roadmap/02Container.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/issues/new?title=Issue%20on%20page%20%2F03DockCloud01Roadmap/02Container.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/03DockCloud01Roadmap/02Container.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>揭秘容器隔离性：从进程到 Namespace</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">容器化 VS 虚拟化</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">隔离技术</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                   <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="namespace">
+<h1>揭秘容器隔离性：从进程到 Namespace<a class="headerlink" href="#namespace" title="Link to this heading">#</a></h1>
+<p>Author by: 张柯帆</p>
+<blockquote>
+<div><p>注：以下讨论基于 Linux</p>
+</div></blockquote>
+<p>在上一篇文章中，我介绍了容器化作为技术的先进性，其主要体现在两方面：</p>
+<ol class="arabic simple">
+<li><p>环境的一致性</p></li>
+<li><p>隔离性</p></li>
+</ol>
+<p>本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到操作系统里的技术细节。</p>
+<section id="vs">
+<h2>容器化 VS 虚拟化<a class="headerlink" href="#vs" title="Link to this heading">#</a></h2>
+<p>如果你之前学习过容器化技术，你可能经常会听到“沙箱”、“集装箱”之类的类比。这确实是两个非常好的比喻：“集装箱”试图说明不同容器之间存在明确的<strong>边界</strong>而互不影响，也隐含了易于搬运的特性；而 Docker 这个词的本意——码头（Dock），则恰如其分地扮演了装卸、管理这些集装箱的角色。我们所说的容器化环境，就像一个自动化的高效码头。”</p>
+<p>不过，若是只考虑隔离性，虚拟机也能做到，为什么非得用容器呢？</p>
+<p><img alt="虚拟机和容器的架构对比" src="../_images/02Container01.png" /></p>
+<p>看这张架构图可以发现：容器是建设在<strong>操作系统之上的</strong>，会利用原本操作系统的能力来部署应用；而虚拟机的方案则是虚拟出任意多个操作系统，再在虚拟操作系统上部署应用。那既然容器是在操作系统之上的应用，那虚拟的操作系统能否继续安装 Docker 呢？答案是肯定的，例如下图的右半部分：</p>
+<p><img alt="容器各种方式的应用" src="../_images/02Container02.png" /></p>
+<p>所以虚拟机跟容器并不是非此即彼的关系，而是可以协同工作，解决不同的问题。</p>
+<p>但我们需要容器，主要是因为容器在<strong>效率、速度和可移植性</strong>上提供了巨大的优势，这在云原生的微服务架构中十分重要。</p>
+<ul class="simple">
+<li><p><strong>虚拟机（VM）就像独栋房子</strong></p>
+<ul>
+<li><p>每栋房子都有自己的地基、水管、电路、煤气系统（即完整的操作系统和虚拟硬件），然后你才能在里面住人、放家具（运行你的应用）。房子之间隔离性非常好，但建造起来又慢又耗费资源。主要通过 Hypervisor（如 VMware, KVM, Hyper-V），在物理硬件之上虚拟出一整套硬件（虚拟CPU、内存、硬盘、网卡）。</p></li>
+<li><p>缺点：完整的操作系统通常需要独占大量的磁盘空间（几十GB）和内存（几百MB到几GB），而且启动时需要像启动一台真实电脑一样，耗费较多时间。</p></li>
+</ul>
+</li>
+<li><p><strong>容器（Container）就像公寓楼里的一个个套间</strong></p>
+<ul>
+<li><p>整栋楼共享同一个地基、总水管和总电路（即宿主机的操作系统内核）。每个套间（容器）只包含自己的家具和生活用品（即应用及其依赖库），并且有独立的门锁和墙壁（通过 Namespace 和 Cgroups 实现隔离）。入住（启动）非常快，而且在一栋楼里可以容纳很多住户（高密度）。</p></li>
+<li><p>优点：容器本身非常轻量级（几MB-几GB），启动速度更快（秒级甚至毫秒级），由于没有 Hypervisor，资源损耗很少。另外由于是共享宿主机资源，也使得部分场景下的超卖成为可能。</p></li>
+</ul>
+</li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>特性</p></th>
+<th class="head"><p>虚拟机 (Virtual Machine)</p></th>
+<th class="head"><p>容器 (Container)</p></th>
+<th class="head"><p>为什么容器胜出？</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>启动速度</p></td>
+<td><p>慢 (分钟级/秒级)</p></td>
+<td><p>快 (秒级/毫秒级)</p></td>
+<td><p>部署更快，方便弹性伸缩，敏捷性更高</p></td>
+</tr>
+<tr class="row-odd"><td><p>资源开销</p></td>
+<td><p>高 (GB级内存/磁盘)</p></td>
+<td><p>低 (MB级内存/磁盘)</p></td>
+<td><p>在相同配置的服务器上，可以运行更多的容器，成本更低</p></td>
+</tr>
+<tr class="row-even"><td><p>性能</p></td>
+<td><p>有 Hypervisor 层的性能损耗</p></td>
+<td><p>接近原生性能，几乎没有开销</p></td>
+<td><p>应用程序运行效率更高。</p></td>
+</tr>
+<tr class="row-odd"><td><p>可移植性</p></td>
+<td><p>镜像巨大，与 Hypervisor 耦合</p></td>
+<td><p>镜像小巧，分层构建，标准化（OCI 标准），移植性极强</p></td>
+<td><p>一次构建，随处运行，可移植性更强大</p></td>
+</tr>
+<tr class="row-even"><td><p>隔离性</p></td>
+<td><p>强隔离 (硬件级别)</p></td>
+<td><p>弱隔离 (进程级别)</p></td>
+<td><p>该项是虚拟机的优势。一个VM的内核崩溃不会影响其他VM。容器共享内核，内核漏洞可能影响所有容器。不过近年也有像 Kata Containers、gVisor 这样的安全容器项目</p></td>
+</tr>
+<tr class="row-odd"><td><p>应用场景</p></td>
+<td><p>运行不同操作系统、强安全隔离、传统应用</p></td>
+<td><p>微服务、CI/CD (持续集成/持续部署)、快速迭代、弹性伸缩</p></td>
+<td><p>符合现代云原生部署需求</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<blockquote>
+<div><p>注：在云上，通常会在虚拟机中运行容器编排系统（如 Kubernetes），然后在这些虚拟机节点上部署和管理成千上万的容器。这种模式既利用了虚拟机的安全隔离能力，又享受了容器带来的所有好处。</p>
+</div></blockquote>
+</section>
+<section id="id1">
+<h2>隔离技术<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>在容器中，隔离具体是怎么实现的呢？怎么能做到不同的应用互不影响呢？</p>
+<p>认知：<strong>应用隔离的本质是资源隔离</strong>。无论是虚拟机、容器还是简单的进程，实现“隔离”的手段，都是限制一个应用程序能够访问和使用的资源。这些资源可以分为不同层次：</p>
+<ul class="simple">
+<li><p><strong>硬件资源</strong>：CPU 时间、内存空间、硬盘 I/O、网络带宽。虚拟机（VM）主要是在这个层面做隔离。</p></li>
+<li><p><strong>内核资源</strong>：进程ID（PID）、用户ID（UID）、网络协议栈、文件系统挂载点。容器（如 Docker）主要是在这个层面做隔离。</p></li>
+<li><p><strong>运行时资源</strong>：特定编程语言独有的资源，比如 Java 虚拟机（JVM）中的类、堆内存，也有资源隔离的诉求。</p></li>
+</ul>
+<p>假设你要写一个输出 <code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">World</span></code> 的程序。不论你用什么编程语言实现（先忽略 Java、Python 这种使用解释器的情况），最终都需要将代码编译成操作系统可以理解的可执行文件，在 Linux 下则是 ELF(Executable and Linkable Format)。这时的程序还只是硬盘上的 01 字节，但只要执行起来，操作系统就会将这个文件加载到内存里，为其分配运行所需要的各种资源和一个 id，然后交给内核调度。此时运行中的程序已经变成内存空间里的数据、打开的文件、堆栈状态的总和，被称为<strong>进程</strong>（Linux 其实不区分进程、线程，统一叫 LWP，下文统一称为进程）。这个进程也有一个数据结构，在 Linux 中被定义为 <code class="docutils literal notranslate"><span class="pre">task_struct</span></code>，是操作系统调度的一个实体，其持有运行一个程序所必要的内存空间、文件描述符、信号处理等<strong>资源</strong>。<code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 结构体过于庞大，我们可以简单一窥几个重要成员。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">task_struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w">		    </span><span class="n">__state</span><span class="p">;</span><span class="w"> </span><span class="c1">// 表示当前进程状态，例如可运行、睡眠、僵死等。</span>
+<span class="w">    </span><span class="kt">void</span><span class="w">				        </span><span class="o">*</span><span class="n">stack</span><span class="p">;</span><span class="w">  </span><span class="c1">// 指向进程的内核栈。</span>
+<span class="w">	  </span><span class="k">struct</span><span class="w"> </span><span class="nc">sched_entity</span><span class="w">	</span><span class="n">se</span><span class="p">;</span><span class="w">      </span><span class="c1">// CFS（完全公平调度器）的调度实体。</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">mm_struct</span><span class="w">	  </span><span class="o">*</span><span class="n">mm</span><span class="p">;</span><span class="w">     </span><span class="c1">// 指向进程的内存描述符结构（mm_struct），管理进程的虚拟内存。</span>
+<span class="w">	  </span><span class="kt">pid_t</span><span class="w">				        </span><span class="n">pid</span><span class="p">;</span><span class="w">     </span><span class="c1">// 进程ID</span>
+<span class="w">	  </span><span class="k">struct</span><span class="w"> </span><span class="nc">fs_struct</span><span class="w">	  </span><span class="o">*</span><span class="n">fs</span><span class="p">;</span><span class="w">     </span><span class="c1">// 指向文件系统信息结构，记录进程的当前工作目录、根目录等文件系统相关信息。</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">files_struct</span><span class="w">	</span><span class="o">*</span><span class="n">files</span><span class="p">;</span><span class="w">  </span><span class="c1">// 指向进程打开的文件表</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>可以看到，<code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 中包含了进程ID(pid)、内存空间(mm)、文件系统(fs)等与资源相关的字段。那么，要实现隔离，思路就变得清晰了：只要我们能让一个进程在访问这些资源时，看到的是一套“专属”的版本，不就实现了隔离吗？比如，让进程A看到的进程列表里只有它自己，让它看到的文件系统根目录是一个特定目录，分配给它的CPU和内存是受限的。Linux 内核恰恰提供了实现这两大目标的两大核心技术：Namespace（命名空间） 和 Cgroups（控制组）。</p>
+<ul class="simple">
+<li><p>Namespace：<strong>解决“看不看得到”的问题</strong>。 它负责“欺骗”进程，为进程创建一个独立的视图，让它感觉自己独占了整个系统资源（如独立的PID、网络、文件系统）。这是一种视图隔离。</p></li>
+<li><p>Cgroups：<strong>解决“用多少”的问题</strong>。 它负责限制进程实际能使用的物理资源量，比如CPU、内存、磁盘I/O。这是一种资源限制。</p></li>
+</ul>
+<p>我们可以通过 docker 命令直观感受一下这两项技术的威力。</p>
+<p>假设你已经安装了 docker 环境，可以运行以下命令来启动一个容器：</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>alpine<span class="w"> </span>/bin/sh
+</pre></div>
+</div>
+<p>以上 docker 命令的含义就是：启动一个容器，并在容器里运行 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 程序，同时为当前的终端分配一个可交互的 TTY。当启动完成后，你在终端上的输入就会传输到容器内部，而容器的输出也会传输到你当前的终端。这时候，一个运行着 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 的程序就运行在了你的宿主机上。此时如果你使用 <code class="docutils literal notranslate"><span class="pre">ps</span></code> 命令检查容器内的进程，你会发现这样的输出：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/<span class="w"> </span><span class="c1"># ps</span>
+PID<span class="w">  </span>USER<span class="w">   </span>TIME<span class="w"> </span>COMMAND
+<span class="w">  </span><span class="m">1</span><span class="w"> </span>root<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/bin/sh
+<span class="w">  </span><span class="m">7</span><span class="w"> </span>root<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>ps
+</pre></div>
+</div>
+<p>这个容器里居然只有 2 个进程，且 1 号进程居然是 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 而不是 Linux 的引导进程 <code class="docutils literal notranslate"><span class="pre">init</span></code>。如果你在宿主机也运行 <code class="docutils literal notranslate"><span class="pre">ps</span></code>，也许能看到这样的输出：</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>/<span class="w"> </span><span class="c1"># ps</span>
+PID<span class="w">     </span>USER<span class="w">   </span>TIME<span class="w"> </span>COMMAND
+...
+<span class="w">  </span><span class="m">29965</span><span class="w"> </span>root<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/bin/sh
+</pre></div>
+</div>
+<p>这意味着这个容器的进程空间跟宿主机已经完全不同了。这种机制，其实就是对被隔离应用的进程空间做了手脚，使得这些进程看不到其他进程，并且以为自己就是 1 号进程。可实际上，他们在宿主机的操作系统里，还是原来的进程 PID。这就是 Namespace 技术。</p>
+<p>PID Namespace 的使用也非常简单，在创建 Linux 子进程的时候传入一个参数即可：</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>int<span class="w"> </span><span class="nv">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>clone<span class="o">(</span>fn,<span class="w"> </span>stack,<span class="w"> </span>SIGCHLD<span class="w"> </span><span class="p">|</span><span class="w"> </span>CLONE_NEWPID,<span class="w"> </span>NULL<span class="o">)</span><span class="p">;</span><span class="w"> </span>
+</pre></div>
+</div>
+<p>只要设置 <code class="docutils literal notranslate"><span class="pre">CLONE_NEWPID</span></code> 这个 flag，子进程就会被创建到一个新的 PID Namespace 里。在这个新的 Namespace 中，这个子进程就是第一个进程，因此它的 PID 为 1。但是父进程拿到的 <code class="docutils literal notranslate"><span class="pre">pid</span></code> 还是其在物理机上的真实 PID。</p>
+<p>子进程创建子子进程和子子子进程时可以继续设置 <code class="docutils literal notranslate"><span class="pre">CLONE_NEWPID</span></code> ，每个子进程在自己的视角里都会认为自己是 1 号进程，在父进程里则会看到递增的 PID：2、3...。而从“上帝视角”（即父进程所在的 Namespace）看，拿到的 <code class="docutils literal notranslate"><span class="pre">pid</span></code> 变量依然是它在宿主机上的真实 PID。</p>
+<p>那么资源限制呢？ 这就要靠 Cgroups 了。虽然我们无法用一个简单的命令直观展示，但其原理就是将进程放入一个特定的“控制组”里。我们可以对这个组设置资源的上限。例如，我们可以规定某个容器内的所有进程，CPU 使用量不能超过50%，内存最多只能使用512MB。一旦超出，内核就会进行干预（如限制CPU时间、或杀死进程）。</p>
+<p>Docker 正是巧妙地将 Namespace 的视图隔离和 Cgroups 的资源限制结合在一起，才为我们提供了轻量而强大的容器环境。</p>
+<p>不过 <a class="reference external" href="https://man7.org/linux/man-pages/man7/pid_namespaces.7.html">PID Namespace</a> 只能隔离 PID 的视图。为了隔离其他内核资源，Linux 还提供了 <a class="reference external" href="https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html">Cgroup</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html">IPC</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/network_namespaces.7.html">Network</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/mount_namespaces.7.html">Mount</a>、<a class="reference external" href="https://www.man7.org/linux/man-pages/man7/time_namespaces.7.html">Time</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/user_namespaces.7.html">User</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/uts_namespaces.7.html">UTS</a> 等 Namespace。</p>
+<p>总结一下：<strong>容器的隔离，本质就是资源的隔离</strong>，技术上利用了 Linux 内核提供的两大特性：Namespace 负责构建“与世隔绝”的独立视图；而 Cgroups 则像一个“资源管家”，严格限制每个容器能消耗的资源配额。</p>
+<p>在接下来的文章中，我们还会详细介绍 Cgroups 的技术细节。</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./03DockCloud01Roadmap"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+   
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01Introduction.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">容器的诞生</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../03DockCloud02DockerK8s/README.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Docker 与 K8S 初体验</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">容器化 VS 虚拟化</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">隔离技术</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 07, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

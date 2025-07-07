@@ -1,12 +1,12 @@
-<!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
 # 大模型算法与数据概述
 
-大模型作为生成式人工智能技术如 ChatGPT 的核心基础，正迅速改变产业布局，并开始塑造一种全新的用户互动模式，形成舆论引导、社会治理、信息服务等方面的不对称优势。自2020年GPT-3推出到2022年ChatGPT、2023年GPT-4及2024年Google Gemini和Claude 3的快速迭代，目前大模型方向已沉淀出关键算法与重要技术，如Transformer算法及改进架构、Scaling Laws、超大规模预训练、模型对齐、原生多模态、超长文本等。因此在本节将会重点讨论大模型相关的算法和对应的数据工程！
+大模型作为生成式人工智能技术如 ChatGPT 的核心基础，正迅速改变产业布局，并开始塑造一种全新的用户互动模式，形成舆论引导、社会治理、信息服务等方面的不对称优势。自 2020 年 GPT-3 推出到 2022 年 ChatGPT、2023 年 GPT-4 及 2024 年 Google Gemini 和 Claude 3 的快速迭代，目前大模型方向已沉淀出关键算法与重要技术，如 Transformer 算法及改进架构、Scaling Laws、超大规模预训练、模型对齐、原生多模态、超长文本等。因此在本节将会重点讨论大模型相关的算法和对应的数据工程！
 
 ## 课程位置
 
-![AIInfra](./images/arch01.png)
+![AIInfra](./../images/06AlgoData/arch01.png)
 
 ## 课程简介
 
@@ -24,15 +24,15 @@
 
 - [**07. DeepSeek**](./07DeepSeek/)：解读幻方量化最新的技术，幻方以基础模型研究为核心，大语言模型、多模态模型全部开源，旨在推动 AI 技术的普惠和生态发展，而不是单纯以商业盈利为首要目标。从 2023 年建立以来发布了 DeepSeek V1/V2/V3/R1 基础大模型，还有 Janus/Janus-Flow/Janus-Pro 多模态大模型等。
 
-- [**08. 新算法解读**](./08NewModel/)：解读最新不同创业公司和互联网大厂发布的大模型算法。例如重点解读以 Meta 的 Llama 系列，Llama-3 在架构上进行的多项优化。因为，多模态融合成为重要趋势，语言塔与视觉塔的协同架构在图文理解任务中表现突出，因此也会重点进行算法解读。同时，强化学习被引入模型训练，如OpenAI 的 o1 模型通过强化学习和思维链技术提升了逻辑推理能力。
+- [**08. 新算法解读**](./08NewModel/)：解读最新不同创业公司和互联网大厂发布的大模型算法。例如重点解读以 Meta 的 Llama 系列，Llama-3 在架构上进行的多项优化。因为，多模态融合成为重要趋势，语言塔与视觉塔的协同架构在图文理解任务中表现突出，因此也会重点进行算法解读。同时，强化学习被引入模型训练，如 OpenAI 的 o1 模型通过强化学习和思维链技术提升了逻辑推理能力。
 
 ## 课程知识
 
-![AIInfra02](./images/aiinfra02.png)
+![AIInfra02](./../images/06AlgoData/aiinfra02.png)
 
 ## 备注
 
-系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
+系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
 >

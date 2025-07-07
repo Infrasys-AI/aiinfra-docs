@@ -1,0 +1,1101 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="MOE 前世今生" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData02MoE/02MOEHistory.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author by: 张晓天 1991年，Robert Jacobs和Geoffrey Hinton在论文 &quot;Adaptive Mixtures of Local Experts&quot; 中首次提出MoE时，他们或许未曾预料到，这个旨在解决‘分而治之’的神经网络框架，会在沉寂了三十年后再次引起大家关注。本节将初步梳理MoE相关的经典奠基工作，介绍模型架构形成到智能涌现，以及几个近期发布的中文MoE..." />
+<meta name="description" content="Author by: 张晓天 1991年，Robert Jacobs和Geoffrey Hinton在论文 &quot;Adaptive Mixtures of Local Experts&quot; 中首次提出MoE时，他们或许未曾预料到，这个旨在解决‘分而治之’的神经网络框架，会在沉寂了三十年后再次引起大家关注。本节将初步梳理MoE相关的经典奠基工作，介绍模型架构形成到智能涌现，以及几个近期发布的中文MoE..." />
+
+    <title>MOE 前世今生 &#8212; AI Infra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData02MoE/02MOEHistory';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="MOE 奠基论文" href="03MOECreate.html" />
+    <link rel="prev" title="MoE 算法架构" href="01MOEIntroducion.html" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Jul 07, 2025"/> 
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+  
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AI Infra - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AI Infra - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. 大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算HPC定义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">网络通信进阶</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">大模型集合通信介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">为什么需要集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">容器时代</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud05Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01.Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">MoE 混合专家</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01MOEIntroducion.html">MoE 算法架构</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">MOE 前世今生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03MOECreate.html">MOE 奠基论文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="11MOECode.html">单机单卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="13MOEVMOE.html">MoE 性能分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="14MOESoft-MOE.html">视觉 MoE 模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：线性 Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">CLIP 模型原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 八. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/blob/master/06AlgoData02MoE/02MOEHistory.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/edit/master/06AlgoData02MoE/02MOEHistory.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/issues/new?title=Issue%20on%20page%20%2F06AlgoData02MoE/02MOEHistory.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData02MoE/02MOEHistory.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>MOE 前世今生</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">MoE 简史</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">传统MoE结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#moe-ffn">为什么MoE 选择替换 FFN 层</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">MOE 结构的分类</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">MoE 激活的参数</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">90 年代初期</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rnn">RNN 时代</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer 时代</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt">GPT 时代</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mixtral-moe">Mixtral-MOE 可视化</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">思考与小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">本节视频</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                   <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="moe">
+<h1>MOE 前世今生<a class="headerlink" href="#moe" title="Link to this heading">#</a></h1>
+<p>Author by: 张晓天</p>
+<p>1991年，Robert Jacobs和Geoffrey Hinton在论文 &quot;Adaptive Mixtures of Local Experts&quot; 中首次提出MoE时，他们或许未曾预料到，这个旨在解决‘分而治之’的神经网络框架，会在沉寂了三十年后再次引起大家关注。本节将初步梳理MoE相关的经典奠基工作，介绍模型架构形成到智能涌现，以及几个近期发布的中文MoE模型，从背景、思路和效果来了解MoE模型的前世今生。</p>
+<section id="id1">
+<h2>MoE 简史<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_01.png" /></p>
+<p>1991年 MoE 局部专家概念性想法被 &quot;Adaptive Mixtures of Local Experts&quot; 论文所提出，但 MoE 架构真正的理论基石是 1994 年的 &quot;Hierarchical Mixtures of Experts and the EM Algorithm&quot; 论文，它超越了1991年提出的概念性想法，将 MoE 建模为一个概率模型。2017 年的&quot;Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer&quot; 论文，首次将MoE应用于大规模神经网络，它提出了一种<strong>可导的稀疏门控机制</strong>，使得对于每个输入样本，<strong>只激活 Top-K 个专家</strong>（通常是 K=1 或 2）。这意味着计算成本不再随着专家数量线性增长（<code class="docutils literal notranslate"><span class="pre">O(n)</span></code>），而是几乎恒定（<code class="docutils literal notranslate"><span class="pre">O(1)</span></code>），只与激活的专家数有关。2020年的“GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding”论文则首次将MoE 技术系统地、成功地集成到 Transformer 架构中，并设计了高效的<strong>分布式训练</strong>方案，开启了 MoE 在 LLM 时代的主流应用。2021 年的“Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity” 论文，在 GShard 的基础上，进一步简化 MoE 架构、提出 K=1 路由等简化稳定技术，成功训练万亿模型，将效率和规模推向新高峰。2024 年的 “DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models” 论文采用 细粒度专家划分 和 共享专家机制，60 亿参数的 DeepSeekMoE 仅激活约 28 亿参数，计算量（74.4 TFLOPs）比同等规模的密集模型（如 Llama 2-7B）减少 60%，但性能相当甚至更优，成为开源 MoE 大模型的标杆之一。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_02.png" /></p>
+<p>进入 LLM 大模型时间，MoE 的发展更加迅猛，大大小小的基于 MoE 的模型被发布出来。例如，23年6月George Hotz爆料GPT4是8×220B MoE模型，2023年，Mistral AI发布的Mistral 8x7B模型由70亿参数的小模型组合起来的MoE模型，直接在多个跑分上超过了多达700亿参数的Llama 2。2025 年幻方量化(深度求索)，在国内首个开源 MoE 模型 DeepSeek-v3。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_03.png" /></p>
+<p>除了在 NLP 领域，计算机视觉（黄色），多模态（粉色），推荐系统（青色）等领域，MoE 也在被快速应用和发展。</p>
+<section id="id2">
+<h3>传统MoE结构<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p>专家网络（Experts）</p></li>
+</ol>
+<p>每个专家 <span class="math notranslate nohighlight">\(f_i\)</span> 是一个前馈神经网络（FFN）：</p>
+<ul class="simple">
+<li><p>输入：Token <span class="math notranslate nohighlight">\(x\)</span></p></li>
+<li><p>输出：<span class="math notranslate nohighlight">\(f_i(x)\)</span>, 其中 <span class="math notranslate nohighlight">\(i \in \{1, \dots, N\}\)</span></p></li>
+</ul>
+<ol class="arabic simple" start="2">
+<li><p>门控网络（Gating Network）</p></li>
+</ol>
+<p>门控网络 <span class="math notranslate nohighlight">\(G\)</span> 生成专家权重分布：</p>
+<div class="math notranslate nohighlight">
+\[
+G(x) = \text{Softmax}(W_g x + b_g)
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(W_g\)</span>: 门控权重矩阵</p></li>
+<li><p><span class="math notranslate nohighlight">\(b_g\)</span>: 偏置项</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{Softmax}\)</span> 保证 <span class="math notranslate nohighlight">\(\sum_{i=1}^N G(x)_i = 1\)</span></p></li>
+</ul>
+<ol class="arabic simple" start="3">
+<li><p>输出计算</p></li>
+</ol>
+<p>MoE 层的输出是所有专家的加权和：</p>
+<div class="math notranslate nohighlight">
+\[
+y = \sum_{i=1}^N G(x)_i \cdot f_i(x)
+\]</div>
+<p><strong>稀疏 MoE</strong> 仅激活 Top-K 专家（通常 <span class="math notranslate nohighlight">\(K=1\)</span> 或 <span class="math notranslate nohighlight">\(2\)</span>）：</p>
+<div class="math notranslate nohighlight">
+\[
+y = \sum_{i \in \text{TopK}} G(x)_i \cdot f_i(x), \quad \text{其他专家权重置零}
+\]</div>
+<p>4.代码示例</p>
+<p>以下是 PyTorch 风格的伪代码，展示传统 MoE 层的实现逻辑：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">MoELayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_experts</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">expert_size</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experts</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">FeedForward</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">expert_size</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_experts</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gate</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_experts</span><span class="p">)</span>  <span class="c1"># 门控网络</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># 门控计算（Softmax 权重）</span>
+        <span class="n">gate_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gate</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [batch_size, seq_len, num_experts]</span>
+  
+        <span class="c1"># 稀疏化：仅保留 Top-K 专家</span>
+        <span class="n">topk_values</span><span class="p">,</span> <span class="n">topk_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">gate_scores</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Top-2</span>
+  
+        <span class="c1"># 计算专家输出并加权求和</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="n">expert_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">topk_indices</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>  <span class="c1"># 当前专家的 Token 掩码</span>
+            <span class="n">expert_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experts</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># 专家计算</span>
+            <span class="n">output</span> <span class="o">+=</span> <span class="n">expert_output</span> <span class="o">*</span> <span class="n">topk_values</span><span class="p">[</span><span class="n">expert_mask</span><span class="p">]</span>  <span class="c1"># 加权累加</span>
+  
+        <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+</div>
+</section>
+<section id="moe-ffn">
+<h3>为什么MoE 选择替换 FFN 层<a class="headerlink" href="#moe-ffn" title="Link to this heading">#</a></h3>
+<p>为什么 MoE 层的位置选择在每个 Transformer 块内的前馈网络 FFN 层进行替换？</p>
+<p>要了解这个问题，我们首先需要知道在标准 Transformer 中，FFN 层通常占据 <strong>70% 以上</strong> 的参数（如 Llama 7B：Attention 占 30%，FFN 占 70%），而且就计算复杂度来说，FFN 的计算复杂度为 <span class="math notranslate nohighlight">\(O(2 \times d_{model} \times d_{ff})\)</span>，远高于 Attention 的 <span class="math notranslate nohighlight">\(O(n^2 \times d_{model})\)</span>。当模型规模增大时，FFN 的计算需求呈<strong>线性增长</strong>，成为扩展的主要瓶颈，尤其在长序列场景。</p>
+<p>其次，在Transformer中，Attention 负责跨 token 相关性计算，FFN 是对每个 token 独立进行特征增强，这与 MoE 的 per-token 路由机制天然兼容。</p>
+<blockquote>
+<div><p>正如 Yann LeCun 所言：&quot;未来的AI系统必然是模块化专业分工的&quot;。MoE 在 FFN 层的应用正是这一思想的工程实践。</p>
+</div></blockquote>
+</section>
+<section id="id3">
+<h3>MOE 结构的分类<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>MoE 的核心差异在于 <strong>门控函数（Gating/Router）如何选择专家</strong>，可分为三类：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>类型</p></th>
+<th class="head"><p>专家激活范围</p></th>
+<th class="head"><p>计算复杂度</p></th>
+<th class="head"><p>典型应用场景</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>稠密 MoE</strong></p></td>
+<td><p>所有专家</p></td>
+<td><p><span class="math notranslate nohighlight">\(O(N)\)</span></p></td>
+<td><p>小规模模型、多模态融合</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>稀疏 MoE</strong></p></td>
+<td><p>Top-K 专家</p></td>
+<td><p><span class="math notranslate nohighlight">\(O(K)\)</span></p></td>
+<td><p>大规模语言模型（LLM）</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>软 MoE</strong></p></td>
+<td><p>专家特征混合</p></td>
+<td><p><span class="math notranslate nohighlight">\(O(N)\)</span></p></td>
+<td><p>视觉任务、轻量化模型</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_04.png" /></p>
+<p>稠密 MoE的核心特征为<strong>全专家激活</strong>，对每个输入 token，门控网络生成所有专家的权重<span class="math notranslate nohighlight">\(G(x) \in \mathbb{R}^N\)</span>。优势是保留所有专家信息，无需处理负载均衡问题，适合需要细粒度融合的任务（如多模态），但劣势是计算成本随专家数量线性增长<span class="math notranslate nohighlight">\(O(N)\)</span>，难以扩展。稠密混合专家 MoE 模型广泛用在 EvoMoE、MoLE、LoRAMoE 和 DS-MoE 等研究。</p>
+<p>稀疏 MoE的核心特征为条件计算，仅激活 <strong>Top-K 专家</strong>（通常 <span class="math notranslate nohighlight">\(K=1\)</span> 或 <span class="math notranslate nohighlight">\(2\)</span>），其余专家权重置零。存在的问题是门控网络可能偏向少数专家，导致其他专家未被充分训练，需要通过负载均衡来解决，还需要添加可学习噪声（Noisy Top-K Gating）防止路由坍缩。稀疏混合专家 MoE 模型常见的有Switch Transformer、GShard和DeepSeekMoE等研究。</p>
+<p>软 MoE 的核心特征为专家特征混合，不显式选择专家，而是将输入 token 与专家特征加权融合。优点是完全可微，适合端到端训练，避免路由离散性带来的梯度估计问题。劣势为计算成本与稠密 MoE 相当，专家专业化程度较低。典型的研究有Soft MoE、Expert Choice Routing等。</p>
+</section>
+<section id="id4">
+<h3>MoE 激活的参数<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_05.png" /></p>
+<p>MoE 模型的参数量计算，不仅看总参数量，还看激活专家数量与总专家的数量对比。如DeepSeek-MoE 中，其参数量由稠密部分和稀疏专家部分共同决定，需分层计算。如上表所示，其中 <span class="math notranslate nohighlight">\(d_{\text{model}} \)</span> 代表隐藏层的大小，<span class="math notranslate nohighlight">\(d_{ffn}\)</span> 是 FFN 中间层大小，<span class="math notranslate nohighlight">\(d_{expert}\)</span>  专家中间层大小, #L 代表层数，#H 表示注意头数量，<span class="math notranslate nohighlight">\(d_{head}\)</span> 表示注意头大小。</p>
+</section>
+</section>
+<section id="id5">
+<h2>90 年代初期<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>在神经网络发展的早期阶段，Hinton与Jordan提出的《Adaptive Mixtures of Local Experts》首次实现了<strong>监督学习与分治策略的系统性融合</strong>。该架构由两类可微分组件构成：1）一组异构的专家网络（Experts），每个专家通过前馈结构建模输入空间的局部特征分布；2）可训练的门控网络（Gating Network），以输入依赖的softmax权重动态分配样本到专家子网络。其数学表述为：</p>
+<div class="math notranslate nohighlight">
+\[
+y = \sum_{i=1}^N g_i(\mathbf{x}; \mathbf{W}_g) \cdot E_i(\mathbf{x}; \mathbf{W}_i)
+\]</div>
+<p>其中门控输出<span class="math notranslate nohighlight">\(g_i(\mathbf{x}) = \text{softmax}(\mathbf{W}_g^T \mathbf{x})_i\)</span>满足概率单纯形约束。通过<strong>EM算法框架下的竞争性学习</strong>，专家网络自发形成输入空间的分区专业化（Partition Specialization），这一性质在原文Theorem 2中严格证明：当损失函数为负对数似然时，梯度下降优化会驱使各专家收敛至数据分布的不同模态区域。</p>
+<p>该工作的深远影响体现在三方面：</p>
+<ol class="arabic simple">
+<li><p><strong>计算效率</strong>：首次提出条件计算（Conditional Computation）思想，仅激活相关专家，为后续稀疏化MoE（如Switch Transformer的Top-2路由）奠定基础；</p></li>
+<li><p><strong>概率解释</strong>：将输出建模为混合密度网络（Mixture Density Network），启发了贝叶斯MoE等扩展；</p></li>
+<li><p><strong>生物学合理性</strong>：其模块化特性与大脑皮层的功能分区理论高度契合。</p></li>
+</ol>
+<p>当代大规模MoE系统（如Google的GLaM模型）仍遵循这一范式，但通过引入负载均衡损失（如2017年Shazeer提出的辅助损失项）解决了原始版本中专家利用率不均的缺陷。Hinton-Jordan MoE的核心理念——<strong>动态路由的模块化学习</strong>，已成为突破单一模型 scaling law 的关键技术路径。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_06.png" /></p>
+</section>
+<section id="rnn">
+<h2>RNN 时代<a class="headerlink" href="#rnn" title="Link to this heading">#</a></h2>
+<p>传统神经网络面临一个根本性矛盾：模型容量与计算效率之间的权衡。增加网络参数可以提升模型表达能力，但同时会导致计算成本呈线性甚至超线性增长。2017年前，即使最先进的LSTM模型也难以突破数十亿参数的规模。这是由于计算资源、内存瓶颈等限制。</p>
+<p>2017年1月，Google研究团队在论文 “Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer” 中提出了一种突破性的神经网络架构——稀疏门控混合专家层。混合专家层(MoE)由N个专家网络(Expert)和一个门控网络(Gate)组成。传统MoE的问题是计算成本仍随专家数量线性增长，稀疏门控混合专家层保留前k个最大值并将其余置为-∞，这实现了每个样本仅激活k个专家(k≪N)，输入自适应的专家选择，通过softmax保持可微性的特点。这一工作不仅创造了当时最大规模神经网络记录(1370亿参数)，更开创了条件计算(Conditional Computation)在大规模语言模型中的应用先河。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_07.png" /></p>
+</section>
+<section id="transformer">
+<h2>Transformer 时代<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h2>
+<p>Google在2020-2022年间实现了MoE技术的三大里程碑式突破：GShard首次将MoE成功集成至Transformer架构并实现6000亿参数规模；Switch Transformer通过简化路由策略突破万亿参数大关；ST-MoE系统性地解决了训练稳定性与迁移学习难题。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>模型</p></th>
+<th class="head"><p>发布时间</p></th>
+<th class="head"><p>参数量</p></th>
+<th class="head"><p>专家数</p></th>
+<th class="head"><p>关键创新</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GShard</p></td>
+<td><p>2020.6</p></td>
+<td><p>600B</p></td>
+<td><p>2048</p></td>
+<td><p>Enc-Dec MoE, 自动分片</p></td>
+</tr>
+<tr class="row-odd"><td><p>Switch</p></td>
+<td><p>2021.1</p></td>
+<td><p>1.6T</p></td>
+<td><p>2048</p></td>
+<td><p>单专家路由</p></td>
+</tr>
+<tr class="row-even"><td><p>ST-MoE</p></td>
+<td><p>2022.2</p></td>
+<td><p>269B</p></td>
+<td><p>32B激活</p></td>
+<td><p>稳定训练方案</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>2020年6月，GShard首次将MoE层整合进标准Transformer的Encoder-Decoder结构，采用<strong>每两层替换一个FFN为MoE层</strong>的策略，同时通过引入<strong>随机性</strong>防止路由决策固化。同时GShard提出<strong>自动分片</strong>技术实现6000亿参数训练。</p>
+<div class="math notranslate nohighlight">
+\[
+G(x) = \text{Softmax}(H(x) + \epsilon), \epsilon \sim \mathcal{N}(0, \sigma^2)
+\]</div>
+<p>其中噪声项ε在训练初期较大，随训练逐渐衰减。</p>
+<p>同时定义专家容量 <span class="math notranslate nohighlight">\( C = \frac{k \cdot B}{N} \cdot \mu\)</span>，其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(k\)</span>：激活专家数</p></li>
+<li><p><span class="math notranslate nohighlight">\(B\)</span>：批次大小</p></li>
+<li><p><span class="math notranslate nohighlight">\(N\)</span>：专家总数</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu\)</span>：容量因子(通常1.0-1.25)</p></li>
+</ul>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_08.png" /></p>
+<p>在2021 年 1 月，在T5（encoder-decoder）基础上，简化 routing 策略，实现 1.6T 参数量 switch transformer。其主要做出两大关键简化：1. 单专家路由 k=1，极大降低通信开销；2. 专家容量自适应，动态调整容量因子μ。同时Switch提出<strong>蒸馏到稠密</strong>策略，通过训练大型Switch Teacher，然后蒸馏到小型稠密Student，实现模型压缩与加速。展示了 MoE 在大模型中的潜力。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_09.png" /></p>
+<p>2022年2月，Google发布ST-MoE，基于 encoder-decoder 结构 MoE，最大 269B，32B 激活参数。解决 MoE 模型在训练和微调中的不稳定性问题，并提升其迁移学习能力。ST-MoE 通过引入梯度裁剪、噪声注入、路由器限制缓解 MoE 模型的训练不稳定性问题；优化微调策略，使ST-MoE 提升迁移学习能力，更好地适应下游任务，减少过拟合；</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 路由器特定裁剪</span>
+<span class="n">router_grad_norm</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">clip_grad_norm_</span><span class="p">(</span>
+    <span class="n">router</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> 
+    <span class="n">max_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">norm_type</span><span class="o">=</span><span class="mf">2.0</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>在路由器logits添加<strong>分类相关噪声</strong>：</p>
+<div class="math notranslate nohighlight">
+\[
+\tilde{g}_i = g_i + \epsilon \cdot \text{Uniform}(-1,1)
+\]</div>
+<p>从GShard到ST-MoE的技术演进，标志着MoE从研究原型到生产级解决方案的成熟过程。</p>
+</section>
+<section id="gpt">
+<h2>GPT 时代<a class="headerlink" href="#gpt" title="Link to this heading">#</a></h2>
+<p>随着ChatGPT等应用的爆发，MoE技术将继续在效率与性能的平衡中扮演关键角色。GLaM作为首个万亿级decoder-only MoE模型，通过稀疏激活和条件计算实现了97B激活参数下的卓越性能；而DeepSeek MoE则通过专家共享和内存优化等创新，在保持模型性能的同时显著降低计算开销。</p>
+<p>GLaM采用纯Decoder架构，采用稀疏 MoE，包含 1.2 万亿参数，实际激活参数 97B，最大为 1.2T 的 decoder-only 模型。它在每层FFN位置插入MoE模块：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GLaMBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_experts</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attention</span> <span class="o">=</span> <span class="n">Attention</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">moe</span> <span class="o">=</span> <span class="n">MoE</span><span class="p">(</span>
+            <span class="n">experts</span><span class="o">=</span><span class="p">[</span><span class="n">Expert</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_ff</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_experts</span><span class="p">)],</span>
+            <span class="n">num_selected</span><span class="o">=</span><span class="mi">2</span>  <span class="c1"># 关键设计：仅激活2个专家</span>
+        <span class="p">)</span>
+  
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">attention</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">moe</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>GLaM的门控网络采用<strong>软性Top-2选择</strong>：每个输入 token 通过门控网络动态选择 2 个 Expert ，仅激活相关 Expert 进行计算。实现了条件计算，即模型根据输入动态调整计算路径，从而显著提高了计算效率。每个 MoE 层包含 64 个 Expert ，可以分布在多个计算设备上，实现跨设备扩展。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_10.png" /></p>
+<p>GLaM 展示 MoE 在 多任务学习 和 多语言处理 中优势，提升模型的泛化能力和效率。GLaM 稀疏激活和负载均衡机制被应用于 Mistral 8x7B，后续模型设计提供重要参考。</p>
+<p>幻方量化在2024年1月发布了 “DeepSeek MoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models”，它有两大突破：1. 专家共享机制；2. 内存优化技术。</p>
+<p><strong>Expert 共享机制</strong>: 部分 Expert 在不同Tokens或层间共享参数，减少模型冗余，同时提高了参数效率。使得模型在保持高性能同时，计算开销降低 40%。</p>
+<p><strong>横向共享（跨层）</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">SharedMoELayer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_experts</span><span class="p">,</span> <span class="n">shared_ratio</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shared_experts</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">Expert</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">total_experts</span><span class="o">*</span><span class="n">shared_ratio</span><span class="p">))</span>
+        <span class="p">])</span>  <span class="c1"># 30%共享专家</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">private_experts</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">Expert</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_experts</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">shared_experts</span><span class="p">))</span>
+        <span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>纵向共享（跨token）</strong></p>
+<p>采用<strong>潜在专家</strong>概念，相似token自动共享专家：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Token</span> <span class="n">A</span> <span class="err">→</span> <span class="p">[</span><span class="n">E1</span><span class="p">,</span> <span class="n">E3</span><span class="p">]</span>  
+<span class="n">Token</span> <span class="n">B</span> <span class="err">→</span> <span class="p">[</span><span class="n">E1</span><span class="p">,</span> <span class="n">E4</span><span class="p">]</span>  <span class="c1"># E1被共享</span>
+</pre></div>
+</div>
+<p><strong>内存优化</strong>：通过多头潜在注意力机制（MLA） 和键值缓存优化，减少生成任务中的浮点运算量，推理延迟降低了 35%。</p>
+<div class="math notranslate nohighlight">
+\[
+\text{MLA}(Q,K,V) = \sum_{i=1}^h \text{Softmax}(\frac{QW_i^Q(KW_i^K)^T}{\sqrt{d_k}})VW_i^V
+\]</div>
+<p>其中投影矩阵`<span class="math notranslate nohighlight">\({W_i}\)</span>在不同专家间共享，减少40%KV缓存。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_11.png" /></p>
+<p>影响：</p>
+<p>◦低成本与高性能：DeepSeek MoE 架构创新和系统优化，实现百倍性价比提升，打破传统大模型依赖算力范式，为资源受限场景下 AI 应用提供新思路。</p>
+<p>◦开源与生态建设：DeepSeek MoE 开源版本在文本生成、代码编写和逻辑推理等任务中表现优异，推动了 MoE 技术普及和应用。</p>
+<p>从GLaM到DeepSeek MoE的技术演进，标志着混合专家架构进入<strong>效率驱动</strong>的新阶段。GLaM证明了万亿参数模型的实际可行性，而DeepSeek MoE则通过专家共享和内存优化将技术民主化，使得资源受限的场景也能享受大模型的能力。未来随着算法创新与硬件协同设计的深入，MoE有望成为AGI系统的核心架构范式，其发展值得持续关注。</p>
+</section>
+<section id="mixtral-moe">
+<h2>Mixtral-MOE 可视化<a class="headerlink" href="#mixtral-moe" title="Link to this heading">#</a></h2>
+<p>Mixtral 8x7B采用<strong>Decoder-Only Transformer</strong>架构，关键创新在于将部分前馈网络（FFN）替换为<strong>稀疏MoE层</strong>。每层包含8个独立的专家网络（每个专家7B参数），但每个Token仅激活其中2个专家，总参数量46.7B，实际激活参数12.9B。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_12.png" /></p>
+<p>如上图所示，其有 8 个独立的专家网络。每个专家中包含 32 个 Transformer block。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_13.png" /></p>
+<p>每个Transformer block中MoE层与标准前馈层交替排列，Attention机制参数跨专家共享。</p>
+<p>MMLU 包括 57 个主题多项选择题，涵盖领域广泛，如抽象代数、信仰、解剖学、天文学等。使用 MMLU（ Massive Multitask Language Understanding）基准测试进行实验。以Mistral 8x7B 为例记录第 1 层、第 16 层和第 32 层 8 位 Expert 中每个 Expert 的激活情况。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_14.png" /></p>
+<p>从上图可以看出，尽管存在负载均衡机制，<strong>自然任务分布</strong>导致不可避免的不均衡。但最忙碌Expert 仍可获得比最闲 Expert 多40%~60% Tokens。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_15.png" /></p>
+<p>数学/逻辑类任务产生最强不均衡，某些领域比其他领域更能激活部分 Expert， Expert 能针对领域学习。如图所示，32层专家高度专业化激活。Expert 的负载分布倾向于在不同的主题范围内保持一致。但当所有样本都完全属于某个主题时，可能会出现很大概率的分布不平衡。</p>
+<p><img alt="Moe 前世今生" src="../_images/02MOEHistory_16.png" /></p>
+<p>特定Token有自己的专家偏好。常见功能Token有<strong>稳定专家偏好</strong>（如&quot;:&quot;偏好专家5，“Who”偏好专家 7），语义丰富Token的专家选择<strong>依赖上下文</strong>。专家专业化形成<strong>层级结构</strong>，如语法层专家和语义层专家。</p>
+</section>
+<section id="id6">
+<h2>思考与小结<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<p>MoE架构通过<strong>稀疏激活</strong>与<strong>条件计算</strong>的本质创新，彻底打破“模型规模=计算成本”的传统范式。历经三十年演进，其模块化设计和分布式扩展能力已支撑起万亿参数时代，未来将在边缘智能、多模态感知等场景持续释放变革性潜力。<strong>规模与效率的协同进化，才是大模型的终极方向</strong>。</p>
+</section>
+<section id="id7">
+<h2>本节视频<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<html>
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=114020342374120&bvid=BV1y7wZeeE96&cid=28445312974&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+</html>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData02MoE"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+   
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01MOEIntroducion.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">MoE 算法架构</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="03MOECreate.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">MOE 奠基论文</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">MoE 简史</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">传统MoE结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#moe-ffn">为什么MoE 选择替换 FFN 层</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">MOE 结构的分类</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">MoE 激活的参数</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">90 年代初期</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rnn">RNN 时代</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer 时代</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpt">GPT 时代</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mixtral-moe">Mixtral-MOE 可视化</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">思考与小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">本节视频</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 07, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

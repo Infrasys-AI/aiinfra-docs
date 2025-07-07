@@ -1,0 +1,1196 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="MPI 通信与通信库" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="02StorComm04CommLibrary/01MPIIntro.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="添加作者，用于宣传自己 在大模型系统中，集合通信（Collective communication）尤为重要，业界比较重要的就是 MPI/OpenMPI。MPI 是集合通信库 XCCL 的基础，包含了很多基本概念和基础 API 定义，方便入门和进一步了解英伟达的 NCCL 和华为的 HCCL。因此本节主要讲解什么是 MPI，在 MPI 通信中有三个比较重要的概念：（1）P2P（Per2Per..." />
+<meta name="description" content="添加作者，用于宣传自己 在大模型系统中，集合通信（Collective communication）尤为重要，业界比较重要的就是 MPI/OpenMPI。MPI 是集合通信库 XCCL 的基础，包含了很多基本概念和基础 API 定义，方便入门和进一步了解英伟达的 NCCL 和华为的 HCCL。因此本节主要讲解什么是 MPI，在 MPI 通信中有三个比较重要的概念：（1）P2P（Per2Per..." />
+
+    <title>MPI 通信与通信库 &#8212; AI Infra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '02StorComm04CommLibrary/01MPIIntro';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="XCCL 通信库" href="02XCCL.html" />
+    <link rel="prev" title="集合通信库" href="README.html" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Jul 07, 2025"/> 
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+  
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AI Infra - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AI Infra - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. 大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算HPC定义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 通信与存储 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">网络通信进阶</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">大模型集合通信介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">为什么需要集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">集合通信库</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02XCCL.html">XCCL 通信库</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">容器时代</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud05Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01.Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/11MOECode.html">单机单卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/13MOEVMOE.html">MoE 性能分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/14MOESoft-MOE.html">视觉 MoE 模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：线性 Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">CLIP 模型原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 八. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/blob/master/02StorComm04CommLibrary/01MPIIntro.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/edit/master/02StorComm04CommLibrary/01MPIIntro.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/issues/new?title=Issue%20on%20page%20%2F02StorComm04CommLibrary/01MPIIntro.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/02StorComm04CommLibrary/01MPIIntro.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>MPI 通信与通信库</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">MPI 基本概念</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#p2p">P2P 点对点通信</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">集合通信</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">MPI 程序运行</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">本节视频</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                   <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="mpi">
+<h1>MPI 通信与通信库<a class="headerlink" href="#mpi" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div></div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>添加作者，用于宣传自己</p>
+<p>在大模型系统中，集合通信（Collective communication）尤为重要，业界比较重要的就是 MPI/OpenMPI。MPI 是集合通信库 XCCL 的基础，包含了很多基本概念和基础 API 定义，方便入门和进一步了解英伟达的 NCCL 和华为的 HCCL。因此本节主要讲解什么是 MPI，在 MPI 通信中有三个比较重要的概念：（1）P2P（Per2Per）通信，也称为点对点通信；（2）CC，collective communication，集合通信；（3）PM（program management），集合通信中的程序和 API。</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div></div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>建议稍微展开三级内容，对某些内容再深入研究哈</p>
+<section id="id1">
+<h2>MPI 基本概念<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>MPI（Message Passing Interface）是一个跨语言的通讯协议，是高性能计算领域不可或缺的消息传递标准。它通过提供一套高效、可移植、功能丰富的通信原语，使得程序员能够在由数千甚至数百万个处理器组成的庞大分布式内存系统上编写复杂的并行应用程序。</p>
+<p>在 1992 年超算大会上定义了第一个消息传递接口的标准，并在 1994 年完成了完整的接口标准（MPI-1）。如今 MPI 已经发展到 MPI-4.0 并提供了应用程序接口 API，包括协议和通信语义。支持语义丰富的消息通信机制，包括点对点、组播和多播模式。MPI 标准规定了基于消息传递的并行编程 API 的调用规范和语义，不同的实现采用不同优化策略。</p>
+<p>MPI 与 TCP/IP 网络协议本身没有直接关系，OSI 参考模型包括应用层、表示层、会话层、传输层、网络层、数据链路层和物理层，一共 7 层。在 TCP/IP 网络协议中只要 4 层，MPI 属于 OSI 参考模型第五层或者更高，MPI 实现可以通过传输层 sockets 和 TCP，大部分 MPI 实现由指定 API 组成。</p>
+<p><img alt="OSI 参考模型" src="../_images/1osimodule.png" /></p>
+<p>OSI 模型，即开放式通信系统互联参考模型（Open Systems Interconnection Reference Model），国际标准化组织提出一个试图使各种计算机在世界范围内互连的网络标准框架，简称 OSI。由于 OSI 模型并没有提供可实现方法，只是概念描述，用来协调进程间通信。即 OSI 模型并不是标准，而是制定标准时所使用的概念性框架，事实上网络标准是 TCP/IP。</p>
+<p><img alt="OSI 和 TCP/IP" src="../_images/2osicomparewithTCP-IPmodule.png" /></p>
+<p>在开始正式介绍 MPI 之前，先解释 MPI 消息传递模型相关的核心概念，重要概念包括进程、通信器、秩和标签等。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>概念</p></th>
+<th class="head"><p>英文</p></th>
+<th class="head"><p>解释</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>进程</p></td>
+<td><p>Process</p></td>
+<td><p>MPI 程序由一组 N 个独立的进程组成。每个进程有自己的地址空间（内存）、程序计数器和堆栈。它们通常（但不一定）运行在不同的物理处理器或计算节点上</p></td>
+</tr>
+<tr class="row-odd"><td><p>通信器</p></td>
+<td><p>Communicator</p></td>
+<td><p>MPI 最核心的概念之一。它是一个通信上下文，定义了一组可以互相通信的进程以及它们之间的拓扑关系。最重要的通信器是 MPI_COMM_WORLD，它包含了程序启动时创建的所有进程</p></td>
+</tr>
+<tr class="row-even"><td><p>进程组</p></td>
+<td><p>Group</p></td>
+<td><p>通信器包含一个有序的进程集合（进程组）</p></td>
+</tr>
+<tr class="row-odd"><td><p>上下文</p></td>
+<td><p>Context</p></td>
+<td><p>确保在不同通信器中的通信不会相互干扰（即使涉及相同的进程组）</p></td>
+</tr>
+<tr class="row-even"><td><p>秩</p></td>
+<td><p>Rank</p></td>
+<td><p>在给定的通信器内，每个进程被分配一个唯一的整数标识符，称为它的“秩”(Rank)，范围从 0 到 N-1（N 是通信器包含的进程总数）。进程通常通过 Rank 来指定通信的源或目标</p></td>
+</tr>
+<tr class="row-odd"><td><p>消息</p></td>
+<td><p>Message</p></td>
+<td><p>进程间通信的基本单位，一条消息包含数据缓冲区、数据类型、数量、目标/源、标签</p></td>
+</tr>
+<tr class="row-even"><td><p>数据缓冲区</p></td>
+<td><p>Buffer</p></td>
+<td><p>包含要发送或接收的实际数据的连续内存区域</p></td>
+</tr>
+<tr class="row-odd"><td><p>数据类型</p></td>
+<td><p>Datatype</p></td>
+<td><p>描述缓冲区中数据的布局（如 MPI_INT, MPI_DOUBLE，或用户自定义的派生类型），MPI 可以处理非连续内存（如数组的某一行、列或子块），这是其强大功能之一</p></td>
+</tr>
+<tr class="row-even"><td><p>数量</p></td>
+<td><p>Count</p></td>
+<td><p>数据类型的个数</p></td>
+</tr>
+<tr class="row-odd"><td><p>目标/源</p></td>
+<td><p>Destination/Source</p></td>
+<td><p>接收/发送消息的进程 Rank</p></td>
+</tr>
+<tr class="row-even"><td><p>标签</p></td>
+<td><p>Tag</p></td>
+<td><p>一个用户定义的整数，用于区分不同类型的消息（例如，区分边界数据和全局汇总指令）</p></td>
+</tr>
+<tr class="row-odd"><td><p>通信模式</p></td>
+<td><p>Communication Modes</p></td>
+<td><p>包含点对点通信（Point-to-Point Communication）和集体通信（Collective Communication）</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>通讯器定义了一组能够互相发消息的进程，在这组进程中，每个进程会被分配一个序号（秩），进程间显性地通过指定秩来进行通信。通信的基础建立在不同进程间发送和接收操作。一个进程可以通过指定另一个进程的秩以及一个独一无二的消息标签来发送消息给另一个进程。</p>
+<p>接受者可以发送一个接收特定标签标记的消息的请求（或者也可以完全不管标签，接收任何消息），然后依次处理接收到的数据。类似这样的涉及一个发送者以及一个接受者的通信被称作点对点通信。当然在很多情况下，某个进程可能需要跟所有其他进程通信。比如主进程想发一个广播给所有的从进程。在这种情况下，手动去写每一个进程分别进行点对点的信息传递就显得很笨拙，而且也会导致网络利用率低下，MPI 则有专门的接口处理这类所有进程间的集体通信。</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div></div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>接受者这种说法很大模型，或者很翻译，直接用 sender/receiver 业界通用的叫法</p>
+</section>
+<section id="p2p">
+<h2>P2P 点对点通信<a class="headerlink" href="#p2p" title="Link to this heading">#</a></h2>
+<p>点对点通信是在两个特定进程（一个发送者 sender，一个接收者 receiver）之间进行消息传递。这是最基本的通信模式，用于控制同步或者数据传输，如 MPI_Send 和 MPI_Recv 分别实现了用于发送数据和接收数据的逻辑。通信采用的方式是两个进程计算结束后，相互交换消息前需要请求访问，再进行下一阶段计算。</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div></div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>图片命名要规范，不然图片太多没办法找对应的内容了
+<img alt="p2p 通信" src="../_images/3p2pcommunication.png" /></p>
+<p>点对点通信分为同步和异步两种，同步阻塞 （Blocking）是发送/接收函数调用在消息操作（发送完成被对方接收/接收完成数据可用）安全完成之前不会返回，例如 MPI_Send 和 MPI_Recv。MPI_Send 返回意味进程发送数据结束，进程缓冲可以重用或覆盖，但不代表 Receiver 收到数据。MPI_Recv 返回意味着数据已经接收到进程的缓冲区，可以使用。</p>
+<p><img alt="同步与异步" src="../_images/4blockingnon-blocking.png" /></p>
+<p>异步非阻塞（Non-blocking） 是发送/接收函数调用立即返回一个“请求句柄”，而实际的通信操作在后台进行。程序员随后需要使用 MPI_Wait 或 MPI_Test 等函数来查询或等待操作完成，例如 MPI_Isend 和 MPI_Irecv。非阻塞通信的意义在于进程发送或接收操作后马上返回，继续后续阶段的计算。当程序要求操作必须确认完成时，调用相应测试接口 MPI_Wait 阻塞等待操作完成。异步编程相对复杂，但使得计算和通信可以一定程度并行，降低数据同步带来的运行时开销，是实现通信与计算重叠、提高性能的关键。</p>
+</section>
+<section id="id2">
+<h2>集合通信<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>集体通信是在通信器内所有进程（或一个定义的子集）之间进行的协调操作，这些操作比用点对点操作手动实现更高效、更简洁。包括了一对多、多对一和多对多的通信方式，常用于一组进程之间的数据交换，包括通信、规约和同步三种类型。常见操作包括同步 (Barrier)、广播 (Broadcast)、收集 (Gather)、散播 (Scatter)、全局归约 (Reduce)、全归约 (Allreduce)、全收集 (Allgather)和扫描/前缀归约 (Scan/Prefix Reduction)。不同通信类型使用通信原语的方式进行表示，MPI 通信中不同函数名对应的含义如下表所示。</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div></div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>表格用 markdown 的格式，方便 shpinx 渲染哈</p>
+<table>
+    <tr>
+        <td>类型</td>
+        <td>函数名</td>
+        <td>含义</td>
+    </tr>
+    <tr>
+        <td rowspan="9">通信</td>
+        <td>MPI_Bcast</td>
+        <td>一对多广播相同消息，一个进程（根进程）将其数据发送给通信器内所有其他进程</td>
+    </tr>
+    <tr>
+        <td>MPI_Gather</td>
+        <td>多对一收集各进程消息，所有进程将各自的数据发送到一个指定的根进程，根进程按 Rank 顺序收集所有数据</td>
+    </tr>
+    <tr>
+        <td>MPI_Gatherv</td>
+        <td>MPI_Gather 一般化</td>
+    </tr>
+    <tr>
+        <td>MPI_Allgather</td>
+        <td>全局收集,每个进程收集所有其他进程的数据（相当于 Gather + Bcast 结果给所有进程）</td>
+    </tr>
+    <tr>
+        <td>MPI_Allgatherv</td>
+        <td>MPI_Allgather 一般化</td>
+    </tr>
+    <tr>
+        <td>MPI_Scatter</td>
+        <td>一对多散播不同消息，根进程将其数据块分割并发送给通信器内的所有其他进程（包括自己）</td>
+    </tr>
+        <tr>
+        <td>MPI_Scatterv</td>
+        <td>MPI_Scatter 一般化</td>
+    </tr>
+    <tr>
+        <td>MPI_Alltoall</td>
+        <td>多对多全局交换信息</td>
+    </tr>
+    <tr>
+        <td>MPI_Alltoallv</td>
+        <td>MPI_Alltoall 一般化</td>
+    </tr>
+    <tr>
+        <td rowspan="4">规约</td>
+        <td>MPI_Reduce</td>
+        <td>多对一规约，所有进程提供数据，使用指定的操作（如求和 MPI_SUM、求最大值 MPI_MAX、求最小值 MPI_MIN 等）进行归约计算，结果存储在根进程</td>
+    </tr>
+    <tr>
+        <td>MPI_Allreduce</td>
+        <td>MPI_Reduce 一般化，与 Reduce 类似，但归约结果会广播给所有进程</td>
+    </tr>
+    <tr>
+        <td>MPI_Reduce_scatter</td>
+        <td>MPI_Reduce 一般化</td>
+    </tr>
+    <tr>
+        <td>MPI_Scan</td>
+        <td>前缀和，对进程 Rank 顺序执行前缀归约操作</td>
+    </tr>
+    <tr>
+        <td>同步</td>
+        <td>MPI_Barrier</td>
+        <td>所有进程在此处等待，直到所有进程都到达该点</td>
+    </tr>
+</table>
+<p>当 MPI 进程启动后，每个进程会分配唯一的序号 Rank。集合通信需要指定一个协调者（Rank 0 Process，一般称为 ROOT），由其负责将数据发送给所有进程。以 MPI_Bcast 为例来解析一对多广播相同消息是如何实现的，它将数据从根进程发送到所有其它进程，所有进程都调用 MPI_Bcast。如下代码实现了一个使用 MPI_Bcast 广播数据的过程。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp"># Broadcast 100 ints from process 0 to every process in the group</span>
+
+<span class="n">MPI_Comm</span><span class="w"> </span><span class="n">comm</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">array</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="n">MPI_Bcast</span><span class="p">(</span><span class="n">array</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_INT</span><span class="p">,</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>虽然每个进程都调用 MPI_Bcast，但根进程负责广播数据，其它进程接收数据。当进程调用 MPI_Bcast，执行的时候会把 MPI_Bcast 里面主进程的数据一一发送到对应的其它进程，或者其它卡上面的缓冲区。</p>
+<p><img alt="MPI_Bcast 过程" src="../_images/5MPI_Bcast.png" /></p>
+<p>MPI_Gather 行为与 MPI_Bcast 恰好相反，每个进程将数据发送给根进程。如下代码实现了一个典型数据聚合过程：</p>
+<p>如下图所示，当启动 MPI_Gather 时，每个进程（process 0~p-1）里面对应的数据全部汇聚到第一个进程中，也就是主进程（Root），通过 MPI_Bcast 和 MPI_Gather 可以看出 MPI 相关 API 所做的操作。</p>
+<p><img alt="MPI_Gather 过程" src="../_images/6MPI_Gather.png" /></p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">MPI_Comm</span><span class="w"> </span><span class="n">comm</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">gsize</span><span class="p">,</span><span class="n">sendarray</span><span class="p">[</span><span class="mi">100</span><span class="p">];</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">myrank</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">rbuf</span><span class="p">;</span>
+
+<span class="n">MPI_Comm_rank</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">myrank</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">myrank</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">MPI_Comm_size</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">gsize</span><span class="p">);</span>
+<span class="w">    </span><span class="n">rbuf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="n">gsize</span><span class="o">*</span><span class="mi">100</span><span class="o">*</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="n">MPI_Gather</span><span class="p">(</span><span class="n">sendarray</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_INT</span><span class="p">,</span><span class="w"> </span><span class="n">rbuf</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_INT</span><span class="p">,</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">comm</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>MPI 集合通信编程模式就是当每个程序独立完成计算后，到达交汇点，同时调用集合通信原语（Primitive）完成数据通信，然后根据结果进行后续计算。当计算规模较大，集合通信性能非常关键，不同 MPI 实现框架有不同优化方案。实际工程应用中，往往采用更复杂拓扑结构来提升性能，例如树形结构、环形结构。</p>
+<p>在 MPI 中有个很重要的概念就是同步（Barrier），在某些场景下，多个进程需要协调同步进入某个过程。MPI 提供了同步原语例如 MPI_Barrier，所有进程调用 MPI_Barrier，阻塞程序直到所有进程都开始执行这个接口，然后返回。同步的作用就是让所有进程确保 MPI_Barrier 之前的工作都已完成，同步进入下一个阶段。</p>
+<p><img alt="Barrier" src="../_images/7Barrier.png" /></p>
+</section>
+<section id="id3">
+<h2>MPI 程序运行<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>MPI 程序编程模式为迭代式“计算 + 通信”，程序可以分为计算块和通信块。每个程序可以独立完成计算块，计算完成后进行交互（通信或同步）。交互后进入下一阶段计算，直到所有任务完成，程序退出。</p>
+<p><img alt="MPI 程序编程模式" src="../_images/8MPIprogramming.png" /></p>
+<p>以下是一个 MPI Hello World 程序，MPI 程序的第一步是引入 <code class="docutils literal notranslate"><span class="pre">include</span> <span class="pre">&lt;mpi.h&gt;</span></code> 这个头文件，主函数在进行 <code class="docutils literal notranslate"><span class="pre">MPI_Init</span></code> 的过程中，所有 MPI 的全局变量或者内部变量都会被创建。MPI_Comm_size 会返回 <code class="docutils literal notranslate"><span class="pre">MPI_COMM_WORLD</span></code> 这个通信器的大小，也就是当前 MPI 任务中所有的进程数目。</p>
+<p><code class="docutils literal notranslate"><span class="pre">MPI_Comm_rank</span></code> 函数会返回通信器中当前进程的秩，MPI_Get_processor_name 会得到当前进程实际跑的时候所在的处理器名字，最后使用 <code class="docutils literal notranslate"><span class="pre">MPI_Finalize</span></code> 清除当前 MPI 环境。</p>
+<blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div><blockquote>
+<div></div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+<p>介绍函数的时候加上<code class="docutils literal notranslate"><span class="pre">xxxx()</span></code>这种符号，方便系统识别，如上</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;mpi.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">**</span><span class="w"> </span><span class="n">argv</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 初始化 MPI 环境</span>
+<span class="w">    </span><span class="n">MPI_Init</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 通过调用以下方法来得到所有可以工作的进程数量</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">world_size</span><span class="p">;</span>
+<span class="w">    </span><span class="n">MPI_Comm_size</span><span class="p">(</span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">world_size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 得到当前进程的秩</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">world_rank</span><span class="p">;</span>
+<span class="w">    </span><span class="n">MPI_Comm_rank</span><span class="p">(</span><span class="n">MPI_COMM_WORLD</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">world_rank</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 得到当前进程的名字</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">processor_name</span><span class="p">[</span><span class="n">MPI_MAX_PROCESSOR_NAME</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">name_len</span><span class="p">;</span>
+<span class="w">    </span><span class="n">MPI_Get_processor_name</span><span class="p">(</span><span class="n">processor_name</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">name_len</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 打印一条带有当前进程名字，秩以及</span>
+<span class="w">    </span><span class="c1">// 整个 communicator 的大小的 hello world 消息。</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;Hello world from processor %s, rank %d out of %d processors</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+<span class="w">           </span><span class="n">processor_name</span><span class="p">,</span><span class="w"> </span><span class="n">world_rank</span><span class="p">,</span><span class="w"> </span><span class="n">world_size</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 释放 MPI 的一些资源</span>
+<span class="w">    </span><span class="n">MPI_Finalize</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>MPI 框架只提供通信机制，即任务间同步和通信手段，与计算无关。计算任务如何分解和实现，数据如何划分，任务如何合并等问题由程序开发者决定。MPI 框架在程序启动时为每个程序副本分配唯一 Rank ID，程序通过获取和根据 Rank 确定任务。之后可以执行以下 Makefile 文件进行编译并在配置了 MPICC 运行环境的多个节点的集群上面执行 MPI 程序。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">EXECS</span><span class="o">=</span><span class="n">mpi_hello_world</span>
+<span class="n">MPICC</span><span class="o">?=</span><span class="n">mpicc</span>
+
+<span class="nl">all</span><span class="p">:</span><span class="w"> </span><span class="n">$</span><span class="p">{</span><span class="n">EXECS</span><span class="p">}</span>
+
+<span class="nl">mpi_hello_world</span><span class="p">:</span><span class="w"> </span><span class="n">mpi_hello_world</span><span class="p">.</span><span class="n">c</span>
+<span class="w">    </span><span class="n">$</span><span class="p">{</span><span class="n">MPICC</span><span class="p">}</span><span class="w"> </span><span class="o">-</span><span class="n">o</span><span class="w"> </span><span class="n">mpi_hello_world</span><span class="w"> </span><span class="n">mpi_hello_world</span><span class="p">.</span><span class="n">c</span>
+
+<span class="nl">clean</span><span class="p">:</span>
+<span class="w">    </span><span class="n">rm</span><span class="w"> </span><span class="n">$</span><span class="p">{</span><span class="n">EXECS</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>一个典型的 MPI 程序由用户程序部分（MPI User）链接 MPI 库（MPI Interface）构成，计算任务本身的算法实现、任务分解和合并实现在用户程序部分，与 MPI 无关，也不受 MPI 限制。因此 MPI 提供给开发者灵活性，实现了最小封装。</p>
+<p><img alt="MPI 程序" src="../_images/9MPIInterface.png" /></p>
+</section>
+<section id="id4">
+<h2>小结<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>MPI 是集合通信库 XCCL 的基础，其中包含了很多基本概念和基础 API 定义，OpenMPI 作为早期的开源集合通信库，定义了 P2P 通信、集合通信和对应的程序运行。通过对 MPI 相关定义和实现可以更好地理解之后英伟达的 NCCL 和华为的 HCCL。</p>
+</section>
+<section id="id5">
+<h2>本节视频<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<html>
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=1456308800&bvid=BV1Di421h7u2&cid=1651238864&p=1&as_wide=1&high_quality=1&danmaku=0&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+</html></section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./02StorComm04CommLibrary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+   
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="README.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">集合通信库</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02XCCL.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">XCCL 通信库</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">MPI 基本概念</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#p2p">P2P 点对点通信</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">集合通信</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">MPI 程序运行</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">本节视频</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Author name not set
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Jul 07, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

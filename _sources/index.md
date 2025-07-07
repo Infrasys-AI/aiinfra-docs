@@ -18,7 +18,7 @@ title: AIInfra
 
 本开源项目主要是跟大家一起探讨和学习人工智能、深度学习的系统设计，而整个系统是围绕着在 NVIDIA、ASCEND 等芯片厂商构建算力层面，所用到的、积累、梳理得到大模型系统全栈的内容。希望跟所有关注 AI 开源项目的好朋友一起探讨研究，共同促进学习讨论。
 
-![大模型系统全栈架构图](images/01Introduction/03Architecture03.png)
+![大模型系统全栈架构图](images/00Summary/aifoundation01.jpg)
 
 # 课程内容大纲
 
@@ -30,7 +30,7 @@ title: AIInfra
 
 第三部分，通信与存储的介绍[<u>**通信与存储**</u>](./02StorComm/README.md)，大模型训练和推理的过程中都严重依赖于网络通信，因此会重点介绍通信原理、网络拓扑、组网方案、高速互联通信的内容。存储则是会从节点内的存储到存储 POD 进行介绍。
 
-第四部分，集群中容器和云原生技术的介绍[<u>**集群容器与云原生**</u>](./03DockCloud/README.md)，从容器、云原生时代到 Docker 和 K8S 技术的应用，这其中包含实践内容： K8S集群搭建与实践。
+第四部分，集群中容器和云原生技术的介绍[<u>**集群容器与云原生**</u>](./03DockCloud/README.md)，从容器、云原生时代到 Docker 和 K8S 技术的应用，这其中包含实践内容： K8S 集群搭建与实践。
 
 第五部分，涉及到大模型，就不得不提大模型训练[<u>**大模型训练**</u>](./04Train/README.md)，训练的基础是并行，加速是核心，后训练、强化学习和微调是关键，验证评估是目的。
 
@@ -184,7 +184,7 @@ title: AIInfra
 
 ## 备注
 
-文字课程开源在 [AIInfra](https://chenzomi12.github.io/)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/chenzomi12/AIInfra)，欢迎取用！！！
+文字课程开源在 [AIInfra](https://infrasys-ai.github.io/aiinfra-docs)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎取用！！！
 
 > 非常希望您也参与到这个开源项目中，B 站给 ZOMI 留言哦！
 > 
