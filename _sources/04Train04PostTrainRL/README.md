@@ -29,4 +29,11 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+DAPO
+GRPO
+GSPO
+PPO_DPO
+RLHF
+RLVR
+VAPO
 ```

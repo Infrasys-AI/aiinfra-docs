@@ -1,0 +1,1616 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="BLIP家族: 统一理解和生成的自举多模态模型" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData04ImageTextGenerat/02BLIP.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author By: 李佳函 引言: 核心挑战: 在 BLIP 提出前，视觉-语言预训练领域已有 CLIP、ALBEF 等代表性工作，但仍存在两个关键瓶颈： 问题一： 任务能力割裂- 架构局限性 。没有一个模型既可以做检索又可以做生成。- Encoder-only 模型 （如 CLIP）： 擅长图文检索等理解任务，但无法执行文本生成任务（如图像字幕生成）, Encoder-Decoder 模..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/_images/social_previews/summary_06AlgoData04ImageTextGenerat_02BLIP_8000e075.png" />
+<meta property="og:image:alt" content="Author By: 李佳函 引言: 核心挑战: 在 BLIP 提出前，视觉-语言预训练领域已有 CLIP、ALBEF 等代表性工作，但仍存在两个关键瓶颈： 问题一： 任务能力割裂- 架构局限性 。没有一个模型既可以做检索又可以做生成。- Encoder-only 模型 （如 CLIP）： 擅长图文检索等理解任务..." />
+<meta name="description" content="Author By: 李佳函 引言: 核心挑战: 在 BLIP 提出前，视觉-语言预训练领域已有 CLIP、ALBEF 等代表性工作，但仍存在两个关键瓶颈： 问题一： 任务能力割裂- 架构局限性 。没有一个模型既可以做检索又可以做生成。- Encoder-only 模型 （如 CLIP）： 擅长图文检索等理解任务，但无法执行文本生成任务（如图像字幕生成）, Encoder-Decoder 模..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>BLIP家族: 统一理解和生成的自举多模态模型 &#8212; AIInfra</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData04ImageTextGenerat/02BLIP';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="视频大模型" href="../06AlgoData05VideoGenerat/README.html" />
+    <link rel="prev" title="图文对齐基础" href="01CLIP.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Aug 24, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">AIInfra</p>
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/chenzomi12/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. 大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02TypicalRepresent/README.html">集群建设之巅</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMAIntroduction.html">网络通信进阶</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/RDMA.html">Scale out and Scale up</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">大模型集合通信介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">为什么需要集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Cgroups.html">资源的限制</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">Kubernetes 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">Kubernetes 容器持网络</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud05Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01.Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行1F1B/1F1B Interleaved原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/comput_total_parameters.html">Dense 计算总参</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train07Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeekOptimize/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer09Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/11MOECode.html">单机单卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/13MOEVMOE.html">MoE 性能分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/14MOESoft-MOE.html">视觉 MoE 模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">图文生成与理解</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">BLIP家族: 统一理解和生成的自举多模态模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 八. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/blob/master/06AlgoData04ImageTextGenerat/02BLIP.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/edit/master/06AlgoData04ImageTextGenerat/02BLIP.md" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/issues/new?title=Issue%20on%20page%20%2F06AlgoData04ImageTextGenerat/02BLIP.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData04ImageTextGenerat/02BLIP.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>BLIP家族: 统一理解和生成的自举多模态模型</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">核心挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">BLIP 的诞生</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">模型架构设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#med">MED</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-image-encoder">图像编码器（Unimodal Image Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-text-encoder">文本编码器（Unimodal Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-encoder">基于图像的文本编码器（Image-Grounded Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-decoder">基于图像的文本解码器（Image-Grounded Text Decoder）</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">预训练目标</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itc">图像编码器+单模态文本编码器：ITC 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itm">图像编码器+多模态文本编码器：ITM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lm">图像编码器+多模态文本解码器：LM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">损失函数的联合优化</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-bootstrapping-capfilt">数据自举(data Bootstrapping)：CapFilt</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#captioner">Captioner（生成器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">Filter（过滤器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">工作流程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">实验结果</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">BLIP的局限性</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blip-2">BLIP-2</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">核心思想设计</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-former-querying-transformer">模型结构详解：Q-Former（Querying Transformer）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">预训练过程</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">第一阶段：视觉-语言表征学习</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">ITC任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">ITM任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#itg">ITG任务</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">第二阶段：视觉到语言的生成学习</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blip2">BLIP2-总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instruct-blip">Instruct-BLIP</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">模型结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">训练策略</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">总结</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<section class="tex2jax_ignore mathjax_ignore" id="blip">
+<h1>BLIP家族: 统一理解和生成的自举多模态模型<a class="headerlink" href="#blip" title="Link to this heading">#</a></h1>
+<p>Author By: 李佳函</p>
+<section id="id1">
+<h2>引言<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h3>核心挑战<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>在 BLIP 提出前，视觉-语言预训练领域已有 CLIP、ALBEF 等代表性工作，但仍存在两个关键瓶颈：</p>
+<ul class="simple">
+<li><p>问题一：<strong>任务能力割裂</strong></p>
+<ul>
+<li><p><strong>架构局限性</strong>。没有一个模型既可以做检索又可以做生成。</p>
+<ul>
+<li><p><strong>Encoder-only 模型</strong>（如 CLIP）：<br />
+擅长图文检索等理解任务，但无法执行文本生成任务（如图像字幕生成）</p></li>
+<li><p><strong>Encoder-Decoder 模型</strong>：<br />
+支持生成任务，但难以有效应用于图像-文本检索任务</p></li>
+</ul>
+</li>
+<li><p><strong>根本矛盾</strong>：理解任务需深度跨模态交互，生成任务需自回归建模，传统架构无法同时优化两种目标。</p></li>
+</ul>
+</li>
+<li><p>问题二：<strong>数据噪声污染</strong>。过往的这些多模态 SOTA 模型，都是在网络上爬取大量的数据进行预训练的。由于数据量够大，训练效果也差强人意。但这些噪声数据对于模型的训练来说是非常不利的，如果可以提取到更纯净的数据进行训练，模型的性能还可以进一步提升。</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>BLIP 的诞生<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>基于此问题现象，BLIP 诞生了。BLIP 的作者也是 ALBEF 的作者，因此可以在 BLIP 上看到很多 ALBEF 的影子。</p>
+<p>该模型的核心思想主要有两个：</p>
+<ol class="arabic simple">
+<li><p><strong>论文提出核心架构——多模态混合编码器-解码器（Multimodal Mixture of Encoder-Decoder, MED）采用双流结构设计</strong>，通过共享参数支持三种模式——单模态编码器（对齐全局特征）、跨模态编码器（细粒度匹配）和跨模态解码器（生成描述），联合优化图像-文本对比（ITC）、匹配（ITM）和语言建模（LM）损失，从而统一理解（如检索）与生成（如描述）任务。</p></li>
+<li><p><strong>数据层面设计 Captioning 和 Filtering（CapFilt）方法</strong>，利用预训练（使用网上获取的有噪声的数据）的 MED 生成合成描述（Captioner 模块）并过滤原始网络文本与合成文本中的噪声（Filter 模块），从噪声数据中提炼高质量训练样本。</p></li>
+</ol>
+</section>
+</section>
+<section id="id4">
+<h2>模型架构设计<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="med">
+<h3>MED<a class="headerlink" href="#med" title="Link to this heading">#</a></h3>
+<p>MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三个任务的复合型模型。</p>
+<p><img alt="" src="../_images/02BLIP01.png" /></p>
+<p>如图所示，总共有四个模块，从左往右，分别为两个单模态编码器：图像编码器和文本编码器，两个多模态编码器：基于图像的文本编码器和解码器。</p>
+<section id="unimodal-image-encoder">
+<h4>图像编码器（Unimodal Image Encoder）<a class="headerlink" href="#unimodal-image-encoder" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>架构：基于 Transformer 的视觉编码器（ViT），将图像划分为固定大小的 patch（如 224×224 分辨率下分割为 14×14 的 196 个 patch），每个 patch 被线性嵌入为向量。</p></li>
+<li><p>关键设计：</p>
+<ul>
+<li><p>全局特征提取：在输入序列中添加一个特殊的[CLS]标记（Global Image Token），用于捕捉图像的整体语义信息。</p></li>
+<li><p>动量编码器：在对比学习（ITC 任务）中，引入了 ALBEF 的做法即动量编码器（Momentum Encoder）生成软标签，增强负样本的鲁棒性。</p></li>
+</ul>
+</li>
+<li><p>输出：生成图像的嵌入向量序列（包括[CLS]标记的特征），作为后续多模态模块的输入。</p></li>
+</ul>
+<blockquote>
+<div><p>软标签即为概率值，不是像硬标签那样的非 1 即 0。使用软标签可以让模型学习到更细粒度的语义信息，而不是简单地二值化判断。</p>
+</div></blockquote>
+<p><img alt="alt text" src="../_images/02BLIP02.png" /></p>
+</section>
+<section id="unimodal-text-encoder">
+<h4>文本编码器（Unimodal Text Encoder）<a class="headerlink" href="#unimodal-text-encoder" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>功能：将文本序列编码为上下文感知的特征表示。</p></li>
+<li><p>架构：基于 BERT 的 Transformer 编码器，对文本进行双向自注意力建模。</p></li>
+<li><p>关键设计：</p>
+<ul>
+<li><p>文本结构化：在文本开头插入[CLS]标记，用于聚合整个文本的全局信息。</p></li>
+<li><p>单模态对齐：通过图像-文本对比损失（ITC）与图像编码器的特征空间对齐。</p></li>
+</ul>
+</li>
+<li><p>输出：生成文本的嵌入向量序列（包括[CLS]标记的特征），用于图像-文本匹配（ITM）或跨模态交互。
+<img alt="alt text" src="../_images/02BLIP03.png" /></p></li>
+</ul>
+</section>
+<section id="image-grounded-text-encoder">
+<h4>基于图像的文本编码器（Image-Grounded Text Encoder）<a class="headerlink" href="#image-grounded-text-encoder" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>功能：融合图像信息与文本信息，生成多模态联合表示。</p></li>
+<li><p>架构：在标准文本编码器的基础上，插入交叉注意力层（Cross-Attention Layer）。</p>
+<ul>
+<li><p>结构细节：</p>
+<ul>
+<li><p>在每个 Transformer 块的自注意力层（Self-Attention, SA）和前馈网络（FFN）之间，增加一个交叉注意力层（Cross-Attention, CA）。</p></li>
+<li><p>CA 层的作用：以图像编码器的输出作为 query，文本编码器的中间表示作为 key 和 value，实现视觉信息向文本的注入。</p></li>
+</ul>
+</li>
+<li><p>任务特定标记：在文本输入中插入一个任务专用的[Encode]标记，其最终输出作为多模态表示的核心。</p></li>
+</ul>
+</li>
+<li><p>关键任务：</p>
+<ul>
+<li><p>图像-文本匹配（ITM）：通过二分类头部（ITM Head）判断图像-文本对是否匹配。</p></li>
+<li><p>多模态检索：生成跨模态嵌入向量，用于图像与文本的相似度计算。</p></li>
+</ul>
+</li>
+</ul>
+<p><img alt="alt text" src="../_images/02BLIP04.png" /></p>
+</section>
+<section id="image-grounded-text-decoder">
+<h4>基于图像的文本解码器（Image-Grounded Text Decoder）<a class="headerlink" href="#image-grounded-text-decoder" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>功能：以图像为条件生成连贯的文本描述（如图像字幕）。</p></li>
+<li><p>架构：基于 Transformer 的解码器，采用因果掩码自注意力（Causal Self-Attention），即 decoder 只与之前出现的 token 进行 attention 操作。</p>
+<ul>
+<li><p>结构细节：</p>
+<ul>
+<li><p>替换标准解码器的双向自注意力为因果掩码自注意力，确保生成过程的顺序性（仅依赖历史和当前 token）。</p></li>
+<li><p>跨模态注意力：在解码器中引入交叉注意力层，直接利用图像编码器的输出作为视觉上下文。</p></li>
+</ul>
+</li>
+<li><p>任务特定标记：在文本生成时，使用[Decode]标记作为序列的起始信号。结尾需要添加一个[EOS]字符。</p></li>
+</ul>
+</li>
+<li><p>关键任务：</p>
+<ul>
+<li><p>图像条件语言建模（LM）：通过最大化给定图像下文本序列的似然，训练模型生成与图像内容一致的描述。</p></li>
+<li><p>多任务生成：支持图像描述生成、视觉问答（VQA）等需要生成能力的任务。</p></li>
+</ul>
+</li>
+</ul>
+<p><img alt="alt text" src="../_images/02BLIP05.png" /></p>
+</section>
+</section>
+<section id="id5">
+<h3>预训练目标<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>以上的四个模块，第一个作为图像编码器，另外三个作为文本的编码/解码器，共同组成了三个任务：ITC、ITM、LM。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>损失函数</p></th>
+<th class="head text-left"><p>作用</p></th>
+<th class="head text-left"><p>对应模块</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>ITC（图文对比损失）</p></td>
+<td class="text-left"><p>对齐图文特征空间</p></td>
+<td class="text-left"><p>编码器</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>ITM（图文匹配损失）</p></td>
+<td class="text-left"><p>细粒度图文匹配</p></td>
+<td class="text-left"><p>编码器</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>LM（语言建模损失）</p></td>
+<td class="text-left"><p>生成连贯文本描述</p></td>
+<td class="text-left"><p>解码器</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>具体的模块在上文中有具体讲解，下文中具体介绍任务。</p>
+<section id="itc">
+<h4>图像编码器+单模态文本编码器：ITC 任务<a class="headerlink" href="#itc" title="Link to this heading">#</a></h4>
+<p><img alt="alt text" src="../_images/02BLIP06.png" /></p>
+<ul class="simple">
+<li><p>核心目标：通过对比学习对齐视觉和文本特征空间，使正向图像-文本对的表征更相似，负向对的表征差异更大。</p></li>
+<li><p>图像端：采用 ViT（Vision Transformer）模型，将输入图像划分为固定大小的 patch（如 224×224 分辨率下分割为 196 个 patch），每个 patch 被线性嵌入为向量。输出包含一个全局图像标记[CLS]的嵌入向量。</p></li>
+<li><p>文本端：基于 BERT 的 Transformer 编码器，对文本进行双向自注意力建模。在文本开头插入[CLS]标记，用于聚合整个文本的全局信息。输出文本的嵌入向量序列（包括[CLS]标记的特征）。</p></li>
+<li><p>损失函数：
+$<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{ITC}}=-\frac{1}{N} \sum_{i=1}^{N}\left[\log \frac{\exp \left(\operatorname{sim}\left(I_{i}, T_{i}\right) / \tau\right)}{\sum_{j=1}^{N} \exp \left(\operatorname{sim}\left(I_{i}, T_{j}\right) / \tau\right)}+\log \frac{\exp \left(\operatorname{sim}\left(T_{i}, I_{i}\right) / \tau\right)}{\sum_{j=1}^{N} \exp \left(\operatorname{sim}\left(T_{i}, I_{j}\right) / \tau\right)}\right]\)</span>$</p></li>
+</ul>
+<p>其中：
+<span class="math notranslate nohighlight">\(I_i\)</span>：第 <span class="math notranslate nohighlight">\(i\)</span> 个图像的特征向量（通过 ViT 提取的[CLS]标记）。
+<span class="math notranslate nohighlight">\(T_i\)</span>：第 <span class="math notranslate nohighlight">\(i\)</span> 个图像的特征向量（通过 BERT 提取的[CLS]标记）。
+<span class="math notranslate nohighlight">\(sim(⋅,⋅)\)</span>：余弦相似度函数。
+<span class="math notranslate nohighlight">\(τ\)</span>：温度参数（通常设为 0.05），用于调整相似度分布的锐度。
+该损失函数采用双向对比，分别计算图像到文本和文本到图像的对比损失，并取平均。</p>
+</section>
+<section id="itm">
+<h4>图像编码器+多模态文本编码器：ITM 任务<a class="headerlink" href="#itm" title="Link to this heading">#</a></h4>
+<p><img alt="alt text" src="../_images/02BLIP07.png" /></p>
+<ul class="simple">
+<li><p>核心目标：学习图像与文本之间的细粒度对齐，判断图像-文本对是否匹配。通过二分类任务区分正样本（匹配）和负样本（不匹配）。</p></li>
+<li><p>图像端：同样采用 ViT 模型提取图像特征，但需与文本编码器联合计算交叉注意力。输出图像的嵌入向量序列，作为多模态交互的基础。</p></li>
+<li><p>文本端：基于 BERT 的 Transformer 编码器，在标准自注意力层（SA）和前馈网络（FFN）之间插入交叉注意力层（CA）。通过 CA 层将图像特征注入文本表示，实现视觉信息与文本的细粒度对齐。在文本输入中插入任务专用的[Encode]标记，其最终输出作为多模态表示的核心。</p></li>
+<li><p>损失函数：
+$<span class="math notranslate nohighlight">\(\mathcal{L}_{\text {ITM }}=-\frac{1}{N} \sum_{i=1}^{N}\left[y_{i} \log p_{i}+\left(1-y_{i}\right) \log \left(1-p_{i}\right)\right]\)</span>$</p></li>
+</ul>
+<p>其中：
+<span class="math notranslate nohighlight">\(y_i∈ \{0,1\}\)</span>：第 <span class="math notranslate nohighlight">\(i\)</span> 个图像-文本对的标签（1 表示匹配，0 表示不匹配）。
+<span class="math notranslate nohighlight">\(p_i\)</span>：模型预测的匹配概率，由 ITM 头部（线性分类层）输出。
+<span class="math notranslate nohighlight">\(N\)</span>：当前 batch 的样本数。
+该损失函数采用交叉熵损失函数，做二分类任务，确保模型能够区分匹配与不匹配的图像-文本对。</p>
+</section>
+<section id="lm">
+<h4>图像编码器+多模态文本解码器：LM 任务<a class="headerlink" href="#lm" title="Link to this heading">#</a></h4>
+<p><img alt="alt text" src="../_images/02BLIP08.png" /></p>
+<ul class="simple">
+<li><p>核心目标：基于图像生成连贯的文本描述（如图像字幕）。通过自回归建模，最大化给定图像下文本序列的似然。</p></li>
+<li><p>图像端：采用 ViT 模型提取图像特征，作为文本生成的上下文条件。输出图像的嵌入向量序列，供解码器直接使用。</p></li>
+<li><p>文本端：基于 Transformer 的解码器架构，采用因果掩码自注意力（Causal Self-Attention），确保生成过程的顺序性。在文本生成时，使用[Decode]标记作为序列的起始信号。通过交叉注意力层（CA）直接利用图像特征作为视觉上下文，实现图像到文本的连贯生成。</p></li>
+<li><p>损失函数：
+$<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{LM}}=-\frac{1}{L}\sum_{t=1}^{L}\log p(t_{t}\mid t_{&lt;t},I)\)</span>$</p></li>
+</ul>
+<p>其中：
+<span class="math notranslate nohighlight">\(t_t\)</span>：第 <span class="math notranslate nohighlight">\(t\)</span> 个时刻生成的 token（如文本中的第 t 个词）
+<span class="math notranslate nohighlight">\(t_{&lt;t}\)</span>：已经生成的前 <span class="math notranslate nohighlight">\(t-1\)</span> 个 token
+<span class="math notranslate nohighlight">\(I\)</span>：输入图像的特征向量（通过 ViT 提取的特征）。
+<span class="math notranslate nohighlight">\(L\)</span>：生成文本的总长度（最大长度或实际长度）。</p>
+</section>
+<section id="id6">
+<h4>损失函数的联合优化<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<p>BLIP 通过联合优化这三个损失函数，实现多模态理解和生成能力的统一训练：
+$<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{Total}}=\alpha\mathcal{L}_{\mathrm{ITC}}+\beta\mathcal{L}_{\mathrm{ITM}}+\gamma\mathcal{L}_{\mathrm{LM}}\)</span><span class="math notranslate nohighlight">\(
+其中，\)</span>α,β,γ$ 是权重系数（通常设为 1 或通过实验调整）。</p>
+</section>
+</section>
+</section>
+<section id="data-bootstrapping-capfilt">
+<h2>数据自举(data Bootstrapping)：CapFilt<a class="headerlink" href="#data-bootstrapping-capfilt" title="Link to this heading">#</a></h2>
+<p>CapFilt（Captioning and Filtering）是 BLIP 提出的一种数据清洗与生成的自举机制，旨在解决从网络爬取的图像-文本对中存在噪声的问题。CapFilt 由两部分组成：Captioner（生成器）和 Filter（过滤器）。</p>
+<section id="captioner">
+<h3>Captioner（生成器）<a class="headerlink" href="#captioner" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>功能：为图像生成高质量文本描述。</p></li>
+<li><p>实现方式：</p>
+<ul>
+<li><p>使用图像引导的文本解码器（基于 Transformer 的解码器架构）。</p></li>
+<li><p>采用因果掩码自注意力（Causal Self-Attention），确保生成过程的顺序性。</p></li>
+</ul>
+</li>
+<li><p>训练目标：通过 LM 损失函数，优化生成能力。</p></li>
+</ul>
+</section>
+<section id="filter">
+<h3>Filter（过滤器）<a class="headerlink" href="#filter" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>功能：评估图文对匹配度，过滤掉噪声样本。</p></li>
+<li><p>实现方式：</p>
+<ul>
+<li><p>使用图像引导的文本编码器（基于 BERT 的编码器架构）。</p></li>
+<li><p>采用二分类任务（ITM Loss）判断匹配性（1 表示匹配，0 表示不匹配）。</p></li>
+</ul>
+</li>
+<li><p>训练目标：通过图文匹配损失（ITM Loss）和对比学习损失（ITC Loss）优化判别能力。</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>工作流程<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p><img alt="alt text" src="../_images/02BLIP09.png" /></p>
+<p>先来看一个简单的例子。
+如图，Captioner 生成的描述为：&quot;chocolate cake with cream frosting and chocolate sprinkles on top&quot;.
+而网络上的文本为：&quot;blue sky bakery in sunset park&quot;.
+通过 Filter，判断出 Captioner 与图片匹配。于是就将原本网络文本对中的文本改变成了新生成的，再进行后续的训练操作。</p>
+<p>接下来具体讲解该流程。</p>
+<p><img alt="alt text" src="../_images/02BLIP10.png" /></p>
+<ol class="arabic simple">
+<li><p><strong>初始化阶段</strong>
+Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参数具备一定的多模态对齐能力。</p></li>
+<li><p><strong>数据生成与过滤阶段</strong>
+对于网络上爬取的噪声图像，使用<strong>Captioner</strong>生成文本描述（合成文本），同时保留原始网络文本（可能存在噪声）。
+将生成的合成文本和网络文本分别输入<strong>Filter</strong>，过滤掉 Filter 认为不匹配的样本。</p></li>
+<li><p><strong>数据集构建</strong>
+将以下三类样本合并，形成新的高质量训练数据集：</p>
+<ul class="simple">
+<li><p>人工标注数据（如 COCO）。图片中即 <span class="math notranslate nohighlight">\(\{I_h, T_h\}\)</span></p></li>
+<li><p>Filter 筛选后的原始网络数据。图片中即 <span class="math notranslate nohighlight">\(\{I_w, T_w\}\)</span></p></li>
+<li><p>Filter 筛选后的合成数据。图片中即 <span class="math notranslate nohighlight">\(\{I_w, T_s\}\)</span></p></li>
+</ul>
+</li>
+<li><p><strong>迭代优化阶段</strong>
+使用新构建的高质量数据集重新训练 BLIP 模型（MED 架构）。重复“生成→过滤→训练”过程，逐步提升模型性能和数据质量。</p></li>
+</ol>
+</section>
+<section id="id8">
+<h3>实验结果<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p>在 BLIP 的论文中，CapFilt 机制被验证能够显著提升模型性能：</p>
+<ul class="simple">
+<li><p><strong>图像-文本检索</strong>：在 COCO、Flickr30K 等数据集上，CapFilt 使 BLIP 的检索精度（Recall&#64;K）提升 10%-15%。</p></li>
+<li><p><strong>图像字幕生成</strong>：在 COCO 测试集上，CapFilt 使 BLIP 的 CIDEr 得分提升 8%-12%。</p></li>
+<li><p><strong>视觉问答</strong>：在 VQA 2.0 数据集上，CapFilt 使 BLIP 的准确率提升 5%-7%。</p></li>
+<li><p><strong>鲁棒性</strong>：在噪声数据场景下，CapFilt 显著提升了模型对错误文本的容忍能力。</p></li>
+</ul>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>方法</p></th>
+<th class="head text-left"><p>数据来源</p></th>
+<th class="head text-left"><p>数据质量</p></th>
+<th class="head text-left"><p>训练成本</p></th>
+<th class="head text-left"><p>模型性能</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>传统方法</p></td>
+<td class="text-left"><p>人工标注数据</p></td>
+<td class="text-left"><p>高</p></td>
+<td class="text-left"><p>高</p></td>
+<td class="text-left"><p>中</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>直接使用噪声数据</p></td>
+<td class="text-left"><p>网络爬取数据</p></td>
+<td class="text-left"><p>低</p></td>
+<td class="text-left"><p>低</p></td>
+<td class="text-left"><p>低</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>CapFilt</p></td>
+<td class="text-left"><p>人工+噪声数据+合成数据</p></td>
+<td class="text-left"><p>高</p></td>
+<td class="text-left"><p>中</p></td>
+<td class="text-left"><p>高</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="id9">
+<h2>BLIP的局限性<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<p>BLIP 通过<strong>架构创新</strong>、<strong>数据自举</strong>和<strong>任务统一</strong>的设计，重新定义了多模态预训练模型的能力边界。它不仅为视觉-语言任务提供了高效解决方案，还为多模态学习提供了可复用的技术范式。但其端到端训练方式对计算资源需求较高，需要训练多次模型。同时，BLIP 的架构限制了视觉编码器和语言模型的选择，适配性不足。</p>
+<p>于是衍生出来了一个问题：如何<strong>在不重新训练图像编码器和语言模型</strong>的前提下，提升模型的效率与泛化能力？</p>
+</section>
+<section id="blip-2">
+<h2>BLIP-2<a class="headerlink" href="#blip-2" title="Link to this heading">#</a></h2>
+<p><img alt="alt text" src="../_images/02BLIP13.png" /></p>
+<p>在23年，同作者推出了BLIP-2。其通过冻结预训练模型（如ViT和LLM），仅引入轻量级的 Q-Former（Querying Transformer）作为“桥梁”，降低训练成本。</p>
+<section id="id10">
+<h3>核心思想设计<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>BLIP2的核心创新在于解耦式架构，主要通过以下几点实现高效的训练和跨模态对齐：</p>
+<ul class="simple">
+<li><p><strong>冻结预训练模型：</strong></p>
+<ul>
+<li><p>使用已有的高质量预训练模型，在预训练和推理过程中保持参数固定。</p></li>
+<li><p>仅仅引入轻量级的<strong>Q-Former</strong>，作为可训练模块，负责跨模态对齐。</p></li>
+</ul>
+</li>
+<li><p><strong>两阶段预训练策略：</strong></p>
+<ul>
+<li><p>第一阶段：视觉-语言表征学习（Vision-Language Representation Learning），训练Q-Former提取与文本相关的视觉特征。</p></li>
+<li><p>第二阶段：视觉到语言的生成学习（Vision-to-Language Generative Learning），通过LLM引导Q-Former生成自然语言描述。</p></li>
+</ul>
+</li>
+<li><p><strong>通用性与扩展性：</strong></p>
+<ul>
+<li><p>BLIP2的架构支持多种图像编码器（如ViT、CLIP）和LLM（如Flan-T5、LLaMA），通过替换不同组件即可适配最新技术。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="q-former-querying-transformer">
+<h3>模型结构详解：Q-Former（Querying Transformer）<a class="headerlink" href="#q-former-querying-transformer" title="Link to this heading">#</a></h3>
+<p>Q-Former的核心结构如图：
+<img alt="alt text" src="../_images/02BLIP11.png" /></p>
+<p>作为视觉和语言模态之间的桥梁，它共分为了两只Transformer。</p>
+<ul class="simple">
+<li><p>图像分支（Image Transformer），即左边的Transformer</p>
+<ul>
+<li><p>输入一组可学习的查询嵌入（Learned Queries）（默认32个）。</p></li>
+<li><p>图像 Transformer 负责与Frozen Image Encoder交互，融合Learned Queries和Input Image中的信息，提取图像特征。通过自注意力（Self-Attention）和交叉注意力（Cross-Attention）与图像编码器的输出交互，提取视觉特征。</p></li>
+</ul>
+</li>
+<li><p>文本分支（Text Transformer），即右边的Transformer</p>
+<ul>
+<li><p>同时处理文本输入（如问题或指令），与图像分支共享自注意力层。</p></li>
+<li><p>根据任务需求，通过不同的注意力掩码（Mask）控制图像和文本的交互方式。</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Learned Queries</strong></p>
+<p>Learned Queries是一组可学习的&quot;查询向量&quot;，在经过Self Attention后，在Cross Attention中作为Q，与图像融合。在实验中，共使用了32个查询，每个查询有768维。总共参数共包含1.88亿个参数，远小于冻结图像特征的大小。这种瓶颈结构与预训练目标一起工作，迫使查询提取<strong>与文本最相关的视觉信息</strong>。</p>
+</section>
+<section id="id11">
+<h3>预训练过程<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<section id="id12">
+<h4>第一阶段：视觉-语言表征学习<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<section id="id13">
+<h5>ITC任务<a class="headerlink" href="#id13" title="Link to this heading">#</a></h5>
+<p><img alt="alt text" src="../_images/02BLIP12.png" /></p>
+<p><strong>目标</strong>：对齐图像和文本的全局特征，最大化匹配图文对的相似度，最小化不匹配对的相似度。</p>
+<p><strong>处理流程</strong>：</p>
+<ul class="simple">
+<li><p>图像特征提取：</p>
+<ul>
+<li><p>Queries通过Cross-Attention与图像特征交互，生成32个图像特征（image_feats）。</p></li>
+<li><p>每个Query单独与图像交互，提取局部或全局视觉信息。</p></li>
+</ul>
+</li>
+<li><p>文本特征提取：</p>
+<ul>
+<li><p>文本通过Q-Former的Text Transformer处理，生成文本特征（text_feat），通常取[CLS] token的特征。</p></li>
+</ul>
+</li>
+<li><p>对比学习：</p>
+<ul>
+<li><p>计算32个image_feats与text_feat的相似度（如余弦相似度）。</p></li>
+<li><p>选择最大相似度作为图文对的匹配度（避免信息泄露）。</p></li>
+<li><p>通过InfoNCE损失（对比损失）优化，拉近匹配对，推远不匹配对。</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>掩码策略</strong></p>
+<ul class="simple">
+<li><p>单模态掩码（Queries与文本互不可见）：</p>
+<ul>
+<li><p>Queries仅通过Self-Attention交互，文本仅通过Self-Attention处理。</p></li>
+<li><p>防止Queries直接访问文本信息，<strong>确保特征独立提取</strong>。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="id14">
+<h5>ITM任务<a class="headerlink" href="#id14" title="Link to this heading">#</a></h5>
+<p><img alt="alt text" src="../_images/02BLIP14.png" /></p>
+<p><strong>目标</strong>：判断图像和文本是否匹配（二分类任务，正样本为匹配，负样本为不匹配）</p>
+<p>Learned Queries：32个Queries，<strong>与文本拼接后送入Q-Former</strong>。</p>
+<p><strong>处理流程</strong>：</p>
+<ul class="simple">
+<li><p>多模态输入：</p>
+<ul>
+<li><p>将Queries与文本嵌入拼接为一个序列（Queries在前，文本在后）。</p></li>
+<li><p>例如：<code class="docutils literal notranslate"><span class="pre">[Query_1,</span> <span class="pre">Query_2,</span> <span class="pre">...,</span> <span class="pre">Query_32,</span> <span class="pre">Text_1,</span> <span class="pre">Text_2,</span> <span class="pre">...,</span> <span class="pre">Text_n]</span></code>。</p></li>
+</ul>
+</li>
+<li><p>双向交互：</p>
+<ul>
+<li><p>Q-Former的Image Transformer处理拼接后的序列，通过双向自注意掩码（Queries与文本互可见）。</p></li>
+<li><p>允许Queries和文本标记之间互相感知，捕捉细粒度对齐信息。</p></li>
+</ul>
+</li>
+<li><p>分类预测：</p>
+<ul>
+<li><p>对Queries的输出向量取平均（或池化），输入二分类器（线性层）。</p></li>
+<li><p>输出匹配概率（0/1），判断图文是否匹配。</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>掩码策略</strong>：<strong>双向自注意掩码</strong>，Queries与文本相互可见。这样设计，可以允许Queries和文本标记之间互相感知，从而捕捉图像和文本的局部交互</p>
+</section>
+<section id="itg">
+<h5>ITG任务<a class="headerlink" href="#itg" title="Link to this heading">#</a></h5>
+<p><img alt="alt text" src="../_images/02BLIP15.png" /></p>
+<p><strong>目标</strong>：基于图像生成文本（如图像描述），训练Q-Former提取图像特征并引导文本生成。</p>
+<p><strong>处理流程</strong>：</p>
+<ul class="simple">
+<li><p>图像特征提取：</p>
+<ul>
+<li><p>Queries通过Self-Attention和Cross-Attention与图像特征交互，提取视觉信息。</p></li>
+</ul>
+</li>
+<li><p>文本生成：</p>
+<ul>
+<li><p>Q-Former的Text Transformer作为解码器，生成文本序列。</p></li>
+<li><p>使用多模态因果掩码（Queries可相互感知，文本只能访问历史信息）。</p></li>
+<li><p>每个文本标记只能看到Queries和前面的文本标记，类似语言模型的自回归生成。</p></li>
+</ul>
+</li>
+<li><p>语言建模损失：</p>
+<ul>
+<li><p>计算文本生成的负对数似然损失（NLL Loss），优化生成质量。</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>掩码策略</strong>：多模态因果掩码（Queries互可见，文本只能看过去信息）。</p>
+<ul class="simple">
+<li><p>文本生成需要逐步预测下一个词，因此必须限制文本标记只能访问自身及前面的标记（Causal Attention）</p></li>
+<li><p>多模态因果掩码确保文本生成依赖Queries提取的图像特征和已生成的历史文本，符合语言模型的自回归特性。</p></li>
+</ul>
+</section>
+</section>
+<section id="id15">
+<h4>第二阶段：视觉到语言的生成学习<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<p><img alt="alt text" src="../_images/02BLIP16.png" /></p>
+<p>第二阶段的核心目标是：</p>
+<ul class="simple">
+<li><p><strong>将Q-Former提取的图像特征转换为LLM可理解的输入格式</strong>。</p></li>
+<li><p><strong>生成与图像内容一致的文本</strong>：通过语言建模任务（Language Modeling）训练Q-Former，使其输出能够引导LLM生成高质量的文本描述（如图像描述、问答答案等）。</p></li>
+</ul>
+<p><strong>训练方法</strong></p>
+<ul class="simple">
+<li><p><strong>输入</strong>：</p>
+<ul>
+<li><p>图像特征：由Q-Former从冻结的图像编码器中提取的视觉特征。</p></li>
+<li><p>文本：目标文本。</p></li>
+</ul>
+</li>
+<li><p><strong>处理流程</strong>：</p>
+<ul>
+<li><p>Q-Former输出视觉特征：</p>
+<ul>
+<li><p>Q-Former在第一阶段训练后，已能提取与文本最相关的视觉特征。</p></li>
+<li><p>这些特征通过全连接层（FC）映射到与LLM输入维度一致的向量空间。</p></li>
+</ul>
+</li>
+<li><p>论文中实验了两种LLM：</p>
+<ul>
+<li><p><strong>无监督训练的OPT作为Decoder-based LLM</strong>，使用语言建模损失（language modeling loss）进行预训练，冻结的 LLM 的任务是根据 Q-Former 的视觉表示生成文本，也就是说直接根据图像生成文本</p></li>
+<li><p><strong>基于指令训练的FlanT5作为Encoder-Decoder-based LLM</strong>：使用前缀语言模型损失（Prefix Language Modeling Loss）优化生成效果。将文本分为两部分：前缀文本（作为LLM编码器的输入）和后缀文本（作为LLM解码器的生成目标）。前缀文本与Q-Former的视觉特征拼接，作为编码器的输入；后缀文本由解码器生成。在训练过程中，模型的任务是根据输入的前缀文本和图像表示来生成后缀文本。也就是说，模型通过 <strong>前缀文本+视觉表示</strong> 来生成 <strong>后续的文本描述</strong>。能够处理 <strong>更复杂的多模态任务</strong>，适合需要 <strong>图像和文本交互理解</strong> 的任务。</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="blip2">
+<h3>BLIP2-总结<a class="headerlink" href="#blip2" title="Link to this heading">#</a></h3>
+<p>BLIP2的第二阶段训练通过Q-Former将图像特征适配到LLM，实现了高效的视觉-语言生成能力。其核心思想是冻结单模态模型，仅训练轻量级的Q-Former模块，从而降低计算成本并提升模型的零样本泛化能力。这一设计使得BLIP2在资源有限的场景下仍能实现SOTA的多模态性能，成为视觉-语言预训练的代表性方法。</p>
+</section>
+</section>
+<section id="instruct-blip">
+<h2>Instruct-BLIP<a class="headerlink" href="#instruct-blip" title="Link to this heading">#</a></h2>
+<p>InstructBLIP 是 BLIP 作者团队在多模态领域的又一续作。InstructBLIP 这个工作介绍了如何把指令微调的范式做在 BLIP-2 模型上面。用指令微调方法的时候会额外有一条 instruction，如何借助这个 instruction 提取更有用的视觉特征是本文的亮点之一。所以，该模型的主要提升点在于通用性和零样本（zero-shot）泛化能力。</p>
+<p>作者将26个数据集转化为指令微调的格式，把它们分成13个 held-in 数据集用于指令微调，和13个 held-out 数据集用于 Zero-Shot 能力的评估。</p>
+<section id="id16">
+<h3>模型结构<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<p><img alt="alt text" src="../_images/02BLIP17.png" /></p>
+<p>Instruct-BLIP的结构如上图所示，基本和BLIP2保持一致。总共由三部分组成：</p>
+<ul class="simple">
+<li><p>冻结的图像编码器（如 CLIP 的视觉部分）：负责提取图像特征。</p></li>
+<li><p>查询转换器（Q-Former）：从图像中提取与指令相关的特征，并将其作为软提示（soft prompt）输入到语言模型。</p></li>
+<li><p>冻结的语言模型（LLM）：如 Flan-T5 或 Vicuna，负责生成文本输出。</p></li>
+</ul>
+<p>此外，Q-Former 的输入还包括可学习的 Queries (BLIP-2 的做法) 和 Instruction。其中，可学习的 Queries 通过 Self-Attention 和 Instruction 交互，可学习的 Queries 通过 Cross-Attention 和输入图片的特征交互，鼓励提取与任务相关的图像特征。</p>
+</section>
+<section id="id17">
+<h3>训练策略<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<p>在数据集选型上，使用了 26 个公开数据集，涵盖 11 类视觉-语言任务（如图像描述、视觉问答、视觉推理、视频问答、图像分类等）。数据集划分如下：</p>
+<ul class="simple">
+<li><p>13 个 held-in 数据集：用于指令微调训练。</p></li>
+<li><p>13 个 held-out 数据集：用于零样本（zero-shot）评估，验证模型对未见任务的泛化能力。</p></li>
+<li><p>4 个完整任务类别：保留为任务级别的零样本评估（如完全未见过的任务类型）。</p></li>
+</ul>
+<p><img alt="alt text" src="../_images/02BLIP18.png" /></p>
+<p><strong>训练的时候，分为了两个阶段</strong>：</p>
+<ul class="simple">
+<li><p>BLIP-2 预训练阶段（非指令微调）：</p>
+<ul>
+<li><p>Stage 1：冻结图像编码器，预训练 Q-Former，目标是视觉语言建模（如图像描述生成）。</p></li>
+<li><p>Stage 2：冻结 LLM，训练 Q-Former 和图像编码器，目标是文本生成（如看图说话）。</p></li>
+</ul>
+</li>
+<li><p>指令微调阶段：</p>
+<ul>
+<li><p>输入格式：<code class="docutils literal notranslate"><span class="pre">&lt;Image&gt;</span></code> + 指令（如 &quot;Question: What is the color of the car?&quot;）。该文本会转换为embedding向量，同queries一起进入self-attention。</p></li>
+<li><p>训练目标：通过语言建模损失（Language Modeling Loss）训练 Q-Former，使其生成符合指令的输出。</p></li>
+</ul>
+</li>
+</ul>
+<p>此外，为缓解多数据集训练中 大数据集主导训练 的问题，InstructBLIP 采用 平衡采样策略：
+$<span class="math notranslate nohighlight">\(p_d=\frac{\sqrt{S_d}}{\sum_{i=1}^D\sqrt{S_i}}\)</span>$</p>
+</section>
+</section>
+<section id="id18">
+<h2>总结<a class="headerlink" href="#id18" title="Link to this heading">#</a></h2>
+<p>三篇文章代表了多模态视觉-预研模型的演进路径。BLIP奠定了基础架构，BLIP-2通过Q-Former的轻量化设计与参数共享，提升了模型训练效率。InstructBLIP则通过指令微调，进一步增强了模型的泛化能力，不仅会指导大模型生成文本，同时也会指导image encoder提取不同的视觉特征。</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData04ImageTextGenerat"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="01CLIP.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">图文对齐基础</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../06AlgoData05VideoGenerat/README.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">视频大模型</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">核心挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">BLIP 的诞生</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">模型架构设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#med">MED</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-image-encoder">图像编码器（Unimodal Image Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-text-encoder">文本编码器（Unimodal Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-encoder">基于图像的文本编码器（Image-Grounded Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-decoder">基于图像的文本解码器（Image-Grounded Text Decoder）</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">预训练目标</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itc">图像编码器+单模态文本编码器：ITC 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itm">图像编码器+多模态文本编码器：ITM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lm">图像编码器+多模态文本解码器：LM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">损失函数的联合优化</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-bootstrapping-capfilt">数据自举(data Bootstrapping)：CapFilt</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#captioner">Captioner（生成器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">Filter（过滤器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">工作流程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">实验结果</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">BLIP的局限性</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blip-2">BLIP-2</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">核心思想设计</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-former-querying-transformer">模型结构详解：Q-Former（Querying Transformer）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">预训练过程</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">第一阶段：视觉-语言表征学习</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">ITC任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">ITM任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#itg">ITG任务</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">第二阶段：视觉到语言的生成学习</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blip2">BLIP2-总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instruct-blip">Instruct-BLIP</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">模型结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">训练策略</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">总结</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Aug 24, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

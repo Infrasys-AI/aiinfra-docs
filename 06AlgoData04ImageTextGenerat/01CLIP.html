@@ -7,14 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="CLIP 模型原理" />
+<meta property="og:title" content="图文对齐基础" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData04ImageTextGenerat/01CLIP.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 李佳函 引言：打破模态壁垒的开端: 传统 AI 的局限: 人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。 多模态需求崛起: 现实场景中，人类通过综合视觉、听觉、语言等多模态信息进行决策。例如，医生需要结合医学影像与病历描述诊断疾..." />
-<meta name="description" content="Author by: 李佳函 引言：打破模态壁垒的开端: 传统 AI 的局限: 人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。 多模态需求崛起: 现实场景中，人类通过综合视觉、听觉、语言等多模态信息进行决策。例如，医生需要结合医学影像与病历描述诊断疾..." />
+<meta property="og:description" content="Author by: 李佳函 引言：打破模态壁垒的开端: 传统 AI 的局限: 人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。 更深层的矛盾在于：视觉信息与文本描述的语义鸿沟始终未被弥合 ——机器无法像人类一样，将&quot;红色茶杯&quot;的视觉特征与&quot;咖啡杯&quot;的..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/_images/social_previews/summary_06AlgoData04ImageTextGenerat_01CLIP_a5ef66d2.png" />
+<meta property="og:image:alt" content="Author by: 李佳函 引言：打破模态壁垒的开端: 传统 AI 的局限: 人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。 更深层的矛盾在于：视觉信息与文本描述的语义..." />
+<meta name="description" content="Author by: 李佳函 引言：打破模态壁垒的开端: 传统 AI 的局限: 人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。 更深层的矛盾在于：视觉信息与文本描述的语义鸿沟始终未被弥合 ——机器无法像人类一样，将&quot;红色茶杯&quot;的视觉特征与&quot;咖啡杯&quot;的..." />
+<meta name="twitter:card" content="summary_large_image" />
 
-    <title>CLIP 模型原理 &#8212; AI Infra</title>
+    <title>图文对齐基础 &#8212; AIInfra</title>
   
   
   
@@ -24,18 +29,18 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
@@ -43,16 +48,17 @@
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
     <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
     <script src="../_static/documentation_options.js?v=aabdd393"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -61,7 +67,7 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
@@ -72,21 +78,24 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData04ImageTextGenerat/01CLIP';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
-    <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="视频大模型" href="../06AlgoData05VideoGenerat/README.html" />
-    <link rel="prev" title="图文生成与理解" href="README.html" /> 
+    <link rel="next" title="BLIP家族: 统一理解和生成的自举多模态模型" href="02BLIP.html" />
+    <link rel="prev" title="图文生成与理解" href="README.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Jul 07, 2025"/> 
+    <meta name="docbuild:last-update" content="Aug 24, 2025"/>
+
 <link
   rel="alternate"
   type="application/atom+xml"
   href="../reference/blog/atom.xml"
   title="Blog"
 />
-  
+
+
+
   </head>
   
   
@@ -162,8 +171,6 @@
         <div class="sidebar-primary-item">
 
   
-    
-  
 
 <a class="navbar-brand logo" href="../index.html">
   
@@ -171,17 +178,11 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AI Infra - Home"/>
-    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AI Infra - Home"/>`);</script>
   
+    <p class="title logo__title">AIInfra</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -192,7 +193,7 @@
           
           
           
-          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/chenzomi12/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">GitHub</span></a>
         </li>
         <li class="nav-item">
@@ -204,7 +205,7 @@
           
           
           
-          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i>
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">Youtube</span></a>
         </li>
         <li class="nav-item">
@@ -216,7 +217,7 @@
           
           
           
-          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i>
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">Blibili</span></a>
         </li>
 </ul></div>
@@ -224,7 +225,7 @@
 
  <script>
  document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
     <span class="search-button__default-text">Search</span>
     <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -241,13 +242,16 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算HPC定义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02TypicalRepresent/README.html">集群建设之巅</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -258,7 +262,8 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">网络通信进阶</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMAIntroduction.html">网络通信进阶</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/RDMA.html">Scale out and Scale up</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -275,6 +280,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -285,16 +292,19 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">容器时代</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/01Introduction.html">容器的诞生</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Cgroups.html">资源的限制</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">Kubernetes 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">Kubernetes 容器持网络</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -315,23 +325,45 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行1F1B/1F1B Interleaved原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention 优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/comput_total_parameters.html">Dense 计算总参</a></li>
+
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train07Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -340,12 +372,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
-
-
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -353,6 +385,9 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -363,6 +398,12 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeekOptimize/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer09Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -387,12 +428,15 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：线性 Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">图文生成与理解</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">CLIP 模型原理</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02BLIP.html">BLIP家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -402,10 +446,152 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </ul>
 </details></li>
 </ul>
@@ -418,7 +604,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -468,9 +655,9 @@
   
     <div class="header-article-items__start">
       
-        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
   <span class="fa-solid fa-bars"></span>
-</button></div>
+</label></div>
       
     </div>
   
@@ -612,10 +799,10 @@
 
 <script>
 document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -623,14 +810,14 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
-</button>
+</label>
 </div></div>
       
     </div>
@@ -641,7 +828,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>CLIP 模型原理</h1>
+    <h1>图文对齐基础</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -651,21 +838,27 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ai">传统 AI 的局限</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">多模态需求崛起</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">CLIP 的里程碑意义</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">多模态需求崛起</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">数据集制作：高质量图文对的构建</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">双塔结构设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">图文对齐：多模态学习的核心基石</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">传统方法的局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer的影响：从单模态到跨模态统一</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">对比学习：无监督语义对齐的范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clip">图文对齐：CLIP奠定基础</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">数据集制作：高质量图文对的构建</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">双塔结构设计</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-encoder">图像编码器 Image Encoder</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#text-encoder">文本编码器 Text Encoder</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">对比学习机制</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">对比损失函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">对比学习机制</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">对比损失函数</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering-and-ensembling">Prompt Engineering and Ensembling</a><ul class="visible nav section-nav flex-column">
@@ -675,14 +868,14 @@ document.write(`
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">能力全景：CLIP 的典型应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">性能与效率局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">任务能力缺陷</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">架构与评估偏差</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">能力全景：CLIP 的典型应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">性能与效率局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">任务能力缺陷</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">架构与评估偏差</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">代码实现详解</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">总结</a></li>
 </ul>
             </nav>
         </div>
@@ -693,29 +886,55 @@ document.write(`
                 
 <div id="searchbox"></div>
                 <article class="bd-article">
-                   <section class="tex2jax_ignore mathjax_ignore" id="clip">
-<h1>CLIP 模型原理<a class="headerlink" href="#clip" title="Link to this heading">#</a></h1>
+                  
+<section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>图文对齐基础<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
 <p>Author by: 李佳函</p>
-<section id="id1">
-<h2>引言：打破模态壁垒的开端<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h2>引言：打破模态壁垒的开端<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <section id="ai">
 <h3>传统 AI 的局限<a class="headerlink" href="#ai" title="Link to this heading">#</a></h3>
-<p>人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。</p>
-</section>
-<section id="id2">
-<h3>多模态需求崛起<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<p>现实场景中，人类通过综合视觉、听觉、语言等多模态信息进行决策。例如，医生需要结合医学影像与病历描述诊断疾病，自动驾驶系统需融合摄像头画面与语音指令。这种需求推动了多模态学习的发展，而 CLIP（Contrastive Language-Image Pre-training）正是这一领域的里程碑式成果。</p>
+<p>人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。<strong>更深层的矛盾在于：视觉信息与文本描述的语义鸿沟始终未被弥合</strong>——机器无法像人类一样，将&quot;红色茶杯&quot;的视觉特征与&quot;咖啡杯&quot;的文本描述自然关联。</p>
 </section>
 <section id="id3">
-<h3>CLIP 的里程碑意义<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>2021 年，<strong>OpenAI 发布的 CLIP 首次实现了 zero-shot，即零样本迁移能力——无需微调即可将训练时学到的跨模态知识直接应用于新任务</strong>。结合 Transformer、对比学习、“完形填空”等强大的自监督训练方式，使得 CLIP 可以在完全没有见过的分类中，正确预测结果。作者在超过 30 个数据集上做了测试，涵盖了 OCR、视频动作检测、坐标定位等等。最震撼的是，在没有使用 ImageNet 训练集任意一张照片的情况下，直接 zero-shot 做推理，可以和 ResNet-50 取得相同的效果。</p>
-<p>它的这一突破标志着 AI 开始接近人类&quot;理解&quot;世界的方式，为后续多模态模型（如 DALL·E、Stable Diffusion）奠定了基础。</p>
+<h3>多模态需求崛起<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>现实场景中，人类通过综合视觉、听觉、语言等多模态信息进行决策。例如，医生需要结合医学影像与病历描述诊断疾病，自动驾驶系统需融合摄像头画面与语音指令。这种需求推动了多模态学习的发展，而本文要讲到的CLIP（Contrastive Language-Image Pre-training）正是这一领域的里程碑式成果。</p>
 </section>
 </section>
 <section id="id4">
-<h2>技术解构：CLIP 的原理解析<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h2>图文对齐：多模态学习的核心基石<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <section id="id5">
-<h3>数据集制作：高质量图文对的构建<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>传统方法的局限性<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>前文提到，视觉信息与文本描述的语义存在割裂现象。例如，在做图文对齐的时候主要依赖单模态的特征提取与简单的融合：</p>
+<ul class="simple">
+<li><p>图像特征提取：采用卷积神经网络（CNN）提取图像中的颜色、纹理、形状等低阶特征，但忽略了高阶语义信息，泛化能力不够强（如&quot;咖啡杯&quot;和&quot;茶杯&quot;）</p></li>
+<li><p>文本特征提取：通过RNN或Word2Vec生成词向量，但无法捕捉长距离依赖和上下文关系。</p></li>
+<li><p>特征融合：通过全连接层或拼接操作将图像与文本特征映射到同一空间，但缺乏对跨模态交互的建模能力，导致匹配效果受限。</p></li>
+</ul>
+<p>这种割裂的特征提取方式，使得模型在面对复杂场景时表现不佳。</p>
+</section>
+<section id="transformer">
+<h3>Transformer的影响：从单模态到跨模态统一<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h3>
+<p>随着Transformer架构的突破性创新，人工智能领域迎来了跨模态学习的范式转变。自注意力机制（Self-Attention） 的引入，不仅解决了传统模型（如CNN+RNN）在长距离依赖建模上的局限，更开创性地为文本与图像的语义对齐提供了统一的框架。</p>
+<p>这一进展直接推动了CLIP（Contrastive Language-Image Pre-training）等里程碑式模型的诞生，标志着图文对齐技术从“特征拼接”迈向“图文对齐”、“语义融合”的关键跨越。</p>
+</section>
+<section id="id6">
+<h3>对比学习：无监督语义对齐的范式<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>对比学习（Contrastive Learning）通过最大化正样本（匹配对）的相似度、最小化负样本（不匹配对）的相似度，直接建模数据间的语义关系。这一方法在多模态中显得尤为关键。</p>
+<p>通过对比损失优化模型，使得正样本在共享语义空间中更接近，负样本更远离。</p>
+</section>
+<section id="clip">
+<h3>图文对齐：CLIP奠定基础<a class="headerlink" href="#clip" title="Link to this heading">#</a></h3>
+<p>Transformer和对比学习的结合，催生了CLIP的诞生。</p>
+<p>2021 年，<strong>OpenAI 发布的 CLIP 首次实现了 zero-shot，即零样本迁移能力——无需微调即可将训练时学到的跨模态知识直接应用于新任务</strong>。结合 Transformer、对比学习、“完形填空”等强大的自监督训练方式，使得 CLIP 可以在完全没有见过的分类中，正确预测结果。作者在超过 30 个数据集上做了测试，涵盖了 OCR、视频动作检测、坐标定位等等。最震撼的是，在没有使用 ImageNet 训练集任意一张照片的情况下，直接 zero-shot 做推理，可以和 ResNet-50 取得相同的效果。</p>
+<p>它的这一突破标志着 AI 开始接近人类&quot;理解&quot;世界的方式，为后续多模态模型（如 DALL·E、Stable Diffusion）奠定了基础。</p>
+<p>那么接下来，就让我们一探究竟，揭开CLIP的面纱，见证CLIP在图文对齐做出了怎样的贡献，又为后续的多模态奠定了怎样的基础。</p>
+</section>
+</section>
+<section id="id7">
+<h2>技术解构：CLIP 的原理解析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<section id="id8">
+<h3>数据集制作：高质量图文对的构建<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <p>OpenAI 在开发 CLIP 的时候构建和使用了一个名为 WebImageText 的自定义数据集，数据集主要来源于<strong>互联网上的大规模图像-文本对</strong>，其主要特点包括：</p>
 <ul class="simple">
 <li><p><strong>规模巨大</strong>： 包含了大约 4 亿个图像-文本对。这个数量级对于训练像 CLIP 这样强大的模型至关重要。</p></li>
@@ -740,8 +959,8 @@ document.write(`
 <li><p><strong>规模与多样性</strong>： 要训练一个能理解开放世界视觉概念的模型，需要覆盖几乎所有能想到（和想不到）的视觉内容。互联网是唯一能提供这种规模和多样性的数据源。</p></li>
 </ul>
 </section>
-<section id="id6">
-<h3>双塔结构设计<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<section id="id9">
+<h3>双塔结构设计<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
 <p>CLIP 的核心目标是将图像和文本映射到同一个语义空间中。使得图片和文本能够在共享的、课比较的向量语义空间进行有效的对比。</p>
 <section id="image-encoder">
 <h4>图像编码器 Image Encoder<a class="headerlink" href="#image-encoder" title="Link to this heading">#</a></h4>
@@ -810,22 +1029,22 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </div></blockquote>
 </section>
 </section>
-<section id="id7">
-<h3>对比学习机制<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<section id="id10">
+<h3>对比学习机制<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <p>在预训练的过程中，模型的输入是一个图片和文字的配对，比如如下图片画的是一条狗，配对的文字是<code class="docutils literal notranslate"><span class="pre">Pepper</span> <span class="pre">the</span> <span class="pre">aussie</span> <span class="pre">pup</span></code>。图片通过了图片编码器得到特征（ResNet 或 ViT）；句子通过文本编码器得到文本的特征。</p>
-<p><img alt="" src="../_images/02CLIP02.png" /></p>
+<p><img alt="" src="../_images/01CLIP02.png" /></p>
 <p>假如一个 batch 里面有 n 个这样的文本对，那么就会得到 n 个图片特征和 n 个文本特征。</p>
 <p><strong>对比学习非常灵活，只需要一个正样本和负样本的定义</strong>。这里的正样本即是配对的本文对，即特征矩阵里面对角线上的。剩下非对角线的元素都是负样本。那么在该特征矩阵中有 <span class="math notranslate nohighlight">\(n\)</span> 个正样本，<span class="math notranslate nohighlight">\(n^{2}-n\)</span> 个负样本。</p>
 <p>尽管如此，CLIP 只能获取到视觉和文本上的特征，但是并没有在分类的任务上做训练或者微调，所以是没有分类头的。那么没有分类如何做推理呢？作者于是想到了 prompt template。</p>
-<section id="id8">
-<h4>对比损失函数<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<section id="id11">
+<h4>对比损失函数<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
 <p>CLIP 使用了一个对称的交叉熵损失（Symmetric Cross-Entropy Loss）来驱动学习：</p>
 <ul class="simple">
 <li><p>图像→文本损失 (Image-to-Text)： 对于每一个图像 <span class="math notranslate nohighlight">\(I_i\)</span>，将其视为一个“类别”，目标是将其对应的正文本 <span class="math notranslate nohighlight">\(T_i\)</span> 的相似度 <span class="math notranslate nohighlight">\(S_{i,i}\)</span> 尽可能提高，而将其与批次内所有其他负文本 <span class="math notranslate nohighlight">\(T_j (j≠i)\)</span> 的相似度 <span class="math notranslate nohighlight">\(S_{i,j}\)</span> 尽可能降低。这相当于一个以图像为查询、文本为类别的多分类问题，使用标准的交叉熵损失：<span class="math notranslate nohighlight">\(L_{i2t}(i) = -log [ exp(S_{i,i} / τ) / Σ_{k=1}^N exp(S_{i,k} / τ) ]\)</span></p></li>
 <li><p>文本→图像损失 (Text-to-Image)： 对称地，对于每一个文本 <span class="math notranslate nohighlight">\(T_j\)</span>，将其视为一个“类别”，目标是将其对应的正图像 <span class="math notranslate nohighlight">\(I_j\)</span> 的相似度 <span class="math notranslate nohighlight">\(S_{j,j}\)</span> 尽可能提高，而将其与批次内所有其他负图像 <span class="math notranslate nohighlight">\(I_k (k≠j)\)</span> 的相似度 <span class="math notranslate nohighlight">\(S_{k,j}\)</span> 尽可能降低：<span class="math notranslate nohighlight">\(L_{t2i}(j) = -log [ exp(S_{j,j} / τ) / Σ_{k=1}^N exp(S_{k,j} / τ) ]\)</span></p></li>
 <li><p>总损失： 最终的批损失是上述两个方向损失的平均值：$<span class="math notranslate nohighlight">\(L_{total} = (1/2N) * [ Σ_{i=1}^N L_{i2t}(i) + Σ_{j=1}^N L_{t2i}(j) ]\)</span>$</p></li>
 </ul>
-<p>温度参数 τ： 公式中的 τ 是一个可学习的温度参数（Temperature Parameter）。它对 <span class="math notranslate nohighlight">\(logits (S / τ)\)</span> 进行缩放，控制着模型区分正负样本对的“难度”或“锐度”。一个合适的 τ 对于模型性能至关重要，它能调节概率分布的集中程度，防止模型过早地过度自信或学习停滞。</p>
+<p>温度参数 <span class="math notranslate nohighlight">\(τ\)</span>： 公式中的 τ 是一个可学习的温度参数（Temperature Parameter）。它对 <span class="math notranslate nohighlight">\(logits (S / τ)\)</span> 进行缩放，控制着模型区分正负样本对的“难度”或“锐度”。一个合适的 τ 对于模型性能至关重要，它能调节概率分布的集中程度，防止模型过早地过度自信或学习停滞。</p>
 <p>通过最小化 <span class="math notranslate nohighlight">\(L_{total}\)</span>，模型被训练去最大化正样本对 <span class="math notranslate nohighlight">\((I_i, T_i)\)</span> 的相似度，同时最小化所有可能的负样本对 <span class="math notranslate nohighlight">\((I_i, T_j)\)</span> 和 <span class="math notranslate nohighlight">\((I_k, T_i) (i≠j, k≠i)\)</span> 的相似度。这种“拉近正对，推远负对”的机制，迫使编码器学习到能够有效区分匹配与不匹配图-文对的鲁棒特征表示。</p>
 </section>
 </section>
@@ -834,7 +1053,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 <section id="prompt-engineering">
 <h4>提示工程（Prompt Engineering）<a class="headerlink" href="#prompt-engineering" title="Link to this heading">#</a></h4>
 <p>CLIP 先把 ImageNet 里面的 1000 个类，变成了一个句子，即<code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">photo</span> <span class="pre">of</span> <span class="pre">a</span> <span class="pre">{object}</span></code>，用类的名称替换掉 object。这里就会生成 1000 个句子。这 1000 个句子通过预训练好的文本编码器，生成 1000 个文本特征。此时，输入的一张图片进入图片编码器后，将图片特征与每一个文本特征做<code class="docutils literal notranslate"><span class="pre">cosine</span> <span class="pre">similarity</span></code>获取相似性，最终，最高相似性所对应的文本特征，就完成了分类的任务。</p>
-<p><img alt="" src="../_images/03CLIP03.png" /></p>
+<p><img alt="" src="../_images/01CLIP03.png" /></p>
 <p><strong>为什么使用句子而不使用单词？</strong></p>
 <blockquote>
 <div><p>在训练的时候，输入的是一个句子，而在推理时输入单词，这与训练时看到的文本不一样，效果会下降。此外，句子的泛化能力更强，可以有更多的内容特征。</p>
@@ -853,8 +1072,8 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </section>
 </section>
 </section>
-<section id="id9">
-<h2>能力全景：CLIP 的典型应用<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<section id="id12">
+<h2>能力全景：CLIP 的典型应用<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
 <p>CLIP 的主要应用场景包括以下几个方面：</p>
 <ul class="simple">
 <li><p>图像搜索：通过给定的文本描述，CLIP 可以在大量图像中找到与该描述最相关的图像。这个功能非常适合于视觉搜索、内容管理和推荐系统。</p></li>
@@ -863,36 +1082,42 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 <li><p>生成式 AI：CLIP 也为图像生成模型提供了有力的支持，例如结合 DALL-E 等模型生成符合文本描述的图像。这在创意产业和艺术生成中有广泛应用。</p></li>
 </ul>
 </section>
-<section id="id10">
-<h2>模型的不足与局限性<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<section id="id13">
+<h2>模型的不足与局限性<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
 <p>尽管 CLIP 的泛化性做的如此之好，但仍有以下的一些不足与局限性。</p>
-<section id="id11">
-<h3>性能与效率局限性<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<section id="id14">
+<h3>性能与效率局限性<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p>与 SOTA 模型存在显著差距</p></li>
+<li><p><strong>与 SOTA 模型存在显著差距</strong></p></li>
 </ol>
 <ul class="simple">
 <li><p>CLIP 的 Zero-Shot 性能虽优于基线模型（如 ResNet-50），但与当时的最先进模型（如 Noisy Student、Vision Transformer）相差 10-15 个百分点。例如，在 ImageNet 上 CLIP 准确率为 76.2%，而 SOTA 模型达 88%以上。弥补此差距需将训练计算量扩大 1000 倍，对 OpenAI 亦不可行。</p></li>
 <li><p>根源：模型规模和数据量的扩展未达收敛临界点。</p></li>
 </ul>
 <ol class="arabic simple" start="2">
-<li><p>数据利用效率低下</p></li>
+<li><p><strong>数据利用效率低下</strong></p></li>
 </ol>
 <ul class="simple">
 <li><p>训练需消耗海量数据：128 亿张图像（32 个 epoch × 4 亿样本），相当于每秒处理 1 张图像需 405 年。与自监督学习相比，CLIP 的数据效率较低。</p></li>
 </ul>
-</section>
-<section id="id12">
-<h3>任务能力缺陷<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
 <ol class="arabic simple" start="3">
-<li><p>细粒度分类表现差</p></li>
+<li><p><strong>文本长度限制</strong></p></li>
+</ol>
+<ul class="simple">
+<li><p>CLIP文本编码器最大支持77个token，实际有效长度不足20个token，无法处理长文本描述。需通过分词、截断等工程手段处理，但效果有限。</p></li>
+</ul>
+</section>
+<section id="id15">
+<h3>任务能力缺陷<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<ol class="arabic simple" start="4">
+<li><p><strong>细粒度分类表现差</strong></p></li>
 </ol>
 <ul class="simple">
 <li><p>在细粒度数据集（如 Oxford Pets 花卉、FGVC Aircraft 车型）上，CLIP 的 Zero-Shot 准确率显著低于监督学习模型，甚至部分类别准确率接近 0%。</p></li>
 <li><p>原因：短文本提示（有效长度&lt;20 token）无法涵盖细节特征（如纹理、局部结构），导致视觉编码器忽略次要属性。</p></li>
 </ul>
-<ol class="arabic simple">
-<li><p>抽象与复杂任务失效</p></li>
+<ol class="arabic simple" start="5">
+<li><p><strong>抽象与复杂任务失效</strong></p></li>
 </ol>
 <ul class="simple">
 <li><p>无法处理需逻辑推理的任务，如：</p>
@@ -904,8 +1129,8 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </li>
 <li><p>根源：模型仅学习模态对齐，缺乏因果推理能力。</p></li>
 </ul>
-<ol class="arabic simple" start="5">
-<li><p>分布外泛化能力弱</p></li>
+<ol class="arabic simple" start="6">
+<li><p><strong>分布外泛化能力弱</strong></p></li>
 </ol>
 <ul class="simple">
 <li><p>在偏离训练分布的数据上表现骤降：</p>
@@ -916,24 +1141,25 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </li>
 </ul>
 </section>
-<section id="id13">
-<h3>架构与评估偏差<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
-<ol class="arabic simple" start="6">
-<li><p>生成能力缺失</p></li>
+<section id="id16">
+<h3>架构与评估偏差<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<ol class="arabic simple" start="7">
+<li><p><strong>生成能力缺失</strong></p></li>
 </ol>
 <ul class="simple">
 <li><p>CLIP 仅支持从预设类别中选择匹配结果，无法生成新概念描述（如自动生成图像标题）。论文建议未来结合对比学习与生成式目标（如 GPT），提升灵活性。</p></li>
 </ul>
-<ol class="arabic simple" start="7">
-<li><p>评估过程隐含偏见</p></li>
+<ol class="arabic simple" start="8">
+<li><p><strong>评估过程隐含偏见</strong></p></li>
 </ol>
 <ul class="simple">
 <li><p>研发中依赖 27 个数据集（如 ImageNet）反复调参，导致 Zero-Shot 评估非“纯粹”。作者呼吁构建专用评测集，避免过拟合现有数据集。</p></li>
 </ul>
 </section>
 </section>
-<section id="id14">
-<h2>代码实现详解<a class="headerlink" href="#id14" title="Link to this heading">#</a></h2>
+<section id="id17">
+<h2>总结<a class="headerlink" href="#id17" title="Link to this heading">#</a></h2>
+<p>CLIP通过对比学习和双塔结构实现了图文跨模态对齐，开启了零样本迁移和多模态应用的新纪元。然而，其全局对齐的局限性和文本长度限制仍需改进。一些CLIP的变种如FG-CLIP、Long-CLIP有效解决了CLIP在长文本处理、细粒度对齐和复杂任务中的局限性。</p>
 </section>
 </section>
 
@@ -957,7 +1183,8 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
     </script>
     <script>kernelName = 'python3'</script>
 <div class="section ablog__blog_comments">
-   
+  
+  
 </div>
 
                 </article>
@@ -980,11 +1207,11 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
       </div>
     </a>
     <a class="right-next"
-       href="../06AlgoData05VideoGenerat/README.html"
+       href="02BLIP.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">视频大模型</p>
+        <p class="prev-next-title">BLIP家族: 统一理解和生成的自举多模态模型</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1004,21 +1231,27 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ai">传统 AI 的局限</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">多模态需求崛起</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">CLIP 的里程碑意义</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">多模态需求崛起</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">数据集制作：高质量图文对的构建</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">双塔结构设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">图文对齐：多模态学习的核心基石</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">传统方法的局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer的影响：从单模态到跨模态统一</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">对比学习：无监督语义对齐的范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clip">图文对齐：CLIP奠定基础</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">数据集制作：高质量图文对的构建</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">双塔结构设计</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-encoder">图像编码器 Image Encoder</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#text-encoder">文本编码器 Text Encoder</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">对比学习机制</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">对比损失函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">对比学习机制</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">对比损失函数</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering-and-ensembling">Prompt Engineering and Ensembling</a><ul class="visible nav section-nav flex-column">
@@ -1028,14 +1261,14 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">能力全景：CLIP 的典型应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">性能与效率局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">任务能力缺陷</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">架构与评估偏差</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">能力全景：CLIP 的典型应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">性能与效率局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">任务能力缺陷</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">架构与评估偏差</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">代码实现详解</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">总结</a></li>
 </ul>
   </nav></div>
 
@@ -1049,10 +1282,6 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
   
   <div class="footer-item">
     
-<p class="component-author">
-By Author name not set
-</p>
-
   </div>
   
   <div class="footer-item">
@@ -1062,7 +1291,7 @@ By Author name not set
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 07, 2025.
+  Last updated on Aug 24, 2025.
   <br/>
 </p>
   </div>
@@ -1080,8 +1309,8 @@ By Author name not set
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
 
   <footer class="bd-footer">
   </footer>

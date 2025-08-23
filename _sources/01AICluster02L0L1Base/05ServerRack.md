@@ -7,5 +7,5 @@ Author by:
 ## 本节视频
 
 <html>
-<iframe src="https:&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=115011305348971&bvid=BV1DwtSzGE7Q&cid=31633245212&p=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>

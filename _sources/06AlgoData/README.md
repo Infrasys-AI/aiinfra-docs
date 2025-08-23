@@ -28,7 +28,7 @@
 
 ## 课程知识
 
-![AIInfra02](./../images/06AlgoData/aiinfra02.png)
+![AIInfra](./../images/06AlgoData/arch02.png)
 
 ## 备注
 

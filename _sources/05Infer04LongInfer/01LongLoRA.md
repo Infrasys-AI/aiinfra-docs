@@ -1,4 +1,6 @@
 # LongLoRA 介绍
+Author by: 付溦崴
+
 LongLoRA 是一种长序列微调方法，其核心部分是提出了 Shifted Sparsed Attention（$S^2$-Attn），在微调时启用稀疏 Attention 从而减少训练参数量以及计算量。在推理时启用的仍然是稠密 Attention。
 Self-Attention 的计算复杂度可简化为 $O(n^2)$，因此训练过程中 LLM 的计算量和内存压力随着序列变长而大幅增加，导致训练变慢。此外，LoRA 微调得到的长序列输出的困惑度与全量微调存在较大差距，研究表明这种差距无法通过增大 LoRA 的 rank 值进行弥补。LongLoRA 提出了 $S^2$-Attn ，通过与 LoRA 进行结合，实现了在参数节约的情况下有效学习长文本序列。
 相比 LoRA，LongLoRA 能够显著改善长序列输出质量：

@@ -20,7 +20,7 @@ xxx
 
 ## 课程知识
 
-xxx
+![AIInfra](./../images/03DockCloud/arch02.png)
 
 ## 备注
 

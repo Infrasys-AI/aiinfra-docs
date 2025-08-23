@@ -11,10 +11,15 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="02StorComm04CommLibrary/02XCCL.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 刘军 本节主要介绍围绕 NCCL 衍生出的各种通信库（统称为XCCL）。重点分析各种通信库的具体内容，比如 GLOO，MSCCL，HCCL 等。同时介绍业界有哪些有名的集合通信库，公司在训练自己的大模型时都会使用哪些库，以及在大模型训练过程中用到的集合通信库 XCCL 都有哪些优缺点。 XCCL 基本概念: XCCL（XXXX Collective Communicat..." />
-<meta name="description" content="Author by: 刘军 本节主要介绍围绕 NCCL 衍生出的各种通信库（统称为XCCL）。重点分析各种通信库的具体内容，比如 GLOO，MSCCL，HCCL 等。同时介绍业界有哪些有名的集合通信库，公司在训练自己的大模型时都会使用哪些库，以及在大模型训练过程中用到的集合通信库 XCCL 都有哪些优缺点。 XCCL 基本概念: XCCL（XXXX Collective Communicat..." />
+<meta property="og:description" content="Author by: 刘军 本节主要介绍围绕 NCCL 衍生出的各种通信库（统称为 XCCL）。重点分析各种通信库的具体内容，比如 GLOO，MSCCL，HCCL 等。同时介绍业界有哪些有名的集合通信库，公司在训练自己的大模型时都会使用哪些库，以及在大模型训练过程中用到的集合通信库 XCCL 都有哪些优缺点。 XCCL 基本概念: XCCL（XXXX Collective Communica..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/_images/social_previews/summary_02StorComm04CommLibrary_02XCCL_b72f9791.png" />
+<meta property="og:image:alt" content="Author by: 刘军 本节主要介绍围绕 NCCL 衍生出的各种通信库（统称为 XCCL）。重点分析各种通信库的具体内容，比如 GLOO，MSCCL，HCCL 等。同时介绍业界有哪些有名的集合通信库，公司在训练自己的大模型时都会使用哪些库，以及在大模型训练过程中用到的集合通信库 XCCL 都有哪些优缺点。 X..." />
+<meta name="description" content="Author by: 刘军 本节主要介绍围绕 NCCL 衍生出的各种通信库（统称为 XCCL）。重点分析各种通信库的具体内容，比如 GLOO，MSCCL，HCCL 等。同时介绍业界有哪些有名的集合通信库，公司在训练自己的大模型时都会使用哪些库，以及在大模型训练过程中用到的集合通信库 XCCL 都有哪些优缺点。 XCCL 基本概念: XCCL（XXXX Collective Communica..." />
+<meta name="twitter:card" content="summary_large_image" />
 
-    <title>XCCL 通信库 &#8212; AI Infra</title>
+    <title>XCCL 通信库 &#8212; AIInfra</title>
   
   
   
@@ -24,18 +29,18 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
   <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=eba8b062" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
@@ -43,16 +48,17 @@
     <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
     <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
     <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
 
     <script src="../_static/documentation_options.js?v=aabdd393"></script>
-    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
@@ -61,7 +67,7 @@
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
     <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
@@ -70,21 +76,24 @@
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = '02StorComm04CommLibrary/02XCCL';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
-    <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="AI 集群存储之路" href="../02StorComm05StorforAI/README.html" />
-    <link rel="prev" title="MPI 通信与通信库" href="01MPIIntro.html" /> 
+    <link rel="next" title="NCCL基本介绍" href="04NCCLIntro.html" />
+    <link rel="prev" title="MPI 通信与通信库" href="01MPIIntro.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Jul 07, 2025"/> 
+    <meta name="docbuild:last-update" content="Aug 24, 2025"/>
+
 <link
   rel="alternate"
   type="application/atom+xml"
   href="../reference/blog/atom.xml"
   title="Blog"
 />
-  
+
+
+
   </head>
   
   
@@ -160,8 +169,6 @@
         <div class="sidebar-primary-item">
 
   
-    
-  
 
 <a class="navbar-brand logo" href="../index.html">
   
@@ -169,17 +176,11 @@
   
   
   
-    
-    
-      
-    
-    
-    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AI Infra - Home"/>
-    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AI Infra - Home"/>`);</script>
   
+    <p class="title logo__title">AIInfra</p>
   
 </a></div>
-        <div class="sidebar-primary-item"><ul class="navbar-icon-links"
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
     aria-label="Icon Links">
         <li class="nav-item">
           
@@ -190,7 +191,7 @@
           
           
           
-          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+          <a href="https://github.com/chenzomi12/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">GitHub</span></a>
         </li>
         <li class="nav-item">
@@ -202,7 +203,7 @@
           
           
           
-          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i>
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">Youtube</span></a>
         </li>
         <li class="nav-item">
@@ -214,7 +215,7 @@
           
           
           
-          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i>
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">Blibili</span></a>
         </li>
 </ul></div>
@@ -222,7 +223,7 @@
 
  <script>
  document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
     <span class="search-button__default-text">Search</span>
     <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -239,13 +240,16 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算HPC定义</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02TypicalRepresent/README.html">集群建设之巅</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -256,7 +260,8 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">网络通信进阶</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMAIntroduction.html">网络通信进阶</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/RDMA.html">Scale out and Scale up</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -273,6 +278,8 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">集合通信库</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01MPIIntro.html">MPI 通信与通信库</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04NCCLIntro.html">NCCL基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05NCCLAPI.html">NCCL API 解读</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -283,16 +290,19 @@
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">容器时代</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/01Introduction.html">容器的诞生</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud01Roadmap/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Cgroups.html">资源的限制</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">Kubernetes 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">Kubernetes 容器持网络</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -313,23 +323,45 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO系列原理以及使用方式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行1F1B/1F1B Interleaved原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention 优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/comput_total_parameters.html">Dense 计算总参</a></li>
+
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train07Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -338,12 +370,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
-
-
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -351,6 +383,9 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -361,6 +396,12 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeekOptimize/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer09Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -385,12 +426,15 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：线性 Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">CLIP 模型原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -400,10 +444,152 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </ul>
 </details></li>
 </ul>
@@ -416,7 +602,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -466,9 +653,9 @@
   
     <div class="header-article-items__start">
       
-        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
   <span class="fa-solid fa-bars"></span>
-</button></div>
+</label></div>
       
     </div>
   
@@ -610,10 +797,10 @@
 
 <script>
 document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
   </button>
 `);
 </script>
@@ -621,14 +808,14 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
-<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
-</button>
+</label>
 </div></div>
       
     </div>
@@ -671,21 +858,22 @@ document.write(`
                 
 <div id="searchbox"></div>
                 <article class="bd-article">
-                   <section class="tex2jax_ignore mathjax_ignore" id="xccl">
+                  
+<section class="tex2jax_ignore mathjax_ignore" id="xccl">
 <h1>XCCL 通信库<a class="headerlink" href="#xccl" title="Link to this heading">#</a></h1>
 <p>Author by: 刘军</p>
-<p>本节主要介绍围绕 NCCL 衍生出的各种通信库（统称为XCCL）。重点分析各种通信库的具体内容，比如 GLOO，MSCCL，HCCL 等。同时介绍业界有哪些有名的集合通信库，公司在训练自己的大模型时都会使用哪些库，以及在大模型训练过程中用到的集合通信库 XCCL 都有哪些优缺点。</p>
+<p>本节主要介绍围绕 NCCL 衍生出的各种通信库（统称为 XCCL）。重点分析各种通信库的具体内容，比如 GLOO，MSCCL，HCCL 等。同时介绍业界有哪些有名的集合通信库，公司在训练自己的大模型时都会使用哪些库，以及在大模型训练过程中用到的集合通信库 XCCL 都有哪些优缺点。</p>
 <section id="id1">
 <h2>XCCL 基本概念<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>XCCL（XXXX Collective Communication Library）集合通信库，大体上会遵照 MPI 提供 API 的接口规定，实现包括点对点通信（SEND，RECV 等），集合通信（REDUCE，BROADCAST，ALLREDUCE）等相关接口。同时针对统一通信原语，在不同的网络拓扑实现不同的优化算法。每个公司可以根据自己的硬件设计或者是系统需要，在底层实现上进行相应改动，保证接口的稳定和性能。因此有了业界常见的通信库，如英伟达的 NCCL，微软的 MSCCL、Meta的 GLOO、华为的HCCL等。</p>
+<p>XCCL（XXXX Collective Communication Library）集合通信库，大体上会遵照 MPI 提供 API 的接口规定，实现包括点对点通信（SEND，RECV 等），集合通信（REDUCE，BROADCAST，ALLREDUCE）等相关接口。同时针对统一通信原语，在不同的网络拓扑实现不同的优化算法。每个公司可以根据自己的硬件设计或者是系统需要，在底层实现上进行相应改动，保证接口的稳定和性能。因此有了业界常见的通信库，如英伟达的 NCCL，微软的 MSCCL、Meta 的 GLOO、华为的 HCCL 等。</p>
 <p><img alt="基于 NCCL 的通信库" src="../_images/02XCCL01.png" /></p>
 <p>XCCL 在整个 AI 系统中是基于网络通信的拓扑之上进行构建的，向上层提供 AllReduce、AllGather、All2All 和 P2P 相关的通信原语，所有通信原语会集成在 AI 框架中，提供给 Megatron-LM，例如 MindSpeed 相关的分布式通讯库进行集成。这么多不同的 XCCL 通信库，核心功能都是实现点对点（P2P）和集合通信（CC）算法。</p>
 <p><img alt="XCCL 在 AI 系统中的位置" src="../_images/02XCCL02.png" /></p>
-<p>通信的具体算法在基本固定的情况下，各大厂家会基于 NCCL 在以下3个方面进行创新和改进：</p>
+<p>通信的具体算法在基本固定的情况下，各大厂家会基于 NCCL 在以下 3 个方面进行创新和改进：</p>
 <p>（1）基础/集合通信算法创新：对开源网络拓扑编排算法进行优化，对基础通信算子&amp;集合通信算法进行优化；</p>
 <p>（2）网络传输优化：对拥塞控制、路由控制进行优化，对传输协议层、路由协议层等进行细化操作；</p>
 <p>（3）端网协同专用优化：端网协同自研协议栈，匹配自研交换机，适配自研的网络架构进行优化。</p>
-<p>以华为的 HCCL 为例，下面的架构图包括公共组件和用户API，也是相关创新的具体要素。</p>
+<p>以华为的 HCCL 为例，下面的架构图包括公共组件和用户 API，也是相关创新的具体要素。</p>
 <p><img alt="华为 HCCL" src="../_images/02XCCL03.png" /></p>
 </section>
 <section id="nvidia-nccl">
@@ -699,7 +887,7 @@ document.write(`
 <p>同时 NCCL 也支持多网卡集合通信操作，GPU Direct RDMA 技术以及节点内多进程和单进程使用。在使用 Flat Ring、Hierarchical Rings 和 Tree 不同通信算法时，ResNet-50 在不同数量 GPU 时的图像生成速度有所差异。</p>
 <p><img alt="不同算法的差异" src="../_images/02XCCL05.png" /></p>
 <p>NCCL 的优点在于其生态开源，支持用户按需自定义新的集合通信算法（ACCL、TCCL 等），同时内置基础通信算子开箱即用。同时灵活解耦，CUDA 等其它组件解耦并单独开发，版本独立演进和发布，在不同层级提供 API，灵活兼顾自定义性能增强算法，具有开发易用性，提供 NCCL Net Plugin 等 API。</p>
-<p>同时NCCL 也存在以下不足：</p>
+<p>同时 NCCL 也存在以下不足：</p>
 <p>（1）节点间拓扑识别能力、流量监控、信息获取能力有限；</p>
 <p>（2）GPU 和 Infiniband 搭配使用效果更好，但是对 RDMA 等网络支持的程度一般，因为英伟达主要在推动 Infiniband 相关的自家网络产品；</p>
 <p>（3）缺乏对异构网络（clos/tours/RDMA）通信传输的系统级优化，需要用户基于原有接口进一步开发；</p>
@@ -709,7 +897,7 @@ document.write(`
 </section>
 <section id="amd-rccl">
 <h2>AMD RCCL<a class="headerlink" href="#amd-rccl" title="Link to this heading">#</a></h2>
-<p>AMD 开源的通信库RCCL（ROCm Communication Collectives Library）是 AMD ROCm 生态的一部分。在AMD自己的 GPU 软硬件生态中，RCCL 通常用于替代 NCCL，在 GPU 互联方面 Infinity Fabric 替代节点内的 NVSwitch，可以看出 AMD 拥有和 NVIDIA 相对等的软件和硬件产品以及相关生态。</p>
+<p>AMD 开源的通信库 RCCL（ROCm Communication Collectives Library）是 AMD ROCm 生态的一部分。在 AMD 自己的 GPU 软硬件生态中，RCCL 通常用于替代 NCCL，在 GPU 互联方面 Infinity Fabric 替代节点内的 NVSwitch，可以看出 AMD 拥有和 NVIDIA 相对等的软件和硬件产品以及相关生态。</p>
 <p><img alt="AMD ROCm 生态" src="../_images/02XCCL06.png" /></p>
 <p>AMD 的 RCCL 主要特性包括 GPU 到 GPU（P2P）直接通信操作，支持通过 PCIe 和 xGMI 互连在本地传输数据，支持通过 InfiniBand Verbs 和 TCP/IP 套接字在网络上传输数据。对标 CUDA 使用 NCCL 相同 API，所以 RCCL 还支持通信器和拓扑等特性，RCCL 中流特性与 NCCL 中流特性不同，它使用 HIP 流而不是 CUDA 流。下图是 AMD MI300X GPU 通过使用  Infinity Fabric 实现了 8 个 GPU 硬件的全互联。</p>
 <p><img alt="AMD MI300X GPU Infinity Fabric" src="../_images/02XCCL07.png" /></p>
@@ -718,7 +906,7 @@ document.write(`
 <h2>Intel oneCCL<a class="headerlink" href="#intel-oneccl" title="Link to this heading">#</a></h2>
 <p>oneCCL（oneAPI Collective Communications Library） 是 Intel 开发的一个高效通信库，作为 oneAPI 生态系统的一部分，支持不同设备之间的通信。</p>
 <p><img alt="oneCCL" src="../_images/02XCCL08.png" /></p>
-<p>oneCCL 支持多种通信模式，包括点对点、广播、规约等，同时支持 SYCL，可与最底层的驱动层配合，充分利用 Intel 的 NPU 和 GPU 硬件资源。提供自动线程亲和性设置功能，可以优化多核处理器上的并行性能。对于低精度数据类型，例如BF16 提供专门的优化支持。</p>
+<p>oneCCL 支持多种通信模式，包括点对点、广播、规约等，同时支持 SYCL，可与最底层的驱动层配合，充分利用 Intel 的 NPU 和 GPU 硬件资源。提供自动线程亲和性设置功能，可以优化多核处理器上的并行性能。对于低精度数据类型，例如 BF16 提供专门的优化支持。</p>
 <p><img alt="oneCCL 性能" src="../_images/02XCCL09.png" /></p>
 <p>分别以 MPI 和 oneCCL 作为集合通信的后端，可以看出 oneCCL 通信效率明显高于 MPI。</p>
 <p><img alt="MPI 和 oneCCL 通信比较" src="../_images/02XCCL10.png" /></p>
@@ -733,21 +921,21 @@ document.write(`
 <section id="microsoft-msccl">
 <h2>Microsoft MSCCL<a class="headerlink" href="#microsoft-msccl" title="Link to this heading">#</a></h2>
 <p>微软集合通信库 MSCCL（Microsoft collective communication library）是一个专为 Microsoft Azure 提供的异构加速平台，用于执行自定义集合通信算法。MSCCL 建立在 NCCL 之上，并利用其构建块来执行用户自定义的集合通信算法，从而提供一个统一、高效且可扩展的框架，以跨多个加速器执行集合通信算法，其关键特性之一是可编程性。由于加速器之间的互连具有不同的时延和带宽，通用的集合通信算法可能并不适用于所有拓扑和缓冲区大小。</p>
-<p>在不同节点数量 A100 GPU情况下，通过测试MSCCL 支持的 AllToAll 算法带宽，其通信带宽明显优于 NCCL，尤其在通信时的buffer size比较大的情况下，优势更为明显。</p>
+<p>在不同节点数量 A100 GPU 情况下，通过测试 MSCCL 支持的 AllToAll 算法带宽，其通信带宽明显优于 NCCL，尤其在通信时的 buffer size 比较大的情况下，优势更为明显。</p>
 <p><img alt="MSCCL 通信效率" src="../_images/02XCCL13.png" /></p>
-<p>通过在 H100 上进行测试，使用 msccl-tests-nccl 对 FP16 All-Reduce 和 All-Gather 算法进行了测试和比较，在时延方面，MSCCL 都做到了一定的加速效果，目前MSCCL 也是一个开源的支持自定义集合通信算法的开源集合通信库。</p>
+<p>通过在 H100 上进行测试，使用 msccl-tests-nccl 对 FP16 All-Reduce 和 All-Gather 算法进行了测试和比较，在时延方面，MSCCL 都做到了一定的加速效果，目前 MSCCL 也是一个开源的支持自定义集合通信算法的开源集合通信库。</p>
 <p><img alt="MSCCL 减少时延 " src="../_images/02XCCL14.png" /></p>
 </section>
 <section id="accl">
 <h2>阿里 ACCL<a class="headerlink" href="#accl" title="Link to this heading">#</a></h2>
-<p>ACCL（Alibaba Collective Communication Library）是基于 NCCL 面向阿里云灵骏架构设计的集合通信库。结合阿里云自身网络特点以及丰富的大模型任务通信调优经验，提供更高的通信性能，并且具备一定的故障诊断和自愈能力。对万卡规模的AI集群提供无拥塞、高性能的集群通讯能力。</p>
+<p>ACCL（Alibaba Collective Communication Library）是基于 NCCL 面向阿里云灵骏架构设计的集合通信库。结合阿里云自身网络特点以及丰富的大模型任务通信调优经验，提供更高的通信性能，并且具备一定的故障诊断和自愈能力。对万卡规模的 AI 集群提供无拥塞、高性能的集群通讯能力。</p>
 <p>ACCL 的关键特性包括异构拓扑感知，如节点内 PCIe 与 NVLink/NVSwitch、节点间多轨 RDMA 网络，分层混合充分利用不同互连带宽。端网协同选路，算法与拓扑协同设计实现无拥塞通信，支撑训练性能上规模可扩展。在网多流负载均衡，多任务并发、资源争抢时保障整体吞吐。</p>
 <p><img alt="阿里灵骏 ACCL" src="../_images/02XCCL15.png" /></p>
-<p>更多技术细节来自于阿里2021年发表的一篇论文：EFLOPS: Algorithm and System Co-design for a High Performance Distributed Training Platform (2021)。阿里集合通信库主要实现了 BigGraph 网络拓扑，两层交换机分组互联，每层一个交换机和另一层交换机全互联，两层交换机间至少存在 N/2 个物理链路可用。两层交换机间最短路径确认，接入不同层次任意两个设备之间最短路径具有唯一性并等长。</p>
+<p>更多技术细节来自于阿里 2021 年发表的一篇论文：EFLOPS: Algorithm and System Co-design for a High Performance Distributed Training Platform (2021)。阿里集合通信库主要实现了 BigGraph 网络拓扑，两层交换机分组互联，每层一个交换机和另一层交换机全互联，两层交换机间至少存在 N/2 个物理链路可用。两层交换机间最短路径确认，接入不同层次任意两个设备之间最短路径具有唯一性并等长。</p>
 <p><img alt="阿里 ACCL 组网" src="../_images/02XCCL16.png" /></p>
-<p>在不同数量 GPU 组成的集群场景下，在整体和单个 GPU 吞吐量方面，阿里的 ACCL 优于 NCCL。在大规模的场景，ACCL 为集群节点间AllReduce 实现 Halving-Doubling 算法，比 Ring 有更优的通信开销控制效果，在典型的集合通信方法测试中可将性能提升20%以上。</p>
+<p>在不同数量 GPU 组成的集群场景下，在整体和单个 GPU 吞吐量方面，阿里的 ACCL 优于 NCCL。在大规模的场景，ACCL 为集群节点间 AllReduce 实现 Halving-Doubling 算法，比 Ring 有更优的通信开销控制效果，在典型的集合通信方法测试中可将性能提升 20%以上。</p>
 <p><img alt="ACCL 优于 NCCL" src="../_images/02XCCL17.png" /></p>
-<p>同时提供了 HD（Halving-Doubling）算法逻辑连接和 BigGraph 拓扑物理链路进行映射，避免链路争用，彻底解决网络拥塞。Halving-Doubling with rank-mapping（HDRM），从集合通信管理层面分配链路。在万卡规模下，可达80%以上的线性集群能力。在百卡规模下，有效（计算）性能可达95%以上，可满足80%以上的业务场景需求。</p>
+<p>同时提供了 HD（Halving-Doubling）算法逻辑连接和 BigGraph 拓扑物理链路进行映射，避免链路争用，彻底解决网络拥塞。Halving-Doubling with rank-mapping（HDRM），从集合通信管理层面分配链路。在万卡规模下，可达 80%以上的线性集群能力。在百卡规模下，有效（计算）性能可达 95%以上，可满足 80%以上的业务场景需求。</p>
 <p><img alt="Halving-Doubling with rank-mapping" src="../_images/02XCCL18.png" /></p>
 </section>
 <section id="tccl">
@@ -764,25 +952,25 @@ document.write(`
 <p><img alt="腾讯云星脉网络架构" src="../_images/02XCCL20.png" /></p>
 <p>TCCL 主要特性包括双网口动态聚合优化，端网协同自研协议栈，发挥 GPU 性能极限。全局哈希路由（Global Hash Routing），实现负载均衡从而避免拥塞。同时支持拓扑亲和组网，流量调度监控，最小化流量绕行，自研交换机和可编程 RDMA 拥塞控制算法。</p>
 <p><img alt="腾讯 TCCL 组网" src="../_images/02XCCL21.png" /></p>
-<p>腾讯自研星脉高性能计算网络支持单集群10万卡组网，规模翻倍网络通信效率提升60%，让大模型训练效率提升20%。集合通信库 TCCL2.0 采用 NVLINK+NET 异构并行通信，相当于为GPU新建了一条网络通道，以实现数据的并行传输。通信性能提升30%，让大模型的训练效率再提升10%。由于腾讯云的星脉网络架构不开源且参考资料较少，因此无法进一步探究更多技术细节。</p>
+<p>腾讯自研星脉高性能计算网络支持单集群 10 万卡组网，规模翻倍网络通信效率提升 60%，让大模型训练效率提升 20%。集合通信库 TCCL2.0 采用 NVLINK+NET 异构并行通信，相当于为 GPU 新建了一条网络通道，以实现数据的并行传输。通信性能提升 30%，让大模型的训练效率再提升 10%。由于腾讯云的星脉网络架构不开源且参考资料较少，因此无法进一步探究更多技术细节。</p>
 </section>
 <section id="bccl">
 <h2>百度 BCCL<a class="headerlink" href="#bccl" title="Link to this heading">#</a></h2>
-<p>百度百舸AI异构计算平台是面向大规模深度学习的高性能云原生AI计算平台，为模型算法专家和运维专家提供全面的集群运维支持和任务全生命周期管理，在网络方面，百舸支持了万卡级别的RDMA网络，配合拓扑感知调度和高性能通信库BCCL可以有效降低网络延迟，提升带宽利用率。其中 BCCL（Baidu Collective Communication Library） 是百度智能云推出的一款面向大模型训练场景优化的集合通信库，基于开源的 NCCL 进行了功能扩展和能力增强。</p>
-<p>BCCL 支持集合通信带宽实时统计功能，为故障诊断排除、训练性能调优等提供数据支撑。支持集合通信 hang 时故障诊断能力，快速进行任务的异常检测。网络故障容错能力增强，针对于偶发性异常故障场景（如单端口的偶发updown），增加相应重试重传超次机制，提升训练任务的健壮性。</p>
-<p><img alt="百度百舸AI异构计算平台" src="../_images/02XCCL22.png" /></p>
+<p>百度百舸 AI 异构计算平台是面向大规模深度学习的高性能云原生 AI 计算平台，为模型算法专家和运维专家提供全面的集群运维支持和任务全生命周期管理，在网络方面，百舸支持了万卡级别的 RDMA 网络，配合拓扑感知调度和高性能通信库 BCCL 可以有效降低网络延迟，提升带宽利用率。其中 BCCL（Baidu Collective Communication Library） 是百度智能云推出的一款面向大模型训练场景优化的集合通信库，基于开源的 NCCL 进行了功能扩展和能力增强。</p>
+<p>BCCL 支持集合通信带宽实时统计功能，为故障诊断排除、训练性能调优等提供数据支撑。支持集合通信 hang 时故障诊断能力，快速进行任务的异常检测。网络故障容错能力增强，针对于偶发性异常故障场景（如单端口的偶发 updown），增加相应重试重传超次机制，提升训练任务的健壮性。</p>
+<p><img alt="百度百舸 AI 异构计算平台" src="../_images/02XCCL22.png" /></p>
 <p>BCCL 针对百度智能云提供的主流的 GPU 芯片进行了深度优化。以双机 H800 测试环境为例，BCCL 相比 NCCL 带宽利用率可提升 10%。借助 BCCL 在运维能力和稳定性进行的优化，使得百度百舸平台的有效训练时长达到 98%，带宽的有效利用率可以达到 95%。</p>
 <p><img alt="All_reduce 算法百度 BCCL 与 NCCL 对比" src="../_images/02XCCL23.png" /></p>
 <p><img alt="All_gather 算法百度 BCCL 与 NCCL 对比" src="../_images/02XCCL24.png" /></p>
 </section>
 <section id="id2">
 <h2>小结<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p>不同XCCL通信库的对比如下表所示，比较了不同通信库的优缺点以及核心设计目标，其中英伟达的NCCL处于行业标杆的位置，Intel、AMD和华为分别基于自己的硬件设计了自己的通信库，但是 AMD 的 ACCL 和华为的 HCCL 无法支持异构通信。腾讯、阿里等互联网大厂则是基于NCCL开发了属于自己的通信库。</p>
+<p>不同 XCCL 通信库的对比如下表所示，比较了不同通信库的优缺点以及核心设计目标，其中英伟达的 NCCL 处于行业标杆的位置，Intel、AMD 和华为分别基于自己的硬件设计了自己的通信库，但是 AMD 的 ACCL 和华为的 HCCL 无法支持异构通信。腾讯、阿里等互联网大厂则是基于 NCCL 开发了属于自己的通信库。</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>通信库</p></th>
 <th class="head"><p>厂商</p></th>
-<th class="head"><p>是否基于NCCL</p></th>
+<th class="head"><p>是否基于 NCCL</p></th>
 <th class="head"><p>是否开源</p></th>
 <th class="head"><p>是否支持异构通信</p></th>
 <th class="head"><p>拓扑感知强化</p></th>
@@ -800,7 +988,7 @@ document.write(`
 <td><p>是</p></td>
 <td><p>是</p></td>
 <td><p>是</p></td>
-<td><p>针对NVIDIA GPU调优，集合通信标杆</p></td>
+<td><p>针对 NVIDIA GPU 调优，集合通信标杆</p></td>
 </tr>
 <tr class="row-odd"><td><p>RCCL</p></td>
 <td><p>AMD</p></td>
@@ -932,7 +1120,8 @@ document.write(`
     </script>
     <script>kernelName = 'python3'</script>
 <div class="section ablog__blog_comments">
-   
+  
+  
 </div>
 
                 </article>
@@ -955,11 +1144,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="../02StorComm05StorforAI/README.html"
+       href="04NCCLIntro.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">AI 集群存储之路</p>
+        <p class="prev-next-title">NCCL基本介绍</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1004,10 +1193,6 @@ document.write(`
   
   <div class="footer-item">
     
-<p class="component-author">
-By Author name not set
-</p>
-
   </div>
   
   <div class="footer-item">
@@ -1017,7 +1202,7 @@ By Author name not set
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Jul 07, 2025.
+  Last updated on Aug 24, 2025.
   <br/>
 </p>
   </div>
@@ -1035,8 +1220,8 @@ By Author name not set
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
 
   <footer class="bd-footer">
   </footer>

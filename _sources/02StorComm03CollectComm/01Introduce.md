@@ -42,12 +42,12 @@ Author by: SingularityKChen
 
 这一部分内容将介绍芯片内 die 间互联的硬件组成及其发展趋势，以及一个服务器（1U）内通信相关硬件模块。
 
-下图是英伟达 DGX-2系统，其标注内容如下：
+下图是英伟达 DGX-2 系统，其标注内容如下：
 
 1. 16 个全连接的 Tesla V100 GPU 核心，构成 1.92 PFLOPS 的总算力、512 GB HBM2 显存；
 2. 双 GPU 基板互联（NVLINK Plane Card）；
-3. 12 组NVSwith，提供 2.4 TB/s 对分带宽；
-4. 8 路 EDR InfiniBand (IB) 或 100 GigE接口，提供 1600 Gb/s 的低延迟总双向带宽；
+3. 12 组 NVSwith，提供 2.4 TB/s 对分带宽；
+4. 8 路 EDR InfiniBand (IB) 或 100 GigE 接口，提供 1600 Gb/s 的低延迟总双向带宽；
 5. PCIe 交换机模块
 6. 2 块英特尔 Xeon Platinum CPU 芯片
 7. 1.5 TB 系统内存
@@ -58,15 +58,11 @@ Author by: SingularityKChen
 
 ### 组网-集群互联
 
+这部分内容将会介绍 rank 之间和集群之间的组网和集合通信相关内容。
+
 ![01Introduce03](../images/02StorComm03CollectComm/01Introduce03.png)
 
->>>>>>>>>>>>>>
-添加图，要把视频读厚，写实，视频都花了好几十秒讲了很多，文字不能比视频还简单了哦
-
 ## 业界集合通信库
-
->>>>>>>>>>>>>>
-添加图，要把视频读厚，写实，视频都花了好几十秒讲了很多，文字不能比视频还简单了哦
 
 了解通信的硬件组成后，我们再来学习业界的集合通信库。这部分内容将从以下三个部分进行介绍：
 
@@ -77,15 +73,13 @@ Author by: SingularityKChen
 
 ## NCCL 实现细节
 
-NCCL 是大模型时代应用最为广泛的集合通信库之一。我们将从以下三个角度介绍 NCCL：
+NCCL 是大模型时代应用最为广泛的集合通信库之一。我们将从以下三个角度仔细介绍和剖析 NCCL：
 
 - NCCL 架构图及其对应 GPU 的拓扑逻辑
 - Tree All Reduce 算法
 - NCCL 架构优缺点与思考
 
 ![01Introduce05](../images/02StorComm03CollectComm/01Introduce05.png)
->>>>>>>>>>>>>>
-添加图，要把视频读厚，写实，视频都花了好几十秒讲了很多，文字不能比视频还简单了哦
 
 ## 本节视频
 

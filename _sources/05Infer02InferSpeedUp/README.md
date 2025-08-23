@@ -30,4 +30,5 @@ xxx
 :maxdepth: 1
 
 01KVCache
+06PagedAttention
 ```

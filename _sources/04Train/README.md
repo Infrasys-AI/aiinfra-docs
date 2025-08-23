@@ -20,7 +20,7 @@
 
 ## 课程知识
 
-![AIInfra02](./../images/04Train/aiinfra02.png)
+![AIInfra](./../images/04Train/arch02.png)
 
 ## 备注
 

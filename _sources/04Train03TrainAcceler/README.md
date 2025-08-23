@@ -38,4 +38,5 @@ xxx
 07.MLA
 08.Checkpoint
 09.HybridPrecision
+comput_total_parameters
 ```

@@ -30,7 +30,7 @@
 
 ## 课程知识
 
-![AIInfra02](./../images/05Infer/aiinfra02.png)
+![AIInfra](./../images/05Infer/arch02.png)
 
 ## 备注
 

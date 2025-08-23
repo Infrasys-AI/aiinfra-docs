@@ -29,4 +29,9 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+01Introduction
+04LoRA
+05LoRA Variants
+06Selective算法：Unstructural Masking
+07Selective算法：Structural Masking
 ```

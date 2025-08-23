@@ -4,37 +4,62 @@
 
 Author by: SingularityKChen
 
-本章内容聚焦**集合通信操作**，也称为**集合通信原语**或**集合通信算子**。
+本章内容聚焦**集合通信操作**的基础介绍。集合通信操作也称为**集合通信原语**或**集合通信算子**。
 
 ## 课程位置
 
 本章节是集合同学系列课程的第三章。如下图所示，属于集合通信概览。
 
->>>>>>>>>>>>>>>>
-[]里面的内容可以不用填写，加个序列让大家知道是哪个图就可以了，如 3-1 图所示这种
-![集合通信操作在集合通信系列课程中的位置](../images/02StorComm03CollectComm/03CCPrimtive01.png)
+![03CCPrimtive01](../images/02StorComm03CollectComm/03CCPrimtive01.png)
 
 ## XCCL 在 AI 系统中的位置
 
->>>>>>>>>>>>>>>>
-每一个二级标题下面都要放字哦，介绍这个内容讲什么
-
-### XCCL 在 AI 系统中的位置
-
->>>>>>>>>>>>>>>>
-三级标题不应该跟二级标题一样
-
-XCCL 在 AI 系统中属于承上启下的位置。
+众多集合通信库 XCCL 在 AI 系统中属于数据链路和传输层。其基于网络模型的拓扑及其适配的通信算法，实现和封装具体的通信原语。
 
 ### XCCL 对通信操作支持情况
 
+下图总结了 MPI 中实现了的常见集合通信算子以及该论文发表时 NCCL、MSCCL、Gloo、oneCCL 和 ACCL 对上述集合通信算子的支持度。我们可以看到，并不是所有 MPI 的通信算子都在 XCCL 中实现。这是因为 MPI 主要针对传统的超算和 HPC，而 XCCL 着重对 AI 计算过程中涉及的通信操作做优化。
+
+![03CCPrimtive02](../images/02StorComm03CollectComm/03CCPrimtive02.png)
+
+下图总结了常见的集合通信算子、其实现算法及其适用场景。
+
+![03CCPrimtive03](../images/02StorComm03CollectComm/03CCPrimtive03.png)
+
+在 NCCL 中，通信操作被分为集合通信与点对点通信两大类。
+
+- 集合通信
+  - AllReduce
+  - Broadcast
+  - Reduce
+  - AllGather
+  - ReduceScatter
+- 点对点通信
+  - Sendrecv
+  - Scatter
+  - Gather
+  - All-to-All
+  - Neighbor exchange
+
+![03CCPrimtive04](../images/02StorComm03CollectComm/03CCPrimtive04.png)
+
+可以发现在表 1 的论文发表后 NCCL 又实现了一些通信算子。
+
+后文我们将按照以下分类方式对通信操作进行介绍：
+
+- 一对多
+- 多对一
+- 多对多
+
 ## 通信操作/原语——一对多
+
+本小节将介绍一对多的通信操作—— Broadcast 和 Scatter。
 
 ### Broadcast
 
 Broadcast 操作将单个 Rank 把自身的数据发送到集群中的其他 Rank。
 
-![Broadcast](../images/02StorComm03CollectComm/03CCPrimtive02.png)
+![03CCPrimtive05](../images/02StorComm03CollectComm/03CCPrimtive05.png)
 
 在 AI 系统中，涉及到 Broadcast 的操作有：
 
@@ -47,7 +72,7 @@ Broadcast 操作将单个 Rank 把自身的数据发送到集群中的其他 Ran
 
 Scatter 操作将主节点的数据进行划分并散布至其他指定的 Rank。
 
-![Scatter](../images/02StorComm03CollectComm/03CCPrimtive03.png)
+![03CCPrimtive06](../images/02StorComm03CollectComm/03CCPrimtive06.png)
 
 在 AI 系统中，涉及到 Scatter 的操作有：
 
@@ -57,45 +82,49 @@ Scatter 操作将主节点的数据进行划分并散布至其他指定的 Rank�
 
 ## 通信操作/原语——多对一
 
+本小节将介绍多对一的通信操作—— Reduce 和 Gather。
+
 ### Reduce
 
 Reduce 操作是把多个 Rank 的数据规约运算到一个 Rank 上。
 
-Reduce 的规约操作包含：SUM、MIN、MAX、PROD、LOR 等类型的规约操作。Reduce Sum 操作示意如下。
+Reduce 的**规约**操作包含：SUM、MIN、MAX、PROD、LOR 等类型的规约操作。Reduce Sum 操作示意如下。
 
-![Reduce Sum](../images/02StorComm03CollectComm/03CCPrimtive04.png)
+![03CCPrimtive07](../images/02StorComm03CollectComm/03CCPrimtive07.png)
 
 在 AI 系统中，涉及到 Reduce 的操作有：
 
-- 大模型训练权重 checkpoint 保存；
+- 大模型训练权重 checkpoint 快照保存；
 - All-Reduce 和 Reduce-Scatter 中的 Reduce 阶段
 
 ### Gather
 
-Gather 操作是将多个 Rank 上的数据收集到Rank 上，Gather 可以理解为反向的 Scatter。
+Gather 操作是将多个 Rank 上的数据收集到 Rank 上。Gather 可以理解为反向的 Scatter。
 
-![Gather](../images/02StorComm03CollectComm/03CCPrimtive05.png)
+![03CCPrimtive08](../images/02StorComm03CollectComm/03CCPrimtive08.png)
 
 在 AI 系统中，涉及到 Gather 的操作相对较少。
 
 ## 通信操作/原语——多对多
 
+本小节将介绍多对多的通信操作—— All-Reduce、All-Gather 和 All-to-All。
+
 ### All-Reduce
 
-All-Reduce 操作是在所有 Rank 执行相同Reduce 操作，然后将所有 Rank 数据规约运算得到的结果发送到所有 Rank。
+All-Reduce 操作是在所有 Rank 执行相同 Reduce 操作，然后将所有 Rank 数据规约运算得到的结果发送到所有 Rank。
 
-![All-Reduce](../images/02StorComm03CollectComm/03CCPrimtive06.png)
+![03CCPrimtive09](../images/02StorComm03CollectComm/03CCPrimtive09.png)
 
 在 AI 系统中，涉及到 All-Reduce 的操作有：
 
 - 在专家并行、张量并行、序列并行中大量地使用 All-Reduce 对权重和梯度参数进行聚合。
-- 数据并行DP 各种通信拓扑结构，比如 Ring All-Reduce、Tree All-Reduce 里的All-Reduce 操作；
+- 数据并行 DP 各种通信拓扑结构，比如 Ring All-Reduce、Tree All-Reduce 里的 All-Reduce 操作；
 
 ### All-Gather
 
 All-Gather 操作是从所有 Rank 收集数据并分发所有 Rank 上。
 
-![All-Gather](../images/02StorComm03CollectComm/03CCPrimtive07.png)
+![03CCPrimtive10](../images/02StorComm03CollectComm/03CCPrimtive10.png)
 
 在 AI 系统中，涉及到 All-Gather 的操作有：
 
@@ -106,7 +135,7 @@ All-Gather 操作是从所有 Rank 收集数据并分发所有 Rank 上。
 
 Reduce-Scatter 操作是在所有 Rank 上都按维度执行相同的 Reduce 规约操作，再将结果发散到集群内所有的节点上。
 
-![Reduce-Scatter](../images/02StorComm03CollectComm/03CCPrimtive08.png)
+![03CCPrimtive11](../images/02StorComm03CollectComm/03CCPrimtive11.png)
 
 在 AI 系统中，涉及到 Reduce-Scatter 的操作有：
 
@@ -118,7 +147,7 @@ Reduce-Scatter 操作是在所有 Rank 上都按维度执行相同的 Reduce 规
 
 All to All 操作是对 All-Gather 的扩展，但不同的节点向某一节点收集到的数据是不同的。
 
-![All2All](../images/02StorComm03CollectComm/03CCPrimtive09.png)
+![03CCPrimtive12](../images/02StorComm03CollectComm/03CCPrimtive12.png)
 
 在 AI 系统中，涉及到 All2All 的操作有：
 
@@ -126,10 +155,21 @@ All to All 操作是对 All-Gather 的扩展，但不同的节点向某一节点
 - 模型并行里的矩阵转置；
 - DP 到模型并行的矩阵转置；
 
-## 小结与思考
+## 通信操作的分解——以 All-Reduce 为例
 
->>>>>>>>>>>>>>>>
-小结直接提供一段话总结即可哈
+在前三个小节中我们提到了通信操作之间有关联，其可以分解为多个通信操作。本小节将简要介绍 All-Reduce 的分解，更加详细的内容请参考下一章。
+
+如下图所示，All-Reduce 可以由 Reduce-Scatter 和 All-Gather 两个操作组合完成。
+
+在 Reduce-Scatter 操作完成后，每个 Rank 中规约了所有 Rank 中一个部分的结果。
+
+在 All-Gather 操作中，每个 Rank 将其数据广播到所有 Rank，最终每个 Rank 都获得所有 Rank 规约的结果。
+
+![03CCPrimtive13](../images/02StorComm03CollectComm/03CCPrimtive13.png)
+
+## 典型通讯模型
+
+![03CCPrimtive14](../images/02StorComm03CollectComm/03CCPrimtive14.png)
 
 下表展示了典型并行类型、涉及的主要通信操作、节点规模及数据量。
 
@@ -139,11 +179,13 @@ All to All 操作是对 All-Gather 的扩展，但不同的节点向某一节点
 | 张量并行 TP                                                                                  | All-Reduce、All-Gather、Reduce-Scatter | 2 / 4 / 8 Rank | MB~GB | 计算通信可隐藏，节点内进行，不宜跨节点       |
 | 流水并行 PP                                                                                  | Send、Recv                           | 2 Rank         | ~MB   | 通过多 Micro Batch 实现计算通信可隐藏 |
 | 序列并行 SP                                                                                  | All-Reduce、All-Gather、Reduce-Scatter | ~理论无限          | MB~GB | 计算通信可隐藏                   |
-| 专家并行 EP                                                                                  | All2All                             | ~理论无限          | ~MB   | 计算通信串行，不可隐藏               |
+| 专家并行 EP                                                                                  | All2All                             | ~理论无限          | ~MB   | 计算通信串行，不可隐藏               | 
 
-在学习了本章内容后，你应该对集合通信原语有了更加深入的理解：
+## 小结与思考
 
-1. 了解集合式通信的3种不同方式
+在学习了本章内容后，我们对集合通信原语有了更加深入的理解：
+
+1. 了解集合式通信的 3 种不同方式
 2. 了解一对多 Scatter/Broadcast，多对一 Gather/Reduce，多对多具体方式
 3. 了解多对多可以由一对多和多对一的方式组合
 

@@ -37,7 +37,12 @@
 ```{toctree}
 :maxdepth: 1
 
+DataCuration
 DataPreprocessing
 DataSources
+PostTrainingDataPrepraing
 Pretraining
+PromptEngineering
+SOTA_procssing
+awesomePrompt
 ```

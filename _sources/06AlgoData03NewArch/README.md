@@ -30,5 +30,7 @@ xxx
 :maxdepth: 1
 
 Efficient_Transformer
+RWKV_在Transformer时代重塑RNNs
 Transformer回顾及核心挑战
+未来之路打破Transformer瓶颈探索
 ```

@@ -34,6 +34,4 @@
 05GQAMLA
 06LongSeq
 07Parameter
-Practice01sinusoidal
-Practice03Minitransformer 
 ```

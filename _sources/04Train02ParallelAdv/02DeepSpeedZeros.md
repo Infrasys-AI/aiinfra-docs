@@ -1,4 +1,4 @@
-# DeepSpeed ZeRO系列原理以及使用方式
+# DeepSpeed ZeRO 系列原理以及使用方式
 
 ## DeepSpeed Zero1
 
@@ -6,6 +6,6 @@
 
 ## DeepSpeed Zero3
 
-## DeepSpeed Zero-offload和Zero-infinity
+## DeepSpeed Zero-offload 和 Zero-infinity
 
-## DeepSpeed config解析和使用
+## DeepSpeed config 解析和使用

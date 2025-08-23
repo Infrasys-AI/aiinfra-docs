@@ -32,5 +32,6 @@ xxx
 01DeepSpeedIntro
 02DeepSpeedZeros
 05.ZeRO
+10_pipeline
 PP基本原理
 ```
