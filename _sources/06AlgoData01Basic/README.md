@@ -1,16 +1,26 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# XXXX
+# Transformer 架构
 
-本次大纲内容主要围绕......
- 
+本系列视频将系统性地讲解 Transformer 架构的核心原理及其在大语言模型中的关键技术实现。从 Transformer 的基础结构入手，逐步深入 Tokenizer 分词算法、Embedding 向量化技术、Attention 注意力机制及其多种变种算法，并专门探讨 Transformer 在长序列处理上的架构优化方案，最后详解大模型训练与推理中的关键参数设置。为深入理解与应用前沿 AI 技术奠定坚实基础。
+
 ## 内容大纲
 
 > 建议优先下载 PDF 版本，PPT 版本会因为字体缺失等原因导致版本很丑哦~
 
 | 大纲 | 小节 | 链接 |
 |:--- |:---- |:-------------------- |
-| xxx | xxxx | [PPT](), [视频](), [文章]() |
+| Transformer 架构 | 01 Transformer 基础结构 | [PPT](./01Transformer.pdf), [视频](https://www.bilibili.com/video/BV1rt421476q/), [文章](./01Transformer.md) |
+| Transformer 架构 | 02 大模型 Tokenizer 算法 | [PPT](./02Tokenizer.pdf), [视频](https://www.bilibili.com/video/BV16pTJz9EV4), [文章](./02Tokenizer.md) |
+| Transformer 架构 | 03 大模型 Embedding 算法 | [PPT](./03Embeding.pdf), [视频](https://www.bilibili.com/video/BV1SSTgzLEzf), [文章](./03Embeding.md) |
+| Transformer 架构 | 04 Attention 注意力机制 | [PPT](./04Attention.pdf), [视频](https://www.bilibili.com/video/BV11AMHzuEet), [文章](./04Attention.md) |
+| Transformer 架构 | 05 Attention 变种算法 | [PPT](./05GQAMLA.pdf), [视频](https://www.bilibili.com/video/BV1GzMUz8Eav), [文章](./05GQAMLA.md) |
+| Transformer 架构 | 06 Transformer 长序列架构 | [PPT](./06LongSeq.pdf), [视频](https://www.bilibili.com/video/BV16PN6z6ELg), [文章](./06LongSeq.md) |
+| Transformer 架构 | 07 大模型参数设置 | [PPT](./07Parameter.pdf), [视频](https://www.bilibili.com/video/BV1nTNkzjE3J), [文章](./07Parameter.md) |
+
+## 内容大纲
+
+![](./../images/06AlgoData01Basic/00outline.png)
 
 ## 备注
 

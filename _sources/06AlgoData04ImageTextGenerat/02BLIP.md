@@ -1,4 +1,4 @@
-# BLIP家族: 统一理解和生成的自举多模态模型
+# BLIP 家族: 统一理解和生成的自举多模态模型
 
 Author By: 李佳函
 
@@ -216,7 +216,7 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 | 直接使用噪声数据 | 网络爬取数据           | 低       | 低       | 低       |
 | CapFilt          | 人工+噪声数据+合成数据 | 高       | 中       | 高       |
 
-## BLIP的局限性
+## BLIP 的局限性
 
 BLIP 通过**架构创新**、**数据自举**和**任务统一**的设计，重新定义了多模态预训练模型的能力边界。它不仅为视觉-语言任务提供了高效解决方案，还为多模态学习提供了可复用的技术范式。但其端到端训练方式对计算资源需求较高，需要训练多次模型。同时，BLIP 的架构限制了视觉编码器和语言模型的选择，适配性不足。
 
@@ -226,44 +226,44 @@ BLIP 通过**架构创新**、**数据自举**和**任务统一**的设计，重
 
 ![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP13.png)
 
-在23年，同作者推出了BLIP-2。其通过冻结预训练模型（如ViT和LLM），仅引入轻量级的 Q-Former（Querying Transformer）作为“桥梁”，降低训练成本。
+在 23 年，同作者推出了 BLIP-2。其通过冻结预训练模型（如 ViT 和 LLM），仅引入轻量级的 Q-Former（Querying Transformer）作为“桥梁”，降低训练成本。
 
 ### 核心思想设计
 
-BLIP2的核心创新在于解耦式架构，主要通过以下几点实现高效的训练和跨模态对齐：
+BLIP2 的核心创新在于解耦式架构，主要通过以下几点实现高效的训练和跨模态对齐：
 
 + **冻结预训练模型：**
   + 使用已有的高质量预训练模型，在预训练和推理过程中保持参数固定。
   + 仅仅引入轻量级的**Q-Former**，作为可训练模块，负责跨模态对齐。
 + **两阶段预训练策略：**
-  + 第一阶段：视觉-语言表征学习（Vision-Language Representation Learning），训练Q-Former提取与文本相关的视觉特征。
-  + 第二阶段：视觉到语言的生成学习（Vision-to-Language Generative Learning），通过LLM引导Q-Former生成自然语言描述。
+  + 第一阶段：视觉-语言表征学习（Vision-Language Representation Learning），训练 Q-Former 提取与文本相关的视觉特征。
+  + 第二阶段：视觉到语言的生成学习（Vision-to-Language Generative Learning），通过 LLM 引导 Q-Former 生成自然语言描述。
 + **通用性与扩展性：**
-  + BLIP2的架构支持多种图像编码器（如ViT、CLIP）和LLM（如Flan-T5、LLaMA），通过替换不同组件即可适配最新技术。
+  + BLIP2 的架构支持多种图像编码器（如 ViT、CLIP）和 LLM（如 Flan-T5、LLaMA），通过替换不同组件即可适配最新技术。
 
 ### 模型结构详解：Q-Former（Querying Transformer）
 
-Q-Former的核心结构如图：
+Q-Former 的核心结构如图：
 ![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP11.png)
 
-作为视觉和语言模态之间的桥梁，它共分为了两只Transformer。
+作为视觉和语言模态之间的桥梁，它共分为了两只 Transformer。
 
-+ 图像分支（Image Transformer），即左边的Transformer
-  + 输入一组可学习的查询嵌入（Learned Queries）（默认32个）。
-  + 图像 Transformer 负责与Frozen Image Encoder交互，融合Learned Queries和Input Image中的信息，提取图像特征。通过自注意力（Self-Attention）和交叉注意力（Cross-Attention）与图像编码器的输出交互，提取视觉特征。
-+ 文本分支（Text Transformer），即右边的Transformer
++ 图像分支（Image Transformer），即左边的 Transformer
+  + 输入一组可学习的查询嵌入（Learned Queries）（默认 32 个）。
+  + 图像 Transformer 负责与 Frozen Image Encoder 交互，融合 Learned Queries 和 Input Image 中的信息，提取图像特征。通过自注意力（Self-Attention）和交叉注意力（Cross-Attention）与图像编码器的输出交互，提取视觉特征。
++ 文本分支（Text Transformer），即右边的 Transformer
   + 同时处理文本输入（如问题或指令），与图像分支共享自注意力层。
   + 根据任务需求，通过不同的注意力掩码（Mask）控制图像和文本的交互方式。
 
 **Learned Queries**
 
-Learned Queries是一组可学习的"查询向量"，在经过Self Attention后，在Cross Attention中作为Q，与图像融合。在实验中，共使用了32个查询，每个查询有768维。总共参数共包含1.88亿个参数，远小于冻结图像特征的大小。这种瓶颈结构与预训练目标一起工作，迫使查询提取**与文本最相关的视觉信息**。
+Learned Queries 是一组可学习的"查询向量"，在经过 Self Attention 后，在 Cross Attention 中作为 Q，与图像融合。在实验中，共使用了 32 个查询，每个查询有 768 维。总共参数共包含 1.88 亿个参数，远小于冻结图像特征的大小。这种瓶颈结构与预训练目标一起工作，迫使查询提取**与文本最相关的视觉信息**。
 
 ### 预训练过程
 
 #### 第一阶段：视觉-语言表征学习
 
-##### ITC任务
+##### ITC 任务
 
 ![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP12.png)
 
@@ -271,98 +271,98 @@ Learned Queries是一组可学习的"查询向量"，在经过Self Attention后�
 
 **处理流程**：
 + 图像特征提取：
-  + Queries通过Cross-Attention与图像特征交互，生成32个图像特征（image_feats）。
-  + 每个Query单独与图像交互，提取局部或全局视觉信息。
+  + Queries 通过 Cross-Attention 与图像特征交互，生成 32 个图像特征（image_feats）。
+  + 每个 Query 单独与图像交互，提取局部或全局视觉信息。
 + 文本特征提取：
-  + 文本通过Q-Former的Text Transformer处理，生成文本特征（text_feat），通常取[CLS] token的特征。
+  + 文本通过 Q-Former 的 Text Transformer 处理，生成文本特征（text_feat），通常取[CLS] token 的特征。
 + 对比学习：
-  + 计算32个image_feats与text_feat的相似度（如余弦相似度）。
+  + 计算 32 个 image_feats 与 text_feat 的相似度（如余弦相似度）。
   + 选择最大相似度作为图文对的匹配度（避免信息泄露）。
-  + 通过InfoNCE损失（对比损失）优化，拉近匹配对，推远不匹配对。
+  + 通过 InfoNCE 损失（对比损失）优化，拉近匹配对，推远不匹配对。
 
 **掩码策略**
 
-+ 单模态掩码（Queries与文本互不可见）：
-  + Queries仅通过Self-Attention交互，文本仅通过Self-Attention处理。
-  + 防止Queries直接访问文本信息，**确保特征独立提取**。
++ 单模态掩码（Queries 与文本互不可见）：
+  + Queries 仅通过 Self-Attention 交互，文本仅通过 Self-Attention 处理。
+  + 防止 Queries 直接访问文本信息，**确保特征独立提取**。
 
-##### ITM任务
+##### ITM 任务
 
 ![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP14.png)
 
 **目标**：判断图像和文本是否匹配（二分类任务，正样本为匹配，负样本为不匹配）
 
-Learned Queries：32个Queries，**与文本拼接后送入Q-Former**。
+Learned Queries：32 个 Queries，**与文本拼接后送入 Q-Former**。
 
 **处理流程**：
 + 多模态输入：
-  + 将Queries与文本嵌入拼接为一个序列（Queries在前，文本在后）。
+  + 将 Queries 与文本嵌入拼接为一个序列（Queries 在前，文本在后）。
   + 例如：`[Query_1, Query_2, ..., Query_32, Text_1, Text_2, ..., Text_n]`。
 + 双向交互：
-  + Q-Former的Image Transformer处理拼接后的序列，通过双向自注意掩码（Queries与文本互可见）。
-  + 允许Queries和文本标记之间互相感知，捕捉细粒度对齐信息。
+  + Q-Former 的 Image Transformer 处理拼接后的序列，通过双向自注意掩码（Queries 与文本互可见）。
+  + 允许 Queries 和文本标记之间互相感知，捕捉细粒度对齐信息。
 + 分类预测：
-  + 对Queries的输出向量取平均（或池化），输入二分类器（线性层）。
+  + 对 Queries 的输出向量取平均（或池化），输入二分类器（线性层）。
   + 输出匹配概率（0/1），判断图文是否匹配。
 
-**掩码策略**：**双向自注意掩码**，Queries与文本相互可见。这样设计，可以允许Queries和文本标记之间互相感知，从而捕捉图像和文本的局部交互
+**掩码策略**：**双向自注意掩码**，Queries 与文本相互可见。这样设计，可以允许 Queries 和文本标记之间互相感知，从而捕捉图像和文本的局部交互
 
-##### ITG任务
+##### ITG 任务
 
 ![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP15.png)
 
-**目标**：基于图像生成文本（如图像描述），训练Q-Former提取图像特征并引导文本生成。
+**目标**：基于图像生成文本（如图像描述），训练 Q-Former 提取图像特征并引导文本生成。
 
 **处理流程**：
 + 图像特征提取：
-    + Queries通过Self-Attention和Cross-Attention与图像特征交互，提取视觉信息。
+    + Queries 通过 Self-Attention 和 Cross-Attention 与图像特征交互，提取视觉信息。
 + 文本生成：
-  + Q-Former的Text Transformer作为解码器，生成文本序列。
-  + 使用多模态因果掩码（Queries可相互感知，文本只能访问历史信息）。
-  + 每个文本标记只能看到Queries和前面的文本标记，类似语言模型的自回归生成。
+  + Q-Former 的 Text Transformer 作为解码器，生成文本序列。
+  + 使用多模态因果掩码（Queries 可相互感知，文本只能访问历史信息）。
+  + 每个文本标记只能看到 Queries 和前面的文本标记，类似语言模型的自回归生成。
 + 语言建模损失：
   + 计算文本生成的负对数似然损失（NLL Loss），优化生成质量。
 
-**掩码策略**：多模态因果掩码（Queries互可见，文本只能看过去信息）。
+**掩码策略**：多模态因果掩码（Queries 互可见，文本只能看过去信息）。
 + 文本生成需要逐步预测下一个词，因此必须限制文本标记只能访问自身及前面的标记（Causal Attention）
-+ 多模态因果掩码确保文本生成依赖Queries提取的图像特征和已生成的历史文本，符合语言模型的自回归特性。
++ 多模态因果掩码确保文本生成依赖 Queries 提取的图像特征和已生成的历史文本，符合语言模型的自回归特性。
 
 #### 第二阶段：视觉到语言的生成学习
 
 ![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP16.png)
 
 第二阶段的核心目标是：
-+ **将Q-Former提取的图像特征转换为LLM可理解的输入格式**。
-+ **生成与图像内容一致的文本**：通过语言建模任务（Language Modeling）训练Q-Former，使其输出能够引导LLM生成高质量的文本描述（如图像描述、问答答案等）。
++ **将 Q-Former 提取的图像特征转换为 LLM 可理解的输入格式**。
++ **生成与图像内容一致的文本**：通过语言建模任务（Language Modeling）训练 Q-Former，使其输出能够引导 LLM 生成高质量的文本描述（如图像描述、问答答案等）。
 
 **训练方法**
 
 + **输入**：
-  + 图像特征：由Q-Former从冻结的图像编码器中提取的视觉特征。
+  + 图像特征：由 Q-Former 从冻结的图像编码器中提取的视觉特征。
   + 文本：目标文本。
 + **处理流程**：
-  + Q-Former输出视觉特征：
-    + Q-Former在第一阶段训练后，已能提取与文本最相关的视觉特征。
-    + 这些特征通过全连接层（FC）映射到与LLM输入维度一致的向量空间。
-  + 论文中实验了两种LLM：
-    + **无监督训练的OPT作为Decoder-based LLM**，使用语言建模损失（language modeling loss）进行预训练，冻结的 LLM 的任务是根据 Q-Former 的视觉表示生成文本，也就是说直接根据图像生成文本
-    + **基于指令训练的FlanT5作为Encoder-Decoder-based LLM**：使用前缀语言模型损失（Prefix Language Modeling Loss）优化生成效果。将文本分为两部分：前缀文本（作为LLM编码器的输入）和后缀文本（作为LLM解码器的生成目标）。前缀文本与Q-Former的视觉特征拼接，作为编码器的输入；后缀文本由解码器生成。在训练过程中，模型的任务是根据输入的前缀文本和图像表示来生成后缀文本。也就是说，模型通过 **前缀文本+视觉表示** 来生成 **后续的文本描述**。能够处理 **更复杂的多模态任务**，适合需要 **图像和文本交互理解** 的任务。
+  + Q-Former 输出视觉特征：
+    + Q-Former 在第一阶段训练后，已能提取与文本最相关的视觉特征。
+    + 这些特征通过全连接层（FC）映射到与 LLM 输入维度一致的向量空间。
+  + 论文中实验了两种 LLM：
+    + **无监督训练的 OPT 作为 Decoder-based LLM**，使用语言建模损失（language modeling loss）进行预训练，冻结的 LLM 的任务是根据 Q-Former 的视觉表示生成文本，也就是说直接根据图像生成文本
+    + **基于指令训练的 FlanT5 作为 Encoder-Decoder-based LLM**：使用前缀语言模型损失（Prefix Language Modeling Loss）优化生成效果。将文本分为两部分：前缀文本（作为 LLM 编码器的输入）和后缀文本（作为 LLM 解码器的生成目标）。前缀文本与 Q-Former 的视觉特征拼接，作为编码器的输入；后缀文本由解码器生成。在训练过程中，模型的任务是根据输入的前缀文本和图像表示来生成后缀文本。也就是说，模型通过 **前缀文本+视觉表示** 来生成 **后续的文本描述**。能够处理 **更复杂的多模态任务**，适合需要 **图像和文本交互理解** 的任务。
 
 ### BLIP2-总结
 
-BLIP2的第二阶段训练通过Q-Former将图像特征适配到LLM，实现了高效的视觉-语言生成能力。其核心思想是冻结单模态模型，仅训练轻量级的Q-Former模块，从而降低计算成本并提升模型的零样本泛化能力。这一设计使得BLIP2在资源有限的场景下仍能实现SOTA的多模态性能，成为视觉-语言预训练的代表性方法。
+BLIP2 的第二阶段训练通过 Q-Former 将图像特征适配到 LLM，实现了高效的视觉-语言生成能力。其核心思想是冻结单模态模型，仅训练轻量级的 Q-Former 模块，从而降低计算成本并提升模型的零样本泛化能力。这一设计使得 BLIP2 在资源有限的场景下仍能实现 SOTA 的多模态性能，成为视觉-语言预训练的代表性方法。
 
 ## Instruct-BLIP
 
 InstructBLIP 是 BLIP 作者团队在多模态领域的又一续作。InstructBLIP 这个工作介绍了如何把指令微调的范式做在 BLIP-2 模型上面。用指令微调方法的时候会额外有一条 instruction，如何借助这个 instruction 提取更有用的视觉特征是本文的亮点之一。所以，该模型的主要提升点在于通用性和零样本（zero-shot）泛化能力。
 
-作者将26个数据集转化为指令微调的格式，把它们分成13个 held-in 数据集用于指令微调，和13个 held-out 数据集用于 Zero-Shot 能力的评估。
+作者将 26 个数据集转化为指令微调的格式，把它们分成 13 个 held-in 数据集用于指令微调，和 13 个 held-out 数据集用于 Zero-Shot 能力的评估。
 
 ### 模型结构
 
 ![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP17.png)
 
-Instruct-BLIP的结构如上图所示，基本和BLIP2保持一致。总共由三部分组成：
+Instruct-BLIP 的结构如上图所示，基本和 BLIP2 保持一致。总共由三部分组成：
 + 冻结的图像编码器（如 CLIP 的视觉部分）：负责提取图像特征。
 + 查询转换器（Q-Former）：从图像中提取与指令相关的特征，并将其作为软提示（soft prompt）输入到语言模型。
 + 冻结的语言模型（LLM）：如 Flan-T5 或 Vicuna，负责生成文本输出。
@@ -383,7 +383,7 @@ Instruct-BLIP的结构如上图所示，基本和BLIP2保持一致。总共由�
   + Stage 1：冻结图像编码器，预训练 Q-Former，目标是视觉语言建模（如图像描述生成）。
   + Stage 2：冻结 LLM，训练 Q-Former 和图像编码器，目标是文本生成（如看图说话）。
 + 指令微调阶段：
-  + 输入格式：`<Image>` + 指令（如 "Question: What is the color of the car?"）。该文本会转换为embedding向量，同queries一起进入self-attention。
+  + 输入格式：`<Image>` + 指令（如 "Question: What is the color of the car?"）。该文本会转换为 embedding 向量，同 queries 一起进入 self-attention。
   + 训练目标：通过语言建模损失（Language Modeling Loss）训练 Q-Former，使其生成符合指令的输出。
 
 此外，为缓解多数据集训练中 大数据集主导训练 的问题，InstructBLIP 采用 平衡采样策略：
@@ -391,4 +391,4 @@ $$p_d=\frac{\sqrt{S_d}}{\sum_{i=1}^D\sqrt{S_i}}$$
 
 ## 总结
 
-三篇文章代表了多模态视觉-预研模型的演进路径。BLIP奠定了基础架构，BLIP-2通过Q-Former的轻量化设计与参数共享，提升了模型训练效率。InstructBLIP则通过指令微调，进一步增强了模型的泛化能力，不仅会指导大模型生成文本，同时也会指导image encoder提取不同的视觉特征。
+三篇文章代表了多模态视觉-预研模型的演进路径。BLIP 奠定了基础架构，BLIP-2 通过 Q-Former 的轻量化设计与参数共享，提升了模型训练效率。InstructBLIP 则通过指令微调，进一步增强了模型的泛化能力，不仅会指导大模型生成文本，同时也会指导 image encoder 提取不同的视觉特征。

@@ -2,11 +2,11 @@
 
 Author by: 刘军
 
-当前使用英伟达 GPU 训练大模型时，PyTorch 等  AI 框架都集成了 NCCL，本节主要介绍如何使用NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。
+当前使用英伟达 GPU 训练大模型时，PyTorch 等  AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。
 
 ## NCCL 基本概念
 
-NCCL 是一个通信库，为高性能应用程序提供优化的 GPU 与 GPU 通信。与 MPI 不同，它不提供包含进程启动器和管理器的并行环境。CPU、GPU/NPU 作为最基本的物理设备，再往上是 PCIe、CXL、RoCE 等链路层，然后使用 Ring 或者Tree 进行拓扑组网，在一定拓扑的基础上有负责数据传输的通信库，集合通信库 NCCL，HCCL 会向上提供通信相关 API，相关 API 会集成在相关分布式加速库或者 AI 框架中。
+NCCL 是一个通信库，为高性能应用程序提供优化的 GPU 与 GPU 通信。与 MPI 不同，它不提供包含进程启动器和管理器的并行环境。CPU、GPU/NPU 作为最基本的物理设备，再往上是 PCIe、CXL、RoCE 等链路层，然后使用 Ring 或者 Tree 进行拓扑组网，在一定拓扑的基础上有负责数据传输的通信库，集合通信库 NCCL，HCCL 会向上提供通信相关 API，相关 API 会集成在相关分布式加速库或者 AI 框架中。
 
 ![high-bandwidth-NVLink-connections](../images/02StorComm04CommLibrary/05NCCLAPI01.png)
 
@@ -35,16 +35,16 @@ NCCL 在通信方面发挥着重要的作用：
 ```c
 ncclResult_t ncclCommInitAll(ncclComm_t* comm, int ndev, constint* devlist) {
 
-    //为每个CUDA设备指定一个 unique rank
+    //为每个 CUDA 设备指定一个 unique rank
     ncclUniqueId Id;
 
-    //创建uniqueId，广播给所有相关线程和进程
+    //创建 uniqueId，广播给所有相关线程和进程
     ncclGetUniqueId(&Id);
     ncclGroupStart();
 
     for (int i = 0; i < ndev; i++) {
         cudaSetDevice(devlist[i]);
-        //创建communicator对象，每个comminutor关联固定的rank
+        //创建 communicator 对象，每个 comminutor 关联固定的 rank
         //uniqueId 被所有进程和线程共享，让它们进行同步
         ncclCommInitRank(comm + i, ndev, Id, i);
   }
@@ -54,7 +54,7 @@ ncclResult_t ncclCommInitAll(ncclComm_t* comm, int ndev, constint* devlist) {
 }
 ```
 
-同时也支持创建多个 Communicator，使用 ncclCommSplit 对已有 Communicator进行划分，将其划分成多个sub-partitions。也可以通过 `ncclCommCount` 复制一个现有的 Communicator，创建一个拥有更少的 ranks 的单个 communitor。
+同时也支持创建多个 Communicator，使用 ncclCommSplit 对已有 Communicator 进行划分，将其划分成多个 sub-partitions。也可以通过 `ncclCommCount` 复制一个现有的 Communicator，创建一个拥有更少的 ranks 的单个 communitor。
 
 ```c
 int rank;
@@ -79,7 +79,7 @@ ncclCommUserRank(comm, &rank);
 ncclCommSplit(comm, rank < 2 ? 0: NCCL_SPLIT_NOCOLOR, rank, &newcomm, NULL);
 ```
 
-需要注意的是，在使用多个 NCCL Communicator 时需要注意同步，否则会造成死锁。NCCL kernel 会因为等待数据到来而阻塞，在此期间任何 CUDA 操作都会导致设备同步，意味着需要等待所有的 NCCL kernel 完成。NCCL kernel 在等待数据到来期间如果有任何 CUDA operation 进入了队列就会导致死锁，因为 NCCL 也会执行CUDA 调用，而 NCCL 的 CUDA 调用会进入队列中等待前一个 CUDA 操作执行完毕。
+需要注意的是，在使用多个 NCCL Communicator 时需要注意同步，否则会造成死锁。NCCL kernel 会因为等待数据到来而阻塞，在此期间任何 CUDA 操作都会导致设备同步，意味着需要等待所有的 NCCL kernel 完成。NCCL kernel 在等待数据到来期间如果有任何 CUDA operation 进入了队列就会导致死锁，因为 NCCL 也会执行 CUDA 调用，而 NCCL 的 CUDA 调用会进入队列中等待前一个 CUDA 操作执行完毕。
 
 在完成通信之后，`ncclCommFinalize` 会把一个 communicator 从 `ncclSuccess` 状态转变为 `ncclInProgress` 状态，开始完成 background 中的各种操作并与其他 ranks 之间进行同步。
 
@@ -144,7 +144,7 @@ int ncclStreamSynchronize(cudaStream_t stream, ncclComm_t comm) {
 
 ## Fault Tolerance 容错
 
-NCC提供了许多特性来让我们的应用从严重的错误中恢复到正常，比如网络连接失败、节点宕机以及进程挂掉等。当这样的错误发生的时候，应用应该能够调用 `ncclCommAbort` 方法来释放相应的 `communicator` 的资源，然后创建一个新的 communicator 继续之前的任务。为了保证 `ncclCommAbout` 能够在任何时间点被调用，所有的 NCCL 调用都可以是非阻塞（异步）的操作。
+NCC 提供了许多特性来让我们的应用从严重的错误中恢复到正常，比如网络连接失败、节点宕机以及进程挂掉等。当这样的错误发生的时候，应用应该能够调用 `ncclCommAbort` 方法来释放相应的 `communicator` 的资源，然后创建一个新的 communicator 继续之前的任务。为了保证 `ncclCommAbout` 能够在任何时间点被调用，所有的 NCCL 调用都可以是非阻塞（异步）的操作。
 
 为了正确的弃用，当一个 communicator 中任何一个 rank 出错了的时候，所有其他的 rank 都需要调用 `ncclCommAbort` 来启用它们自己的 NCCL communicator。用户可以实现方法来决定什么时候以及是否弃用这些 communicator 并重新开始当前的 NCCL 操作。
 
@@ -206,7 +206,7 @@ if (globalFlag) {
 
 ### 全局归约 (ncclAllReduce)
 
-所有参与GPU将各自 `sendbuff`中的数据，使用指定操作（如求和 `ncclSum`）进行**全局归约**，并将**最终相同的结果**复制到各自的 `recvbuff`中。可以实现高效的全局同步（如梯度汇总），当 `sendbuff == recvbuff` 时触发。
+所有参与 GPU 将各自 `sendbuff`中的数据，使用指定操作（如求和 `ncclSum`）进行**全局归约**，并将**最终相同的结果**复制到各自的 `recvbuff`中。可以实现高效的全局同步（如梯度汇总），当 `sendbuff == recvbuff` 时触发。
 
 ```c
 ncclResult_t ncclAllReduce(const void* sendbuff, void* recvbuff, 
@@ -217,7 +217,7 @@ ncclResult_t ncclAllReduce(const void* sendbuff, void* recvbuff,
 
 ### 广播 (ncclBroadcast / ncclBcast)
 
-由指定的 `root` GPU将其 `sendbuff`中的数据**完整复制**到所有GPU（包括自身）的 `recvbuff`中。 用于分发初始数据（如模型权重）。
+由指定的 `root` GPU 将其 `sendbuff`中的数据**完整复制**到所有 GPU（包括自身）的 `recvbuff`中。 用于分发初始数据（如模型权重）。
 
 ```c
 ncclResult_t ncclBroadcast(const void* sendbuff, void* recvbuff,
@@ -232,7 +232,7 @@ ncclResult_t ncclBcast(void* buff, size_t count, ncclDataType_t datatype,
 
 ### 归约 (ncclReduce)
 
-所有GPU将各自 `sendbuff`中的数据，使用指定操作进行**归约**，但**仅将最终结果**存放到指定 `root` GPU的 `recvbuff`中，其他GPU的 `recvbuff`被忽略。中心化收集计算结果。当 `sendbuff == recvbuff` 时触发（仅在 root 上有意义）。
+所有 GPU 将各自 `sendbuff`中的数据，使用指定操作进行**归约**，但**仅将最终结果**存放到指定 `root` GPU 的 `recvbuff`中，其他 GPU 的 `recvbuff`被忽略。中心化收集计算结果。当 `sendbuff == recvbuff` 时触发（仅在 root 上有意义）。
 
 ```c
 ncclResult_t ncclReduce(const void* sendbuff, void* recvbuff,
@@ -242,7 +242,7 @@ ncclResult_t ncclReduce(const void* sendbuff, void* recvbuff,
 
 ### 全收集 (ncclAllGather)
 
-每个GPU提供长度为 `sendcount`的数据块。所有GPU将这些块**按GPU序号拼接**成一个完整的大数据块（总长度 = `GPU数量 * sendcount`），并将这个**完整拼接结果**存放到各自的 `recvbuff`中。 汇聚所有GPU的局部数据（如收集嵌入向量）。当 `sendbuff == recvbuff + rank * sendcount` 时触发（需严格满足内存偏移）。
+每个 GPU 提供长度为 `sendcount`的数据块。所有 GPU 将这些块**按 GPU 序号拼接**成一个完整的大数据块（总长度 = `GPU 数量 * sendcount`），并将这个**完整拼接结果**存放到各自的 `recvbuff`中。 汇聚所有 GPU 的局部数据（如收集嵌入向量）。当 `sendbuff == recvbuff + rank * sendcount` 时触发（需严格满足内存偏移）。
 
 ```c
 ncclResult_t ncclAllGather(const void* sendbuff, void* recvbuff,
@@ -252,7 +252,7 @@ ncclResult_t ncclAllGather(const void* sendbuff, void* recvbuff,
 
 ### 归约散播 (ncclReduceScatter)
 
-每个GPU提供一个**大输入数组** `sendbuff`（长度 = `GPU数量 * recvcount`）。首先按元素位置对所有GPU的 `sendbuff`进行**归约**（例如，所有GPU的第0个 `recvcount`块归约在一起，第1个块归约在一起...），然后每个GPU**只接收**归约后结果中对应于自己序号的那一块（长度为 `recvcount`），存放到 `recvbuff`中。融合归约与数据分发，常见于模型并行。当 recvbuff == sendbuff + rank * recvcount 时触发（需严格满足内存偏移）。
+每个 GPU 提供一个**大输入数组** `sendbuff`（长度 = `GPU 数量 * recvcount`）。首先按元素位置对所有 GPU 的 `sendbuff`进行**归约**（例如，所有 GPU 的第 0 个 `recvcount`块归约在一起，第 1 个块归约在一起...），然后每个 GPU**只接收**归约后结果中对应于自己序号的那一块（长度为 `recvcount`），存放到 `recvbuff`中。融合归约与数据分发，常见于模型并行。当 recvbuff == sendbuff + rank * recvcount 时触发（需严格满足内存偏移）。
 
 ```c
 
@@ -276,7 +276,7 @@ ncclResult_t ncclReduceScatter(const void* sendbuff, void* recvbuff,
 
 在并行计算中，CPU 线程阻塞会严重影响效率，NCCL 的**组操作原语** (`ncclGroupStart`/`ncclGroupEnd`) 提供了关键的非阻塞协作机制，组函数可以将多个调用合并成一个，其核心功能在于：
 
-+**消除CPU阻塞**：将多个NCCL调用（如集合通信或通信器初始化）封装在组操作内，可避免操作间的CPU线程同步等待。
++**消除 CPU 阻塞**：将多个 NCCL 调用（如集合通信或通信器初始化）封装在组操作内，可避免操作间的 CPU 线程同步等待。
 
 +**支持多线程并发**：不同线程可独立发起各自的组操作，无需互斥锁保护，显著提升多线程程序的并行效率。
 
@@ -286,11 +286,11 @@ ncclResult_t ncclReduceScatter(const void* sendbuff, void* recvbuff,
 ncclResult_t ncclGroupStart();
 ```
 
-标记组操作的起始点。调用后，**后续所有NCCL函数调用**（如 `ncclAllReduce`, `ncclCommInitRank` 等）将：
+标记组操作的起始点。调用后，**后续所有 NCCL 函数调用**（如 `ncclAllReduce`, `ncclCommInitRank` 等）将：
 
 -**延迟执行**：仅记录操作，不立即提交到硬件。
 
--**跳过CPU同步**：避免操作间不必要的线程阻塞。
+-**跳过 CPU 同步**：避免操作间不必要的线程阻塞。
 
 ### 组操作结束 (`ncclGroupEnd`)
 
@@ -300,9 +300,9 @@ ncclResult_t ncclGroupEnd();
 
 标记组操作的结束点，触发组内操作提交。
 
--**批量提交**：将组内累积的所有操作**一次性提交**到对应的CUDA流 (`stream`)。
+-**批量提交**：将组内累积的所有操作**一次性提交**到对应的 CUDA 流 (`stream`)。
 
--**非阻塞返回**：函数返回仅表示操作**已加入CUDA流队列**，**不保证完成**。
+-**非阻塞返回**：函数返回仅表示操作**已加入 CUDA 流队列**，**不保证完成**。
 
 -**通信器初始化特例**：当组内包含 `ncclCommInitRank` 时，`ncclGroupEnd`**会阻塞等待**所有通信器完成初始化。
 
@@ -321,47 +321,47 @@ ncclResult_t ncclGroupSimulateEnd(ncclSimInfo_t *simInfo);
 
 ```c
 ncclGroupStart();          // 开始组操作
-ncclAllReduce(..., stream1); // 操作1：加入组 (不阻塞)
-ncclBroadcast(..., stream2); // 操作2：加入组 (不阻塞)
+ncclAllReduce(..., stream1); // 操作 1：加入组 (不阻塞)
+ncclBroadcast(..., stream2); // 操作 2：加入组 (不阻塞)
 ncclGroupEnd();            // 提交组内所有操作到流
-// 此处操作已加入流队列，但GPU可能仍在执行
+// 此处操作已加入流队列，但 GPU 可能仍在执行
 ```
 
-需要注意的是 `ncclGroupStart` 和 `ncclGroupEnd`**必须成对调用**。同时 `ncclGroupEnd` 返回**不保证**操作完成，需通过CUDA事件或流查询同步。组操作仅作用于**当前线程**的NCCL调用，`ncclGroupSimulateEnd` 不影响真实通信状态。
+需要注意的是 `ncclGroupStart` 和 `ncclGroupEnd`**必须成对调用**。同时 `ncclGroupEnd` 返回**不保证**操作完成，需通过 CUDA 事件或流查询同步。组操作仅作用于**当前线程**的 NCCL 调用，`ncclGroupSimulateEnd` 不影响真实通信状态。
 
-NCCL组操作原语是构建高效异步程序的关键工具。通过将操作封装在 `ncclGroupStart` 和 `ncclGroupEnd` 之间，开发者可消除冗余的CPU阻塞，实现多操作批量提交与多线程安全调用。配合模拟功能，还能在部署前预判通信性能，为分布式训练提供底层优化支撑。
+NCCL 组操作原语是构建高效异步程序的关键工具。通过将操作封装在 `ncclGroupStart` 和 `ncclGroupEnd` 之间，开发者可消除冗余的 CPU 阻塞，实现多操作批量提交与多线程安全调用。配合模拟功能，还能在部署前预判通信性能，为分布式训练提供底层优化支撑。
 
 ## 点对点通信 Point-to-point
 
-在复杂分布式计算场景中，当 GPU 间需要**非对称数据交换**（如参数服务器、图计算等），NCCL 的点对点通信（P2P）提供了灵活的数据传输能力。与集合通信不同，P2P支持任意两个 GPU 间的定向数据流动。NCCL 的点对点通信主要有 `ncclSend`和 `ncclRecv`，然后由此组成 One-to-all、All-to-one、All-to-all、Neighbor exchange。
+在复杂分布式计算场景中，当 GPU 间需要**非对称数据交换**（如参数服务器、图计算等），NCCL 的点对点通信（P2P）提供了灵活的数据传输能力。与集合通信不同，P2P 支持任意两个 GPU 间的定向数据流动。NCCL 的点对点通信主要有 `ncclSend`和 `ncclRecv`，然后由此组成 One-to-all、All-to-one、All-to-all、Neighbor exchange。
 
 ### 数据发送 (`ncclSend`)
 
-将当前 GPU 中 sendbuff 内的 count 个元素发送给指定 peer GPU。在使用该函数时，目标 GPU **必须同步调用** `ncclRecv`，且 `count`和 `datatype`参数需完全一致。在数据被完全发送前，GPU 执行流会阻塞（不阻塞CPU线程）,sendbuff 需位于 GPU 显存，且发送期间内容不可修改。
+将当前 GPU 中 sendbuff 内的 count 个元素发送给指定 peer GPU。在使用该函数时，目标 GPU **必须同步调用** `ncclRecv`，且 `count`和 `datatype`参数需完全一致。在数据被完全发送前，GPU 执行流会阻塞（不阻塞 CPU 线程）,sendbuff 需位于 GPU 显存，且发送期间内容不可修改。
 
 ```c
 ncclResult_t ncclSend(
     const void* sendbuff,  // 发送数据地址
     size_t count,          // 数据元素数量
-    ncclDataType_t datatype, // 数据类型 (如ncclFloat)
-    int peer,              // 目标GPU的通信序号
+    ncclDataType_t datatype, // 数据类型 (如 ncclFloat)
+    int peer,              // 目标 GPU 的通信序号
     ncclComm_t comm,       // 通信器对象
-    cudaStream_t stream    // 关联的CUDA流
+    cudaStream_t stream    // 关联的 CUDA 流
 );
 ```
 
 ### 数据接收 (`ncclRecv`)
 
-从指定 peer GPU 接收 count 个元素，存储到当前 GPU 的 recvbuff。参数必须与发送端的 ncclSend 完全匹配（相同peer、count、datatype）。在数据完全到达前，GPU 执行流暂停。recvbuff 需预先分配足够显存，接收完成前不可访问。
+从指定 peer GPU 接收 count 个元素，存储到当前 GPU 的 recvbuff。参数必须与发送端的 ncclSend 完全匹配（相同 peer、count、datatype）。在数据完全到达前，GPU 执行流暂停。recvbuff 需预先分配足够显存，接收完成前不可访问。
 
 ```c
 ncclResult_t ncclRecv(
     void *recvbuff,        // 接收数据地址
     size_t count,          // 数据元素数量
     ncclDataType_t datatype, // 数据类型
-    int peer,              // 源GPU的通信序号
+    int peer,              // 源 GPU 的通信序号
     ncclComm_t comm,       // 通信器对象
-    cudaStream_t stream    // 关联的CUDA流
+    cudaStream_t stream    // 关联的 CUDA 流
 );
 ```
 
@@ -373,7 +373,7 @@ NCCL 是一个通信库，为高性能应用程序提供优化的 GPU 与 GPU �
 
 ## 内容参考
 
-NCCL官方文档（[https://docs.nvidia.com/deeplearning/nccl/](https://docs.nvidia.com/deeplearning/nccl/)）
+NCCL 官方文档（[https://docs.nvidia.com/deeplearning/nccl/](https://docs.nvidia.com/deeplearning/nccl/)）
 
 ## 本节视频
 

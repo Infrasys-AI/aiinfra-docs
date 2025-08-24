@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="02StorComm04CommLibrary/05NCCLAPI.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。 NCCL 基本概念: NCCL 是一个通信库，为高性能应用程序提供优化的 GPU..." />
+<meta property="og:description" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。 NCCL 基本概念: NCCL 是一个通信库，为高性能应用程序提供优化的 GP..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/_images/social_previews/summary_02StorComm04CommLibrary_05NCCLAPI_cc22e62f.png" />
-<meta property="og:image:alt" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。..." />
-<meta name="description" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。 NCCL 基本概念: NCCL 是一个通信库，为高性能应用程序提供优化的 GPU..." />
+<meta property="og:image" content="/_images/social_previews/summary_02StorComm04CommLibrary_05NCCLAPI_f041f808.png" />
+<meta property="og:image:alt" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。..." />
+<meta name="description" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。 NCCL 基本概念: NCCL 是一个通信库，为高性能应用程序提供优化的 GP..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>NCCL API 解读 &#8212; AIInfra</title>
@@ -41,7 +41,7 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
@@ -79,7 +79,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="AI 集群存储之路" href="../02StorComm05StorforAI/README.html" />
-    <link rel="prev" title="NCCL基本介绍" href="04NCCLIntro.html" />
+    <link rel="prev" title="NCCL 基本介绍" href="04NCCLIntro.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
@@ -278,7 +278,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">集合通信库</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01MPIIntro.html">MPI 通信与通信库</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02XCCL.html">XCCL 通信库</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04NCCLIntro.html">NCCL基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04NCCLIntro.html">NCCL 基本介绍</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">NCCL API 解读</a></li>
 </ul>
 </details></li>
@@ -326,7 +326,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行1F1B/1F1B Interleaved原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行 1F1B/1F1B Interleaved 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -350,12 +350,12 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA变体算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -409,10 +409,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
@@ -427,14 +427,14 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV 架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -876,10 +876,10 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="nccl-api">
 <h1>NCCL API 解读<a class="headerlink" href="#nccl-api" title="Link to this heading">#</a></h1>
 <p>Author by: 刘军</p>
-<p>当前使用英伟达 GPU 训练大模型时，PyTorch 等  AI 框架都集成了 NCCL，本节主要介绍如何使用NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。</p>
+<p>当前使用英伟达 GPU 训练大模型时，PyTorch 等  AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。</p>
 <section id="nccl">
 <h2>NCCL 基本概念<a class="headerlink" href="#nccl" title="Link to this heading">#</a></h2>
-<p>NCCL 是一个通信库，为高性能应用程序提供优化的 GPU 与 GPU 通信。与 MPI 不同，它不提供包含进程启动器和管理器的并行环境。CPU、GPU/NPU 作为最基本的物理设备，再往上是 PCIe、CXL、RoCE 等链路层，然后使用 Ring 或者Tree 进行拓扑组网，在一定拓扑的基础上有负责数据传输的通信库，集合通信库 NCCL，HCCL 会向上提供通信相关 API，相关 API 会集成在相关分布式加速库或者 AI 框架中。</p>
+<p>NCCL 是一个通信库，为高性能应用程序提供优化的 GPU 与 GPU 通信。与 MPI 不同，它不提供包含进程启动器和管理器的并行环境。CPU、GPU/NPU 作为最基本的物理设备，再往上是 PCIe、CXL、RoCE 等链路层，然后使用 Ring 或者 Tree 进行拓扑组网，在一定拓扑的基础上有负责数据传输的通信库，集合通信库 NCCL，HCCL 会向上提供通信相关 API，相关 API 会集成在相关分布式加速库或者 AI 框架中。</p>
 <p><img alt="high-bandwidth-NVLink-connections" src="../_images/05NCCLAPI01.png" /></p>
 <p>NCCL 在通信方面发挥着重要的作用：</p>
 <ul class="simple">
@@ -898,16 +898,16 @@ document.write(`
 <p>同时在创建过程中，使用 <code class="docutils literal notranslate"><span class="pre">ncclGetUniqueId()</span></code> 创建 unique ID，通过广播的方式发送给所有相关线程和进程，Unique ID 被所有进程和线程共享，让他们进行同步。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclCommInitAll</span><span class="p">(</span><span class="n">ncclComm_t</span><span class="o">*</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">ndev</span><span class="p">,</span><span class="w"> </span><span class="n">constint</span><span class="o">*</span><span class="w"> </span><span class="n">devlist</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 
-<span class="w">    </span><span class="c1">//为每个CUDA设备指定一个 unique rank</span>
+<span class="w">    </span><span class="c1">//为每个 CUDA 设备指定一个 unique rank</span>
 <span class="w">    </span><span class="n">ncclUniqueId</span><span class="w"> </span><span class="n">Id</span><span class="p">;</span>
 
-<span class="w">    </span><span class="c1">//创建uniqueId，广播给所有相关线程和进程</span>
+<span class="w">    </span><span class="c1">//创建 uniqueId，广播给所有相关线程和进程</span>
 <span class="w">    </span><span class="n">ncclGetUniqueId</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Id</span><span class="p">);</span>
 <span class="w">    </span><span class="n">ncclGroupStart</span><span class="p">();</span>
 
 <span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ndev</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="n">cudaSetDevice</span><span class="p">(</span><span class="n">devlist</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
-<span class="w">        </span><span class="c1">//创建communicator对象，每个comminutor关联固定的rank</span>
+<span class="w">        </span><span class="c1">//创建 communicator 对象，每个 comminutor 关联固定的 rank</span>
 <span class="w">        </span><span class="c1">//uniqueId 被所有进程和线程共享，让它们进行同步</span>
 <span class="w">        </span><span class="n">ncclCommInitRank</span><span class="p">(</span><span class="n">comm</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">ndev</span><span class="p">,</span><span class="w"> </span><span class="n">Id</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 <span class="w">  </span><span class="p">}</span>
@@ -917,7 +917,7 @@ document.write(`
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>同时也支持创建多个 Communicator，使用 ncclCommSplit 对已有 Communicator进行划分，将其划分成多个sub-partitions。也可以通过 <code class="docutils literal notranslate"><span class="pre">ncclCommCount</span></code> 复制一个现有的 Communicator，创建一个拥有更少的 ranks 的单个 communitor。</p>
+<p>同时也支持创建多个 Communicator，使用 ncclCommSplit 对已有 Communicator 进行划分，将其划分成多个 sub-partitions。也可以通过 <code class="docutils literal notranslate"><span class="pre">ncclCommCount</span></code> 复制一个现有的 Communicator，创建一个拥有更少的 ranks 的单个 communitor。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">rank</span><span class="p">;</span>
 <span class="n">ncclCommUserRank</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rank</span><span class="p">);</span>
 <span class="n">ncclCommSplit</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">newcomm</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
@@ -936,7 +936,7 @@ document.write(`
 <span class="n">ncclCommSplit</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="w"> </span><span class="n">NCCL_SPLIT_NOCOLOR</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">newcomm</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
 </pre></div>
 </div>
-<p>需要注意的是，在使用多个 NCCL Communicator 时需要注意同步，否则会造成死锁。NCCL kernel 会因为等待数据到来而阻塞，在此期间任何 CUDA 操作都会导致设备同步，意味着需要等待所有的 NCCL kernel 完成。NCCL kernel 在等待数据到来期间如果有任何 CUDA operation 进入了队列就会导致死锁，因为 NCCL 也会执行CUDA 调用，而 NCCL 的 CUDA 调用会进入队列中等待前一个 CUDA 操作执行完毕。</p>
+<p>需要注意的是，在使用多个 NCCL Communicator 时需要注意同步，否则会造成死锁。NCCL kernel 会因为等待数据到来而阻塞，在此期间任何 CUDA 操作都会导致设备同步，意味着需要等待所有的 NCCL kernel 完成。NCCL kernel 在等待数据到来期间如果有任何 CUDA operation 进入了队列就会导致死锁，因为 NCCL 也会执行 CUDA 调用，而 NCCL 的 CUDA 调用会进入队列中等待前一个 CUDA 操作执行完毕。</p>
 <p>在完成通信之后，<code class="docutils literal notranslate"><span class="pre">ncclCommFinalize</span></code> 会把一个 communicator 从 <code class="docutils literal notranslate"><span class="pre">ncclSuccess</span></code> 状态转变为 <code class="docutils literal notranslate"><span class="pre">ncclInProgress</span></code> 状态，开始完成 background 中的各种操作并与其他 ranks 之间进行同步。</p>
 <p><code class="docutils literal notranslate"><span class="pre">ncclCommFinalize</span></code>会将所有未完成的操作以及与该 communicator 所属的网络相关的资源会被 flushed 并被释放掉。一旦所有的 NCCL 操作都完成了，communicator 会将状态转换成 ncclSuccess，可以通过 <code class="docutils literal notranslate"><span class="pre">ncclCommGetAsyncError</span></code>来查询状态。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclCommFinalize</span><span class="p">(</span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
@@ -993,7 +993,7 @@ document.write(`
 </section>
 <section id="fault-tolerance">
 <h2>Fault Tolerance 容错<a class="headerlink" href="#fault-tolerance" title="Link to this heading">#</a></h2>
-<p>NCC提供了许多特性来让我们的应用从严重的错误中恢复到正常，比如网络连接失败、节点宕机以及进程挂掉等。当这样的错误发生的时候，应用应该能够调用 <code class="docutils literal notranslate"><span class="pre">ncclCommAbort</span></code> 方法来释放相应的 <code class="docutils literal notranslate"><span class="pre">communicator</span></code> 的资源，然后创建一个新的 communicator 继续之前的任务。为了保证 <code class="docutils literal notranslate"><span class="pre">ncclCommAbout</span></code> 能够在任何时间点被调用，所有的 NCCL 调用都可以是非阻塞（异步）的操作。</p>
+<p>NCC 提供了许多特性来让我们的应用从严重的错误中恢复到正常，比如网络连接失败、节点宕机以及进程挂掉等。当这样的错误发生的时候，应用应该能够调用 <code class="docutils literal notranslate"><span class="pre">ncclCommAbort</span></code> 方法来释放相应的 <code class="docutils literal notranslate"><span class="pre">communicator</span></code> 的资源，然后创建一个新的 communicator 继续之前的任务。为了保证 <code class="docutils literal notranslate"><span class="pre">ncclCommAbout</span></code> 能够在任何时间点被调用，所有的 NCCL 调用都可以是非阻塞（异步）的操作。</p>
 <p>为了正确的弃用，当一个 communicator 中任何一个 rank 出错了的时候，所有其他的 rank 都需要调用 <code class="docutils literal notranslate"><span class="pre">ncclCommAbort</span></code> 来启用它们自己的 NCCL communicator。用户可以实现方法来决定什么时候以及是否弃用这些 communicator 并重新开始当前的 NCCL 操作。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="n">globalFlag</span><span class="p">;</span>
 <span class="kt">bool</span><span class="w"> </span><span class="n">abortFlag</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
@@ -1051,7 +1051,7 @@ document.write(`
 <p>理解其语义和原位操作条件，是构建高效多 GPU 应用的基础。开发者需根据同步需求（全局同步/中心收集/数据分发）和显存布局选择合适的原语。在分布式深度学习训练中，多 GPU 间高效的数据同步至关重要。NVIDIA 的 NCCL 库为此提供了高性能的集合通信原语，接下来解析其核心函数。</p>
 <section id="ncclallreduce">
 <h3>全局归约 (ncclAllReduce)<a class="headerlink" href="#ncclallreduce" title="Link to this heading">#</a></h3>
-<p>所有参与GPU将各自 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据，使用指定操作（如求和 <code class="docutils literal notranslate"><span class="pre">ncclSum</span></code>）进行<strong>全局归约</strong>，并将<strong>最终相同的结果</strong>复制到各自的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。可以实现高效的全局同步（如梯度汇总），当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span></code> 时触发。</p>
+<p>所有参与 GPU 将各自 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据，使用指定操作（如求和 <code class="docutils literal notranslate"><span class="pre">ncclSum</span></code>）进行<strong>全局归约</strong>，并将<strong>最终相同的结果</strong>复制到各自的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。可以实现高效的全局同步（如梯度汇总），当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span></code> 时触发。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclAllReduce</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span><span class="w"> </span>
 <span class="w">            </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span>
 <span class="w">            </span><span class="n">ncclRedOp_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
@@ -1061,7 +1061,7 @@ document.write(`
 </section>
 <section id="ncclbroadcast-ncclbcast">
 <h3>广播 (ncclBroadcast / ncclBcast)<a class="headerlink" href="#ncclbroadcast-ncclbcast" title="Link to this heading">#</a></h3>
-<p>由指定的 <code class="docutils literal notranslate"><span class="pre">root</span></code> GPU将其 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据<strong>完整复制</strong>到所有GPU（包括自身）的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。 用于分发初始数据（如模型权重）。</p>
+<p>由指定的 <code class="docutils literal notranslate"><span class="pre">root</span></code> GPU 将其 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据<strong>完整复制</strong>到所有 GPU（包括自身）的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。 用于分发初始数据（如模型权重）。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclBroadcast</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
 <span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span>
 <span class="w">        </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
@@ -1074,7 +1074,7 @@ document.write(`
 </section>
 <section id="ncclreduce">
 <h3>归约 (ncclReduce)<a class="headerlink" href="#ncclreduce" title="Link to this heading">#</a></h3>
-<p>所有GPU将各自 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据，使用指定操作进行<strong>归约</strong>，但<strong>仅将最终结果</strong>存放到指定 <code class="docutils literal notranslate"><span class="pre">root</span></code> GPU的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中，其他GPU的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>被忽略。中心化收集计算结果。当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span></code> 时触发（仅在 root 上有意义）。</p>
+<p>所有 GPU 将各自 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据，使用指定操作进行<strong>归约</strong>，但<strong>仅将最终结果</strong>存放到指定 <code class="docutils literal notranslate"><span class="pre">root</span></code> GPU 的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中，其他 GPU 的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>被忽略。中心化收集计算结果。当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span></code> 时触发（仅在 root 上有意义）。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclReduce</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
 <span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="n">ncclRedOp_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span>
 <span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
@@ -1083,7 +1083,7 @@ document.write(`
 </section>
 <section id="ncclallgather">
 <h3>全收集 (ncclAllGather)<a class="headerlink" href="#ncclallgather" title="Link to this heading">#</a></h3>
-<p>每个GPU提供长度为 <code class="docutils literal notranslate"><span class="pre">sendcount</span></code>的数据块。所有GPU将这些块<strong>按GPU序号拼接</strong>成一个完整的大数据块（总长度 = <code class="docutils literal notranslate"><span class="pre">GPU数量</span> <span class="pre">*</span> <span class="pre">sendcount</span></code>），并将这个<strong>完整拼接结果</strong>存放到各自的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。 汇聚所有GPU的局部数据（如收集嵌入向量）。当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span> <span class="pre">+</span> <span class="pre">rank</span> <span class="pre">*</span> <span class="pre">sendcount</span></code> 时触发（需严格满足内存偏移）。</p>
+<p>每个 GPU 提供长度为 <code class="docutils literal notranslate"><span class="pre">sendcount</span></code>的数据块。所有 GPU 将这些块<strong>按 GPU 序号拼接</strong>成一个完整的大数据块（总长度 = <code class="docutils literal notranslate"><span class="pre">GPU</span> <span class="pre">数量</span> <span class="pre">*</span> <span class="pre">sendcount</span></code>），并将这个<strong>完整拼接结果</strong>存放到各自的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。 汇聚所有 GPU 的局部数据（如收集嵌入向量）。当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span> <span class="pre">+</span> <span class="pre">rank</span> <span class="pre">*</span> <span class="pre">sendcount</span></code> 时触发（需严格满足内存偏移）。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclAllGather</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
 <span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">sendcount</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span>
 <span class="w">        </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
@@ -1092,7 +1092,7 @@ document.write(`
 </section>
 <section id="ncclreducescatter">
 <h3>归约散播 (ncclReduceScatter)<a class="headerlink" href="#ncclreducescatter" title="Link to this heading">#</a></h3>
-<p>每个GPU提供一个<strong>大输入数组</strong> <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>（长度 = <code class="docutils literal notranslate"><span class="pre">GPU数量</span> <span class="pre">*</span> <span class="pre">recvcount</span></code>）。首先按元素位置对所有GPU的 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>进行<strong>归约</strong>（例如，所有GPU的第0个 <code class="docutils literal notranslate"><span class="pre">recvcount</span></code>块归约在一起，第1个块归约在一起...），然后每个GPU<strong>只接收</strong>归约后结果中对应于自己序号的那一块（长度为 <code class="docutils literal notranslate"><span class="pre">recvcount</span></code>），存放到 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。融合归约与数据分发，常见于模型并行。当 recvbuff == sendbuff + rank * recvcount 时触发（需严格满足内存偏移）。</p>
+<p>每个 GPU 提供一个<strong>大输入数组</strong> <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>（长度 = <code class="docutils literal notranslate"><span class="pre">GPU</span> <span class="pre">数量</span> <span class="pre">*</span> <span class="pre">recvcount</span></code>）。首先按元素位置对所有 GPU 的 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>进行<strong>归约</strong>（例如，所有 GPU 的第 0 个 <code class="docutils literal notranslate"><span class="pre">recvcount</span></code>块归约在一起，第 1 个块归约在一起...），然后每个 GPU<strong>只接收</strong>归约后结果中对应于自己序号的那一块（长度为 <code class="docutils literal notranslate"><span class="pre">recvcount</span></code>），存放到 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。融合归约与数据分发，常见于模型并行。当 recvbuff == sendbuff + rank * recvcount 时触发（需严格满足内存偏移）。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span>
 <span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclReduceScatter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
 <span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">recvcount</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span>
@@ -1110,16 +1110,16 @@ document.write(`
 <section id="id1">
 <h2>NCCL 组操作原理解析<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>在并行计算中，CPU 线程阻塞会严重影响效率，NCCL 的<strong>组操作原语</strong> (<code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code>/<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code>) 提供了关键的非阻塞协作机制，组函数可以将多个调用合并成一个，其核心功能在于：</p>
-<p>+<strong>消除CPU阻塞</strong>：将多个NCCL调用（如集合通信或通信器初始化）封装在组操作内，可避免操作间的CPU线程同步等待。</p>
+<p>+<strong>消除 CPU 阻塞</strong>：将多个 NCCL 调用（如集合通信或通信器初始化）封装在组操作内，可避免操作间的 CPU 线程同步等待。</p>
 <p>+<strong>支持多线程并发</strong>：不同线程可独立发起各自的组操作，无需互斥锁保护，显著提升多线程程序的并行效率。</p>
 <section id="ncclgroupstart">
 <h3>组操作开始 (<code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code>)<a class="headerlink" href="#ncclgroupstart" title="Link to this heading">#</a></h3>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclGroupStart</span><span class="p">();</span>
 </pre></div>
 </div>
-<p>标记组操作的起始点。调用后，<strong>后续所有NCCL函数调用</strong>（如 <code class="docutils literal notranslate"><span class="pre">ncclAllReduce</span></code>, <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code> 等）将：</p>
+<p>标记组操作的起始点。调用后，<strong>后续所有 NCCL 函数调用</strong>（如 <code class="docutils literal notranslate"><span class="pre">ncclAllReduce</span></code>, <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code> 等）将：</p>
 <p>-<strong>延迟执行</strong>：仅记录操作，不立即提交到硬件。</p>
-<p>-<strong>跳过CPU同步</strong>：避免操作间不必要的线程阻塞。</p>
+<p>-<strong>跳过 CPU 同步</strong>：避免操作间不必要的线程阻塞。</p>
 </section>
 <section id="ncclgroupend">
 <h3>组操作结束 (<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code>)<a class="headerlink" href="#ncclgroupend" title="Link to this heading">#</a></h3>
@@ -1127,8 +1127,8 @@ document.write(`
 </pre></div>
 </div>
 <p>标记组操作的结束点，触发组内操作提交。</p>
-<p>-<strong>批量提交</strong>：将组内累积的所有操作<strong>一次性提交</strong>到对应的CUDA流 (<code class="docutils literal notranslate"><span class="pre">stream</span></code>)。</p>
-<p>-<strong>非阻塞返回</strong>：函数返回仅表示操作<strong>已加入CUDA流队列</strong>，<strong>不保证完成</strong>。</p>
+<p>-<strong>批量提交</strong>：将组内累积的所有操作<strong>一次性提交</strong>到对应的 CUDA 流 (<code class="docutils literal notranslate"><span class="pre">stream</span></code>)。</p>
+<p>-<strong>非阻塞返回</strong>：函数返回仅表示操作<strong>已加入 CUDA 流队列</strong>，<strong>不保证完成</strong>。</p>
 <p>-<strong>通信器初始化特例</strong>：当组内包含 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code> 时，<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code><strong>会阻塞等待</strong>所有通信器完成初始化。</p>
 </section>
 <section id="ncclgroupsimulateend">
@@ -1141,43 +1141,43 @@ document.write(`
 <p>-<strong>性能预分析</strong>：用于优化策略选择或资源预估。</p>
 <p>典型的工作流程如下，可以避免频繁的 CPU-GPU 同步，释放 CPU 线程处理其他任务。将多个独立操作合并提交，减少启动开销。不同线程可安全调用独立组操作，简化并发设计。结合 ncclCommInitRank 实现多通信器高效创建。通过 ncclGroupSimulateEnd 预判通信成本，优化算法选择。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclGroupStart</span><span class="p">();</span><span class="w">          </span><span class="c1">// 开始组操作</span>
-<span class="n">ncclAllReduce</span><span class="p">(...,</span><span class="w"> </span><span class="n">stream1</span><span class="p">);</span><span class="w"> </span><span class="c1">// 操作1：加入组 (不阻塞)</span>
-<span class="n">ncclBroadcast</span><span class="p">(...,</span><span class="w"> </span><span class="n">stream2</span><span class="p">);</span><span class="w"> </span><span class="c1">// 操作2：加入组 (不阻塞)</span>
+<span class="n">ncclAllReduce</span><span class="p">(...,</span><span class="w"> </span><span class="n">stream1</span><span class="p">);</span><span class="w"> </span><span class="c1">// 操作 1：加入组 (不阻塞)</span>
+<span class="n">ncclBroadcast</span><span class="p">(...,</span><span class="w"> </span><span class="n">stream2</span><span class="p">);</span><span class="w"> </span><span class="c1">// 操作 2：加入组 (不阻塞)</span>
 <span class="n">ncclGroupEnd</span><span class="p">();</span><span class="w">            </span><span class="c1">// 提交组内所有操作到流</span>
-<span class="c1">// 此处操作已加入流队列，但GPU可能仍在执行</span>
+<span class="c1">// 此处操作已加入流队列，但 GPU 可能仍在执行</span>
 </pre></div>
 </div>
-<p>需要注意的是 <code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code><strong>必须成对调用</strong>。同时 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code> 返回<strong>不保证</strong>操作完成，需通过CUDA事件或流查询同步。组操作仅作用于<strong>当前线程</strong>的NCCL调用，<code class="docutils literal notranslate"><span class="pre">ncclGroupSimulateEnd</span></code> 不影响真实通信状态。</p>
-<p>NCCL组操作原语是构建高效异步程序的关键工具。通过将操作封装在 <code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code> 之间，开发者可消除冗余的CPU阻塞，实现多操作批量提交与多线程安全调用。配合模拟功能，还能在部署前预判通信性能，为分布式训练提供底层优化支撑。</p>
+<p>需要注意的是 <code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code><strong>必须成对调用</strong>。同时 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code> 返回<strong>不保证</strong>操作完成，需通过 CUDA 事件或流查询同步。组操作仅作用于<strong>当前线程</strong>的 NCCL 调用，<code class="docutils literal notranslate"><span class="pre">ncclGroupSimulateEnd</span></code> 不影响真实通信状态。</p>
+<p>NCCL 组操作原语是构建高效异步程序的关键工具。通过将操作封装在 <code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code> 之间，开发者可消除冗余的 CPU 阻塞，实现多操作批量提交与多线程安全调用。配合模拟功能，还能在部署前预判通信性能，为分布式训练提供底层优化支撑。</p>
 </section>
 </section>
 <section id="point-to-point">
 <h2>点对点通信 Point-to-point<a class="headerlink" href="#point-to-point" title="Link to this heading">#</a></h2>
-<p>在复杂分布式计算场景中，当 GPU 间需要<strong>非对称数据交换</strong>（如参数服务器、图计算等），NCCL 的点对点通信（P2P）提供了灵活的数据传输能力。与集合通信不同，P2P支持任意两个 GPU 间的定向数据流动。NCCL 的点对点通信主要有 <code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>和 <code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>，然后由此组成 One-to-all、All-to-one、All-to-all、Neighbor exchange。</p>
+<p>在复杂分布式计算场景中，当 GPU 间需要<strong>非对称数据交换</strong>（如参数服务器、图计算等），NCCL 的点对点通信（P2P）提供了灵活的数据传输能力。与集合通信不同，P2P 支持任意两个 GPU 间的定向数据流动。NCCL 的点对点通信主要有 <code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>和 <code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>，然后由此组成 One-to-all、All-to-one、All-to-all、Neighbor exchange。</p>
 <section id="ncclsend">
 <h3>数据发送 (<code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>)<a class="headerlink" href="#ncclsend" title="Link to this heading">#</a></h3>
-<p>将当前 GPU 中 sendbuff 内的 count 个元素发送给指定 peer GPU。在使用该函数时，目标 GPU <strong>必须同步调用</strong> <code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>，且 <code class="docutils literal notranslate"><span class="pre">count</span></code>和 <code class="docutils literal notranslate"><span class="pre">datatype</span></code>参数需完全一致。在数据被完全发送前，GPU 执行流会阻塞（不阻塞CPU线程）,sendbuff 需位于 GPU 显存，且发送期间内容不可修改。</p>
+<p>将当前 GPU 中 sendbuff 内的 count 个元素发送给指定 peer GPU。在使用该函数时，目标 GPU <strong>必须同步调用</strong> <code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>，且 <code class="docutils literal notranslate"><span class="pre">count</span></code>和 <code class="docutils literal notranslate"><span class="pre">datatype</span></code>参数需完全一致。在数据被完全发送前，GPU 执行流会阻塞（不阻塞 CPU 线程）,sendbuff 需位于 GPU 显存，且发送期间内容不可修改。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclSend</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w">  </span><span class="c1">// 发送数据地址</span>
 <span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w">          </span><span class="c1">// 数据元素数量</span>
-<span class="w">    </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="c1">// 数据类型 (如ncclFloat)</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">peer</span><span class="p">,</span><span class="w">              </span><span class="c1">// 目标GPU的通信序号</span>
+<span class="w">    </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="c1">// 数据类型 (如 ncclFloat)</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">peer</span><span class="p">,</span><span class="w">              </span><span class="c1">// 目标 GPU 的通信序号</span>
 <span class="w">    </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w">       </span><span class="c1">// 通信器对象</span>
-<span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="w">    </span><span class="c1">// 关联的CUDA流</span>
+<span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="w">    </span><span class="c1">// 关联的 CUDA 流</span>
 <span class="p">);</span>
 </pre></div>
 </div>
 </section>
 <section id="ncclrecv">
 <h3>数据接收 (<code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>)<a class="headerlink" href="#ncclrecv" title="Link to this heading">#</a></h3>
-<p>从指定 peer GPU 接收 count 个元素，存储到当前 GPU 的 recvbuff。参数必须与发送端的 ncclSend 完全匹配（相同peer、count、datatype）。在数据完全到达前，GPU 执行流暂停。recvbuff 需预先分配足够显存，接收完成前不可访问。</p>
+<p>从指定 peer GPU 接收 count 个元素，存储到当前 GPU 的 recvbuff。参数必须与发送端的 ncclSend 完全匹配（相同 peer、count、datatype）。在数据完全到达前，GPU 执行流暂停。recvbuff 需预先分配足够显存，接收完成前不可访问。</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclRecv</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">recvbuff</span><span class="p">,</span><span class="w">        </span><span class="c1">// 接收数据地址</span>
 <span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w">          </span><span class="c1">// 数据元素数量</span>
 <span class="w">    </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="c1">// 数据类型</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">peer</span><span class="p">,</span><span class="w">              </span><span class="c1">// 源GPU的通信序号</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">peer</span><span class="p">,</span><span class="w">              </span><span class="c1">// 源 GPU 的通信序号</span>
 <span class="w">    </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w">       </span><span class="c1">// 通信器对象</span>
-<span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="w">    </span><span class="c1">// 关联的CUDA流</span>
+<span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="w">    </span><span class="c1">// 关联的 CUDA 流</span>
 <span class="p">);</span>
 </pre></div>
 </div>
@@ -1190,7 +1190,7 @@ document.write(`
 </section>
 <section id="id3">
 <h2>内容参考<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
-<p>NCCL官方文档（<a class="reference external" href="https://docs.nvidia.com/deeplearning/nccl/">https://docs.nvidia.com/deeplearning/nccl/</a>）</p>
+<p>NCCL 官方文档（<a class="reference external" href="https://docs.nvidia.com/deeplearning/nccl/">https://docs.nvidia.com/deeplearning/nccl/</a>）</p>
 </section>
 <section id="id4">
 <h2>本节视频<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
@@ -1240,7 +1240,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">NCCL基本介绍</p>
+        <p class="prev-next-title">NCCL 基本介绍</p>
       </div>
     </a>
     <a class="right-next"

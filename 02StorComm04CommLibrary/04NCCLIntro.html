@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="NCCL基本介绍" />
+<meta property="og:title" content="NCCL 基本介绍" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="02StorComm04CommLibrary/04NCCLIntro.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 刘军 在使用 GPU/NPU 进行大模型训练或推理时，因为模型太大所以需要使用多张卡组成集群，此时多卡之间的通信离不开 NCCL 通信库，本节主要介绍 NCCL 的通讯架构和工作原理。 NCCL 基本介绍: 本节主要参考英伟达官网（ https://developer.nvidia.com/nccl ）关于 NCCL 的介绍，NCCL是英伟达为实现 GPU 和 GPU ..." />
+<meta property="og:description" content="Author by: 刘军 在使用 GPU/NPU 进行大模型训练或推理时，因为模型太大所以需要使用多张卡组成集群，此时多卡之间的通信离不开 NCCL 通信库，本节主要介绍 NCCL 的通讯架构和工作原理。 NCCL 基本介绍: 本节主要参考英伟达官网（ https://developer.nvidia.com/nccl ）关于 NCCL 的介绍，NCCL 是英伟达为实现 GPU 和 GPU..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/_images/social_previews/summary_02StorComm04CommLibrary_04NCCLIntro_7febc0b5.png" />
+<meta property="og:image" content="/_images/social_previews/summary_02StorComm04CommLibrary_04NCCLIntro_b6b8f0de.png" />
 <meta property="og:image:alt" content="Author by: 刘军 在使用 GPU/NPU 进行大模型训练或推理时，因为模型太大所以需要使用多张卡组成集群，此时多卡之间的通信离不开 NCCL 通信库，本节主要介绍 NCCL 的通讯架构和工作原理。 NCCL 基本介绍: 本节主要参考英伟达官网（ https://developer.nvidia.com/..." />
-<meta name="description" content="Author by: 刘军 在使用 GPU/NPU 进行大模型训练或推理时，因为模型太大所以需要使用多张卡组成集群，此时多卡之间的通信离不开 NCCL 通信库，本节主要介绍 NCCL 的通讯架构和工作原理。 NCCL 基本介绍: 本节主要参考英伟达官网（ https://developer.nvidia.com/nccl ）关于 NCCL 的介绍，NCCL是英伟达为实现 GPU 和 GPU ..." />
+<meta name="description" content="Author by: 刘军 在使用 GPU/NPU 进行大模型训练或推理时，因为模型太大所以需要使用多张卡组成集群，此时多卡之间的通信离不开 NCCL 通信库，本节主要介绍 NCCL 的通讯架构和工作原理。 NCCL 基本介绍: 本节主要参考英伟达官网（ https://developer.nvidia.com/nccl ）关于 NCCL 的介绍，NCCL 是英伟达为实现 GPU 和 GPU..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>NCCL基本介绍 &#8212; AIInfra</title>
+    <title>NCCL 基本介绍 &#8212; AIInfra</title>
   
   
   
@@ -41,7 +41,7 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
@@ -278,7 +278,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">集合通信库</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01MPIIntro.html">MPI 通信与通信库</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02XCCL.html">XCCL 通信库</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">NCCL基本介绍</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">NCCL 基本介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05NCCLAPI.html">NCCL API 解读</a></li>
 </ul>
 </details></li>
@@ -326,7 +326,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行1F1B/1F1B Interleaved原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行 1F1B/1F1B Interleaved 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -350,12 +350,12 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA变体算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -409,10 +409,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
@@ -427,14 +427,14 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV 架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -826,7 +826,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>NCCL基本介绍</h1>
+    <h1>NCCL 基本介绍</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -858,7 +858,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">节点间通信</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cuda">CUDA执行核心</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cuda">CUDA 执行核心</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">数据发送和接收</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">通信协议对比与使用</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">小结</a></li>
@@ -876,14 +876,14 @@ document.write(`
                 <article class="bd-article">
                   
 <section class="tex2jax_ignore mathjax_ignore" id="nccl">
-<h1>NCCL基本介绍<a class="headerlink" href="#nccl" title="Link to this heading">#</a></h1>
+<h1>NCCL 基本介绍<a class="headerlink" href="#nccl" title="Link to this heading">#</a></h1>
 <p>Author by: 刘军</p>
 <p>在使用 GPU/NPU 进行大模型训练或推理时，因为模型太大所以需要使用多张卡组成集群，此时多卡之间的通信离不开 NCCL 通信库，本节主要介绍 NCCL 的通讯架构和工作原理。</p>
 <section id="id1">
 <h2>NCCL 基本介绍<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>本节主要参考英伟达官网（<a class="reference external" href="https://developer.nvidia.com/nccl%EF%BC%8C">https://developer.nvidia.com/nccl</a>）关于 NCCL 的介绍，NCCL是英伟达为实现 GPU 和 GPU 之间互联通信的集合通信库，提供相关协议和 API 接口。相关代码实现在 Github（<a class="github reference external" href="https://github.com/NVIDIA/nccl">NVIDIA/nccl</a>）开源，同时提供相关性能测试参考。</p>
+<p>本节主要参考英伟达官网（<a class="reference external" href="https://developer.nvidia.com/nccl%EF%BC%8C">https://developer.nvidia.com/nccl</a>）关于 NCCL 的介绍，NCCL 是英伟达为实现 GPU 和 GPU 之间互联通信的集合通信库，提供相关协议和 API 接口。相关代码实现在 Github（<a class="github reference external" href="https://github.com/NVIDIA/nccl">NVIDIA/nccl</a>）开源，同时提供相关性能测试参考。</p>
 <p><img alt="NCCL 开源" src="../_images/04NCCLIntro01.png" /></p>
-<p>在整个深度学习软件栈中，最底层的是英伟达 GPU 相关硬件组成的多卡集群，中间层是 CUDA，更上层是基于CUDA 实现的 NCCL，CUDNN 和 CUBLAS 等相关库，最上层就是 Tensorflow，PyTorch 等各种深度学习框架。</p>
+<p>在整个深度学习软件栈中，最底层的是英伟达 GPU 相关硬件组成的多卡集群，中间层是 CUDA，更上层是基于 CUDA 实现的 NCCL，CUDNN 和 CUBLAS 等相关库，最上层就是 Tensorflow，PyTorch 等各种深度学习框架。</p>
 <p><img alt="CUDA 软件栈" src="../_images/04NCCLIntro02.png" /></p>
 <section id="id2">
 <h3>神经网络训练流程<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
@@ -897,14 +897,14 @@ document.write(`
 </ul>
 <p><img alt="单张 GPU 神经网络训练" src="../_images/04NCCLIntro03.png" /></p>
 <p>在使用多 GPU 进行数据并行训练时核心思想是复制相同的模型到多个 GPU 上，每个 GPU 处理不同的数据子集（Batch），然后聚合所有 GPU 计算出的梯度，并用聚合后的梯度更新所有 GPU 上的模型副本，确保所有副本始终保持一致。全局 Batch Size 是单卡 Batch Size 乘以 GPU 数量，例如，4 个 GPU，单卡 Batch Size=32，则全局 Batch Size=128。这些子 Batch 被分发到各个参与训练的 Local GPU（本地 GPU）的显存中。每个 GPU 获得一个互不重叠的子 Batch，每个 GPU 上的模型副本（Model Replica）具有完全相同的初始参数，独立地进行前向传播计算。每个 GPU 独立计算出损失值相对于其本地模型副本所有参数的本地梯度（Local Gradients），这些梯度存储在各自 GPU 的显存中。</p>
-<p>为了计算能代表整个全局 Batch（128个样本）的梯度，需要聚合所有 GPU 上计算出的本地梯度（每个只基于32个样本），这是数据并行中最核心的通信步骤。使用高性能通信库 NCCL 执行 Allreduce 操作（通常使用 SUM 或 AVERAGE 操作）。经过 Allreduce (+ Averaging) 操作后，所有 Local GPU 上存储的每个参数的梯度值都变得完全相同，且代表了整个全局 Batch 的平均梯度信息，这一步确保了模型更新的梯度在所有副本上是一致的。</p>
+<p>为了计算能代表整个全局 Batch（128 个样本）的梯度，需要聚合所有 GPU 上计算出的本地梯度（每个只基于 32 个样本），这是数据并行中最核心的通信步骤。使用高性能通信库 NCCL 执行 Allreduce 操作（通常使用 SUM 或 AVERAGE 操作）。经过 Allreduce (+ Averaging) 操作后，所有 Local GPU 上存储的每个参数的梯度值都变得完全相同，且代表了整个全局 Batch 的平均梯度信息，这一步确保了模型更新的梯度在所有副本上是一致的。</p>
 <p>然后进行本地参数更新，由于每个 Local GPU 现在拥有相同的、基于全局 Batch 的平均梯度。经过一次迭代后，多 GPU 训练更新的模型参数与在单个超大 GPU 上使用全局 Batch 进行一次训练更新的结果是等效的，然后循环迭代。</p>
 <p><img alt="多张 GPU 神经网络训练" src="../_images/04NCCLIntro04.png" /></p>
 </section>
 <section id="id3">
 <h3>节点内和节点间通信<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>在使用多 GPU 进行数据并行训练时，使用 NCCL Allreduce (通常 Sum + Average) 将所有 GPU 的本地梯度聚合为全局平均梯度，并确保每个 GPU 都获得一份相同的副本。大小相同的子 Batch 能确保每个 GPU 的计算负载相对均衡，避免某些 GPU 等待其他 GPU 完成计算（负载不均衡），可以最大限度地利用所有 GPU 的算力。</p>
-<p>NCCL 通过三大硬件协调通信过程，其中GPU负责执行 Reduce 操作并在缓冲区之间迁移数据；CPU 负责启动计算 Kernel 及 Host 端的协调管理；NIC 网卡承担跨节点数据包传输任务。</p>
+<p>NCCL 通过三大硬件协调通信过程，其中 GPU 负责执行 Reduce 操作并在缓冲区之间迁移数据；CPU 负责启动计算 Kernel 及 Host 端的协调管理；NIC 网卡承担跨节点数据包传输任务。</p>
 <section id="id4">
 <h4>节点内数据传输<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
 <p>NCCL 采用层次化架构来实现节点内通信，优先选择同一物理机内 GPU 间延迟最低、带宽最高的传输路径。该策略深度依赖 NVIDIA 的 GPUDirect P2P 技术，使 GPU 能够直接访问彼此的显存，不需要通过 CPU 系统内存进行中转。</p>
@@ -915,14 +915,14 @@ document.write(`
 <p>NCCL 根据可用硬件在两种主要网络传输协议之间进行选择，首先是基于套接字的通信，当 NIC 不支持 RDMA 时，NCCL 采用套接字传输，在此模式下，中间缓冲区被分配为 Host 内存中的 CUDA 固定内存。</p>
 <p>针对 IB 或 RoCE 等高性能网络，NCCL 采用传输方案利用 RDMA 技术，在最小化 CPU 干预的情况下实现节点间的直接数据传输。与套接字传输类似，所有传输均通过中间缓冲区进行中转，但该缓冲区的具体位置取决于硬件支持及配置参数。</p>
 <p><img alt="节点间数据传输" src="../_images/04NCCLIntro06.png" /></p>
-<p>实际 GPU 和 GPU 进行通信的目的是同步神经网络模型里面的参数，同步的过程可以分为节点内（Intra-node）使用NVLink/PCI 通信和节点之间（Inter-node）使用 Sockets/RDMA 进行通信，一般来说通信的带宽和效率，节点内会高于节点之间。</p>
+<p>实际 GPU 和 GPU 进行通信的目的是同步神经网络模型里面的参数，同步的过程可以分为节点内（Intra-node）使用 NVLink/PCI 通信和节点之间（Inter-node）使用 Sockets/RDMA 进行通信，一般来说通信的带宽和效率，节点内会高于节点之间。</p>
 <p><img alt="节点内/间数据传输带宽比较" src="../_images/04NCCLIntro07.png" /></p>
 </section>
 </section>
 </section>
 <section id="id6">
 <h2>初始化过程<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
-<p>NCCL 用于在多个 GPU 之间进行高效的通信，在开始集合通信（如AllReduce、Broadcast等）之前，NCCL必须初始化并建立通信所需的连接。NCCL 提供了相关 API，接下来解释相关 API 是如何定义和工作的。</p>
+<p>NCCL 用于在多个 GPU 之间进行高效的通信，在开始集合通信（如 AllReduce、Broadcast 等）之前，NCCL 必须初始化并建立通信所需的连接。NCCL 提供了相关 API，接下来解释相关 API 是如何定义和工作的。</p>
 <section id="id7">
 <h3>建立通信所需的连接<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
 <p>初始化的执行过程主要分为 worker0 和 workers，worker0 可以看作是一个父节点或者父线程，首先初始化一个具体的 id 来声明自己是一个主线程，然后通知通信域中的所有其它 rank，其它并行的线程在感知或接受主线程的 id 之后会进行初始化去获取它相关的 IP，在拿到对应的 IP 信息之后开始真正去执行对应的 All-reduce 完成集合通信的操作。</p>
@@ -932,16 +932,16 @@ document.write(`
 </section>
 <section id="bootstrap">
 <h3>Bootstrap 代码实例<a class="headerlink" href="#bootstrap" title="Link to this heading">#</a></h3>
-<p>NCCL Bootstrap 过程是这一初始化的关键部分，目标是让所有参与通信的进程（每个进程通常对应一个GPU）相互发现并建立连接。这个过程通常包括以下步骤：</p>
-<p>1.<strong>启动参数</strong>：每个进程在启动时知道自己的信息（如本地IP地址、端口号、rank等）以及一个共同的“引导信息”，这个信息通常包括一个或多个根进程的地址，用于协调发现过程。</p>
+<p>NCCL Bootstrap 过程是这一初始化的关键部分，目标是让所有参与通信的进程（每个进程通常对应一个 GPU）相互发现并建立连接。这个过程通常包括以下步骤：</p>
+<p>1.<strong>启动参数</strong>：每个进程在启动时知道自己的信息（如本地 IP 地址、端口号、rank 等）以及一个共同的“引导信息”，这个信息通常包括一个或多个根进程的地址，用于协调发现过程。</p>
 <p>2.<strong>建立初始连接</strong>：在 NCCL 中，通常使用一个或多个“引导服务器”或指定一个进程作为根（root）来协调。每个进程首先连接到这个根进程，并交换自己的网络地址信息。</p>
-<p>3.<strong>信息交换</strong>：根进程收集所有进程的信息（如IP地址、端口号、rank等），然后将这些信息广播给所有进程。这样每个进程就知道了所有其他进程的网络位置。</p>
+<p>3.<strong>信息交换</strong>：根进程收集所有进程的信息（如 IP 地址、端口号、rank 等），然后将这些信息广播给所有进程。这样每个进程就知道了所有其他进程的网络位置。</p>
 <p>4.<strong>建立对等连接</strong>：每个进程使用获取到的信息与其他进程直接建立连接，这些连接将用于后续的集合通信操作。</p>
 <p>5.<strong>握手与验证</strong>：建立连接后，进程之间会进行握手，验证彼此的身份，并协商通信参数（如协议、缓冲区大小等）。</p>
-<p>在 NCCL 中，这个 Bootstrap 过程通常是通过一个名为 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code>或 <code class="docutils literal notranslate"><span class="pre">ncclCommInitAll</span></code>的API函数触发的。在底层，NCCL 使用套接字（sockets）进行初始的通信，然后可能会切换到更高效的传输方式（如InfiniBand Verbs，或者通过 NVLink 进行 GPU Direct 通信）。</p>
+<p>在 NCCL 中，这个 Bootstrap 过程通常是通过一个名为 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code>或 <code class="docutils literal notranslate"><span class="pre">ncclCommInitAll</span></code>的 API 函数触发的。在底层，NCCL 使用套接字（sockets）进行初始的通信，然后可能会切换到更高效的传输方式（如 InfiniBand Verbs，或者通过 NVLink 进行 GPU Direct 通信）。</p>
 <p>值得注意的是，NCCL 的 Bootstrap 过程需要确保所有进程能够相互通信，因此网络配置必须允许这些进程之间的连接。下面是一个简化的代码示例，展示如何使用 NCCL 进行初始化（包括 Bootstrap 过程）：</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="cpf">&lt;nccl.h&gt;</span>
-<span class="cp">#include</span><span class="cpf">&lt;mpi.h&gt;</span><span class="c1"> // 假设使用MPI来启动多个进程</span>
+<span class="cp">#include</span><span class="cpf">&lt;mpi.h&gt;</span><span class="c1"> // 假设使用 MPI 来启动多个进程</span>
 
 <span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">intargc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="n">argv</span><span class="p">[])</span><span class="w"> </span><span class="p">{</span>
 <span class="w">  </span><span class="n">MPI_Init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">argv</span><span class="p">);</span>
@@ -953,7 +953,7 @@ document.write(`
 <span class="w">  </span><span class="n">ncclUniqueId</span><span class="w"> </span><span class="n">id</span><span class="p">;</span>
 
 <span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">world_rank</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">ncclGetUniqueId</span><span class="p">(</span><span class="o">&amp;</span><span class="n">id</span><span class="p">);</span><span class="w"> </span><span class="c1">// 根进程生成唯一的ID</span>
+<span class="w">    </span><span class="n">ncclGetUniqueId</span><span class="p">(</span><span class="o">&amp;</span><span class="n">id</span><span class="p">);</span><span class="w"> </span><span class="c1">// 根进程生成唯一的 ID</span>
 <span class="w">  </span><span class="p">}</span>
 
 <span class="w">  </span><span class="n">MPI_Bcast</span><span class="p">(</span><span class="o">&amp;</span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">id</span><span class="p">),</span><span class="w"> </span><span class="n">MPI_BYTE</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">MPI_COMM_WORLD</span><span class="p">);</span><span class="w"> </span><span class="c1">// 广播给所有进程</span>
@@ -961,9 +961,9 @@ document.write(`
 <span class="w">  </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">;</span>
 <span class="w">  </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">;</span>
 <span class="w">  </span><span class="n">cudaStreamCreate</span><span class="p">(</span><span class="o">&amp;</span><span class="n">stream</span><span class="p">);</span>
-<span class="w">  </span><span class="n">ncclCommInitRank</span><span class="p">(</span><span class="o">&amp;</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">world_size</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">world_rank</span><span class="p">);</span><span class="w"> </span><span class="c1">// 初始化NCCL通信器</span>
+<span class="w">  </span><span class="n">ncclCommInitRank</span><span class="p">(</span><span class="o">&amp;</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">world_size</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">world_rank</span><span class="p">);</span><span class="w"> </span><span class="c1">// 初始化 NCCL 通信器</span>
 
-<span class="w">  </span><span class="c1">// ... 使用NCCL进行集合通信 ...</span>
+<span class="w">  </span><span class="c1">// ... 使用 NCCL 进行集合通信 ...</span>
 <span class="w">  </span><span class="n">ncclCommDestroy</span><span class="p">(</span><span class="n">comm</span><span class="p">);</span>
 <span class="w">  </span><span class="n">cudaStreamDestroy</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
 <span class="w">  </span><span class="n">MPI_Finalize</span><span class="p">();</span>
@@ -972,14 +972,14 @@ document.write(`
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>在这个例子中使用 MPI 来启动多个进程。根进程（rank 0）调用 <code class="docutils literal notranslate"><span class="pre">ncclGetUniqueId</span></code>生成一个唯一的 ID，然后通过 MPI 广播给所有进程。每个进程（包括根进程）调用 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code>，传入这个 ID、总的进程数和自己的 rank。在 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code>函数内部，NCCL 执行了 Bootstrap 过程：每个进程尝试连接到根进程（通过ID中包含的地址信息），交换各自的地址信息，然后建立相互之间的连接。</p>
+<p>在这个例子中使用 MPI 来启动多个进程。根进程（rank 0）调用 <code class="docutils literal notranslate"><span class="pre">ncclGetUniqueId</span></code>生成一个唯一的 ID，然后通过 MPI 广播给所有进程。每个进程（包括根进程）调用 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code>，传入这个 ID、总的进程数和自己的 rank。在 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code>函数内部，NCCL 执行了 Bootstrap 过程：每个进程尝试连接到根进程（通过 ID 中包含的地址信息），交换各自的地址信息，然后建立相互之间的连接。</p>
 <p>需要注意的是，这个例子使用了 MPI 来广播 NCCL 的唯一 ID，但实际上，NCCL 并不依赖 MPI。任何能够将唯一 ID 从根进程传递到其他进程的方法都可以使用。</p>
-<p>NCCL 的 Bootstrap 过程是一个关键步骤，它使得所有参与通信的进程能够相互发现并建立连接，为后续的集合通信做好准备。这个过程依赖于一个共同的引导信息（唯一ID）和初始的根进程来协调信息的交换。</p>
+<p>NCCL 的 Bootstrap 过程是一个关键步骤，它使得所有参与通信的进程能够相互发现并建立连接，为后续的集合通信做好准备。这个过程依赖于一个共同的引导信息（唯一 ID）和初始的根进程来协调信息的交换。</p>
 </section>
 </section>
 <section id="id8">
 <h2>通信架构<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
-<p>在使用 NCCL 进行多 GPU 或多节点通信时，高性能计算和分布式计算中常见的通信初始化流程主要包括拓扑检测、图搜索，图连接和Kernel 执行，在完成 Bootstrap 初始化之后，主要分为 4 步来进行通信：</p>
+<p>在使用 NCCL 进行多 GPU 或多节点通信时，高性能计算和分布式计算中常见的通信初始化流程主要包括拓扑检测、图搜索，图连接和 Kernel 执行，在完成 Bootstrap 初始化之后，主要分为 4 步来进行通信：</p>
 <ul class="simple">
 <li><p>拓扑检测（Topology Detection）：首先 NCCL 会感知具体的物理拓扑，比如 GPU 之间的通信、CPU 之间的通信，使用 NVLink 或者 NVSwitch 通信；</p></li>
 <li><p>图搜索（Graph Search）：在获得了具体的拓朴信息之后，会进一步检索查找到拓扑关系中具体的环或者树结构；</p></li>
@@ -994,8 +994,8 @@ document.write(`
 </section>
 <section id="id10">
 <h3>图搜索<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
-<p>在拓扑检测完成后，NCCL 会根据检测到的拓扑信息进行图搜索，以确定最优的通信结构。NCCL 会尝试在拓扑图中找到环（Ring）或树（Tree）结构。这些结构是集合通信（如AllReduce、Broadcast等）的常用拓扑形式。</p>
-<p>在环结构中，每个节点（GPU或CPU）都与两个相邻节点相连，形成一个闭环。这种结构适用于某些类型的集合通信，例如环形 AllReduce。在树结构中，节点以层次化的方式连接，通常有一个根节点，其他节点通过分支连接。树结构适用于广播（Broadcast）和归约（Reduce）等操作。</p>
+<p>在拓扑检测完成后，NCCL 会根据检测到的拓扑信息进行图搜索，以确定最优的通信结构。NCCL 会尝试在拓扑图中找到环（Ring）或树（Tree）结构。这些结构是集合通信（如 AllReduce、Broadcast 等）的常用拓扑形式。</p>
+<p>在环结构中，每个节点（GPU 或 CPU）都与两个相邻节点相连，形成一个闭环。这种结构适用于某些类型的集合通信，例如环形 AllReduce。在树结构中，节点以层次化的方式连接，通常有一个根节点，其他节点通过分支连接。树结构适用于广播（Broadcast）和归约（Reduce）等操作。</p>
 <p>NCCL 会根据拓扑检测阶段收集的性能数据，选择最优的通信结构。例如，如果某些 GPU 之间的 NVLink 连接具有高带宽和低延迟，NCCL 可能会优先选择这些连接来构建通信结构。</p>
 <p><img alt="拓扑检测和图搜索过程" src="../_images/04NCCLIntro11.png" /></p>
 </section>
@@ -1008,7 +1008,7 @@ document.write(`
 </section>
 <section id="kernel">
 <h3>Kernel 执行<a class="headerlink" href="#kernel" title="Link to this heading">#</a></h3>
-<p>最后一步是 Kernel 执行，即在构建好的通信图上执行具体的集合通信操作。NCCL 会通过 CUDA API 调用 GPU 上的Kernel 来执行通信操作。这些 Kernel 是预先编写好的，用于实现各种集合通信算法，例如 AllReduce、Broadcast、Reduce 等。</p>
+<p>最后一步是 Kernel 执行，即在构建好的通信图上执行具体的集合通信操作。NCCL 会通过 CUDA API 调用 GPU 上的 Kernel 来执行通信操作。这些 Kernel 是预先编写好的，用于实现各种集合通信算法，例如 AllReduce、Broadcast、Reduce 等。</p>
 <p>在 Kernel 执行过程中，数据会在节点之间传输。NCCL 会确保数据传输的正确性和同步性。例如，在 AllReduce 操作中，每个节点会将自己的数据发送给其他节点，并接收其他节点的数据，最终每个节点都获得全局聚合的结果。NCCL 在 Kernel 执行阶段还会进行一些性能优化，它会根据通信图的拓扑结构和节点之间的连接性能，动态调整数据传输的顺序和方式，以提高通信效率。</p>
 <p>上面四个步骤共同构成了 NCCL 在多 GPU 或多节点环境中的通信初始化和执行流程。拓扑检测提供了硬件连接信息，图搜索确定了最优的通信结构，图连接将通信关系具体化，而 Kernel 执行则实现了具体的通信操作。通过这一系列步骤，NCCL 能够高效地完成大规模并行计算中的集合通信任务。</p>
 <p><img alt="Kernel 执行过程" src="../_images/04NCCLIntro13.png" /></p>
@@ -1018,13 +1018,13 @@ document.write(`
 <h2>节点间通信<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
 <p>在节点之间通信，首先需要明确多 GPU 节点和交换机之间的连接方式，英伟达采用了多轨的连接方式，比如不同节点上的 GPU 连接到同一个交换机上。当假设通过 NIC 网口可以在节点间进行高效通信，那么具体的连接方式就是对每个节点的 Rings 进行相互连接。</p>
 <p><img alt="节点间通信" src="../_images/04NCCLIntro14.png" /></p>
-<p>节点之间通信采用环（Rings）和树（Trees）两种方式，当采用环的通信方式时会把不同GPU组成一个具体的环连接，采用树的通信方式则是把不同节点组成一个子树图，节点内通过多块 NIC 网卡聚合带宽，实际的节点之间通信取决于物理拓扑的感知结果。</p>
+<p>节点之间通信采用环（Rings）和树（Trees）两种方式，当采用环的通信方式时会把不同 GPU 组成一个具体的环连接，采用树的通信方式则是把不同节点组成一个子树图，节点内通过多块 NIC 网卡聚合带宽，实际的节点之间通信取决于物理拓扑的感知结果。</p>
 <p><img alt="节点间通信需要考虑实际的物理拓扑" src="../_images/04NCCLIntro15.png" /></p>
 <p>当节点规模很大的时候，节点间通信采用双二叉树（Dual binary tree）进行建图和通信，此时两棵树二叉树有两种模式，两棵互补二叉树，每一棵树处理一半的数据，充分利用网络带宽，可以最大化局部通信。</p>
 <p><img alt="双二叉树建立图和通信" src="../_images/04NCCLIntro16.png" /></p>
 </section>
 <section id="cuda">
-<h2>CUDA执行核心<a class="headerlink" href="#cuda" title="Link to this heading">#</a></h2>
+<h2>CUDA 执行核心<a class="headerlink" href="#cuda" title="Link to this heading">#</a></h2>
 <p>GPU 核心内通过 GPU 内 FIFO 队列从其他 GPU 中接收和发送数据，同时使用本地和远程缓冲区执行 reductions 和 copy 操作，相关操作结束之后再通过 FIFO 输出到下一个 GPU 中。</p>
 <p><img alt="节点内 CUDA 执行" src="../_images/04NCCLIntro17.png" /></p>
 <p>GPU0 和 GPU1 之间可能通过 NVLink 或者 NVSwitch 进行连接，当发生跨节点时就需要通过交换机并使用 Sockets 或者 Infiniband 网络从一个节点的 CPU 发送一个代理的线程到另一个节点的 CPU。</p>
@@ -1060,14 +1060,14 @@ document.write(`
 </tr>
 <tr class="row-odd"><td><p><strong>同步机制</strong></p></td>
 <td><p>内存屏障（高开销）</p></td>
-<td><p>轻量级标志同步（4B数据+4B标志）</p></td>
-<td><p>轻量级标志同步（120B数据+8B标志）</p></td>
+<td><p>轻量级标志同步（4B 数据+4B 标志）</p></td>
+<td><p>轻量级标志同步（120B 数据+8B 标志）</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><strong>传输单元</strong></p></td>
 <td><p>大块数据</p></td>
-<td><p>8字节原子操作（含数据+标志）</p></td>
-<td><p>128字节原子操作（含数据+标志）</p></td>
+<td><p>8 字节原子操作（含数据+标志）</p></td>
+<td><p>128 字节原子操作（含数据+标志）</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>关键优势</strong></p></td>
@@ -1078,12 +1078,12 @@ document.write(`
 </tr>
 <tr class="row-even"><td><p><strong>核心限制</strong></p></td>
 <td><p>小消息<strong>延迟高</strong>（屏障开销主导）</p></td>
-<td><p><strong>带宽严重受限</strong>（峰值25-50%）   • 禁用 GPUDirect RDMA   • 中间缓冲强制位于主机内存</p></td>
-<td><p><strong>依赖硬件支持</strong>   • 需128字节原子写   • 跨节点流水线受限</p></td>
-<td><p>• 受 <code class="docutils literal notranslate"><span class="pre">NCCL_PROTO</span></code> 设置、系统拓扑、GPU架构约束   • NCCL 自动调优</p></td>
+<td><p><strong>带宽严重受限</strong>（峰值 25-50%）   • 禁用 GPUDirect RDMA   • 中间缓冲强制位于主机内存</p></td>
+<td><p><strong>依赖硬件支持</strong>   • 需 128 字节原子写   • 跨节点流水线受限</p></td>
+<td><p>• 受 <code class="docutils literal notranslate"><span class="pre">NCCL_PROTO</span></code> 设置、系统拓扑、GPU 架构约束   • NCCL 自动调优</p></td>
 </tr>
 <tr class="row-odd"><td><p><strong>适用场景</strong></p></td>
-<td><p>大规模数据并行（如AI训练）</p></td>
+<td><p>大规模数据并行（如 AI 训练）</p></td>
 <td><p>延迟敏感型小消息（如参数同步）</p></td>
 <td><p>需平衡延迟与带宽的中小消息</p></td>
 <td><p></p></td>
@@ -1106,9 +1106,9 @@ document.write(`
 <p>在单张和多张 GPU 卡上进行神经网络训练的基本过程中需要使用 NCCL 集合通信实现数据并行，梯度聚合确保每个 GPU 都获得一份相同的副本，同时大小相同的子 Batch 能确保每个 GPU 的计算负载相对均衡，避免某些 GPU 等待其他 GPU 完成计算（负载不均衡），可以最大限度地利用所有 GPU 的算力。</p>
 <p>节点内数据传输优先选择同一物理机内 GPU 间延迟最低、带宽最高的传输路径。该策略深度依赖 NVIDIA 的 GPUDirect P2P 技术，使 GPU 能够直接访问彼此的显存，不需要通过 CPU 系统内存进行中转。</p>
 <p>在进行节点间数据传输时，NCCL 根据可用硬件在两种主要网络传输协议之间进行选择，首先是基于套接字的通信，当 NIC 不支持 RDMA 时，NCCL 采用套接字传输，针对 IB 或 RoCE 等高性能网络，NCCL 采用传输方案利用 RDMA 技术。一般来说节点内通信的带宽和效率会高于节点之间的通信。</p>
-<p>NCCL Bootstrap 过程是初始化的关键部分，目标是让所有参与通信的进程（每个进程通常对应一个GPU）相互发现并建立连接，为后续的集合通信做好准备。</p>
-<p>在使用 NCCL 进行多 GPU 或多节点通信时，拓扑检测提供了硬件连接信息，图搜索确定了最优的通信结构，图连接将通信关系具体化，而Kernel执行则实现了具体的通信操作。通过这一系列步骤，NCCL 能够高效地完成大规模并行计算中的集合通信任务。</p>
-<p>NCCL 使用LL、LL128 和 Simple 3 种不同的通信协议，分别具有不同延迟（1us，2us 和 ~6us），不同带宽（50%、95% 和 100%）以及其他影响其性能的差异。时延越长带宽越高，时延越高带宽越长，不同协议在带宽和延迟之间做出了不同的权衡 。与此同时不同节点通信拓扑结构，比如通信方式采用环或者树相关算法，很大程度上也会影响通信带宽。</p>
+<p>NCCL Bootstrap 过程是初始化的关键部分，目标是让所有参与通信的进程（每个进程通常对应一个 GPU）相互发现并建立连接，为后续的集合通信做好准备。</p>
+<p>在使用 NCCL 进行多 GPU 或多节点通信时，拓扑检测提供了硬件连接信息，图搜索确定了最优的通信结构，图连接将通信关系具体化，而 Kernel 执行则实现了具体的通信操作。通过这一系列步骤，NCCL 能够高效地完成大规模并行计算中的集合通信任务。</p>
+<p>NCCL 使用 LL、LL128 和 Simple 3 种不同的通信协议，分别具有不同延迟（1us，2us 和 ~6us），不同带宽（50%、95% 和 100%）以及其他影响其性能的差异。时延越长带宽越高，时延越高带宽越长，不同协议在带宽和延迟之间做出了不同的权衡 。与此同时不同节点通信拓扑结构，比如通信方式采用环或者树相关算法，很大程度上也会影响通信带宽。</p>
 </section>
 <section id="id16">
 <h2>内容参考<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
@@ -1213,7 +1213,7 @@ document.write(`
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">节点间通信</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cuda">CUDA执行核心</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cuda">CUDA 执行核心</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">数据发送和接收</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">通信协议对比与使用</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">小结</a></li>

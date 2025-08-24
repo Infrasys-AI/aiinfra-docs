@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="05Infer04LongInfer/02RingAttention.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式版..." />
+<meta property="og:description" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/_images/social_previews/summary_05Infer04LongInfer_02RingAttention_a4c39aba.png" />
-<meta property="og:image:alt" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention除了对 Attention 进行多卡分块计算，还将 F..." />
-<meta name="description" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式版..." />
+<meta property="og:image" content="/_images/social_previews/summary_05Infer04LongInfer_02RingAttention_6e729913.png" />
+<meta property="og:image:alt" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将..." />
+<meta name="description" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>Ring Attention &#8212; AIInfra</title>
@@ -41,7 +41,7 @@
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
-    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
@@ -280,7 +280,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
 </ul>
 </details></li>
@@ -328,7 +328,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行1F1B/1F1B Interleaved原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行 1F1B/1F1B Interleaved 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -352,12 +352,12 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA变体算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -411,10 +411,10 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
@@ -429,14 +429,14 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV 架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -862,7 +862,7 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="ring-attention">
 <h1>Ring Attention<a class="headerlink" href="#ring-attention" title="Link to this heading">#</a></h1>
 <p>Author by: 付溦崴</p>
-<p>Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 <span class="math notranslate nohighlight">\(Q\)</span>、<span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 <span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵 block，达到更新注意力输出的目的。Ring Attention除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式版本的 BPT（Blockwisew Parallel Transformers），可以简单地将两者与 Flash Attention2 的关系理解为：Flash Attention2-&gt;BPT(Flash Attention2 + 分块 MLP)-&gt;Ring Attention(分布式版本的 BPT)。</p>
+<p>Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 <span class="math notranslate nohighlight">\(Q\)</span>、<span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 <span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式版本的 BPT（Blockwisew Parallel Transformers），可以简单地将两者与 Flash Attention2 的关系理解为：Flash Attention2-&gt;BPT(Flash Attention2 + 分块 MLP)-&gt;Ring Attention(分布式版本的 BPT)。</p>
 <section id="attention">
 <h2>Attention 分块计算<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
 <p>我们假设 <span class="math notranslate nohighlight">\(Q\)</span>、<span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵的尺寸均为（N，d），其中 N=seq_len，d=hidden_size，为简单起见，我们将序列切分为 4 个 chunk（假设我们有 4 张卡，每张卡负责一个 chunk），每个 chunk 大小为（C，d），如下图所示：
@@ -884,8 +884,8 @@ document.write(`
 <img alt="" src="../_images/02RingAttention03.jpg" /></p>
 <ul class="simple">
 <li><p>首先将 <span class="math notranslate nohighlight">\(Q\)</span> 分块放置到每张 GPU 内，各卡上的 <span class="math notranslate nohighlight">\(Q\)</span> 分块不变；</p></li>
-<li><p>接着，每块卡上只放一块 <span class="math notranslate nohighlight">\((K，V)\)</span> 对。也就是每次计算时，哪个 <span class="math notranslate nohighlight">\((K，V)\)</span> 对需要被这块卡用到，哪个 <span class="math notranslate nohighlight">\((K，V)\)</span> 对就在这块卡上放着。初始化的状态如图iter0所示；</p></li>
-<li><p>接着，在每块卡使用当前 <span class="math notranslate nohighlight">\((K，V)\)</span> 对做Attention计算时:</p>
+<li><p>接着，每块卡上只放一块 <span class="math notranslate nohighlight">\((K，V)\)</span> 对。也就是每次计算时，哪个 <span class="math notranslate nohighlight">\((K，V)\)</span> 对需要被这块卡用到，哪个 <span class="math notranslate nohighlight">\((K，V)\)</span> 对就在这块卡上放着。初始化的状态如图 iter0 所示；</p></li>
+<li><p>接着，在每块卡使用当前 <span class="math notranslate nohighlight">\((K，V)\)</span> 对做 Attention 计算时:</p>
 <ul>
 <li><p>接收来自前一块卡的 <span class="math notranslate nohighlight">\((K，V)\)</span> 对，并把自己当前维护的 <span class="math notranslate nohighlight">\((K，V)\)</span> 对发给下一张卡，形成一个环状通信拓扑</p></li>
 <li><p>例如，当 GPU0 正在使用 <span class="math notranslate nohighlight">\((K_0，V_0)\)</span> 进行计算时，它接收来自 GPU3 的 <span class="math notranslate nohighlight">\((K_3，V_3)\)</span> ，同时把自己的 <span class="math notranslate nohighlight">\((K_0，V_0)\)</span> 发送给 GPU1，其余卡也是类推。</p></li>
@@ -900,14 +900,14 @@ document.write(`
 </section>
 <section id="chunk-size">
 <h2>Chunk Size 设置<a class="headerlink" href="#chunk-size" title="Link to this heading">#</a></h2>
-<p>为了不影响效率，设置的原则是【传输时间 &lt;= 计算时间】，这样才可以让这部分开销被计算覆盖住，进而不影响整个系统的计算效率。而要做到这一点，就需要我们根据所使用的卡的配置，设计好最优的分块大小，也就是上图中所说的 C（chunk size），用于表示一个分块中包含多长的序列。为了表达简便，我们在做各种指标计算时忽略掉batch_size维度。</p>
+<p>为了不影响效率，设置的原则是【传输时间 &lt;= 计算时间】，这样才可以让这部分开销被计算覆盖住，进而不影响整个系统的计算效率。而要做到这一点，就需要我们根据所使用的卡的配置，设计好最优的分块大小，也就是上图中所说的 C（chunk size），用于表示一个分块中包含多长的序列。为了表达简便，我们在做各种指标计算时忽略掉 batch_size 维度。</p>
 <p>我们假设：</p>
 <ul class="simple">
-<li><p>硬件（例如单张 GPU）的算力上限是F，单位是 FLOPS 或者 FLOP/s。</p></li>
-<li><p>硬件的带宽上限是B，单位是Byte/s。</p></li>
+<li><p>硬件（例如单张 GPU）的算力上限是 F，单位是 FLOPS 或者 FLOP/s。</p></li>
+<li><p>硬件的带宽上限是 B，单位是 Byte/s。</p></li>
 </ul>
 <p>单卡在对每个 chunk 进行计算的时候，计算 Attention score 的计算量为 <span class="math notranslate nohighlight">\(2dC^2\)</span> FLOPs，Attention score 与 <span class="math notranslate nohighlight">\(V\)</span> 矩阵相乘的计算量为 <span class="math notranslate nohighlight">\(2dC^2\)</span> FLOPs，因此 Attention score 的整体计算量为 <span class="math notranslate nohighlight">\(4dC^2\)</span> FLOPs。</p>
-<p>传输数据（<span class="math notranslate nohighlight">\(K\)</span>，<span class="math notranslate nohighlight">\(V\)</span>分块）的通信总量为 <span class="math notranslate nohighlight">\(4dC\)</span> bytes。根据【传输时间&lt;=计算时间】的基本要求，我们有：
+<p>传输数据（<span class="math notranslate nohighlight">\(K\)</span>，<span class="math notranslate nohighlight">\(V\)</span> 分块）的通信总量为 <span class="math notranslate nohighlight">\(4dC\)</span> bytes。根据【传输时间&lt;=计算时间】的基本要求，我们有：
 <span class="math notranslate nohighlight">\(\frac{4dC}{B} \leq \frac{4dC^2}{F}\)</span>，进一步可得：<span class="math notranslate nohighlight">\(C \geq \frac{F}{B}\)</span>，及我们根据硬件的算力和带宽得到的最优切块大小。</p>
 <p>上面的推导过程中没有考虑 <span class="math notranslate nohighlight">\(W_Q\)</span>，<span class="math notranslate nohighlight">\(W_K\)</span>，<span class="math notranslate nohighlight">\(W_V\)</span> 矩阵的映射的计算量，因此对 <span class="math notranslate nohighlight">\(C\)</span> 的要求也是更严格的，因为这意味着要求在 Attention Score 的计算量下完成通信，而不是在实际情况 Attention score + Projection 的计算量下完成通信。</p>
 </section>
@@ -919,7 +919,7 @@ document.write(`
 <h1>Hybrid Attention<a class="headerlink" href="#hybrid-attention" title="Link to this heading">#</a></h1>
 <p>参考链接：</p>
 <p><a class="reference external" href="https://arxiv.org/abs/2310.01889">Ring Attention with Blockwise Transformers for Near-Infinite Context</a></p>
-<p><a class="reference external" href="https://zhuanlan.zhihu.com/p/4963530231">图解大模型训练系列：序列并行3，Ring Attention</a></p>
+<p><a class="reference external" href="https://zhuanlan.zhihu.com/p/4963530231">图解大模型训练系列：序列并行 3，Ring Attention</a></p>
 </section>
 
     <script type="text/x-thebe-config">

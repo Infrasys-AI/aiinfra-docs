@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# MOE 前世今生
+# MOE 前世今生(DONE)
 
 Author by: 张晓天
 
@@ -10,7 +10,13 @@ Author by: 张晓天
 
 ![Moe 前世今生](../images/06AlgoData02MoE/02MOEHistory_01.png)
 
-1991 年 MoE 局部专家概念性想法被 "Adaptive Mixtures of Local Experts" 论文所提出，但 MoE 架构真正的理论基石是 1994 年的 "Hierarchical Mixtures of Experts and the EM Algorithm" 论文，它超越了 1991 年提出的概念性想法，将 MoE 建模为一个概率模型。2017 年的"Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer" 论文，首次将 MoE 应用于大规模神经网络，它提出了一种**可导的稀疏门控机制**，使得对于每个输入样本，**只激活 Top-K 个专家**（通常是 K=1 或 2）。这意味着计算成本不再随着专家数量线性增长（`O(n)`），而是几乎恒定（`O(1)`），只与激活的专家数有关。2020 年的“GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding”论文则首次将 MoE 技术系统地、成功地集成到 Transformer 架构中，并设计了高效的**分布式训练**方案，开启了 MoE 在 LLM 时代的主流应用。2021 年的“Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity” 论文，在 GShard 的基础上，进一步简化 MoE 架构、提出 K=1 路由等简化稳定技术，成功训练万亿模型，将效率和规模推向新高峰。2024 年的 “DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models” 论文采用 细粒度专家划分 和 共享专家机制，60 亿参数的 DeepSeekMoE 仅激活约 28 亿参数，计算量（74.4 TFLOPs）比同等规模的密集模型（如 Llama 2-7B）减少 60%，但性能相当甚至更优，成为开源 MoE 大模型的标杆之一。
+1991 年 MoE 局部专家概念性想法被 "Adaptive Mixtures of Local Experts" 论文所提出，但 MoE 架构真正的理论基石是 1994 年的 "Hierarchical Mixtures of Experts and the EM Algorithm" 论文，它超越了 1991 年提出的概念性想法，将 MoE 建模为一个概率模型。
+
+2017 年的"Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer" 论文，首次将 MoE 应用于大规模神经网络，它提出了一种**可导的稀疏门控机制**，使得对于每个输入样本，**只激活 Top-K 个专家**（通常是 K=1 或 2）。这意味着计算成本不再随着专家数量线性增长（`O(n)`），而是几乎恒定（`O(1)`），只与激活的专家数有关。
+
+2020 年的“GShard: Scaling Giant Models with Conditional Computation and Automatic Sharding”论文则首次将 MoE 技术系统地、成功地集成到 Transformer 架构中，并设计了高效的**分布式训练**方案，开启了 MoE 在 LLM 时代的主流应用。2021 年的“Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity” 论文，在 GShard 的基础上，进一步简化 MoE 架构、提出 K=1 路由等简化稳定技术，成功训练万亿模型，将效率和规模推向新高峰。
+
+2024 年的 “DeepSeekMoE: Towards Ultimate Expert Specialization in Mixture-of-Experts Language Models” 论文采用 细粒度专家划分 和 共享专家机制，60 亿参数的 DeepSeekMoE 仅激活约 28 亿参数，计算量（74.4 TFLOPs）比同等规模的密集模型（如 Llama 2-7B）减少 60%，但性能相当甚至更优，成为开源 MoE 大模型的标杆之一。
 
 ![Moe 前世今生](../images/06AlgoData02MoE/02MOEHistory_02.png)
 
@@ -142,14 +148,15 @@ $$
 
 传统神经网络面临一个根本性矛盾：模型容量与计算效率之间的权衡。增加网络参数可以提升模型表达能力，但同时会导致计算成本呈线性甚至超线性增长。2017 年前，即使最先进的 LSTM 模型也难以突破数十亿参数的规模。这是由于计算资源、内存瓶颈等限制。
 
-2017 年 1 月，Google 研究团队在论文 “Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer” 中提出了一种突破性的神经网络架构——稀疏门控混合专家层。混合专家层(MoE)由 N 个专家网络(Expert)和一个门控网络(Gate)组成。传统 MoE 的问题是计算成本仍随专家数量线性增长，稀疏门控混合专家层保留前 k 个最大值并将其余置为-∞，这实现了每个样本仅激活 k 个专家(k≪N)，输入自适应的专家选择，通过 softmax 保持可微性的特点。这一工作不仅创造了当时最大规模神经网络记录(1370 亿参数)，更开创了条件计算(Conditional Computation)在大规模语言模型中的应用先河。
+2017 年 1 月，Google 研究团队在论文 “Outrageously Large Neural Networks: The Sparsely-Gated Mixture-of-Experts Layer” 中提出了一种突破性的神经网络架构——稀疏门控混合专家层。混合专家层(MoE)由 N 个专家网络(Expert)和一个门控网络(Gate)组成。
+
+传统 MoE 的问题是计算成本仍随专家数量线性增长，稀疏门控混合专家层保留前 k 个最大值并将其余置为-∞，这实现了每个样本仅激活 k 个专家(k≪N)，输入自适应的专家选择，通过 softmax 保持可微性的特点。这一工作不仅创造了当时最大规模神经网络记录(1370 亿参数)，更开创了条件计算(Conditional Computation)在大规模语言模型中的应用先河。
 
 ![Moe 前世今生](../images/06AlgoData02MoE/02MOEHistory_07.png)
 
 ## Transformer 时代
 
 Google 在 2020-2022 年间实现了 MoE 技术的三大里程碑式突破：GShard 首次将 MoE 成功集成至 Transformer 架构并实现 6000 亿参数规模；Switch Transformer 通过简化路由策略突破万亿参数大关；ST-MoE 系统性地解决了训练稳定性与迁移学习难题。
-
 
 | 模型   | 发布时间 | 参数量 | 专家数  | 关键创新              |
 | ------ | -------- | ------ | ------- | --------------------- |
@@ -180,7 +187,7 @@ $$
 
 2022 年 2 月，Google 发布 ST-MoE，基于 encoder-decoder 结构 MoE，最大 269B，32B 激活参数。解决 MoE 模型在训练和微调中的不稳定性问题，并提升其迁移学习能力。ST-MoE 通过引入梯度裁剪、噪声注入、路由器限制缓解 MoE 模型的训练不稳定性问题；优化微调策略，使 ST-MoE 提升迁移学习能力，更好地适应下游任务，减少过拟合；
 
-```
+```python
 # 路由器特定裁剪
 router_grad_norm = torch.nn.utils.clip_grad_norm_(
     router.parameters(), 
@@ -259,11 +266,10 @@ $$
 
 ![Moe 前世今生](../images/06AlgoData02MoE/02MOEHistory_11.png)
 
-影响：
+对应的影响 you：
 
-◦低成本与高性能：DeepSeek MoE 架构创新和系统优化，实现百倍性价比提升，打破传统大模型依赖算力范式，为资源受限场景下 AI 应用提供新思路。
-
-◦开源与生态建设：DeepSeek MoE 开源版本在文本生成、代码编写和逻辑推理等任务中表现优异，推动了 MoE 技术普及和应用。
+- 低成本与高性能：DeepSeek MoE 架构创新和系统优化，实现百倍性价比提升，打破传统大模型依赖算力范式，为资源受限场景下 AI 应用提供新思路。
+- 开源与生态建设：DeepSeek MoE 开源版本在文本生成、代码编写和逻辑推理等任务中表现优异，推动了 MoE 技术普及和应用。
 
 从 GLaM 到 DeepSeek MoE 的技术演进，标志着混合专家架构进入**效率驱动**的新阶段。GLaM 证明了万亿参数模型的实际可行性，而 DeepSeek MoE 则通过专家共享和内存优化将技术民主化，使得资源受限的场景也能享受大模型的能力。未来随着算法创新与硬件协同设计的深入，MoE 有望成为 AGI 系统的核心架构范式，其发展值得持续关注。
 

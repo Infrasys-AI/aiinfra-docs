@@ -66,7 +66,7 @@ Volume（存储卷） 是用于在容器之间或容器重启后持久化数据�
 | **云厂商存储**                | 如 awsElasticBlockStore (AWS)、gcePersistentDisk (GCP)、azureDisk (Azure) | 云环境中持久化存储           |
 | **分布式存储**                | 如 cephfs、glusterfs、rook (基于 Ceph)                              | 大规模分布式存储需求         |
 
-### 特殊用途卷类型csi
+### 特殊用途卷类型 csi
 CSI（Container Storage Interface）是容器存储接口的标准，允许存储供应商编写插件来支持其存储系统。CSI 卷类型允许 Pod 使用任何符合 CSI 规范的存储驱动程序。
 ```yaml
 apiVersion: v1
@@ -98,11 +98,11 @@ spec:
 ### 关键阶段说明
 | 阶段           | 触发条件       | 系统行为             | 持续时间          |
 |----------------|----------------|----------------------|-------------------|
-| Provisioning   | PVC创建        | 动态分配存储资源     | 秒级~分钟级       |
-| Binding        | PVC匹配PV      | 建立绑定关系         | 瞬时完成          |
-| Using          | Pod挂载        | 数据读写操作         | 应用运行期        |
-| Releasing      | PVC删除        | 解除PV绑定           | 瞬时完成          |
-| Reclaiming     | PV释放         | 执行回收策略         | 依赖策略类型      |
+| Provisioning   | PVC 创建        | 动态分配存储资源     | 秒级~分钟级       |
+| Binding        | PVC 匹配 PV      | 建立绑定关系         | 瞬时完成          |
+| Using          | Pod 挂载        | 数据读写操作         | 应用运行期        |
+| Releasing      | PVC 删除        | 解除 PV 绑定           | 瞬时完成          |
+| Reclaiming     | PV 释放         | 执行回收策略         | 依赖策略类型      |
 | Recycling      | 回收完成       | 等待重新绑定         | 无限期            |
 
 ### 动态生命周期管理
@@ -122,17 +122,17 @@ parameters:
 
 延迟绑定(WaitForFirstConsumer)
 ```flowchart TD
-    A[创建PVC] --> B[等待Pod调度]
+    A[创建 PVC] --> B[等待 Pod 调度]
     B --> C{确定节点}
-    C --> D[在目标节点所在区创建PV]
-    D --> E[绑定PVC-PV]
+    C --> D[在目标节点所在区创建 PV]
+    D --> E[绑定 PVC-PV]
 ```
 
 卷扩容流程
 ```sequenceDiagram
     User->>PVC: kubectl edit pvc size=30Gi
-    PVC->>StorageClass: 检查allowVolumeExpansion
-    StorageClass->>Cloud-Plugin: 调用扩容API
+    PVC->>StorageClass: 检查 allowVolumeExpansion
+    StorageClass->>Cloud-Plugin: 调用扩容 API
     Cloud-Plugin->>Storage: 扩展卷容量
     Storage-->>Node: 通知文件系统扩容
     Node->>Pod: 在线扩容无需重启
@@ -142,24 +142,24 @@ parameters:
 静态工作流程
 ```mermaid
 sequenceDiagram
-    管理员->>集群： 创建PV (my-pv)
-    开发者->>集群： 创建PVC (my-pvc)
-    集群->>集群： 绑定PV和PVC
-    开发者->>集群： 创建Pod使用PVC
+    管理员->>集群： 创建 PV (my-pv)
+    开发者->>集群： 创建 PVC (my-pvc)
+    集群->>集群： 绑定 PV 和 PVC
+    开发者->>集群： 创建 Pod 使用 PVC
     Pod->>PV： 挂载存储
 ```
 
 动态工作流程
 ```sequenceDiagram
-    开发者->>集群： 创建PVC (指定StorageClass)
-    集群->>StorageClass： 请求创建PV
-    StorageClass->>云存储： 调用API创建卷
-    云存储-->>集群： 返回新PV
+    开发者->>集群： 创建 PVC (指定 StorageClass)
+    集群->>StorageClass： 请求创建 PV
+    StorageClass->>云存储： 调用 API 创建卷
+    云存储-->>集群： 返回新 PV
     集群->>PVC： 自动绑定
 ```
 
 ## 关键配置详解
-### StorageClass示例
+### StorageClass 示例
 ```yaml
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -215,7 +215,7 @@ spec:
 
 ### 存储扩展
 ```bash
-kubectl edit pvc my-pvc # 修改storage请求大小
+kubectl edit pvc my-pvc # 修改 storage 请求大小
 ```
 
 拓扑感知：使用 volumeBindingMode: WaitForFirstConsumer

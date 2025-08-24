@@ -44,7 +44,7 @@ $$
 Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 $$
 
-为了方便描述，我们在之后的公式he中忽略 scale 项 $\sqrt{d}$。假设我们输入的 prompt 是 h，最终的输出是 hello。
+为了方便描述，我们在之后的公式 he 中忽略 scale 项 $\sqrt{d}$。假设我们输入的 prompt 是 h，最终的输出是 hello。
 
 因为这里计算的是 casual attention，根据定义，第 t 个 token 的公式表示如下：
 $$
@@ -55,7 +55,7 @@ $$
 
 第一步输入"h"的时候，attention 计算如下（图中 $\theta$ 代表 softmax 计算后的结果）：
 
-![without cache 计算示意图1](./../images/05Infer02InferSpeedUp/01KVCache05.jpg)
+![without cache 计算示意图 1](./../images/05Infer02InferSpeedUp/01KVCache05.jpg)
 
 如上图所示，计算公式如下：
 $$
@@ -64,7 +64,7 @@ $$
 
 最终计算出了 token "e"，然后下一步我们输入"e",这个时候的 attention 计算变成了：
 
-![without cache 计算示意图2](./../images/05Infer02InferSpeedUp/01KVCache06.jpg)
+![without cache 计算示意图 2](./../images/05Infer02InferSpeedUp/01KVCache06.jpg)
 
 其计算公式为：
 $$
@@ -73,7 +73,7 @@ $$
 
 然后我们计算出了 token"l",我们下一步输入"l",这个时候 attention 计算为:
 
-![without cache 计算示意图3](./../images/05Infer02InferSpeedUp/01KVCache01.jpg)
+![without cache 计算示意图 3](./../images/05Infer02InferSpeedUp/01KVCache01.jpg)
 
 其计算公式如下：
 $$
@@ -86,7 +86,7 @@ $$
 
 ## KV Cache 基本原理
 
->>>>>>>> KV Cache的原理可以参考这个增加更多的图例https://zhuanlan.zhihu.com/p/662498827
+>>>>>>>> KV Cache 的原理可以参考这个增加更多的图例 https://zhuanlan.zhihu.com/p/662498827
 
 因为有了上一节的分析，我们知道了每个 token decode 阶段具体需要用到哪些东西，由于大模型的推理是 Masked Self-Attention 每个 token 只能够看到其之前的 token 信息，因此当我们输入第 $t$ 个 token 的时候，$K_t$，$V_t$ 计算之后就是确定的，之后计算新的 attention 的时候，前面计算的 key 和 value 值并不会改变，我们自然想到直接将之前计算出的 key 和 value 向量缓存。
 
@@ -96,9 +96,9 @@ $$
 
 我们可以清楚的看到与没有 KV Cache 相比,我们只需要输入当前的 token,然后利用缓存的 KV 就可以完成 KV 的计算。
 
-下图直观的展示了是否使用KV Cache的计算对比。当我们不使用KV Cache的时候，在每一步生成token的过程中，都需要将之前所有的token作为模型输入，才能计算出之前所有token的K/V值；当我们使用KV Cache时，因为已经将之前所有token的K/V 进行缓存，所以只需要将当前的token传入模型计算即可，大大降低了推理时的计算量。
+下图直观的展示了是否使用 KV Cache 的计算对比。当我们不使用 KV Cache 的时候，在每一步生成 token 的过程中，都需要将之前所有的 token 作为模型输入，才能计算出之前所有 token 的 K/V 值；当我们使用 KV Cache 时，因为已经将之前所有 token 的 K/V 进行缓存，所以只需要将当前的 token 传入模型计算即可，大大降低了推理时的计算量。
 
-![with cache与withoutcache 计算对比图](./../images/05Infer02InferSpeedUp/01KVCache07.jpg)
+![with cache 与 withoutcache 计算对比图](./../images/05Infer02InferSpeedUp/01KVCache07.jpg)
 
 而从上述图解和公式中，也可以清晰的看到为什么没有 Q Cache。因为之前 token 的 Q 在之后 token 的 attention 计算中根本不会用到。
 
@@ -243,19 +243,19 @@ $$
 这个显存占用量已经约为大模型参数量的一半，消耗了大量的显存资源，这也正是针对 KV Cache 的内存优化在大模型推理领域至关重要的原因。
 
 ### 长序列场景
-当前大模型推理向着支持更长上下文发展，随着序列长度的增加，KV Cache线性增长，KV Cache的显存占用成为了一个核心瓶颈。我们仍以上述GPT-3模型为例，当我们将序列长度从常规的1024扩展到目前常见的32k，其KV Cache的显存占用将会变为：
+当前大模型推理向着支持更长上下文发展，随着序列长度的增加，KV Cache 线性增长，KV Cache 的显存占用成为了一个核心瓶颈。我们仍以上述 GPT-3 模型为例，当我们将序列长度从常规的 1024 扩展到目前常见的 32k，其 KV Cache 的显存占用将会变为：
  $2 \times 96 \times 16 \times 32768 \times 12288 \times 2 / 1024 / 1024 / 1024 = 2304 GB = 2.25 TB$
- 经过计算，在32k的序列长度下KV Cache的显存就需要2.25TB，这样大的显存需求使得未经优化的长序列推理几乎是不可能做到的。
+ 经过计算，在 32k 的序列长度下 KV Cache 的显存就需要 2.25TB，这样大的显存需求使得未经优化的长序列推理几乎是不可能做到的。
 
-这种与序列长度成正比的显存增长，是制约大模型走向更长上下文的核心瓶颈之一。因此，如何有效管理和压缩KV Cache，特别是在长序列场景下，成为了一个迫切需要解决的问题。因此催生了PagedAttention，KV Cache量化，滑动窗口注意力等一系列关键的推理优化技术。
+这种与序列长度成正比的显存增长，是制约大模型走向更长上下文的核心瓶颈之一。因此，如何有效管理和压缩 KV Cache，特别是在长序列场景下，成为了一个迫切需要解决的问题。因此催生了 PagedAttention，KV Cache 量化，滑动窗口注意力等一系列关键的推理优化技术。
 
 ## 小结与思考
 
-1. KV Cache通过缓存历史Token的Key和Value矩阵，避免自回归生成过程中的重复计算，将注意力计算复杂度从O(T²)降至O(T)，显著提升大模型推理效率。
+1. KV Cache 通过缓存历史 Token 的 Key 和 Value 矩阵，避免自回归生成过程中的重复计算，将注意力计算复杂度从 O(T²)降至 O(T)，显著提升大模型推理效率。
 
-2. Decode阶段，模型仅需将当前Token的Q向量与缓存的K/V矩阵拼接，直接计算注意力输出，无需重新处理全部历史Token（如公式 $\text{Att}_t = \text{softmax}(q_t \cdot \text{Cache}_K^T) \cdot \text{Cache}_V$ 所示）。
+2. Decode 阶段，模型仅需将当前 Token 的 Q 向量与缓存的 K/V 矩阵拼接，直接计算注意力输出，无需重新处理全部历史 Token（如公式 $\text{Att}_t = \text{softmax}(q_t \cdot \text{Cache}_K^T) \cdot \text{Cache}_V$ 所示）。
 
-3. KV Cache显存占用公式为 $2 \times \text{层数} \times \text{批大小} \times \text{序列长} \times \text{隐藏层维度} \times \text{精度字节}$，当模型序列越长，显存消耗越高。
+3. KV Cache 显存占用公式为 $2 \times \text{层数} \times \text{批大小} \times \text{序列长} \times \text{隐藏层维度} \times \text{精度字节}$，当模型序列越长，显存消耗越高。
 
 ## 本节视频
 

@@ -8,11 +8,11 @@ DeepSeek V3/R1 模型自问世以来，在各个行业都引起了巨大的关�
 
 | 大纲 | 小节 | 链接|
 |:-- |:-- |:-- |
-| DeepSeek推理优化 | 01 DeepSeek V3/R1 推理系统概览  | [PPT](), [视频]() |
-| DeepSeek推理优化 | 02 MTP算法原理  | [PPT](), [视频]() |
-| DeepSeek推理优化 | 03 FlashMLA算法原理  | [PPT](), [视频]() |
-| DeepSeek推理优化 | 04 DeepEP算法原理  | [PPT](), [视频]() |
-| DeepSeek推理优化 | 05 DeepGEMM算法原理  | [PPT](), [视频]() |
+| DeepSeek 推理优化 | 01 DeepSeek V3/R1 推理系统概览  | [PPT](), [视频]() |
+| DeepSeek 推理优化 | 02 MTP 算法原理  | [PPT](), [视频]() |
+| DeepSeek 推理优化 | 03 FlashMLA 算法原理  | [PPT](), [视频]() |
+| DeepSeek 推理优化 | 04 DeepEP 算法原理  | [PPT](), [视频]() |
+| DeepSeek 推理优化 | 05 DeepGEMM 算法原理  | [PPT](), [视频]() |
 
 
 ## 备注

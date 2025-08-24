@@ -10,14 +10,14 @@
 ![alt text](./../images/06AlgoData07DataEngineer/full_time_training.png)
 
 
-## SFT数据构建
+## SFT 数据构建
 
 ### 单轮数据构建
 本质：指令-响应对（Instruction-Response Pairs）
 
 ``` python 
 {  
-  "instruction": "用Python实现斐波那契数列",  
+  "instruction": "用 Python 实现斐波那契数列",  
   "output": "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)"  
 }  
 ```
@@ -26,10 +26,10 @@
 
 ``` python
 [  
-  {"role": "user", "content": "如何用PyTorch实现CNN？"},  
-  {"role": "assistant", "content": "首先导入torch.nn模块..."},  
-  {"role": "user", "content": "和TensorFlow实现有何不同？"},  
-  {"role": "assistant", "content": "主要区别在API设计上..."}  
+  {"role": "user", "content": "如何用 PyTorch 实现 CNN？"},  
+  {"role": "assistant", "content": "首先导入 torch.nn 模块..."},  
+  {"role": "user", "content": "和 TensorFlow 实现有何不同？"},  
+  {"role": "assistant", "content": "主要区别在 API 设计上..."}  
 ]  
 
 ```
@@ -59,7 +59,7 @@
 
 
 ## 数据飞轮
-数据飞轮（Data Flywheel）是人工智能领域中描述数据、模型和产品之间良性循环的一个重要概念。它借用“飞轮”这一物理装置的比喻，形象地说明了数据驱动AI系统在不断自我强化、持续提升的过程。
+数据飞轮（Data Flywheel）是人工智能领域中描述数据、模型和产品之间良性循环的一个重要概念。它借用“飞轮”这一物理装置的比喻，形象地说明了数据驱动 AI 系统在不断自我强化、持续提升的过程。
 
 简单来说，数据飞轮指的是：数据越多，模型越好，产品体验越佳，从而吸引更多用户产生更多数据，进一步提升模型能力，形成正向循环。
 
@@ -67,7 +67,7 @@
 
 从用户交互中自动或人工筛选出高质量的标注数据，包括问题、答案、用户评价、纠错建议等。
 
-这些数据被用于微调（Fine-tuning）、指令调优（Instruction Tuning）、强化学习（如RLHF）等后训练方法，使模型更贴近用户需求。
+这些数据被用于微调（Fine-tuning）、指令调优（Instruction Tuning）、强化学习（如 RLHF）等后训练方法，使模型更贴近用户需求。
 
 优化后的模型能够更好地理解用户意图，生成更准确、自然的回复，提升用户体验。
 

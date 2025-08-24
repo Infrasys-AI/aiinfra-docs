@@ -12,7 +12,7 @@
 |:--- |:---- |:-------------------- |
 | 计算集群之路 | 01 什么是集群计算  | [PPT](./01Define.pdf), [文章](./01Define.md), [视频](https://www.bilibili.com/video/BV1s5KfzzEbo) |
 | 计算集群之路 | 02 通过 HPC 看 AI 发展  | [PPT](./02TrendHard.pdf), [文章](./02TrendHard.md), [视频](https://www.bilibili.com/video/BV16A3wzEELU) |
-| 计算集群之路 | 03 深度剖析HPC软件和应用 | [PPT](./03TrendSoft.pdf), [文章](./03TrendSoft.md), [视频](https://www.bilibili.com/video/BV1Sr3YzXEQa) |
+| 计算集群之路 | 03 深度剖析 HPC 软件和应用 | [PPT](./03TrendSoft.pdf), [文章](./03TrendSoft.md), [视频](https://www.bilibili.com/video/BV1Sr3YzXEQa) |
 | 计算集群历史 | 04 HPC 发展历程(上)  | [PPT](./04Develop1.pdf), [文章](./04Develop1.md), [视频](https://www.bilibili.com/video/BV1vugAzgEMK) |
 | 计算集群历史 | 05 HPC 发展历程(下)  | [PPT](./05Develop2.pdf), [文章](./05Develop2.md), [视频](https://www.bilibili.com/video/BV14kgizdEmc) |
 | AI 集群之路 | 06 AIInfra 分层介绍  | [PPT](./06Challenge.pdf), [文章](./06Challenge.md), [视频](https://www.bilibili.com/video/BV1C28dzWErf) |
