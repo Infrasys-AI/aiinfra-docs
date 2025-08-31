@@ -8,15 +8,23 @@
 
 > 建议优先下载 PDF 版本，PPT 版本会因为字体缺失等原因导致版本很丑哦~
 
-| 大纲 | 小节 | 链接 |
-|:--- |:---- |:-------------------- |
-| Transformer 架构 | 01 Transformer 基础结构 | [PPT](./01Transformer.pdf), [视频](https://www.bilibili.com/video/BV1rt421476q/), [文章](./01Transformer.md) |
-| Transformer 架构 | 02 大模型 Tokenizer 算法 | [PPT](./02Tokenizer.pdf), [视频](https://www.bilibili.com/video/BV16pTJz9EV4), [文章](./02Tokenizer.md) |
-| Transformer 架构 | 03 大模型 Embedding 算法 | [PPT](./03Embeding.pdf), [视频](https://www.bilibili.com/video/BV1SSTgzLEzf), [文章](./03Embeding.md) |
-| Transformer 架构 | 04 Attention 注意力机制 | [PPT](./04Attention.pdf), [视频](https://www.bilibili.com/video/BV11AMHzuEet), [文章](./04Attention.md) |
-| Transformer 架构 | 05 Attention 变种算法 | [PPT](./05GQAMLA.pdf), [视频](https://www.bilibili.com/video/BV1GzMUz8Eav), [文章](./05GQAMLA.md) |
-| Transformer 架构 | 06 Transformer 长序列架构 | [PPT](./06LongSeq.pdf), [视频](https://www.bilibili.com/video/BV16PN6z6ELg), [文章](./06LongSeq.md) |
-| Transformer 架构 | 07 大模型参数设置 | [PPT](./07Parameter.pdf), [视频](https://www.bilibili.com/video/BV1nTNkzjE3J), [文章](./07Parameter.md) |
+| 大纲 | 小节 | 链接 | 状态 |
+|:--- |:---- |:-------------------- |:---- |
+| Transformer 架构 | 01 Transformer 基础结构 | [PPT](./01Transformer.pdf), [视频](https://www.bilibili.com/video/BV1rt421476q/), [文章](./01Transformer.md) | :white_check_mark: |
+| Transformer 架构 | 02 大模型 Tokenizer 算法 | [PPT](./02Tokenizer.pdf), [视频](https://www.bilibili.com/video/BV16pTJz9EV4), [文章](./02Tokenizer.md) | :white_check_mark: |
+| Transformer 架构 | 03 大模型 Embedding 算法 | [PPT](./03Embeding.pdf), [视频](https://www.bilibili.com/video/BV1SSTgzLEzf), [文章](./03Embeding.md) | :white_check_mark: |
+| Transformer 架构 | 04 Attention 注意力机制 | [PPT](./04Attention.pdf), [视频](https://www.bilibili.com/video/BV11AMHzuEet), [文章](./04Attention.md) | :white_check_mark: |
+| Transformer 架构 | 05 Attention 变种算法 | [PPT](./05GQAMLA.pdf), [视频](https://www.bilibili.com/video/BV1GzMUz8Eav), [文章](./05GQAMLA.md) | :white_check_mark: |
+| Transformer 架构 | 06 Transformer 长序列架构 | [PPT](./06LongSeq.pdf), [视频](https://www.bilibili.com/video/BV16PN6z6ELg), [文章](./06LongSeq.md) | :white_check_mark: |
+| Transformer 架构 | 07 大模型参数设置 | [PPT](./07Parameter.pdf), [视频](https://www.bilibili.com/video/BV1nTNkzjE3J), [文章](./07Parameter.md) | :white_check_mark: |
+|:sparkling_heart:|:star2:|:sparkling_heart:| |
+| 代码实践 | 01 搭建迷你 Transformer | [Markdown](./Practice01MiniTranformer.md), [Jupyter](./Practice01MiniTranformer.ipynb) | :white_check_mark: |
+| 代码实践 | 02 从零实现 Transformer 训练 | [Markdown](./Practice02TransformerTrain.md), [Jupyter](./Practice02TransformerTrain.ipynb) | :white_check_mark: |
+| 代码实践 | 03 实战 Transformer 机器翻译 | [Markdown](./Practice03MachineTrans.md), [Jupyter](./Practice03MachineTrans.ipynb) | :white_check_mark: |
+| 代码实践 | 04 手把手实现核心机制 Sinusoidal 编码 | [Markdown](./Practice04Sinusoidal.md), [Jupyter](./Practice04Sinusoidal.ipynb) | :white_check_mark: |
+| 代码实践 | 05 手把手实现核心机制 BPE 分词算法 | [Markdown](./Practice05BPE.md), [Jupyter](./Practice05BPE.ipynb) | :white_check_mark: |
+| 代码实践 | 06 手把手实现核心机制 Embedding 词嵌入 | [Markdown](./Practice06Embedding.md), [Jupyter](./Practice06Embedding.ipynb) | :white_check_mark: |
+| 代码实践 | 07 深入注意力机制 MHA、MQA、GQA、MLA | [Markdown](./Practice07Attention.md), [Jupyter](./Practice07Attention.ipynb) | :white_check_mark: |
 
 ## 内容大纲
 
@@ -44,4 +52,11 @@
 05GQAMLA
 06LongSeq
 07Parameter
+Practice01MiniTranformer
+Practice02TransformerTrain
+Practice03MachineTrans
+Practice04Sinusoidal
+Practice05BPE
+Practice06Embedding
+Practice07Attention
 ```

@@ -1,0 +1,1347 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="多 Token 推理与生成(DONE)" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="04Train03TrainAcceler/04.MultiTokenGen.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author by: 管弘毅. 大语言模型（LLM）的标准范式是基于自回归的、逐 Token 的生成方式。这一过程的内在顺序性使其推理速度缓慢且计算成本高昂，尤其是在模型规模持续扩大、推理任务需要更长生成序列的背景下，这一问题愈发突出。推理延迟主要是由内存带宽限制造成的，因为每生成一个 Token，都必须访问模型的全部参数。这种低效率严重阻碍了实时应用的部署，并显著增加了运营成本。 为了突破..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/None" />
+<meta property="og:image:alt" content="Author by: 管弘毅. 大语言模型（LLM）的标准范式是基于自回归的、逐 Token 的生成方式。这一过程的内在顺序性使其推理速度缓慢且计算成本高昂，尤其是在模型规模持续扩大、推理任务需要更长生成序列的背景下，这一问题愈发突出。推理延迟主要是由内存带宽限制造成的，因为每生成一个 Token，都必须访问模型..." />
+<meta name="description" content="Author by: 管弘毅. 大语言模型（LLM）的标准范式是基于自回归的、逐 Token 的生成方式。这一过程的内在顺序性使其推理速度缓慢且计算成本高昂，尤其是在模型规模持续扩大、推理任务需要更长生成序列的背景下，这一问题愈发突出。推理延迟主要是由内存带宽限制造成的，因为每生成一个 Token，都必须访问模型的全部参数。这种低效率严重阻碍了实时应用的部署，并显著增加了运营成本。 为了突破..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>多 Token 推理与生成(DONE) &#8212; AIInfra AI基础设施</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fddca223" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '04Train03TrainAcceler/04.MultiTokenGen';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="05.Ulysses.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="03.DSGEMM.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">服务器机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">集群机房供电</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">AI 万卡集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">AI 万卡集群建设交付</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03 AI 万卡集群测试步骤</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">NVIDIA Blackwell 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">GPU 与 NPU 精度误差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">基于 RWKV 的 RNN 范式革新</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">大模型集合通信介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">为什么需要集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Introduction.html">容器的诞生</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Container.html">揭秘容器隔离性：从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Cgroups.html">资源的限制</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">Kubernetes 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">Kubernetes 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">Kubernetes 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">Kubernetes 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器持网络</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行 1F1B/1F1B Interleaved 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型训练加速</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="02.FlashAttn.html">计算优化：Flash Attention 优化</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">多 Token 推理与生成(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="comput_total_parameters.html">Dense 计算总参</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">MoE 分布式性能分析(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/04Train03TrainAcceler/04.MultiTokenGen.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F04Train03TrainAcceler/04.MultiTokenGen.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/04Train03TrainAcceler/04.MultiTokenGen.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>多 Token 推理与生成(DONE)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mtp">MTP 架构与方法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#native-mtp">Native MTP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">序列式 MTP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">掩码输入式 MTP</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#speculative-decoding">Speculative Decoding 架构与方法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#draft-then-verify">Draft-then-Verify 范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle">EAGLE 框架演进</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle-1">EAGLE-1</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle-2">EAGLE-2</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle-3">EAGLE-3</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">EAGLE 框架对比</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token">多 Token 策略综合对比</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">参考资料</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<section class="tex2jax_ignore mathjax_ignore" id="token-done">
+<h1>多 Token 推理与生成(DONE)<a class="headerlink" href="#token-done" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>Author by: 管弘毅</p></li>
+</ul>
+<p>大语言模型（LLM）的标准范式是基于自回归的、逐 Token 的生成方式。这一过程的内在顺序性使其推理速度缓慢且计算成本高昂，尤其是在模型规模持续扩大、推理任务需要更长生成序列的背景下，这一问题愈发突出。推理延迟主要是由内存带宽限制造成的，因为每生成一个 Token，都必须访问模型的全部参数。这种低效率严重阻碍了实时应用的部署，并显著增加了运营成本。</p>
+<p>为了突破这一瓶颈，学术界和工业界的研究重心开始转向超越单 Token 预测的范式。这一努力形成了两条主要的技术路线：</p>
+<ul class="simple">
+<li><p>第一条路线是在模型训练阶段，通过引入 Multi-Token Prediction（MTP）来增强模型内在的、对更长序列进行推理和预测的能力。</p></li>
+<li><p>第二条路线则聚焦于优化推理过程本身，通过推测式解码等技术，在单次前向传播中生成多个 Token，同时保持与原始模型一致的输出质量。</p></li>
+</ul>
+<p>本文将系统性地介绍这两类技术路线的核心原理、架构设计和最新进展，帮助读者理解多 Token 生成技术如何有效提升大模型的训练效率和推理速度。</p>
+<section id="mtp">
+<h2>MTP 架构与方法<a class="headerlink" href="#mtp" title="Link to this heading">#</a></h2>
+<p>在这一部分，我们将深入探讨多 Token 预测（MTP）技术，它通过修改模型的训练目标来增强模型的预测能力，从而在训练阶段就为模型赋予生成多 Token 的能力。MTP 技术主要分为三种实现方式：核心并行 MTP 架构、序列式 MTP 以及掩码输入式 MTP，每种方法都有其独特的优势和适用场景。</p>
+<section id="native-mtp">
+<h3>Native MTP<a class="headerlink" href="#native-mtp" title="Link to this heading">#</a></h3>
+<p>MTP 基础架构在 <a class="reference external" href="https://arxiv.org/abs/2404.19737">《Better &amp; Faster Large Language Models via Multi-token Prediction》</a> 一文中被提出，其核心思想是让模型在训练时一次性预测未来的多个 Token，共享主干与并行头。下图展示了文章设计的架构。</p>
+<p><img alt="图 1：并行 MTP 架构" src="../_images/04.MultiTokenGen.01.png" /></p>
+<blockquote>
+<div><p>注：图中 Shared 部分代表 embedding 和多层 Transformer，Head 部分代表用于推理的单层 Transformer。</p>
+</div></blockquote>
+<ul class="simple">
+<li><p><strong>训练</strong>：</p>
+<ul>
+<li><p>该架构由一个共享的 Transformer 主干网络和多个独立的并行输出头（prediction heads）组成。共享主干为普通的 Transformer 结构，而每个输出头则被专门训练用于预测未来的一个特定 Token（例如，Head 1 预测<code class="docutils literal notranslate"><span class="pre">t+1</span></code>时刻的 Token，Head 2 预测<code class="docutils literal notranslate"><span class="pre">t+2</span></code>时刻的 Token，以此类推）。其训练目标是所有输出头预测的交叉熵损失之和。</p></li>
+</ul>
+</li>
+<li><p><strong>推理</strong>：</p>
+<ul>
+<li><p>在计算完多层 Transformer 模型后，使用多个 Head 并行预测后续 Token。</p></li>
+</ul>
+</li>
+</ul>
+<p>这种并行 MTP 架构是追求速度优先的直接方法，它最大化了训练信号和并行度，但其固有的独立预测机制（连续预测得到的 Token 之间没有消息交互）也带来了潜在的连贯性问题。</p>
+</section>
+<section id="id1">
+<h3>序列式 MTP<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>并行 MTP 架构的一个主要局限在于，由于每个输出头是独立进行预测的，导致对<code class="docutils literal notranslate"><span class="pre">t+2</span></code>时刻 Token 的预测并未以<code class="docutils literal notranslate"><span class="pre">t+1</span></code>时刻的预测为条件，这可能导致生成的文本序列缺乏连贯性。</p>
+<p>DeepSeek-V3 模型在 <a class="reference external" href="https://arxiv.org/abs/2412.19437">《DeepSeek-V3 Technical Report》</a> 中通过引入一种序列式 MTP 架构解决了这一问题。模型结构如下图所示。</p>
+<p><img alt="图 2：DeepSeek-V3 的序列式 MTP 架构" src="../_images/04.MultiTokenGen.02.png" /></p>
+<p>图中的 Main Model 为传统多层 Transformer，其输出结果为 <code class="docutils literal notranslate"><span class="pre">t5</span></code>；后续的 MTP Module [x] 是单层 Transformer，用于串行预测后续 Token，它们的参数也是单独训练的。</p>
+<p>相对于之前的方法，DeepSeek 的实现为每个预测的 Token 之间添加了串行连接关系。此外，在训练过程中，DeepSeek 直接使用了样本中的 ground truth 作为输入，将其与上一层的输出合并后进行计算，这样有助于减少在训练过程中的错误累加问题，从而提升训练效果。</p>
+<p>在推理过程中，需要将训练过程中的 ground truth 替换为 Main Model 的输出 <code class="docutils literal notranslate"><span class="pre">t5'</span></code>，经过 embedding 后与中间结果进行合并后用于计算。</p>
+<p>这种链式结构重建了 Token 之间的因果依赖关系，显著提升了生成文本的逻辑连贯性。值得注意的是，这些 MTP 模块主要用于增强训练效果，在推理阶段可以被丢弃以节省计算资源，或者被重新利用于推测式解码以加速生成。</p>
+<ul class="simple">
+<li><p><strong>MTP 对主模型训练的帮助</strong></p>
+<ul>
+<li><p><strong>稳定训练</strong>：MTP 提供更密集的监督信号，缓解仅依赖单 token loss 时学习信号稀疏的问题。如图所示，除了主模型外，MTP Module 也产生了额外的损失。</p></li>
+<li><p><strong>提高泛化能力</strong>：训练过程中模型必须在隐藏表示中编码更全局的语义信息，以便预测多个未来 token。</p></li>
+<li><p><strong>缓解 exposure bias</strong>：自回归训练仅基于上一步真实标签，而推理时依赖模型自身输出，容易累积错误；MTP 让模型“更习惯”多步预测，有助于提升鲁棒性。</p></li>
+</ul>
+</li>
+</ul>
+<p>总结来说：<strong>MTP 是一种训练技巧，本质是为骨干网络（backbone）增加辅助任务，以提升主模型的表征能力和收敛效率。在推理阶段可以完全不依赖该模块。</strong></p>
+</section>
+<section id="id2">
+<h3>掩码输入式 MTP<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>掩码输入式 MTP 提供了一种不同于传统 MTP 的实现思路，它将多 Token 预测重新定义为掩码预测任务。这种方法不需要对模型架构进行大幅改动，而是通过微调已有模型实现多 Token 生成能力。</p>
+<p>前文的两种方案都是通过增加额外的 Head 或 Module 来预测后续多个 Token。而来自 Apple 公司的研究者提出了一种新的视角：将 MTP 重新定义为一个掩码填充任务。</p>
+<p>论文 <a class="reference external" href="https://arxiv.org/abs/2507.11851v1">Your LLM Knows the Future: Uncovering Its Multi-Token Prediction Potential</a> 基于一个关键洞察：<strong>利用自回归模型中已有的“未来信息”，通过 mask 预测和一个轻量采样模块，把这种潜力转化为更明确、更连贯的未来 token 生成能力。</strong> 我们可以通过下图的例子进行说明：</p>
+<p><img alt="图 3：掩码输入式 MTP 示意图" src="../_images/04.MultiTokenGen.03.png" /></p>
+<ul class="simple">
+<li><p><strong>左图</strong>：在 prompt 后插入占位符 <code class="docutils literal notranslate"><span class="pre">&lt;-&gt;</span></code>，发现模型对这些位置的预测中，未来正确词经常出现在较高排名的位置（如 top-200）</p></li>
+<li><p><strong>中图</strong>：既然模型已经“知道”一些未来信息，作者尝试<strong>显式地利用这种潜力</strong>：在 prompt 后加入 <strong>mask token</strong>，让模型直接预测这些 mask 对应的未来词。经过微调（Fine-Tuning）后，模型在这些 mask 的预测上更准确，正确答案能排到 <strong>top-10 logits</strong>。</p></li>
+<li><p><strong>右图</strong>：为了让预测的多个未来词不只是“独立猜测”，而是能<strong>连贯生成</strong>：引入一个轻量的 <strong>采样模块</strong>（two-layer MLP），它在生成时让每个预测的词依赖之前已经预测出的词。</p></li>
+</ul>
+<p>从描述中可以看到，本方案不需要从头训练一个全新的模型，而是只需要对一个已有的模型进行 Fine-Tuning 即可。这一部分被作者称为 <strong>Gated LoRA</strong>，即只在 <strong>Mask</strong> 对应的部分启用 LoRA 参数计算，而在自回归推理时保持关闭，因此不会影响原有模型的功能和精度，这是一个巧妙的设计。下图展示了本设计对应的模块图：</p>
+<p><img alt="图 4：Gated LoRA 模块设计" src="../_images/04.MultiTokenGen.04.png" /></p>
+<p>本图充分展示了几个设计重点：</p>
+<ul class="simple">
+<li><p><strong>左上角</strong>：包含 Mask 和 Gated LoRA 的模型推理流程</p></li>
+<li><p><strong>左下角</strong>：多个连续的预测得到的 Token 之间使用 Sampler 产生串行依赖，生成语言上更连续的输出</p></li>
+<li><p><strong>右图</strong>：Gated LoRA 在 NTP（Next Token Prediction） 和 MTP 的开关状态</p></li>
+</ul>
+<p>作者在训练设计中的一个关键创新是引入了 <strong>潜在一致性匹配（Latent Consistency Loss，LCM）</strong>：要求模型在一次性预测未来第三个词时，其结果应尽可能接近“一步一步”预测到第三个词的结果。这使得多词预测的结果更接近传统、严谨的单步自回归预测，从而提升预测的准确率和可靠性。</p>
+</section>
+</section>
+<section id="speculative-decoding">
+<h2>Speculative Decoding 架构与方法<a class="headerlink" href="#speculative-decoding" title="Link to this heading">#</a></h2>
+<p>Speculative Decoding（推测式解码）是一种纯粹的推理时优化技术，与 MTP 不同，它不改变模型本身，而是在推理过程中通过“草稿-验证”机制加速 Token 生成。本部分将详细解析推测式解码的核心原理、实现方式以及 EAGLE 系列框架的演进过程。</p>
+<section id="draft-then-verify">
+<h3>Draft-then-Verify 范式<a class="headerlink" href="#draft-then-verify" title="Link to this heading">#</a></h3>
+<p>Draft-then-Verify（草稿-验证）是推测式解码的核心机制，它通过引入一个小模型来加速大模型的推理过程。这一范式巧妙地解决了推理速度与生成质量之间的平衡问题。</p>
+<p>推测式解码的核心机制是“草稿-then-验证”（draft-then-verify）。该过程通常涉及两个模型：</p>
+<ol class="arabic simple">
+<li><p><strong>草稿模型（Draft Model）</strong>：一个规模较小、速度更快的模型，负责根据当前上下文生成一个候选 Token 序列（即“草稿”）。</p></li>
+<li><p><strong>目标模型（Target Model）</strong>：原始的、规模较大、能力更强的模型，负责对草稿模型生成的整个序列进行一次并行的前向传播验证。</p></li>
+</ol>
+<p>验证过程如下：目标模型会逐一检查草稿序列中的每个 Token。只要目标模型为某个 Token 分配的概率高于草稿模型，该 Token 就会被接受。一旦出现不匹配（即目标模型认为有更好的选择），该 Token 及其后的所有草稿 Token 都会被拒绝。随后，目标模型会自行生成一个正确的 Token，然后整个“草稿-then-验证”循环重新开始。这一机制通过一个严谨的概率接受准则，确保最终输出的文本与完全由目标模型逐 Token 自回归生成所得到的文本，在概率分布上完全一致。</p>
+<p>投机采样过程如下：</p>
+<ol class="arabic simple">
+<li><p>用<strong>草稿模型</strong>做自回归采样，连续生成 k 个 tokens。</p></li>
+<li><p>将生成的 k 个 tokens 与原始前缀拼接，送入<strong>目标模型</strong>执行一次前向传播（forward）。</p></li>
+<li><p>使用目标模型和草稿模型的 logits 结果进行比对，如果发现某个 token 在草稿模型中生成的质量不佳，则需要重新采样该 token。重复步骤 1。</p></li>
+<li><p>如果所有生成的 token 均被接受，则用<strong>目标模型</strong>采样下一个 token。重复步骤 1。</p></li>
+</ol>
+</section>
+<section id="eagle">
+<h3>EAGLE 框架演进<a class="headerlink" href="#eagle" title="Link to this heading">#</a></h3>
+<p>EAGLE 框架是推测式解码领域最具代表性的工作之一，其从 EAGLE-1 到 EAGLE-3 的演进，深刻反映了研究社区对该技术理解的深化。本节将详细介绍 EAGLE 系列框架的技术演进和创新点。</p>
+<section id="eagle-1">
+<h4>EAGLE-1<a class="headerlink" href="#eagle-1" title="Link to this heading">#</a></h4>
+<p>EAGLE-1 是该系列的开创性工作，首次将推测式解码引入特征层面进行自回归预测，突破了传统 Token 层面预测的局限。</p>
+<p>最初的 <a class="reference external" href="https://arxiv.org/abs/2401.15077">EAGLE: Speculative Sampling Requires Rethinking Feature Uncertainty</a> 框架引入了一项关键创新：它在 <strong>特征层面</strong> 而非 Token 层面进行自回归预测。</p>
+<p>具体来说，草稿模型的目标不是直接预测下一个 Token，而是预测目标模型倒数第二层的隐藏状态（即特征向量）。然后，这个预测出的特征向量被输入到目标模型的最后一个 LM 头中，以生成草稿 Token。这种方法旨在利用特征空间中更丰富的语义信息，从而生成比直接预测 Token 更准确的草稿。</p>
+<p><img alt="图 5：EAGLE-1 架构示意图" src="../_images/04.MultiTokenGen.05.png" /></p>
+<p><strong>EAGLE-1</strong> 的核心工作流程：</p>
+<ol class="arabic simple">
+<li><p><strong>草稿生成</strong>：利用一个预先定义好的 <strong>静态草稿树</strong> 结构，快速生成多个候选的文本续写路径。这种“先验方式”保证了生成过程的稳定和高效。</p></li>
+<li><p><strong>并行验证</strong>：借用并优化了 <strong>Medusa 的树状注意力机制</strong>，将整个草稿树一次性提交给主模型进行批量验证。这极大地利用了现代硬件的并行计算能力，避免了传统模型逐词元生成的瓶颈，从而显著提升了语言模型的推理速度。</p></li>
+</ol>
+</section>
+<section id="eagle-2">
+<h4>EAGLE-2<a class="headerlink" href="#eagle-2" title="Link to this heading">#</a></h4>
+<p>EAGLE-2 在 EAGLE-1 的基础上引入了动态草稿树机制，根据上下文的可预测性动态调整草稿生成策略，进一步提升了验证效率。</p>
+<p><a class="reference external" href="https://arxiv.org/abs/2406.16858">EAGLE-2: Faster Inference of Language Models with Dynamic Draft Trees</a> 在 EAGLE-1 基础上进行了改进，引入了基于草稿模型置信度得分的动态可调整草稿树结构。这使得模型能够根据上下文的可预测性，动态地生成更多或更少的候选 Token，从而提高验证的效率。</p>
+<p><img alt="图 6：EAGLE-2 草稿树构建" src="../_images/04.MultiTokenGen.06.png" /><br />
+<img alt="图 7：EAGLE-2 草稿筛选与验证" src="../_images/04.MultiTokenGen.07.png" /></p>
+<p>如上图所示，EAGLE-2 的机制为：</p>
+<ul class="simple">
+<li><p><strong>构建草稿树</strong>：首先，系统通过不断选择当前层最可信的<strong>两个节点</strong>来扩展，生成一个包含多种可能续写路径的树状结构。</p></li>
+<li><p><strong>筛选最终草稿</strong>：接着，系统会从整个树中挑选出价值最高的<strong>八个节点</strong>，并将它们排列成一个单一序列，形成最终提交的草稿。</p></li>
+<li><p><strong>并行验证</strong>：最后，在验证时，一个特殊的注意力掩码会确保每个词元只关注其原始路径上的祖先词元，从而实现所有路径的高效并行处理。</p></li>
+</ul>
+</section>
+<section id="eagle-3">
+<h4>EAGLE-3<a class="headerlink" href="#eagle-3" title="Link to this heading">#</a></h4>
+<p>EAGLE-3 代表了推测式解码技术的最新进展，它摒弃了前代版本中核心的特征预测约束，转而采用更灵活的直接 Token 预测和多层特征融合策略。</p>
+<p>在先前工作中引入的 EAGLE 框架，通过重用目标模型的顶层特征，开创了特征级自回归。然而，EAGLE 面临着以下关键限制：</p>
+<ol class="arabic simple">
+<li><p><strong>特征预测限制</strong>：草稿模型被限制在语言模型头部之前预测下一个特征，限制了其表达能力。</p></li>
+<li><p><strong>误差累积</strong>：当草稿模型的预测结果用作后续步骤的输入时，微小误差会迅速累积，导致较长序列的接受率较低。</p></li>
+<li><p><strong>信息利用有限</strong>：仅依赖顶层特征可能无法为准确的多步预测提供足够的上下文信息。</p></li>
+</ol>
+<p><a class="reference external" href="https://arxiv.org/abs/2503.01840">EAGLE-3: Scaling up Inference Acceleration of Large Language Models via Training-Time Test</a> 标志着一个重要的转折点，它摒弃了前代版本中核心的<strong>特征预测约束</strong>，因为研究发现这一约束成为了性能瓶颈。EAGLE-3 的两大架构突破在于：</p>
+<ol class="arabic simple">
+<li><p><strong>基于“训练时测试”的直接 Token 预测</strong>：</p>
+<ol class="arabic simple">
+<li><p>通过“训练时测试”机制消除了特征预测限制。草稿模型现在不再预测受限特征，而是生成“无约束向量”，这些向量直接输入到目标模型的语言模型头部。</p></li>
+<li><p>训练时测试通过在训练期间模拟多步推理过程来解决误差累积问题。训练不再总是使用目标模型的真实特征，而是包含草稿模型自身先前生成的输出作为后续预测输入的实例。这迫使草稿模型学习对其自身近似值的鲁棒性。</p></li>
+<li><p>论文中的下图反映了：</p>
+<ol class="arabic simple">
+<li><p>左半部分展示了训练和测试条件的不一致，会导致模型在实际应用中表现不佳，因为在训练时它从未学习过如何处理自己可能产生的错误。中间的 <code class="docutils literal notranslate"><span class="pre">EAGLE</span> <span class="pre">+</span> <span class="pre">lfea</span> <span class="pre">removal</span></code> 图示更是强调了这一点：如果简单地移除特征匹配(<code class="docutils literal notranslate"><span class="pre">lfea</span></code>)，模型生成的<code class="docutils literal notranslate"><span class="pre">â</span></code>质量会很差，导致测试时出现严重错误（<code class="docutils literal notranslate"><span class="pre">t̂</span> <span class="pre">≠</span> <span class="pre">t</span></code>）。</p></li>
+<li><p>右半部分展示了模型会 <strong>同时</strong> 将它在路径一中自己生成的预测特征 <code class="docutils literal notranslate"><span class="pre">â</span></code>，再次输入到 LM Head 中，进行第二次词元预测。这个过程完全 <strong>模拟了测试时的真实情况</strong>——即依赖自己的预测进行下一步生成。</p></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p><img alt="图 8：训练与测试不一致问题" src="../_images/04.MultiTokenGen.08.png" /><br />
+<img alt="图 9：训练时测试机制" src="../_images/04.MultiTokenGen.09.png" /></p>
+<ol class="arabic simple" start="2">
+<li><p><strong>多层特征融合</strong>：为了给草稿模型提供更丰富的上下文信息，EAGLE-3 不再仅仅依赖于目标模型的顶层特征。取而代之的是，它将目标模型在最后一次前向传播中产生的低、中、高层特征进行融合，并将这个融合后的特征向量作为草稿模型的输入。这为生成高质量的草稿提供了远比单一顶层特征更全面的信号。</p></li>
+</ol>
+<p><img alt="图 10：EAGLE-3 多层特征融合" src="../_images/04.MultiTokenGen.10.png" /></p>
+</section>
+<section id="id3">
+<h4>EAGLE 框架对比<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>EAGLE 系列框架的演进反映了推测式解码技术的快速发展。本节将对 EAGLE-1 到 EAGLE-3 进行系统对比，帮助读者理解各版本的技术特点和性能差异。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>特性 / 技术点</p></th>
+<th class="head"><p>EAGLE-1</p></th>
+<th class="head"><p>EAGLE-2</p></th>
+<th class="head"><p>EAGLE-3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>预测目标</strong></p></td>
+<td><p>Feature（第二高层特征）</p></td>
+<td><p>同 EAGLE-1</p></td>
+<td><p>Token（直接预测）</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>结构</strong></p></td>
+<td><p>静态草稿树</p></td>
+<td><p>动态草稿树（基于上下文与置信度）</p></td>
+<td><p>使用 training-time test，更灵活</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>特征利用</strong></p></td>
+<td><p>Top-layer features</p></td>
+<td><p>同 EAGLE-1</p></td>
+<td><p>多层特征融合（低／中／高层）</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>生成质量一致性</strong></p></td>
+<td><p>Lossless（无损）</p></td>
+<td><p>Lossless（无损）</p></td>
+<td><p>继续保持一致性</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>性能加速比</strong></p></td>
+<td><p>≈ 2.7×–3.5×</p></td>
+<td><p>≈ 3.05×–4.26×（提升 20%–40%）</p></td>
+<td><p>最多 ≈ 6.5×，相较 EAGLE-2 提升约 1.4×</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>吞吐提升（高 Batch）</strong></p></td>
+<td><p>—</p></td>
+<td><p>—</p></td>
+<td><p>≈ 1.38× 吞吐提升</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+<section id="token">
+<h2>多 Token 策略综合对比<a class="headerlink" href="#token" title="Link to this heading">#</a></h2>
+<p>下表对各类多 Token 生成策略进行了系统对比，包括 MTP 系列和推测式解码技术，帮助读者根据实际应用场景选择合适的技术方案。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>技术</p></th>
+<th class="head"><p>核心机制</p></th>
+<th class="head"><p>应用阶段</p></th>
+<th class="head"><p>关键创新</p></th>
+<th class="head"><p>优势</p></th>
+<th class="head"><p>局限性</p></th>
+<th class="head"><p>代表性示例</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>并行 MTP</strong></p></td>
+<td><p>共享主干网络 + 多个并行输出头</p></td>
+<td><p>训练时</p></td>
+<td><p>在训练目标中引入多未来 Token 预测</p></td>
+<td><p>训练信号强，适合自推测解码</p></td>
+<td><p>独立预测可能导致输出不连贯</p></td>
+<td><p>&quot;Better &amp; Faster LLMs&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>序列式 MTP</strong></p></td>
+<td><p>链式 MTP 模块，维持因果依赖</p></td>
+<td><p>训练时</p></td>
+<td><p>解决了并行 MTP 的连贯性问题</p></td>
+<td><p>生成质量更高，逻辑性更强</p></td>
+<td><p>牺牲了部分并行性</p></td>
+<td><p>DeepSeek-V3</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>掩码输入式 MTP</strong></p></td>
+<td><p>将 MTP 转化为掩码填充任务</p></td>
+<td><p>训练/微调时</p></td>
+<td><p>使用 LoRA，可附加到任意预训练模型</p></td>
+<td><p>模块化，高效微调，不损害原模型</p></td>
+<td><p>依赖轻量级采样器来保证连贯性</p></td>
+<td><p>Apple Research</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>标准推测式解码</strong></p></td>
+<td><p>&quot;草稿-验证&quot;循环</p></td>
+<td><p>推理时</p></td>
+<td><p>使用小模型为大模型生成草稿</p></td>
+<td><p>无损加速，保证输出分布一致</p></td>
+<td><p>需要合适的、兼容的草稿模型</p></td>
+<td><p><a class="reference external" href="https://research.google/blog/looking-back-at-speculative-decoding/">Google Research</a></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>EAGLE-3</strong></p></td>
+<td><p>直接 Token 预测 + 多层特征融合</p></td>
+<td><p>训练+推理</p></td>
+<td><p>&quot;训练时测试&quot;方法，发现缩放定律</p></td>
+<td><p>极高的加速比，可从数据规模中获益</p></td>
+<td><p>训练草稿模型过程相对复杂</p></td>
+<td><p>EAGLE-3</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id4">
+<h2>总结与思考<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>多 Token 生成技术代表了大模型推理优化的重要方向，通过 MTP 和 Speculative Decoding 两类主要技术路线，有效突破了传统自回归生成的性能瓶颈。MTP 技术在训练阶段增强模型的多步预测能力，通过并行架构、序列式连接或掩码预测等方式，提高了模型的训练效率和泛化能力；而 Speculative Decoding 则在推理阶段通过“草稿-验证”机制，利用小模型加速大模型的推理过程，实现了无损的推理加速。</p>
+<p>随着 EAGLE 系列框架的演进，推测式解码技术已经从简单的特征预测发展到动态草稿树和多层特征融合，加速比从最初的 2.7-3.5 倍提升到最高 6.5 倍。这些技术不仅显著提高了大模型的推理效率，降低了部署成本，还为未来大模型的实用化铺平了道路。</p>
+<p>在实际应用中，选择哪种技术取决于具体场景需求：若追求训练效率和模型质量，MTP 系列技术更为适合；若关注推理速度和资源消耗，Speculative Decoding 则是更好的选择。随着技术的不断演进，这两类方法也可能进一步融合，为大模型的高效部署提供更强大的支持。</p>
+</section>
+<section id="id5">
+<h2>参考资料<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.cnblogs.com/rossiXYZ/p/18880573">探秘 Transformer 系列之（33）--- DeepSeek MTP</a></p></li>
+<li><p><a class="reference external" href="https://zhuanlan.zhihu.com/p/18056041194">deepseek 技术解读(2)-MTP（Multi-Token Prediction）的前世今生</a></p></li>
+<li><p><a class="reference external" href="https://zhuanlan.zhihu.com/p/651359908">大模型推理妙招—投机采样（Speculative Decoding）</a></p></li>
+<li><p><a class="reference external" href="https://zhuanlan.zhihu.com/p/716344354">[LLM 投机推理] 超越 Medusa 的投机采样—— EAGLE 1/2 论文解读</a></p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./04Train03TrainAcceler"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="03.DSGEMM.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">&lt;no title&gt;</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="05.Ulysses.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">&lt;no title&gt;</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mtp">MTP 架构与方法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#native-mtp">Native MTP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">序列式 MTP</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">掩码输入式 MTP</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#speculative-decoding">Speculative Decoding 架构与方法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#draft-then-verify">Draft-then-Verify 范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle">EAGLE 框架演进</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle-1">EAGLE-1</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle-2">EAGLE-2</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#eagle-3">EAGLE-3</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">EAGLE 框架对比</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token">多 Token 策略综合对比</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">参考资料</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ZOMI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Aug 31, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="MoE 算法架构(DONE)" />
+<meta property="og:title" content="3.2.1. MoE 算法架构(DONE)" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData02MoE/01MOEIntroducion.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
 <meta property="og:description" content="Author by: 张晓天 MoE（Mixture of Experts，混合专家） ，这绝非一个全新的概念，它的思想甚至可以追溯到几十年前。近年来，它随着 Mixtral 8x7B 的推出，在开源人工智能社区又引起了关注。但真正让它在大模型时代大放异彩、成为突破“成本-性能”瓶颈关键钥匙的，是国内幻方团队推出的 DeepSeek V3 和 R1 模型。 可以想象一下，当你向 AI 助手提..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/_images/social_previews/summary_06AlgoData02MoE_01MOEIntroducion_eeb74089.png" />
+<meta property="og:image" content="/None" />
 <meta property="og:image:alt" content="Author by: 张晓天 MoE（Mixture of Experts，混合专家） ，这绝非一个全新的概念，它的思想甚至可以追溯到几十年前。近年来，它随着 Mixtral 8x7B 的推出，在开源人工智能社区又引起了关注。但真正让它在大模型时代大放异彩、成为突破“成本-性能”瓶颈关键钥匙的，是国内幻方团队推出..." />
 <meta name="description" content="Author by: 张晓天 MoE（Mixture of Experts，混合专家） ，这绝非一个全新的概念，它的思想甚至可以追溯到几十年前。近年来，它随着 Mixtral 8x7B 的推出，在开源人工智能社区又引起了关注。但真正让它在大模型时代大放异彩、成为突破“成本-性能”瓶颈关键钥匙的，是国内幻方团队推出的 DeepSeek V3 和 R1 模型。 可以想象一下，当你向 AI 助手提..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>MoE 算法架构(DONE) &#8212; AIInfra</title>
+    <title>3.2.1. MoE 算法架构(DONE) &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -50,7 +50,7 @@
     <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fddca223" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
@@ -78,14 +78,15 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData02MoE/01MOEIntroducion';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="MOE 前世今生(DONE)" href="02MOEHistory.html" />
-    <link rel="prev" title="MoE 混合专家" href="README.html" />
+    <link rel="next" title="3.2.2. MOE 前世今生(DONE)" href="02MOEHistory.html" />
+    <link rel="prev" title="3. MoE 混合专家" href="README.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Aug 24, 2025"/>
+    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
 
 <link
   rel="alternate"
@@ -178,8 +179,14 @@
   
   
   
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
   
-    <p class="title logo__title">AIInfra</p>
   
 </a></div>
         <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
@@ -193,7 +200,7 @@
           
           
           
-          <a href="https://github.com/chenzomi12/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">GitHub</span></a>
         </li>
         <li class="nav-item">
@@ -234,36 +241,58 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. 大模型系统概述 ===</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. AI 计算集群 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">1. AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">2. 计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">2.3.1. 高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">2.3.2. HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">2.3.3. HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">2.3.4. 计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">2.3.5. 计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">2.3.6. AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">2.3.7. AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02TypicalRepresent/README.html">集群建设之巅</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">3. L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">3.3.1. 服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">3.3.2. 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">3.3.3. 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">3.3.4. 液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">3.3.5. 服务器机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">3.3.6. 集群机房供电</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">4. 万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">4.3.1. AI 万卡集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">4.3.2. AI 万卡集群建设交付</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">4.3.3. 03 AI 万卡集群测试步骤</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">4.3.4. NVIDIA Blackwell 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">4.3.5. NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">4.3.6. NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">4.3.7. NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">4.3.8. XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">4.3.9. 十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">5. 集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">5.4.1. GPU 与 NPU 精度误差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">5.4.2. 基于 RWKV 的 RNN 范式革新</a></li>
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 通信与存储 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMAIntroduction.html">网络通信进阶</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/RDMA.html">Scale out and Scale up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -284,12 +313,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -305,34 +333,31 @@
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">Kubernetes 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">Kubernetes 容器持网络</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud05Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">Kubernetes 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">Kubernetes 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器持网络</a></li>
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01.Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行 1F1B/1F1B Interleaved 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04.MultiTokenGen.html">多 Token 推理与生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/comput_total_parameters.html">Dense 计算总参</a></li>
 
@@ -363,11 +388,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train07Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
-</details></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -380,7 +402,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -390,7 +412,8 @@
 
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -400,70 +423,88 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeekOptimize/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer09Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">MoE 混合专家</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">MoE 算法架构(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02MOEHistory.html">MOE 前世今生(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03MOECreate.html">MOE 奠基论文(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06MOESwitch.html">Switch Trans 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09MoECore.html">MOE 模型可视化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="10MOELLM.html">MoE 参数与专家</a></li>
-<li class="toctree-l2"><a class="reference internal" href="11MOECode.html">单机单卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="12MOEFuture.html">单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="13MOEVMOE.html">MoE 性能分析</a></li>
-<li class="toctree-l2"><a class="reference internal" href="14MOESoft-MOE.html">视觉 MoE 模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">1. 大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">2. Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">2.3.1. Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">2.3.2. 大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">2.3.3. 大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">2.3.4. Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">2.3.5. Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">2.3.6. Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">2.3.7. 大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">2.3.8. 搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">2.3.9. 从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">2.3.10. 实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">2.3.12. 手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">2.3.13. 手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">2.3.14. 深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">3. MoE 混合专家</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">3.2.1. MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02MOEHistory.html">3.2.2. MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03MOECreate.html">3.2.3. MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">3.2.4. MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">3.2.5. GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06MOESwitch.html">3.2.6. Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07GLaM_STMOE.html">3.2.7. GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">3.2.8. DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09MoECore.html">3.2.9. MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10MOELLM.html">3.2.10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12MOEFuture.html">3.2.11. 单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice01MOEInfer.html">3.2.12. 基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice02SignalMOE.html">3.2.13. 从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice03IntrtaMOE.html">3.2.14. MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice04MOEAnalysize.html">3.2.15. MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">4. 大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">4.2.1. 高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">4.2.2. 基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">4.2.3. Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">4.2.4. RetNet：混合训练实战(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">4.2.5. RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">4.2.6. Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">5. 图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">5.11.1. 图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">6. 视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">7. 语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">8. 数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">8.2.1. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">8.2.2. 预训练数据预处理</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
-
-
-
-
-
-
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">8.2.4. 数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">8.2.5. 后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">8.2.6. 预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">8.2.7. 概述</a></li>
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">8.2.14. Llama3.1</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">8.2.18. 充当 Linux 终端</a></li>
 
 
 
@@ -594,8 +635,15 @@
 
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">9. DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">9.2.1. ChatGPT 解读</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 八. 大模型应用 ===</span></p>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">10. 向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -624,6 +672,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -680,7 +731,24 @@
       
       
       
-      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/blob/master/06AlgoData02MoE/01MOEIntroducion.md?plain=1" target="_blank"
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/06AlgoData02MoE/01MOEIntroducion.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -697,24 +765,7 @@
       
       
       
-      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/edit/master/06AlgoData02MoE/01MOEIntroducion.md" target="_blank"
-   class="btn btn-sm btn-source-edit-button dropdown-item"
-   title="Suggest edit"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fas fa-pencil-alt"></i>
-  </span>
-<span class="btn__text-container">Suggest edit</span>
-</a>
-</li>
-      
-      
-      
-      
-      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/issues/new?title=Issue%20on%20page%20%2F06AlgoData02MoE/01MOEIntroducion.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F06AlgoData02MoE/01MOEIntroducion.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -834,35 +885,35 @@ document.write(`
         <div id="jb-print-toc">
             
             <div>
-                <h2> Contents </h2>
+                <h2> 本节目录 Contents </h2>
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">什么是 MoE 混合专家模型？</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">MoE 混合专家模型简史</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">MoE 混合专家对训练的影响？</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">什么是稀疏性？</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">解决稀疏性计算</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token">Token 负载均衡</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">专家如何学习？</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">专家的数量对预训练有何影响？</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">稀疏 VS 稠密，如何选择?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">3.2.1.1. 什么是 MoE 混合专家模型？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.2.1.2. MoE 混合专家模型简史</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.2.1.3. MoE 混合专家对训练的影响？</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.2.1.3.1. 什么是稀疏性？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.2.1.3.2. 解决稀疏性计算</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token">3.2.1.3.3. Token 负载均衡</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.2.1.3.4. 专家如何学习？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2.1.3.5. 专家的数量对预训练有何影响？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">3.2.1.3.6. 稀疏 VS 稠密，如何选择?</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">让 MoE 训练和推理起飞</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">初代 MoE 的"缺陷"</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">并行计算：MoE 的动力系统</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">通信优化：突破音障的关键</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">MoE 模型的精简化革命</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">模型蒸馏</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">任务级别路由</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">专家网络聚合</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2.1.4. 让 MoE 训练和推理起飞</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.2.1.4.1. 初代 MoE 的"缺陷"</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.2.1.4.2. 并行计算：MoE 的动力系统</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2.1.4.3. 通信优化：突破音障的关键</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.2.1.4.4. MoE 模型的精简化革命</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.2.1.4.4.1. 模型蒸馏</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.2.1.4.4.2. 任务级别路由</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">3.2.1.4.4.3. 专家网络聚合</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">思考与小结</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">3.2.1.5. 思考与小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">3.2.1.6. 本节视频</a></li>
 </ul>
             </nav>
         </div>
@@ -876,7 +927,7 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="moe-done">
-<h1>MoE 算法架构(DONE)<a class="headerlink" href="#moe-done" title="Link to this heading">#</a></h1>
+<h1><span class="section-number">3.2.1. </span>MoE 算法架构(DONE)<a class="headerlink" href="#moe-done" title="Link to this heading">#</a></h1>
 <p>Author by: 张晓天</p>
 <p><strong>MoE（Mixture of Experts，混合专家）</strong>，这绝非一个全新的概念，它的思想甚至可以追溯到几十年前。近年来，它随着 Mixtral 8x7B 的推出，在开源人工智能社区又引起了关注。但真正让它在大模型时代大放异彩、成为突破“成本-性能”瓶颈关键钥匙的，是国内幻方团队推出的 DeepSeek V3 和 R1 模型。</p>
 <p>可以想象一下，当你向 AI 助手提问，它流畅地写出千字长文，精准分析复杂数据时，这一切的成本<strong>低至每百万次交互（Tokens）只需几分钱，甚至不到一分美金（&lt; $0.001 / 1M Tokens）</strong>。而这就是 DeepSeek V3 和 R1 模型所创造的现实。</p>
@@ -888,7 +939,7 @@ document.write(`
 </ol>
 <p>这些问题的核心都将围绕 MoE 进行展开，本章将提供一系列的文章一步步的揭开 MoE 的面纱。</p>
 <section id="moe">
-<h2>什么是 MoE 混合专家模型？<a class="headerlink" href="#moe" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.2.1.1. </span>什么是 MoE 混合专家模型？<a class="headerlink" href="#moe" title="Link to this heading">#</a></h2>
 <p>都知道模型规模是提升模型性能的关键因素之一。在有限的计算资源预算下，用更少的训练步数训练一个更大的模型，往往比用更多的步数训练一个较小的模型效果更佳。</p>
 <p>传统稠密模型 (Dense Model)，必须<strong>激活其绝大部分甚至全部参数</strong>来处理每一个输入（Token），这一方面导致了处理简单问题也动用庞大算力，其次模型总参数量的直接增加、线性地推高每次推理的计算成本和延迟。</p>
 <p>混合专家模型 (MoE) 的一个显著优势是它们能够在远少于稠密模型所需的计算资源下进行有效的预训练。这意味着在相同的计算预算条件下，可以显著扩大模型或数据集的规模。</p>
@@ -915,7 +966,7 @@ document.write(`
 </div></blockquote>
 </section>
 <section id="id1">
-<h2>MoE 混合专家模型简史<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.2.1.2. </span>MoE 混合专家模型简史<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>混合专家模型 (MoE) 的理念起源于 1991 年的论文 <strong><a class="reference external" href="https://link.zhihu.com/?target=https%3A//www.cs.toronto.edu/~hinton/absps/jjnh91.pdf">Adaptive Mixture of Local Experts</a></strong>，出自 Geoffrey Hinton 和 Michael I. Jordan 两位大神之手。这个概念与集成学习方法相似，旨在为由多个单独网络组成的系统建立一个监管机制。</p>
 <p>在这种系统中，每个网络 (被称为“专家”) 处理训练样本的不同子集，专注于输入空间的特定区域。那么，如何选择哪个专家来处理特定的输入呢？这就是门控网络发挥作用的地方，它决定了分配给每个专家的权重。在训练过程中，这些专家和门控网络都同时接受训练，以优化它们的性能和决策能力。</p>
 <p><img alt="1749375628925" src="../_images/01MOEIntroducion_02.png" /></p>
@@ -930,9 +981,9 @@ document.write(`
 <p>从 2023 年 ChatGPT 发布以来，大模型领域也迎来了很多关于 MoE 相关工作的进展。例如，虽未官方确认，但多方证据（如 George Hotz 爆料）表明 2023 年 3 月 OpenAI 发布的 GPT-4 可能是 <strong>8×220B MoE</strong> 架构。2024 年 1 月 DeepSeek 发布了 DeepSeek-MoE 为国内首个开源 MoE。2024 年 3 月 Databricks 发布了 最强开源 MoE DBRX，它的参数量打的了 132B 总参数。2025 年 1 月 DeepSeek 发布了 性价比之王 DeepSeek-V3 总参数量 2360B，但通过 <strong>动态稀疏化</strong> 实现超低推理成本。2025 年 1 月  MiniMax 发布了 参数量达到 4560B 的 MiniMax-01 MoE 模型。</p>
 </section>
 <section id="id2">
-<h2>MoE 混合专家对训练的影响？<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.2.1.3. </span>MoE 混合专家对训练的影响？<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <section id="id3">
-<h3>什么是稀疏性？<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.3.1. </span>什么是稀疏性？<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>稀疏性的概念采用了条件计算的思想。</p>
 <p>在传统的 稠密模型（Dense Model）属于全参数强制激活。对于<strong>任意输入数据 x，模型的</strong>全部参数 W 都必须参与计算，即所有神经元和权重矩阵都会被激活。</p>
 <ul class="simple">
@@ -952,13 +1003,13 @@ document.write(`
 <p>条件计算的概念 (即仅在每个样本的基础上激活网络的不同部分) 使得在不增加额外计算负担的情况下扩展模型规模成为可能。这一策略在每个 MoE 层中实现了数以千计甚至更多的专家的有效利用。然而这种稀疏性设置确实带来了一些挑战。例如，在混合专家模型 (MoE) 中，尽管较大的批量大小通常有利于提高性能，但当数据通过激活的专家时，实际的批量大小可能会减少。比如，假设我们的输入批量包含 10 个 token， 可能会有五个 token 被路由到同一个专家，而剩下的五个 token 分别被路由到不同的专家。这导致了批量大小的不均匀分配和资源利用效率不高的问题。</p>
 </section>
 <section id="id4">
-<h3>解决稀疏性计算<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.3.2. </span>解决稀疏性计算<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <p>那我们应该如何解决这个问题呢？一个可学习的门控网络 <span class="math notranslate nohighlight">\(g_i(x)\)</span> 决定将输入的哪一部分发送给哪些专家 <span class="math notranslate nohighlight">\(f_{\text{expert}_i}(x)\)</span>。</p>
 <p>Google Shazeer 对 MoE 在翻译应用中，引入条件计算，在每个样本的基础上激活网络的不同部分。不增加额外计算情况下扩展 MoE 规模，每个 MoE 层中实现更多 Expert，提升专家利用率。</p>
 <p><img alt="1749375628925" src="../_images/01MOEIntroducion_05.png" /></p>
 </section>
 <section id="token">
-<h3>Token 负载均衡<a class="headerlink" href="#token" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.3.3. </span>Token 负载均衡<a class="headerlink" href="#token" title="Link to this heading">#</a></h3>
 <p>在标准 MoE 训练中，门控网络（Router）倾向于<strong>过度选择少数专家</strong>，导致少数专家被高频激活（如 20% 的专家处理 80% 的样本），其参数快速优化，形成“强者愈强”的正反馈。冷门专家（Cold Experts）则因训练不足逐渐退化，甚至输出全零（参数未被有效更新）。这种现象使得模型容量浪费，实际性能接近稠密小模型，硬件利用率也不会很高。</p>
 <p>通过损失函数（Auxiliary Loss）强制门控网络<strong>均匀分配样本给所有专家，使每个专家在 batch 内的</strong>总被选概率接近均匀，打破马太效应。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">auxiliary_loss</span><span class="p">(</span><span class="n">gating_probs</span><span class="p">,</span> <span class="k">lambda</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
@@ -978,7 +1029,7 @@ document.write(`
 <p>通过引入辅助损失，MoE 模型能够更高效地利用全部专家容量，这也是 <strong>DeepSeek-V3</strong> 等先进模型实现低成本高性能的关键技术之一。</p>
 </section>
 <section id="id5">
-<h3>专家如何学习？<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.3.4. </span>专家如何学习？<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <p>那么 MOE 专家是如何学习的呢？ST-MoE 的研究者们发现，编码器中不同的专家倾向于专注于特定类型的 token 或浅层概念。例如，某些专家可能专门处理标点符号，而其他专家则专注于专有名词等。与此相反，解码器中的专家通常具有较低的专业化程度。</p>
 <p>实际上，专家的学习过程是一个动态演化的自组织系统，其核心在于路由机制与专家能力之间持续的相互塑造。在模型训练初期，所有专家处于近乎均质的状态，随着训练进程的推进，微小的随机差异开始被放大。某个专家可能偶然对特定类型的 token（比如标点符号）处理效果略好，这个微小优势通过梯度回传使得路由网络逐渐倾向于将同类 token 更多地分配给该专家。这种正反馈循环导致专家开始形成专业化倾向。为了防止单一专家垄断某类 token 的处理，确保系统资源得到合理分配，所以引入负载均衡机制作为关键约束条件。</p>
 <p><img alt="1749375628925" src="../_images/01MOEIntroducion_06.png" /></p>
@@ -988,25 +1039,25 @@ document.write(`
 <p>整个专家系统的学习过程呈现出典型的涌现特性——宏观的专业化模式并非预先设计，而是通过大量微观的 token 级路由决策自下而上形成的。这种自组织过程既受到模型架构的约束（如专家容量、路由维度），也受到优化目标的引导（如负载均衡损失、任务损失）。最终形成的专家分工体系实际上是模型在效率压力下（有限的计算资源）和效能需求间找到的平衡解。</p>
 </section>
 <section id="id6">
-<h3>专家的数量对预训练有何影响？<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.3.5. </span>专家的数量对预训练有何影响？<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <p>研究表明，增加专家数量能够提高混合专家模型（MoE）的样本处理效率和计算速度，但其性能增益随专家数量的增加呈现递减趋势，并在专家数量达到 256 或 512 时趋于饱和。此外，由于推理过程中需要加载所有专家模型，增加专家数量会线性增加显存需求，从而对硬件资源提出更高要求。</p>
 </section>
 <section id="vs">
-<h3>稀疏 VS 稠密，如何选择?<a class="headerlink" href="#vs" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.3.6. </span>稀疏 VS 稠密，如何选择?<a class="headerlink" href="#vs" title="Link to this heading">#</a></h3>
 <p>在固定计算预算的预训练场景中，稀疏模型通常能够取得更好的性能表现。而对于显存资源有限且对吞吐量要求不高的应用场景，稠密模型往往是更合适的选择。需要注意的是，由于稀疏模型和稠密模型在架构设计和参数计算方式上存在本质差异，直接比较两者的参数量并不具备实际意义。</p>
 </section>
 </section>
 <section id="id7">
-<h2>让 MoE 训练和推理起飞<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.2.1.4. </span>让 MoE 训练和推理起飞<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
 <p>早期的混合专家模型(MoE)就像一架设计精良却笨重不堪的初代飞机——理论上拥有强大的性能，在实际飞行中却屡屡受挫。问题根源在于其分支式的架构设计，这种设计在纸面上完美无缺，却忽视了现代计算硬件的实际特性。就像早期的飞机设计师尚未完全理解空气动力学原理一样，MoE 的开拓者们最初也未能充分考虑 GPU 的并行计算特性和分布式系统的通信瓶颈。</p>
 <section id="id8">
-<h3>初代 MoE 的&quot;缺陷&quot;<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.4.1. </span>初代 MoE 的&quot;缺陷&quot;<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <p>第一代 MoE 模型面临的核心挑战可以比作飞机设计中的&quot;重量与升力&quot;矛盾。模型中的分支结构导致两个主要问题：</p>
 <p>首先，GPU 作为现代深度学习的主力计算单元，其优势在于处理规整的、高度并行的计算任务。而 MoE 模型中动态路由带来的条件计算路径，就像在一条高速公路上设置无数个可变车道一样，使得 GPU 难以充分发挥其并行计算能力。每次前向传播时，不同的 token 可能被路由到不同的专家，这种不规则性导致计算资源的利用率大幅下降。</p>
 <p>其次，在分布式训练场景下，专家往往分布在不同的计算设备上。这就好比飞机的各个部件分散在不同的工厂生产，需要频繁运输组装。当数据需要在设备间传递时，网络带宽很快成为系统瓶颈。我们的实验数据显示，在某些配置下，通信开销可占总训练时间的 60%以上，这意味着计算设备大部分时间都在等待数据传输，而非实际进行计算。</p>
 </section>
 <section id="id9">
-<h3>并行计算：MoE 的动力系统<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.4.2. </span>并行计算：MoE 的动力系统<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
 <p>现代 MoE 模型的效率优化建立在四大并行计算范式的基础之上，它们如同飞机的四个发动机，共同推动模型性能的提升：</p>
 <p><strong>数据并行</strong>如同机群的编队飞行，每个计算节点都携带完整的模型副本（包括所有专家），但处理不同的数据批次。这种方式的优势在于实现简单，但当模型规模增大时，内存压力也随之剧增。</p>
 <p><strong>模型并行</strong>则像将飞机的不同部件分散到多个工厂生产，模型被分割到不同节点，每个节点处理完整的数据流。这种方法适合超大规模模型，但需要精细的流水线设计以避免计算资源的闲置。</p>
@@ -1020,7 +1071,7 @@ document.write(`
 </ul>
 </section>
 <section id="id10">
-<h3>通信优化：突破音障的关键<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.4.3. </span>通信优化：突破音障的关键<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <p>在 MoE 模型的优化设计中，容量因子(Capacity Factor, CF)的调节可以提升模型性能，但同时也增加了机身重量（通信成本和显存需求）。这也意味着更高的通信成本和对保存激活值的显存的需求。</p>
 <p>容量因子作为 MoE 模型的核心调节旋钮，呈现出明显的收益递减特性：</p>
 <ul class="simple">
@@ -1066,30 +1117,30 @@ document.write(`
 <p>其次，为缓解高 CF 带来的显存压力，可以通过<strong>梯度检查点专家选择</strong>，<strong>动态显存分配池</strong>，<strong>专家级混合精度</strong>来进行优化解决。</p>
 </section>
 <section id="id11">
-<h3>MoE 模型的精简化革命<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">3.2.1.4.4. </span>MoE 模型的精简化革命<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
 <section id="id12">
-<h4>模型蒸馏<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">3.2.1.4.4.1. </span>模型蒸馏<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
 <p>模型蒸馏在 MoE 架构中扮演着&quot;精炼厂&quot;的角色，能够将庞大稀疏模型的知识精华浓缩到紧凑的稠密模型中。通过将 MoE 模型蒸馏回其对应稠密模型，保留 30-40% 由稀疏性带来性能提升。预先蒸馏不仅加快预训练速度，还使得在推理中使用更小型模型。</p>
 <p><img alt="1749375628925" src="../_images/01MOEIntroducion_08.png" /></p>
 <p>利用 MoE 教师模型生成富含专家决策特征的增强训练数据，通过早期专家特征融合技术将稀疏路由模式编码为稠密表示，同时引入动态调整机制逐步提升蒸馏强度，形成渐进式的知识迁移课程。进入部署阶段后，系统自动根据业务需求智能选择推理路径——当任务需要最高精度时调用原始 MoE 模型，在常规场景下则启用蒸馏模型。</p>
 </section>
 <section id="id13">
-<h4>任务级别路由<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">3.2.1.4.4.2. </span>任务级别路由<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
 <p>任务级路由机制代表了混合专家模型架构的重要演进方向，它通过将整个输入序列或特定任务直接路由到确定的专家子集，实现了模型结构的本质性简化。这种路由方式犹如为 MoE 系统装上了智能导航仪，不再对每个 token 进行细粒度决策，而是在更高语义层面做出路由选择。</p>
 <p>在具体实现上，任务级路由系统首先会对输入进行语义特征分析，通过轻量级分类器判断任务类型（如文本分类、序列生成、问答等），然后将整个任务实例分配给预配置的专家组合</p>
 </section>
 <section id="id14">
-<h4>专家网络聚合<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">3.2.1.4.4.3. </span>专家网络聚合<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
 <p>通过数学方法将多个专家模块的知识融合到紧凑的参数。合并各个专家权重，推理时减少所需参数数量。在不显著牺牲性能的情况下降低模型稀疏复杂度。相比传统 MoE 架构，这种集约化设计消除了稀疏计算带来的硬件适配挑战，使模型部署效率提升了一个数量级。专家聚合特别适用于需要严格满足延迟 SLA 的在线服务等场景。</p>
 </section>
 </section>
 </section>
 <section id="id15">
-<h2>思考与小结<a class="headerlink" href="#id15" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.2.1.5. </span>思考与小结<a class="headerlink" href="#id15" title="Link to this heading">#</a></h2>
 <p>幻方 DeepSeek V3 和 R1 模型能够实现极低的成本，主要得益于其创新的 DeepSeekMoE 架构和一系列工程优化。相同参数下，MOE 架构的天然优势，推理时候只执行部分参数。例如，V3 总参数量 671B 但激活仅 37B，大幅减少计算量。同时，FP8 混合精度训练、无辅助损失的负载均衡策略以及 MLA（多头隐式注意力）机制进一步降低了显存占用和计算开销<strong>8</strong>10。在训练阶段，DeepSeekMoE 通过优化通信重叠和专家并行，避免了传统 MoE 的跨节点瓶颈，这些都使得 DeepSeek V3 和 R1 模型能够实现极低的成本。因此，MOE 架构不仅提升了算力利用率，还通过稀疏激活特性降低了对训练和推理算力的需求，同时保持高性能。</p>
 </section>
 <section id="id16">
-<h2>本节视频<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">3.2.1.6. </span>本节视频<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
 <html>
 <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=113959675893393&bvid=BV17PNtekE3Y&cid=28253028746&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>
@@ -1136,7 +1187,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">MoE 混合专家</p>
+        <p class="prev-next-title"><span class="section-number">3. </span>MoE 混合专家</p>
       </div>
     </a>
     <a class="right-next"
@@ -1144,7 +1195,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">MOE 前世今生(DONE)</p>
+        <p class="prev-next-title"><span class="section-number">3.2.2. </span>MOE 前世今生(DONE)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1160,35 +1211,35 @@ document.write(`
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">什么是 MoE 混合专家模型？</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">MoE 混合专家模型简史</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">MoE 混合专家对训练的影响？</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">什么是稀疏性？</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">解决稀疏性计算</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token">Token 负载均衡</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">专家如何学习？</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">专家的数量对预训练有何影响？</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">稀疏 VS 稠密，如何选择?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">3.2.1.1. 什么是 MoE 混合专家模型？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.2.1.2. MoE 混合专家模型简史</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.2.1.3. MoE 混合专家对训练的影响？</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.2.1.3.1. 什么是稀疏性？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.2.1.3.2. 解决稀疏性计算</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#token">3.2.1.3.3. Token 负载均衡</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.2.1.3.4. 专家如何学习？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2.1.3.5. 专家的数量对预训练有何影响？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">3.2.1.3.6. 稀疏 VS 稠密，如何选择?</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">让 MoE 训练和推理起飞</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">初代 MoE 的"缺陷"</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">并行计算：MoE 的动力系统</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">通信优化：突破音障的关键</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">MoE 模型的精简化革命</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">模型蒸馏</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">任务级别路由</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">专家网络聚合</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2.1.4. 让 MoE 训练和推理起飞</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.2.1.4.1. 初代 MoE 的"缺陷"</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.2.1.4.2. 并行计算：MoE 的动力系统</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2.1.4.3. 通信优化：突破音障的关键</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.2.1.4.4. MoE 模型的精简化革命</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.2.1.4.4.1. 模型蒸馏</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.2.1.4.4.2. 任务级别路由</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">3.2.1.4.4.3. 专家网络聚合</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">思考与小结</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">3.2.1.5. 思考与小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">3.2.1.6. 本节视频</a></li>
 </ul>
   </nav></div>
 
@@ -1202,16 +1253,27 @@ document.write(`
   
   <div class="footer-item">
     
+<p class="component-author">
+By ZOMI
+</p>
+
   </div>
   
   <div class="footer-item">
     
 
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
   </div>
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 24, 2025.
+  Last updated on Aug 31, 2025.
   <br/>
 </p>
   </div>

@@ -37,5 +37,4 @@
 ```{toctree}
 :maxdepth: 1
 
-09the_Architecture_of_Storage_and_Computing
 ```

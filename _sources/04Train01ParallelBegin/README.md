@@ -36,9 +36,9 @@
 ```{toctree}
 :maxdepth: 1
 
-01.Introduction
+01Introduction
 02.single_device
 03.data_parallel
 04.data_parallel_implement
-06.ZeRO_implement
+05MGConfig
 ```

@@ -18,7 +18,7 @@ title: AIInfra
 
 本开源项目主要是跟大家一起探讨和学习人工智能、深度学习的系统设计，而整个系统是围绕着在 NVIDIA、ASCEND 等芯片厂商构建算力层面，所用到的、积累、梳理得到大模型系统全栈的内容。希望跟所有关注 AI 开源项目的好朋友一起探讨研究，共同促进学习讨论。
 
-![大模型系统全栈架构图](images/01Introduction/03Architecture03.png)
+![大模型系统全栈架构图](./_static/aifoundation01.jpg)
 
 # 课程内容大纲
 
@@ -41,7 +41,6 @@ title: AIInfra
 第八部分，介绍大模型在各行各界应用的介绍[<u>**大模型应用**</u>](./07Application/README.md)，首先介绍大模型的典型应用场景，之后深入进阶应用，接着梳理大模型应用面临的挑战和伦理问题，最后进行未来展望。
 
 
-
 # 课程设立目的
 
 本课程主要为本科生高年级、硕博研究生、大模型系统从业者设计，帮助大家：
@@ -58,29 +57,29 @@ title: AIInfra
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 一. 大模型系统概述 ===
+:caption: ===  大模型系统概述 ===
 
 00Summary/README
 ```
 
-<!-- ## 二. AI 计算集群 -->
+<!-- ## 一. AI 计算集群 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 二. AI 计算集群 ===
+:caption: === 一. AI 计算集群 ===
 
 01AICluster/README
 01AICluster01Roadmap/README
-01AICluster02TypicalRepresent/README
-01AICluster03Analysis/README
-01AICluster04Practices/README
+01AICluster02L0L1Base/README
+01AICluster03SuperPod/README
+01AICluster04Performance/README
 ```
 
-<!-- ## 三. 通信与存储 -->
+<!-- ## 二. 通信与存储 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 三. 通信与存储 ===
+:caption: === 二. 通信与存储 ===
 
 02StorComm/README
 02StorComm01Roadmap/README
@@ -90,25 +89,24 @@ title: AIInfra
 02StorComm05StorforAI/README
 ```
 
-<!-- ## 四. 集群容器与云原生 -->
+<!-- ## 三. 集群容器与云原生 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 四. 集群容器与云原生 ===
+:caption: === 三. 集群容器与云原生 ===
 
 03DockCloud/README
 03DockCloud01Roadmap/README
 03DockCloud02DockerK8s/README
 03DockCloud03DiveintoK8s/README
 03DockCloud04CloudforAI/README
-03DockCloud05Practices/README
 ```
 
-<!-- ## 五. 大模型训练 -->
+<!-- ## 四. 大模型训练 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 五. 大模型训练 ===
+:caption: === 四. 大模型训练 ===
 
 04Train/README
 04Train01ParallelBegin/README
@@ -117,49 +115,48 @@ title: AIInfra
 04Train04PostTrainRL/README
 04Train05FineTune/README
 04Train06VerifValid/README
-04Train07Practices/README
 ```
 
-<!-- ## 六. 大模型推理 -->
+<!-- ## 五. 大模型推理 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 六. 大模型推理 ===
+:caption: === 五. 大模型推理 ===
 
 05Infer/README
 05Infer01Foundation/README
 05Infer02InferSpeedUp/README
-05Infer03SchedSpeedUp/README
+05Infer03Dispatch/README
 05Infer04LongInfer/README
-05Infer05OutputSamp/README
+05Infer05Sampling/README
 05Infer06CompDistill/README
 05Infer07Framework/README
-05Infer08DeepSeekOptimize/README
-05Infer09Practices/README
+05Infer08DeepSeek/README
 ```
 
-<!-- ## 七. 大模型算法与数据 -->
+<!-- ## 六. 大模型算法与数据 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 七. 大模型算法与数据 ===
+:caption: === 六. 大模型算法与数据 ===
 
 06AlgoData/README
-06AlgoData01Transformer/README
+06AlgoData01Basic/README
 06AlgoData02MoE/README
 06AlgoData03NewArch/README
 06AlgoData04ImageTextGenerat/README
 06AlgoData05VideoGenerat/README
 06AlgoData06AudioGenerat/README
 06AlgoData07DataEngineer/README
-06AlgoData08Practices/README
+06AlgoData08Special/README
+06AlgoData09VectorDB/README
 ```
 
-<!-- ## 八. 大模型应用 -->
+<!-- ## 七. 大模型应用 -->
 
 ```{toctree}
 :maxdepth: 1
-:caption: === 八. 大模型应用 ===
+:caption: === 七. 大模型应用 ===
 
 07Application/README
 07Application00Others/README
@@ -171,6 +168,7 @@ title: AIInfra
 07Application06Remmcon/README
 07Application07Safe/README
 07Application08History/README
+07Application10NewModel/README
 ```
 
 <!-- ## 附录内容 -->

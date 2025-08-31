@@ -29,6 +29,5 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
-02RDMAIntroduction
-RDMA
+02RDMA
 ```

@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Transformer 结构回顾与核心挑战" />
+<meta property="og:title" content="4.2.6. Transformer 结构回顾与核心挑战" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
@@ -19,7 +19,7 @@
 <meta name="description" content="Author by: 张嘉瑶 I. Transformer 的起源与架构蓝图: Transformer 模型由 Vaswani 等人在 2017 年的论文《Attention Is All You Need》中提出，旨在解决循环神经网络（RNN）和卷积神经网络（CNN）在并行化与长距离依赖处理上的局限性。 A. &quot;Attention Is All You Need&quot;范式转变: 该论文的核心论..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>Transformer 结构回顾与核心挑战 &#8212; AIInfra</title>
+    <title>4.2.6. Transformer 结构回顾与核心挑战 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -39,7 +39,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
     <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
@@ -50,7 +50,7 @@
     <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
-    <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=fddca223" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
@@ -78,14 +78,15 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData03NewArch/Transformer回顾及核心挑战';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式" href="%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html" />
-    <link rel="prev" title="RWKV 架构研究:核心特点与版本演进" href="RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html" />
+    <link rel="next" title="4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式" href="%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html" />
+    <link rel="prev" title="4.2.5. RWKV 架构研究:核心特点与版本演进" href="RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Aug 24, 2025"/>
+    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
 
 <link
   rel="alternate"
@@ -178,8 +179,14 @@
   
   
   
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
   
-    <p class="title logo__title">AIInfra</p>
   
 </a></div>
         <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
@@ -193,7 +200,7 @@
           
           
           
-          <a href="https://github.com/chenzomi12/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
             <span class="sr-only">GitHub</span></a>
         </li>
         <li class="nav-item">
@@ -234,36 +241,58 @@
  </script></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
-        <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. 大模型系统概述 ===</span></p>
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. AI 计算集群 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">1. AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">2. 计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">2.3.1. 高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">2.3.2. HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">2.3.3. HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">2.3.4. 计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">2.3.5. 计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">2.3.6. AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">2.3.7. AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02TypicalRepresent/README.html">集群建设之巅</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">3. L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">3.3.1. 服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">3.3.2. 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">3.3.3. 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">3.3.4. 液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">3.3.5. 服务器机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">3.3.6. 集群机房供电</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">4. 万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">4.3.1. AI 万卡集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">4.3.2. AI 万卡集群建设交付</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">4.3.3. 03 AI 万卡集群测试步骤</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">4.3.4. NVIDIA Blackwell 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">4.3.5. NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">4.3.6. NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">4.3.7. NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">4.3.8. XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">4.3.9. 十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">5. 集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">5.4.1. GPU 与 NPU 精度误差</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">5.4.2. 基于 RWKV 的 RNN 范式革新</a></li>
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 通信与存储 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMAIntroduction.html">网络通信进阶</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/RDMA.html">Scale out and Scale up</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -284,12 +313,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09the_Architecture_of_Storage_and_Computing.html">存算架构思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 集群容器与云原生 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -305,34 +333,31 @@
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">Kubernetes 容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">Kubernetes 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">Kubernetes 容器持网络</a></li>
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud04CloudforAI/README.html">AI 集群云平台 Cloud for AI</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud05Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">Kubernetes 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">Kubernetes 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器持网络</a></li>
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型训练 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01.Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZeros.html">DeepSpeed ZeRO 系列原理以及使用方式</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/05.ZeRO.html">分布式优化器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10_pipeline.html">流水并行 1F1B/1F1B Interleaved 原理</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04.MultiTokenGen.html">多 Token 推理与生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/comput_total_parameters.html">Dense 计算总参</a></li>
 
@@ -363,11 +388,8 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train07Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
-</details></li>
-</ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型推理 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -380,7 +402,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03SchedSpeedUp/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -390,7 +412,8 @@
 
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05OutputSamp/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -400,70 +423,88 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeekOptimize/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
-</ul>
-</details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer09Practices/README.html">实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型算法与数据 ===</span></p>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/11MOECode.html">单机单卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/13MOEVMOE.html">MoE 性能分析</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/14MOESoft-MOE.html">视觉 MoE 模型</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">1. 大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">2. Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">2.3.1. Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">2.3.2. 大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">2.3.3. 大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">2.3.4. Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">2.3.5. Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">2.3.6. Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">2.3.7. 大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">2.3.8. 搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">2.3.9. 从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">2.3.10. 实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">2.3.12. 手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">2.3.13. 手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">2.3.14. 深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">创新架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">3. MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">3.2.1. MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">3.2.2. MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">3.2.3. MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">3.2.4. MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">3.2.5. GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">3.2.6. Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">3.2.7. GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">3.2.8. DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">3.2.9. MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">3.2.10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">3.2.11. 单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">3.2.12. 基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">3.2.13. 从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">3.2.14. MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">3.2.15. MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">4. 大模型创新架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Efficient_Transformer.html">4.2.1. 高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice01RWKV.html">4.2.2. 基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice02Mamba.html">4.2.3. Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice03RetNet.html">4.2.4. RetNet：混合训练实战(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">4.2.5. RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">4.2.6. Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">5. 图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">5.11.1. 图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">6. 视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">7. 语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">8. 数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">8.2.1. 概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">8.2.2. 预训练数据预处理</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
-
-
-
-
-
-
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">8.2.4. 数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">8.2.5. 后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">8.2.6. 预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">8.2.7. 概述</a></li>
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">8.2.14. Llama3.1</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">8.2.18. 充当 Linux 终端</a></li>
 
 
 
@@ -594,8 +635,15 @@
 
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">9. DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">9.2.1. ChatGPT 解读</a></li>
 </ul>
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 八. 大模型应用 ===</span></p>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">10. 向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -624,6 +672,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -680,7 +731,24 @@
       
       
       
-      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/blob/master/06AlgoData03NewArch/Transformer回顾及核心挑战.md?plain=1" target="_blank"
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/06AlgoData03NewArch/Transformer回顾及核心挑战.md?plain=1" target="_blank"
    class="btn btn-sm btn-source-file-button dropdown-item"
    title="Show source"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -697,24 +765,7 @@
       
       
       
-      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/edit/master/06AlgoData03NewArch/Transformer回顾及核心挑战.md" target="_blank"
-   class="btn btn-sm btn-source-edit-button dropdown-item"
-   title="Suggest edit"
-   data-bs-placement="left" data-bs-toggle="tooltip"
->
-  
-
-<span class="btn__icon-container">
-  <i class="fas fa-pencil-alt"></i>
-  </span>
-<span class="btn__text-container">Suggest edit</span>
-</a>
-</li>
-      
-      
-      
-      
-      <li><a href="https://github.com/chenzomi12/chenzomi12.github.io/issues/new?title=Issue%20on%20page%20%2F06AlgoData03NewArch/Transformer回顾及核心挑战.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F06AlgoData03NewArch/Transformer回顾及核心挑战.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -834,61 +885,61 @@ document.write(`
         <div id="jb-print-toc">
             
             <div>
-                <h2> Contents </h2>
+                <h2> 本节目录 Contents </h2>
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i-transformer">I. Transformer 的起源与架构蓝图</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-attention-is-all-you-need">A. "Attention Is All You Need"范式转变</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rnn-lstm">B. 与循环模型（RNN/LSTM）的根本区别</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c">C. 经典的编码器-解码器架构</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">编码器（Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">解码器（Decoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">编码器与解码器的交互</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i-transformer">4.2.6.1. I. Transformer 的起源与架构蓝图</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-attention-is-all-you-need">4.2.6.1.1. A. "Attention Is All You Need"范式转变</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rnn-lstm">4.2.6.1.2. B. 与循环模型（RNN/LSTM）的根本区别</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c">4.2.6.1.3. C. 经典的编码器-解码器架构</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">4.2.6.1.3.1. 编码器（Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">4.2.6.1.3.2. 解码器（Decoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4.2.6.1.3.3. 编码器与解码器的交互</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d">D. 核心机制</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1. 缩放点积注意力与自注意力</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 多头注意力：赋能多样化表征子空间</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. 位置编码：为并行处理注入顺序信息</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">4. 位置全连接前馈网络</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">5. 残差连接与层归一化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d">4.2.6.1.4. D. 核心机制</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4.2.6.1.4.1. 1. 缩放点积注意力与自注意力</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4.2.6.1.4.2. 2. 多头注意力：赋能多样化表征子空间</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4.2.6.1.4.3. 3. 位置编码：为并行处理注入顺序信息</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">4.2.6.1.4.4. 4. 位置全连接前馈网络</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">4.2.6.1.4.5. 5. 残差连接与层归一化</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ii">II. 演进与关键架构改进</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-ln-post-ln">A. 层归一化策略：Pre-LN 与 Post-LN 之争</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rope">B. 位置编码的进展（例如，相对位置编码、RoPE）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-moe">C. 混合专家模型（MoE）提升可扩展性与容量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ii">4.2.6.2. II. 演进与关键架构改进</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-ln-post-ln">4.2.6.2.1. A. 层归一化策略：Pre-LN 与 Post-LN 之争</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rope">4.2.6.2.2. B. 位置编码的进展（例如，相对位置编码、RoPE）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-moe">4.2.6.2.3. C. 混合专家模型（MoE）提升可扩展性与容量</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iii-transformer">III. Transformer 模型的核心挑战与研究前沿</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a">A. 计算复杂性与内存约束</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">1. 自注意力机制随序列长度的二次方瓶颈</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2. 应对效率挑战：稀疏、线性及其他近似方法</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3. 训练与推理的内存优化策略</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iii-transformer">4.2.6.3. III. Transformer 模型的核心挑战与研究前沿</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a">4.2.6.3.1. A. 计算复杂性与内存约束</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4.2.6.3.1.1. 1. 自注意力机制随序列长度的二次方瓶颈</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4.2.6.3.1.2. 2. 应对效率挑战：稀疏、线性及其他近似方法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2.6.3.1.3. 3. 训练与推理的内存优化策略</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b">B. 位置信息表示：局限与创新</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">1. 标准位置编码在复杂任务中的不足</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2. 先进及替代性位置编码方法</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b">4.2.6.3.2. B. 位置信息表示：局限与创新</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.2.6.3.2.1. 1. 标准位置编码在复杂任务中的不足</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">4.2.6.3.2.2. 2. 先进及替代性位置编码方法</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">C. 训练动态：确保稳定性与加速收敛</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">D. 可解释性困境：解包"黑箱"</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e">E. 数据依赖与泛化能力</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.2.6.3.3. C. 训练动态：确保稳定性与加速收敛</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.2.6.3.4. D. 可解释性困境：解包"黑箱"</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e">4.2.6.3.5. E. 数据依赖与泛化能力</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iv-transformer">IV. Transformer 的变革性影响：跨领域的广泛应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v-transformer">V. Transformer 架构的关键突破</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-norm">A. Pre-Norm 层归一化：提升稳定性与梯度流</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">B. 旋转位置编码 (RoPE)：优雅地融入相对位置感知</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">C. 混合专家 (MoE)：在计算成本可控下扩展模型容量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iv-transformer">4.2.6.4. IV. Transformer 的变革性影响：跨领域的广泛应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v-transformer">4.2.6.5. V. Transformer 架构的关键突破</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-norm">4.2.6.5.1. A. Pre-Norm 层归一化：提升稳定性与梯度流</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">4.2.6.5.2. B. 旋转位置编码 (RoPE)：优雅地融入相对位置感知</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.2.6.5.3. C. 混合专家 (MoE)：在计算成本可控下扩展模型容量</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-transformer">VI. Transformer 未来展望与研究方向</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vii">VII. 结论</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-transformer">4.2.6.6. VI. Transformer 未来展望与研究方向</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vii">4.2.6.7. VII. 结论</a></li>
 </ul>
             </nav>
         </div>
@@ -901,18 +952,18 @@ document.write(`
                 <article class="bd-article">
                   
 <section class="tex2jax_ignore mathjax_ignore" id="transformer">
-<h1>Transformer 结构回顾与核心挑战<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
+<h1><span class="section-number">4.2.6. </span>Transformer 结构回顾与核心挑战<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h1>
 <p>Author by: 张嘉瑶</p>
 <section id="i-transformer">
-<h2>I. Transformer 的起源与架构蓝图<a class="headerlink" href="#i-transformer" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6.1. </span>I. Transformer 的起源与架构蓝图<a class="headerlink" href="#i-transformer" title="Link to this heading">#</a></h2>
 <p>Transformer 模型由 Vaswani 等人在 2017 年的论文《Attention Is All You Need》中提出，旨在解决循环神经网络（RNN）和卷积神经网络（CNN）在并行化与长距离依赖处理上的局限性。</p>
 <section id="a-attention-is-all-you-need">
-<h3>A. &quot;Attention Is All You Need&quot;范式转变<a class="headerlink" href="#a-attention-is-all-you-need" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.1.1. </span>A. &quot;Attention Is All You Need&quot;范式转变<a class="headerlink" href="#a-attention-is-all-you-need" title="Link to this heading">#</a></h3>
 <p>该论文的核心论点是，仅靠注意力机制足以实现高性能的序列转导，无需循环或卷积。Transformer 作为一个全新的网络架构，完全基于注意力机制捕捉全局依赖关系。</p>
 <p>在 Transformer 之前，RNN（如 LSTM）和 CNN 是序列转导模型的主流。然而，RNN 的顺序处理方式限制了并行计算能力，难以处理长序列。Transformer 不仅在机器翻译等任务上取得了更优的质量和更高的并行度，显著缩短了训练时间，还为 BERT、GPT 等大规模预训练模型的诞生奠定了基础。</p>
 </section>
 <section id="b-rnn-lstm">
-<h3>B. 与循环模型（RNN/LSTM）的根本区别<a class="headerlink" href="#b-rnn-lstm" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.1.2. </span>B. 与循环模型（RNN/LSTM）的根本区别<a class="headerlink" href="#b-rnn-lstm" title="Link to this heading">#</a></h3>
 <p>Transformer 旨在克服 RNN/LSTM 的固有缺陷。RNN 采用顺序处理，阻碍了并行化，并存在梯度消失/爆炸问题，难以捕捉长距离依赖。</p>
 <p>Transformer 通过以下设计解决了这些问题：</p>
 <ul class="simple">
@@ -959,10 +1010,10 @@ document.write(`
 </div>
 </section>
 <section id="c">
-<h3>C. 经典的编码器-解码器架构<a class="headerlink" href="#c" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.1.3. </span>C. 经典的编码器-解码器架构<a class="headerlink" href="#c" title="Link to this heading">#</a></h3>
 <p>Transformer 沿用了编码器-解码器（Encoder-Decoder）架构。编码器将输入序列映射到连续表示，解码器基于此表示生成输出序列。</p>
 <section id="encoder">
-<h4>编码器（Encoder）<a class="headerlink" href="#encoder" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.3.1. </span>编码器（Encoder）<a class="headerlink" href="#encoder" title="Link to this heading">#</a></h4>
 <p>由 N 个相同层堆叠而成（通常 N=6）。每层包含两个子层：</p>
 <ul class="simple">
 <li><p><strong>多头自注意力机制（Multi-Head Self-Attention）</strong>：捕捉输入序列内的上下文信息。</p></li>
@@ -971,7 +1022,7 @@ document.write(`
 </ul>
 </section>
 <section id="decoder">
-<h4>解码器（Decoder）<a class="headerlink" href="#decoder" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.3.2. </span>解码器（Decoder）<a class="headerlink" href="#decoder" title="Link to this heading">#</a></h4>
 <p>同样由 N 个相同层堆叠而成，但每个解码器层插入了第三个子层：</p>
 <ul class="simple">
 <li><p><strong>掩码多头自注意力机制（Masked Multi-Head Self-Attention）</strong>：在自注意力中增加掩码，确保在预测当前位置时只能关注到已知输出，维持自回归（auto-regressive）特性。</p></li>
@@ -980,14 +1031,14 @@ document.write(`
 </ul>
 </section>
 <section id="id1">
-<h4>编码器与解码器的交互<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.3.3. </span>编码器与解码器的交互<a class="headerlink" href="#id1" title="Link to this heading">#</a></h4>
 <p>编码器处理整个输入序列，生成上下文表示。解码器在生成输出的每个时间步，利用编码器的输出以及已生成的输出，自回归地预测下一个词元，直到生成序列结束符。</p>
 </section>
 </section>
 <section id="d">
-<h3>D. 核心机制<a class="headerlink" href="#d" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.1.4. </span>D. 核心机制<a class="headerlink" href="#d" title="Link to this heading">#</a></h3>
 <section id="id2">
-<h4>1. 缩放点积注意力与自注意力<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.4.1. </span>1. 缩放点积注意力与自注意力<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
 <p>注意力机制是 Transformer 的核心，其具体实现是<strong>缩放点积注意力（Scaled Dot-Product Attention）</strong>。它通过计算查询（Q）、键（K）和值（V）的交互来获得加权和。</p>
 <p>其数学表达式为：
 $<span class="math notranslate nohighlight">\( \text{Attention}(Q,K,V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V \)</span><span class="math notranslate nohighlight">\(
@@ -995,7 +1046,7 @@ $<span class="math notranslate nohighlight">\( \text{Attention}(Q,K,V) = \text{s
 <p>**自注意力（Self-Attention）**是该机制的特殊应用，其中 Q、K、V 均来自同一来源序列。它使模型能衡量序列中不同位置的重要性，为每个词元计算上下文感知的表示。</p>
 </section>
 <section id="id3">
-<h4>2. 多头注意力：赋能多样化表征子空间<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.4.2. </span>2. 多头注意力：赋能多样化表征子空间<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
 <p>Transformer 采用<strong>多头注意力（Multi-Head Attention）</strong>，将 Q、K、V 投影到多个低维子空间，并在每个子空间并行执行注意力计算，最后将结果拼接。</p>
 <div class="math notranslate nohighlight">
 \[ \text{head}_i = \text{Attention}(QW_i^Q, KW_i^K, VW_i^V) \]</div>
@@ -1042,7 +1093,7 @@ $<span class="math notranslate nohighlight">\( \text{Attention}(Q,K,V) = \text{s
 </div>
 </section>
 <section id="id4">
-<h4>3. 位置编码：为并行处理注入顺序信息<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.4.3. </span>3. 位置编码：为并行处理注入顺序信息<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
 <p>由于 Transformer 是并行处理的，它本身缺乏对序列顺序的感知。为解决此问题，模型引入了<strong>位置编码（Positional Encoding, PE）</strong>，将其与词元嵌入相加，为模型注入关于词元在序列中相对或绝对位置的信息。</p>
 <p>原始论文提出一种基于正弦和余弦函数的固定位置编码方法：
 $<span class="math notranslate nohighlight">\( PE_{(pos,2i)} = \sin(pos/10000^{2i/d_{\text{model}}}) \)</span><span class="math notranslate nohighlight">\(
@@ -1050,13 +1101,13 @@ $<span class="math notranslate nohighlight">\( PE_{(pos,2i)} = \sin(pos/10000^{2
 这种编码为每个位置生成唯一的向量，并使模型能轻易学习到相对位置信息。</p>
 </section>
 <section id="id5">
-<h4>4. 位置全连接前馈网络<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.4.4. </span>4. 位置全连接前馈网络<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
 <p>在每个编码器和解码器层中，**位置全连接前馈网络（FFN）**被独立地应用于序列中的每个位置。它通常由两个线性变换和一个非线性激活函数（如 ReLU）组成。
 $<span class="math notranslate nohighlight">\( FFN(x) = \max(0, xW_1 + b_1)W_2 + b_2 \)</span>$
 FFN 的主要作用是引入非线性，对每个位置的表示进行特征转换与提炼，并增加模型容量。</p>
 </section>
 <section id="id6">
-<h4>5. 残差连接与层归一化<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.1.4.5. </span>5. 残差连接与层归一化<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
 <p>每个子层后都跟着一个<strong>残差连接（Residual Connection）<strong>和一个</strong>层归一化（Layer Normalization）</strong>，即 &quot;Add &amp; Norm&quot; 模块。</p>
 <ul class="simple">
 <li><p><strong>残差连接</strong>：借鉴 ResNet 的思想，允许信息（梯度）“跳过”子层直接向前传播，有效缓解梯度消失问题，支持构建更深的网络。</p></li>
@@ -1067,14 +1118,14 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </section>
 </section>
 <section id="ii">
-<h2>II. 演进与关键架构改进<a class="headerlink" href="#ii" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6.2. </span>II. 演进与关键架构改进<a class="headerlink" href="#ii" title="Link to this heading">#</a></h2>
 <p>自提出以来，Transformer 架构经历了持续演进，主要围绕提升训练稳定性、位置表示能力和计算效率。</p>
 <section id="a-pre-ln-post-ln">
-<h3>A. 层归一化策略：Pre-LN 与 Post-LN 之争<a class="headerlink" href="#a-pre-ln-post-ln" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.2.1. </span>A. 层归一化策略：Pre-LN 与 Post-LN 之争<a class="headerlink" href="#a-pre-ln-post-ln" title="Link to this heading">#</a></h3>
 <p>如上所述，Post-LN 在训练深度 Transformer 时常导致不稳定和梯度消失。<strong>Pre-LN</strong> 将层归一化移至每个子模块的输入端，为深度模型提供了更好的训练稳定性，因为它能保持梯度流的通畅。虽然 Pre-LN 在深层模型中更稳定，但在浅层模型中，Post-LN 有时性能稍好。从 Post-LN 到 Pre-LN 的演变反映了为训练更深、更大模型而追求稳定性的趋势。</p>
 </section>
 <section id="b-rope">
-<h3>B. 位置编码的进展（例如，相对位置编码、RoPE）<a class="headerlink" href="#b-rope" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.2.2. </span>B. 位置编码的进展（例如，相对位置编码、RoPE）<a class="headerlink" href="#b-rope" title="Link to this heading">#</a></h3>
 <p>标准的绝对位置编码存在外推能力差、难以处理复杂结构数据等局限。为克服这些不足，研究者们探索了多种先进方法：</p>
 <ul class="simple">
 <li><p><strong>相对位置编码（RPEs）</strong>：在注意力机制内部直接编码词元对的相对距离，能更好地泛化到不同序列长度。</p></li>
@@ -1086,7 +1137,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 <p>从绝对编码到相对编码的转变，反映了对更动态、更具上下文感知的序列顺序表示的追求，这对于处理超长序列至关重要。</p>
 </section>
 <section id="c-moe">
-<h3>C. 混合专家模型（MoE）提升可扩展性与容量<a class="headerlink" href="#c-moe" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.2.3. </span>C. 混合专家模型（MoE）提升可扩展性与容量<a class="headerlink" href="#c-moe" title="Link to this heading">#</a></h3>
 <p>**混合专家模型（Mixture of Experts, MoE）**旨在显著增加模型参数，同时控制计算成本。它将标准的 FFN 层替换为多个并行的“专家”网络和一个“门控”网络（或称“路由器”）。</p>
 <p>对于每个词元，门控网络选择一个或少数几个（Top-K）最相关的专家进行处理。MoE 的主要优势在于：</p>
 <ul class="simple">
@@ -1097,7 +1148,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </section>
 </section>
 <section id="iii-transformer">
-<h2>III. Transformer 模型的核心挑战与研究前沿<a class="headerlink" href="#iii-transformer" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6.3. </span>III. Transformer 模型的核心挑战与研究前沿<a class="headerlink" href="#iii-transformer" title="Link to this heading">#</a></h2>
 <p>尽管 Transformer 取得了巨大成功，但仍面临计算效率、信息表示、训练动态、可解释性和数据依赖等多方面挑战。</p>
 <p><strong>表 3：Transformer 模型主要挑战总结</strong></p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -1138,13 +1189,13 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </table>
 </div>
 <section id="a">
-<h3>A. 计算复杂性与内存约束<a class="headerlink" href="#a" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.3.1. </span>A. 计算复杂性与内存约束<a class="headerlink" href="#a" title="Link to this heading">#</a></h3>
 <section id="id7">
-<h4>1. 自注意力机制随序列长度的二次方瓶颈<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.3.1.1. </span>1. 自注意力机制随序列长度的二次方瓶颈<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
 <p>标准自注意力机制的计算复杂度和内存占用均与序列长度 n 的平方成正比（O(n²)），这严重限制了模型能处理的序列长度，使其难以直接应用于长文档分析、高分辨率图像等任务。</p>
 </section>
 <section id="id8">
-<h4>2. 应对效率挑战：稀疏、线性及其他近似方法<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.3.1.2. </span>2. 应对效率挑战：稀疏、线性及其他近似方法<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
 <p>为缓解 O(n²) 瓶颈，研究界提出了多种“高效 Transformer”：</p>
 <ul class="simple">
 <li><p><strong>稀疏注意力（Sparse Attention）</strong>：限制每个词元只关注一个子集，如局部窗口注意力（Longformer）或组合模式（Big Bird）。</p></li>
@@ -1153,7 +1204,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </ul>
 </section>
 <section id="id9">
-<h4>3. 训练与推理的内存优化策略<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.3.1.3. </span>3. 训练与推理的内存优化策略<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p><strong>训练阶段</strong>：采用激活重计算、混合精度训练、内存高效的优化器，以及 ZeRO、FSDP 等分布式训练策略。</p></li>
 <li><p><strong>推理阶段</strong>：优化 KV 缓存、模型量化、剪枝和知识蒸馏等技术被广泛应用，以减少内存消耗和加速推理。</p></li>
@@ -1161,13 +1212,13 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </section>
 </section>
 <section id="b">
-<h3>B. 位置信息表示：局限与创新<a class="headerlink" href="#b" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.3.2. </span>B. 位置信息表示：局限与创新<a class="headerlink" href="#b" title="Link to this heading">#</a></h3>
 <section id="id10">
-<h4>1. 标准位置编码在复杂任务中的不足<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.3.2.1. </span>1. 标准位置编码在复杂任务中的不足<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
 <p>标准位置编码在处理超长序列、复杂结构（如图像、图）或需要精细空间推理的任务时表现不足，其固定性和混合方式限制了模型的表达能力和可解释性。</p>
 </section>
 <section id="id11">
-<h4>2. 先进及替代性位置编码方法<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
+<h4><span class="section-number">4.2.6.3.2.2. </span>2. 先进及替代性位置编码方法<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
 <p>如前文所述，相对位置编码（RPEs）、旋转位置嵌入（RoPE）和线性偏置注意力（ALiBi）等方法通过将位置信息更动态地融入注意力计算，显著改善了模型的长度外推能力和对复杂位置关系地捕捉。此外，针对特定数据（如二维图像、时间序列）的专用 PE 也被开发出来。</p>
 <p><strong>表 4：位置编码技术对比</strong></p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -1220,7 +1271,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </section>
 </section>
 <section id="id12">
-<h3>C. 训练动态：确保稳定性与加速收敛<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.3.3. </span>C. 训练动态：确保稳定性与加速收敛<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
 <p>训练深度和大规模 Transformer 是一项艰巨任务，常面临不稳定和收敛慢的问题。</p>
 <ul class="simple">
 <li><p><strong>挑战</strong>：Post-LN 在深层模型中易导致梯度消失；不稳定的训练过程可能与陡峭的损失地形有关。</p></li>
@@ -1228,7 +1279,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </ul>
 </section>
 <section id="id13">
-<h3>D. 可解释性困境：解包&quot;黑箱&quot;<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.3.4. </span>D. 可解释性困境：解包&quot;黑箱&quot;<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
 <p>Transformer 的“黑箱”特性限制了其在医疗、金融等高风险领域的应用。</p>
 <ul class="simple">
 <li><p><strong>难点</strong>：注意力权重可视化并不总能提供稳健的解释；多头注意力和多层堆叠的非线性变换使得推理路径难以追踪。</p></li>
@@ -1236,7 +1287,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </ul>
 </section>
 <section id="e">
-<h3>E. 数据依赖与泛化能力<a class="headerlink" href="#e" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.3.5. </span>E. 数据依赖与泛化能力<a class="headerlink" href="#e" title="Link to this heading">#</a></h3>
 <p>Transformer 的成功严重依赖大规模、高质量的训练数据，这带来了成本和偏见问题。</p>
 <ul class="simple">
 <li><p><strong>需求</strong>：LLM 的性能与数据量和质量密切相关，但数据获取困难且成本高昂，模型也易学习并放大数据偏见。</p></li>
@@ -1245,7 +1296,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </section>
 </section>
 <section id="iv-transformer">
-<h2>IV. Transformer 的变革性影响：跨领域的广泛应用<a class="headerlink" href="#iv-transformer" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6.4. </span>IV. Transformer 的变革性影响：跨领域的广泛应用<a class="headerlink" href="#iv-transformer" title="Link to this heading">#</a></h2>
 <p>Transformer 已从 NLP 扩展到计算机视觉、语音处理乃至科学发现等多个领域。</p>
 <ul class="simple">
 <li><p><strong>自然语言处理（NLP）</strong>：已成为机器翻译、文本摘要、问答、文本生成（如 GPT 系列）等几乎所有 NLP 任务的事实标准。</p></li>
@@ -1255,23 +1306,23 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </ul>
 </section>
 <section id="v-transformer">
-<h2>V. Transformer 架构的关键突破<a class="headerlink" href="#v-transformer" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6.5. </span>V. Transformer 架构的关键突破<a class="headerlink" href="#v-transformer" title="Link to this heading">#</a></h2>
 <p>对原始架构的几次关键改进，塑造了现代 Transformer 的形态。</p>
 <section id="a-pre-norm">
-<h3>A. Pre-Norm 层归一化：提升稳定性与梯度流<a class="headerlink" href="#a-pre-norm" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.5.1. </span>A. Pre-Norm 层归一化：提升稳定性与梯度流<a class="headerlink" href="#a-pre-norm" title="Link to this heading">#</a></h3>
 <p>Pre-Norm 将层归一化移至每个子层之前，通过改善梯度流和确保输入分布的稳定，极大地提升了深度 Transformer 的训练稳定性，使其能够扩展到更大规模。</p>
 </section>
 <section id="id14">
-<h3>B. 旋转位置编码 (RoPE)：优雅地融入相对位置感知<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.5.2. </span>B. 旋转位置编码 (RoPE)：优雅地融入相对位置感知<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
 <p>RoPE 是一种先进的相对位置编码方法，通过对 Q 和 K 向量进行旋转，使其点积自然地依赖于相对位置。它因其良好的长度外推能力和多尺度感知能力，被许多先进大模型采用。</p>
 </section>
 <section id="id15">
-<h3>C. 混合专家 (MoE)：在计算成本可控下扩展模型容量<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<h3><span class="section-number">4.2.6.5.3. </span>C. 混合专家 (MoE)：在计算成本可控下扩展模型容量<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
 <p>MoE 通过为每个输入词元动态选择一小部分“专家” FFN 进行处理，实现了在控制计算成本（FLOPs）的同时，大幅扩展模型总参数量。这种条件计算范式是构建当前超大规模语言模型的关键技术。</p>
 </section>
 </section>
 <section id="vi-transformer">
-<h2>VI. Transformer 未来展望与研究方向<a class="headerlink" href="#vi-transformer" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6.6. </span>VI. Transformer 未来展望与研究方向<a class="headerlink" href="#vi-transformer" title="Link to this heading">#</a></h2>
 <p>Transformer 的未来发展将继续围绕效率、专业化、数据和技术融合展开。</p>
 <ul class="simple">
 <li><p><strong>效率提升与可扩展性</strong>：开发更优的稀疏/线性注意力机制，并进行硬件协同设计和算法系统优化。</p></li>
@@ -1283,7 +1334,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 </ul>
 </section>
 <section id="vii">
-<h2>VII. 结论<a class="headerlink" href="#vii" title="Link to this heading">#</a></h2>
+<h2><span class="section-number">4.2.6.7. </span>VII. 结论<a class="headerlink" href="#vii" title="Link to this heading">#</a></h2>
 <p>Transformer 架构以其核心的自注意力机制，彻底改变了深度学习领域，催生了大规模预训练模型的辉煌时代。本报告回顾了其核心结构与关键演进（如 Pre-LN, RoPE, MoE），这些创新提升了模型的性能、稳定性与可扩展性。</p>
 <p>然而，Transformer 仍面临二次方计算复杂度、标准位置编码局限、训练不稳定、可解释性差以及对大规模数据严重依赖等核心挑战。针对这些问题，研究界已提出稀疏/线性注意力、高级位置编码、改进的训练策略、XAI 技术和数据高效学习等一系列解决方案。</p>
 <p>展望未来，Transformer 及其演进架构将继续在提升效率、增强专业化、克服数据瓶颈以及与新兴技术融合等方面寻求突破。它已从 NLP 工具演变为一种通用的信息处理范式，有望在更广泛的科学和社会领域发挥变革性力量。与此同时，对这些强大模型进行负责任的开发和应用，解决其带来的伦理与社会影响，将是确保技术持续向善发展的关键。</p>
@@ -1330,7 +1381,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">RWKV 架构研究:核心特点与版本演进</p>
+        <p class="prev-next-title"><span class="section-number">4.2.5. </span>RWKV 架构研究:核心特点与版本演进</p>
       </div>
     </a>
     <a class="right-next"
@@ -1338,7 +1389,7 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</p>
+        <p class="prev-next-title"><span class="section-number">4.2.7. </span>Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1354,61 +1405,61 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
-    <i class="fa-solid fa-list"></i> Contents
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i-transformer">I. Transformer 的起源与架构蓝图</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-attention-is-all-you-need">A. "Attention Is All You Need"范式转变</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rnn-lstm">B. 与循环模型（RNN/LSTM）的根本区别</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c">C. 经典的编码器-解码器架构</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">编码器（Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">解码器（Decoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">编码器与解码器的交互</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i-transformer">4.2.6.1. I. Transformer 的起源与架构蓝图</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-attention-is-all-you-need">4.2.6.1.1. A. "Attention Is All You Need"范式转变</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rnn-lstm">4.2.6.1.2. B. 与循环模型（RNN/LSTM）的根本区别</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c">4.2.6.1.3. C. 经典的编码器-解码器架构</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#encoder">4.2.6.1.3.1. 编码器（Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#decoder">4.2.6.1.3.2. 解码器（Decoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4.2.6.1.3.3. 编码器与解码器的交互</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d">D. 核心机制</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1. 缩放点积注意力与自注意力</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 多头注意力：赋能多样化表征子空间</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. 位置编码：为并行处理注入顺序信息</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">4. 位置全连接前馈网络</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">5. 残差连接与层归一化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d">4.2.6.1.4. D. 核心机制</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4.2.6.1.4.1. 1. 缩放点积注意力与自注意力</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4.2.6.1.4.2. 2. 多头注意力：赋能多样化表征子空间</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4.2.6.1.4.3. 3. 位置编码：为并行处理注入顺序信息</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">4.2.6.1.4.4. 4. 位置全连接前馈网络</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">4.2.6.1.4.5. 5. 残差连接与层归一化</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ii">II. 演进与关键架构改进</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-ln-post-ln">A. 层归一化策略：Pre-LN 与 Post-LN 之争</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rope">B. 位置编码的进展（例如，相对位置编码、RoPE）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-moe">C. 混合专家模型（MoE）提升可扩展性与容量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ii">4.2.6.2. II. 演进与关键架构改进</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-ln-post-ln">4.2.6.2.1. A. 层归一化策略：Pre-LN 与 Post-LN 之争</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rope">4.2.6.2.2. B. 位置编码的进展（例如，相对位置编码、RoPE）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-moe">4.2.6.2.3. C. 混合专家模型（MoE）提升可扩展性与容量</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iii-transformer">III. Transformer 模型的核心挑战与研究前沿</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a">A. 计算复杂性与内存约束</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">1. 自注意力机制随序列长度的二次方瓶颈</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2. 应对效率挑战：稀疏、线性及其他近似方法</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3. 训练与推理的内存优化策略</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iii-transformer">4.2.6.3. III. Transformer 模型的核心挑战与研究前沿</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a">4.2.6.3.1. A. 计算复杂性与内存约束</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4.2.6.3.1.1. 1. 自注意力机制随序列长度的二次方瓶颈</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4.2.6.3.1.2. 2. 应对效率挑战：稀疏、线性及其他近似方法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2.6.3.1.3. 3. 训练与推理的内存优化策略</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b">B. 位置信息表示：局限与创新</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">1. 标准位置编码在复杂任务中的不足</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2. 先进及替代性位置编码方法</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b">4.2.6.3.2. B. 位置信息表示：局限与创新</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.2.6.3.2.1. 1. 标准位置编码在复杂任务中的不足</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">4.2.6.3.2.2. 2. 先进及替代性位置编码方法</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">C. 训练动态：确保稳定性与加速收敛</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">D. 可解释性困境：解包"黑箱"</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e">E. 数据依赖与泛化能力</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.2.6.3.3. C. 训练动态：确保稳定性与加速收敛</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.2.6.3.4. D. 可解释性困境：解包"黑箱"</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e">4.2.6.3.5. E. 数据依赖与泛化能力</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iv-transformer">IV. Transformer 的变革性影响：跨领域的广泛应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v-transformer">V. Transformer 架构的关键突破</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-norm">A. Pre-Norm 层归一化：提升稳定性与梯度流</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">B. 旋转位置编码 (RoPE)：优雅地融入相对位置感知</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">C. 混合专家 (MoE)：在计算成本可控下扩展模型容量</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iv-transformer">4.2.6.4. IV. Transformer 的变革性影响：跨领域的广泛应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v-transformer">4.2.6.5. V. Transformer 架构的关键突破</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-pre-norm">4.2.6.5.1. A. Pre-Norm 层归一化：提升稳定性与梯度流</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">4.2.6.5.2. B. 旋转位置编码 (RoPE)：优雅地融入相对位置感知</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.2.6.5.3. C. 混合专家 (MoE)：在计算成本可控下扩展模型容量</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-transformer">VI. Transformer 未来展望与研究方向</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vii">VII. 结论</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-transformer">4.2.6.6. VI. Transformer 未来展望与研究方向</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vii">4.2.6.7. VII. 结论</a></li>
 </ul>
   </nav></div>
 
@@ -1422,16 +1473,27 @@ FFN 的主要作用是引入非线性，对每个位置的表示进行特征转�
   
   <div class="footer-item">
     
+<p class="component-author">
+By ZOMI
+</p>
+
   </div>
   
   <div class="footer-item">
     
 
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
   </div>
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 24, 2025.
+  Last updated on Aug 31, 2025.
   <br/>
 </p>
   </div>
