@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="8.2.2. 预训练数据预处理" />
+<meta property="og:title" content="预训练数据预处理" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData07DataEngineer/DataPreprocessing.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
@@ -19,7 +19,7 @@
 <meta name="description" content="数据预处理概览: 大语言模型的卓越能力在很大程度上归功于其在海量、多样化的文本数据上的预训练。然而，原始数据的质量参差不齐，直接使用未经处理的数据进行训练，不仅会严重影响模型的最终性能，还可能引入偏见、安全风险和法律问题。因此，系统化、工程化的预训练数据处理是构建高性能、高安全、高可靠性大模型的基石。本文将对数据处理流程进行全面梳理，涵盖从数据提取，去重，打分，质量验证的全过程 数据提取: ..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>8.2.2. 预训练数据预处理 &#8212; AIInfra AI基础设施</title>
+    <title>预训练数据预处理 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -79,12 +79,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="8.2.4. 数据源概述" href="DataSources.html" />
-    <link rel="prev" title="8.2.1. 概述" href="DataCuration.html" />
+    <link rel="next" title="数据源概述" href="DataSources.html" />
+    <link rel="prev" title="概述" href="DataCuration.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 01, 2025"/>
 
 <link
   rel="alternate"
@@ -241,45 +241,60 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">大模型训练与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">大模型推理与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">AI Infra 未来发展趋势</a></li>
+</ul>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">1. AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">2. 计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">2.3.1. 高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">2.3.2. HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">2.3.3. HPC 软件与应用趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">2.3.4. 计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">2.3.5. 计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">2.3.6. AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">2.3.7. AI 集群系统架构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">3. L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">3.3.1. 服务器节点初探</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">3.3.2. 服务器风冷实践与思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">3.3.3. 服务器液冷技术发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">3.3.4. 液冷挑战与实践思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">3.3.5. 服务器机柜深度认识</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">3.3.6. 集群机房供电</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">AI 集群供配电系统</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">4. 万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">4.3.1. AI 万卡集群建设挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">4.3.2. AI 万卡集群建设交付</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">4.3.3. 03 AI 万卡集群测试步骤</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">4.3.4. NVIDIA Blackwell 演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">4.3.5. NV Blackwell 深度解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">4.3.6. NV GB200 网络演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">4.3.7. NV GB200 集群互联方案</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">4.3.8. XAI 十万卡集群解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">4.3.9. 十万卡 AI 集群思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03 AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">十万卡 AI 集群思考</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">5. 集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">5.4.1. GPU 与 NPU 精度误差</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">5.4.2. 基于 RWKV 的 RNN 范式革新</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">Ai 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">精度性能：大模型性能问题定位</a></li>
 </ul>
 </details></li>
 </ul>
@@ -400,7 +415,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Practice01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -427,82 +444,83 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">1. 大模型算法与数据概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">2. Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">2.3.1. Transformer 结构介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">2.3.2. 大模型 Tokenizer 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">2.3.3. 大模型 Embedding 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">2.3.4. Attention 注意力机制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">2.3.5. Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">2.3.6. Transformer 长序列架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">2.3.7. 大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">2.3.8. 搭建迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">2.3.9. 从零实现 Transformer 训练(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">2.3.10. 实战 Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">2.3.12. 手把手实现核心机制 BPE 分词算法(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">2.3.13. 手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">2.3.14. 深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">3. MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">3.2.1. MoE 算法架构(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">3.2.2. MOE 前世今生(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">3.2.3. MOE 奠基论文(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">3.2.4. MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">3.2.5. GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">3.2.6. Switch Trans 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">3.2.7. GLaM &amp; ST-MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">3.2.8. DeepSeek MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">3.2.9. MOE 模型可视化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">3.2.10. MoE 参数与专家</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">3.2.11. 单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">3.2.12. 基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">3.2.13. 从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">3.2.14. MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">3.2.15. MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">4. 大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">4.2.1. 高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">4.2.2. 基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">4.2.3. Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">4.2.4. RetNet：混合训练实战(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">4.2.5. RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">4.2.6. Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">5. 图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">5.11.1. 图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">6. 视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">7. 语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">8. 数据工程</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="DataCuration.html">8.2.1. 概述</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">8.2.2. 预训练数据预处理</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">数据工程</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="DataCuration.html">概述</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">预训练数据预处理</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="DataSources.html">8.2.4. 数据源概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PostTrainingDataPrepraing.html">8.2.5. 后训练数据集概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Pretraining.html">8.2.6. 预训练数据处理概览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="PromptEngineering.html">8.2.7. 概述</a></li>
-
-
+<li class="toctree-l2"><a class="reference internal" href="DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PromptEngineering.html">概述</a></li>
 
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="SOTA_procssing.html">8.2.14. Llama3.1</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="SOTA_procssing.html">Llama3.1</a></li>
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="awesomePrompt.html">8.2.18. 充当 Linux 终端</a></li>
+<li class="toctree-l2"><a class="reference internal" href="awesomePrompt.html">充当 Linux 终端</a></li>
 
 
 
@@ -633,11 +651,11 @@
 
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">9. DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">9.2.1. ChatGPT 解读</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">10. 向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -887,28 +905,28 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">8.2.2. 预训练数据预处理</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">8.2.3. 数据预处理概览</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">8.2.3.1. 数据提取</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">8.2.3.1.1. 网页数据提取</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">8.2.3.1.2. 多模态数据提取</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">预训练数据预处理</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">数据预处理概览</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">数据提取</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">网页数据提取</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">多模态数据提取</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">8.2.3.2. 数据质量评估</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">8.2.3.2.1. 安全过滤</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">8.2.3.2.2. 质量打分</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">8.2.3.2.3. 数据去重</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">8.2.3.2.4. 数据去重的目标</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">8.2.3.2.5. 数据去重的挑战</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">8.2.3.2.6. 数据去重的基本原理</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">8.2.3.2.6.1. 基于文本相似性</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">8.2.3.2.6.2. 基于哈希算法</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">8.2.3.2.6.3. 基于聚类分析</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">8.2.3.2.6.4. 基于自然语言处理（NLP）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">8.2.3.2.6.5. 数据去重技术的优化与扩展</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">数据质量评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">安全过滤</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">质量打分</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">数据去重</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">数据去重的目标</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">数据去重的挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">数据去重的基本原理</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">基于文本相似性</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">基于哈希算法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">基于聚类分析</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">基于自然语言处理（NLP）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">数据去重技术的优化与扩展</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">8.2.3.2.7. 数据质量评估</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">数据质量评估</a></li>
 </ul>
 </li>
 </ul>
@@ -926,16 +944,16 @@ document.write(`
                 <article class="bd-article">
                   
 <section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1><span class="section-number">8.2.2. </span>预训练数据预处理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>预训练数据预处理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
 </section>
 <section class="tex2jax_ignore mathjax_ignore" id="id2">
-<h1><span class="section-number">8.2.3. </span>数据预处理概览<a class="headerlink" href="#id2" title="Link to this heading">#</a></h1>
+<h1>数据预处理概览<a class="headerlink" href="#id2" title="Link to this heading">#</a></h1>
 <p>大语言模型的卓越能力在很大程度上归功于其在海量、多样化的文本数据上的预训练。然而，原始数据的质量参差不齐，直接使用未经处理的数据进行训练，不仅会严重影响模型的最终性能，还可能引入偏见、安全风险和法律问题。因此，系统化、工程化的预训练数据处理是构建高性能、高安全、高可靠性大模型的基石。本文将对数据处理流程进行全面梳理，涵盖从数据提取，去重，打分，质量验证的全过程</p>
 <section id="id3">
-<h2><span class="section-number">8.2.3.1. </span>数据提取<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>数据提取<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <p>数据提取的目标是从多样化的来源中获取海量、广泛且信息丰富的原始数据。随着大数据时代的到来，数据提取技术已成为人工智能、商业智能和科学研究的基础环节。有效的数据提取不仅能提高后续数据分析的质量，还能为模型训练提供更加全面和多样化的数据支持。</p>
 <section id="id4">
-<h3><span class="section-number">8.2.3.1.1. </span>网页数据提取<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<h3>网页数据提取<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <p>网页数据提取（Web Scraping）是指从网页中自动抓取和解析所需信息的过程。常见的网页数据提取方法包括：</p>
 <ol class="arabic simple">
 <li><p>基于规则的提取：</p>
@@ -964,7 +982,7 @@ document.write(`
 <p>频率限制：过于频繁的抓取可能会给目标网站带来压力，甚至可能被封禁。因此，建议使用适当的抓取间隔，避免对网站造成负担。</p>
 </section>
 <section id="id5">
-<h3><span class="section-number">8.2.3.1.2. </span>多模态数据提取<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>多模态数据提取<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
 <li><p>文本数据提取：</p>
 <ul class="simple">
@@ -1000,17 +1018,17 @@ document.write(`
 </section>
 </section>
 <section id="id6">
-<h2><span class="section-number">8.2.3.2. </span>数据质量评估<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<h2>数据质量评估<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
 <p>数据质量评估旨在剔除掉不安全，低价值的数据，并选出高知识，高价值的数据。</p>
 <section id="id7">
-<h3><span class="section-number">8.2.3.2.1. </span>安全过滤<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<h3>安全过滤<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
 <p>基于 URL 的过滤：在数据采集初期，可以通过 URL 黑名单机制，过滤掉赌博，成人，诈骗等网站。比如最近开源的小红书大模型 dots.llm1 就采用了这种方法。</p>
 <p>PII 隐私保护：隐私保护是在数据处理中避免泄露个人身份信息（PII），比如身份证号，邮箱，电话号码等。使用正则表达式和命名实体识别（NER）模型，可以自动检测并移除包含敏感个人信息的文本数据，确保符合隐私保护的要求。</p>
 <p>版权过滤：在处理数据时，需要确保不侵犯他人的版权和知识产权。尊重 DMCA（Digital Millennium Copyright Act）和处理代码时移除许可证头信息是常见的做法，尤其是在使用网络上的公开数据进行训练时。</p>
 <p>基于模型的过滤：通过训练模型来用于自动识别数据中的仇恨言论、暴力、色情等不良信息，一般可以使用如 BERT、RoBERTa 等模型。</p>
 </section>
 <section id="id8">
-<h3><span class="section-number">8.2.3.2.2. </span>质量打分<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<h3>质量打分<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <p>利用大模型来评估数据质量是现在的常见方式之一。比如使用 GPT4.1 或者 DeepSeek-V3 来对已有数据来进行质量打分，通过设置阈值来进行数据筛选，下面是在利用大模型进行打分时一些需要注意的点：</p>
 <ol class="arabic simple">
 <li><p>数据完整性：
@@ -1026,11 +1044,11 @@ document.write(`
 </ol>
 </section>
 <section id="id9">
-<h3><span class="section-number">8.2.3.2.3. </span>数据去重<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<h3>数据去重<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
 <p>在大规模预训练模型的训练中，数据去重（Deduplication）是一个至关重要的环节。通过去重，可以有效避免模型在训练过程中多次学习相同的信息，从而提高训练效率，减少不必要的计算和内存开销，同时避免模型出现过拟合或学到冗余知识。接下来将详细介绍预训练数据去重的原理、技术以及相关的深入技术原理。</p>
 </section>
 <section id="id10">
-<h3><span class="section-number">8.2.3.2.4. </span>数据去重的目标<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<h3>数据去重的目标<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <p>数据去重的主要目标是：</p>
 <ul class="simple">
 <li><p><strong>去除重复样本</strong>：避免在同一训练集内重复的样本导致重复训练，浪费计算资源。</p></li>
@@ -1039,7 +1057,7 @@ document.write(`
 </ul>
 </section>
 <section id="id11">
-<h3><span class="section-number">8.2.3.2.5. </span>数据去重的挑战<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<h3>数据去重的挑战<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
 <p>去重在大规模预训练数据集中的应用面临一系列挑战：</p>
 <ul class="simple">
 <li><p><strong>规模庞大</strong>：大规模数据集通常包含数亿甚至数十亿条数据，人工去重不可行，因此需要高效的算法进行去重。</p></li>
@@ -1048,10 +1066,10 @@ document.write(`
 </ul>
 </section>
 <section id="id12">
-<h3><span class="section-number">8.2.3.2.6. </span>数据去重的基本原理<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<h3>数据去重的基本原理<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
 <p>数据去重的核心问题是<strong>相似性计算</strong>，即如何有效地度量数据样本之间的相似度，并据此判断是否为重复数据。常见的去重方法有基于<strong>文本相似性</strong>、<strong>哈希算法</strong>、<strong>聚类分析</strong>等。</p>
 <section id="id13">
-<h4><span class="section-number">8.2.3.2.6.1. </span>基于文本相似性<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<h4>基于文本相似性<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
 <p>一种常见的去重方法是通过计算文本之间的相似度来识别重复数据。可以使用以下几种技术：</p>
 <ul class="simple">
 <li><p><strong>Jaccard 相似度</strong>：计算两个文本的交集与并集之比。常用于基于词袋模型的相似度计算。</p></li>
@@ -1060,7 +1078,7 @@ document.write(`
 </ul>
 </section>
 <section id="id14">
-<h4><span class="section-number">8.2.3.2.6.2. </span>基于哈希算法<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<h4>基于哈希算法<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
 <p>另一种常用的去重方法是使用哈希算法对文本进行散列，常见的有以下几种：</p>
 <ul>
 <li><p><strong>SimHash</strong>：通过将文本转换为固定长度的哈希值，计算文本之间的哈希值差异。如果两个文本的哈希值非常相近，则认为它们是重复的。SimHash 广泛应用于大规模数据的去重。</p>
@@ -1070,7 +1088,7 @@ document.write(`
 </ul>
 </section>
 <section id="id15">
-<h4><span class="section-number">8.2.3.2.6.3. </span>基于聚类分析<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<h4>基于聚类分析<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
 <p>聚类分析是将数据样本根据相似度分成多个组的方法。通过聚类，我们可以识别出重复样本，并将它们归为一类，从而避免重复训练。</p>
 <ul class="simple">
 <li><p><strong>K-means 聚类</strong>：对于大规模文本数据，可以通过 K-means 聚类将相似的样本聚集到一起。如果一个簇中的样本之间相似度较高，则可以认为它们是重复的。通过设定合理的簇数和相似度阈值，可以高效地进行去重。</p></li>
@@ -1078,7 +1096,7 @@ document.write(`
 </ul>
 </section>
 <section id="nlp">
-<h4><span class="section-number">8.2.3.2.6.4. </span>基于自然语言处理（NLP）<a class="headerlink" href="#nlp" title="Link to this heading">#</a></h4>
+<h4>基于自然语言处理（NLP）<a class="headerlink" href="#nlp" title="Link to this heading">#</a></h4>
 <p>现代自然语言处理技术能够有效地捕捉文本间的语义相似度，因此可以通过深度学习模型计算文本之间的相似性，尤其是在文本不完全相同的情况下。常用方法包括：</p>
 <ul class="simple">
 <li><p><strong>词向量</strong>：如 Word2Vec、GloVe、FastText 等，通过将每个单词映射为向量，在向量空间中计算词汇间的相似度。</p></li>
@@ -1087,7 +1105,7 @@ document.write(`
 </ul>
 </section>
 <section id="id16">
-<h4><span class="section-number">8.2.3.2.6.5. </span>数据去重技术的优化与扩展<a class="headerlink" href="#id16" title="Link to this heading">#</a></h4>
+<h4>数据去重技术的优化与扩展<a class="headerlink" href="#id16" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p><strong>增量去重</strong>：对于动态数据集，可以通过增量去重来持续优化数据去重过程。当新数据加入时，通过更新哈希值或重新计算相似度，及时发现并去除重复数据。</p></li>
 <li><p><strong>分布式去重</strong>：大规模数据集的去重往往需要分布式计算框架（如 Hadoop、Spark）来处理。使用 MapReduce 或分布式数据流处理框架，可以将数据划分为多个部分并并行计算，从而提高去重效率。</p></li>
@@ -1096,7 +1114,7 @@ document.write(`
 </section>
 </section>
 <section id="id17">
-<h3><span class="section-number">8.2.3.2.7. </span>数据质量评估<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<h3>数据质量评估<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
 <p>上面的流程能够剔除掉对模型有危害的数据，并通过打分使得能够筛选一些高质量数据。但上面的流程都是一些经验性的，比较通用的流程，真正要检测数据质量必须要真正的训练模型，通过模型的表现来判断数据质量的好坏，可以通过如下实验验证。</p>
 <p>实验设计：在相同的训练条件下，使用相同量的数据，通过查看 Loss 或者是 PPL 来判断数据质量的好坏，一般而言，Loss 越低，PPL 越小，数据质量越高。也可以看稳定收敛到相同位置时，训练的数据量多少，训练的数据量越小，数据质量越大，有实验说明高质量数据可以加快收敛。</p>
 </section>
@@ -1143,7 +1161,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">8.2.1. </span>概述</p>
+        <p class="prev-next-title">概述</p>
       </div>
     </a>
     <a class="right-next"
@@ -1151,7 +1169,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">8.2.4. </span>数据源概述</p>
+        <p class="prev-next-title">数据源概述</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1171,28 +1189,28 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">8.2.2. 预训练数据预处理</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">8.2.3. 数据预处理概览</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">8.2.3.1. 数据提取</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">8.2.3.1.1. 网页数据提取</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">8.2.3.1.2. 多模态数据提取</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">预训练数据预处理</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">数据预处理概览</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">数据提取</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">网页数据提取</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">多模态数据提取</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">8.2.3.2. 数据质量评估</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">8.2.3.2.1. 安全过滤</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">8.2.3.2.2. 质量打分</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">8.2.3.2.3. 数据去重</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">8.2.3.2.4. 数据去重的目标</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">8.2.3.2.5. 数据去重的挑战</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">8.2.3.2.6. 数据去重的基本原理</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">8.2.3.2.6.1. 基于文本相似性</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">8.2.3.2.6.2. 基于哈希算法</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">8.2.3.2.6.3. 基于聚类分析</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">8.2.3.2.6.4. 基于自然语言处理（NLP）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">8.2.3.2.6.5. 数据去重技术的优化与扩展</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">数据质量评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">安全过滤</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">质量打分</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">数据去重</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">数据去重的目标</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">数据去重的挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">数据去重的基本原理</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">基于文本相似性</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">基于哈希算法</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">基于聚类分析</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">基于自然语言处理（NLP）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">数据去重技术的优化与扩展</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">8.2.3.2.7. 数据质量评估</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">数据质量评估</a></li>
 </ul>
 </li>
 </ul>
@@ -1231,7 +1249,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 31, 2025.
+  Last updated on Sep 01, 2025.
   <br/>
 </p>
   </div>

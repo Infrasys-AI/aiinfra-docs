@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型" />
+<meta property="og:title" content="BLIP 家族: 统一理解和生成的自举多模态模型" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData04ImageTextGenerat/02BLIP.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
@@ -19,7 +19,7 @@
 <meta name="description" content="Author By: 李佳函 引言: 核心挑战: 在 BLIP 提出前，视觉-语言预训练领域已有 CLIP、ALBEF 等代表性工作，但仍存在两个关键瓶颈： 问题一： 任务能力割裂- 架构局限性 。没有一个模型既可以做检索又可以做生成。- Encoder-only 模型 （如 CLIP）： 擅长图文检索等理解任务，但无法执行文本生成任务（如图像字幕生成）, Encoder-Decoder 模..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型 &#8212; AIInfra AI基础设施</title>
+    <title>BLIP 家族: 统一理解和生成的自举多模态模型 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="6. 视频大模型" href="../06AlgoData05VideoGenerat/README.html" />
-    <link rel="prev" title="5.11.1. 图文对齐基础" href="01CLIP.html" />
+    <link rel="next" title="视频大模型" href="../06AlgoData05VideoGenerat/README.html" />
+    <link rel="prev" title="图文对齐基础" href="01CLIP.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 01, 2025"/>
 
 <link
   rel="alternate"
@@ -243,45 +243,60 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">大模型训练与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">大模型推理与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">AI Infra 未来发展趋势</a></li>
+</ul>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">1. AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">2. 计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">2.3.1. 高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">2.3.2. HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">2.3.3. HPC 软件与应用趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">2.3.4. 计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">2.3.5. 计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">2.3.6. AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">2.3.7. AI 集群系统架构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">3. L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">3.3.1. 服务器节点初探</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">3.3.2. 服务器风冷实践与思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">3.3.3. 服务器液冷技术发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">3.3.4. 液冷挑战与实践思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">3.3.5. 服务器机柜深度认识</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">3.3.6. 集群机房供电</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">AI 集群供配电系统</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">4. 万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">4.3.1. AI 万卡集群建设挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">4.3.2. AI 万卡集群建设交付</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">4.3.3. 03 AI 万卡集群测试步骤</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">4.3.4. NVIDIA Blackwell 演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">4.3.5. NV Blackwell 深度解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">4.3.6. NV GB200 网络演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">4.3.7. NV GB200 集群互联方案</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">4.3.8. XAI 十万卡集群解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">4.3.9. 十万卡 AI 集群思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03 AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">十万卡 AI 集群思考</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">5. 集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">5.4.1. GPU 与 NPU 精度误差</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">5.4.2. 基于 RWKV 的 RNN 范式革新</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">Ai 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">精度性能：大模型性能问题定位</a></li>
 </ul>
 </details></li>
 </ul>
@@ -402,7 +417,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Practice01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -429,82 +446,83 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">1. 大模型算法与数据概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">2. Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">2.3.1. Transformer 结构介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">2.3.2. 大模型 Tokenizer 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">2.3.3. 大模型 Embedding 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">2.3.4. Attention 注意力机制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">2.3.5. Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">2.3.6. Transformer 长序列架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">2.3.7. 大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">2.3.8. 搭建迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">2.3.9. 从零实现 Transformer 训练(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">2.3.10. 实战 Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">2.3.12. 手把手实现核心机制 BPE 分词算法(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">2.3.13. 手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">2.3.14. 深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">3. MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">3.2.1. MoE 算法架构(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">3.2.2. MOE 前世今生(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">3.2.3. MOE 奠基论文(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">3.2.4. MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">3.2.5. GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">3.2.6. Switch Trans 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">3.2.7. GLaM &amp; ST-MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">3.2.8. DeepSeek MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">3.2.9. MOE 模型可视化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">3.2.10. MoE 参数与专家</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">3.2.11. 单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">3.2.12. 基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">3.2.13. 从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">3.2.14. MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">3.2.15. MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">4. 大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">4.2.1. 高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">4.2.2. 基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">4.2.3. Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">4.2.4. RetNet：混合训练实战(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">4.2.5. RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">4.2.6. Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">5. 图文生成与理解</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01CLIP.html">5.11.1. 图文对齐基础</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">图文生成与理解</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">6. 视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">7. 语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">8. 数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">8.2.1. 概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">8.2.2. 预训练数据预处理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">8.2.4. 数据源概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">8.2.5. 后训练数据集概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">8.2.6. 预训练数据处理概览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">8.2.7. 概述</a></li>
-
-
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
 
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">8.2.14. Llama3.1</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">8.2.18. 充当 Linux 终端</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
 
 
 
@@ -635,11 +653,11 @@
 
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">9. DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">9.2.1. ChatGPT 解读</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">10. 向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -889,58 +907,58 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">5.11.2.1. 引言</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">5.11.2.1.1. 核心挑战</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5.11.2.1.2. BLIP 的诞生</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">核心挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">BLIP 的诞生</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5.11.2.2. 模型架构设计</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#med">5.11.2.2.1. MED</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-image-encoder">5.11.2.2.1.1. 图像编码器（Unimodal Image Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-text-encoder">5.11.2.2.1.2. 文本编码器（Unimodal Text Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-encoder">5.11.2.2.1.3. 基于图像的文本编码器（Image-Grounded Text Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-decoder">5.11.2.2.1.4. 基于图像的文本解码器（Image-Grounded Text Decoder）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">模型架构设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#med">MED</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-image-encoder">图像编码器（Unimodal Image Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-text-encoder">文本编码器（Unimodal Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-encoder">基于图像的文本编码器（Image-Grounded Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-decoder">基于图像的文本解码器（Image-Grounded Text Decoder）</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5.11.2.2.2. 预训练目标</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itc">5.11.2.2.2.1. 图像编码器+单模态文本编码器：ITC 任务</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itm">5.11.2.2.2.2. 图像编码器+多模态文本编码器：ITM 任务</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lm">5.11.2.2.2.3. 图像编码器+多模态文本解码器：LM 任务</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">5.11.2.2.2.4. 损失函数的联合优化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">预训练目标</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itc">图像编码器+单模态文本编码器：ITC 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itm">图像编码器+多模态文本编码器：ITM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lm">图像编码器+多模态文本解码器：LM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">损失函数的联合优化</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-bootstrapping-capfilt">5.11.2.3. 数据自举(data Bootstrapping)：CapFilt</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#captioner">5.11.2.3.1. Captioner（生成器）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">5.11.2.3.2. Filter（过滤器）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">5.11.2.3.3. 工作流程</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">5.11.2.3.4. 实验结果</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-bootstrapping-capfilt">数据自举(data Bootstrapping)：CapFilt</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#captioner">Captioner（生成器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">Filter（过滤器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">工作流程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">实验结果</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5.11.2.4. BLIP 的局限性</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blip-2">5.11.2.5. BLIP-2</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.11.2.5.1. 核心思想设计</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-former-querying-transformer">5.11.2.5.2. 模型结构详解：Q-Former（Querying Transformer）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.11.2.5.3. 预训练过程</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">5.11.2.5.3.1. 第一阶段：视觉-语言表征学习</a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">5.11.2.5.3.1.1. ITC 任务</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">5.11.2.5.3.1.2. ITM 任务</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#itg">5.11.2.5.3.1.3. ITG 任务</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">BLIP 的局限性</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blip-2">BLIP-2</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">核心思想设计</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-former-querying-transformer">模型结构详解：Q-Former（Querying Transformer）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">预训练过程</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">第一阶段：视觉-语言表征学习</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">ITC 任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">ITM 任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#itg">ITG 任务</a></li>
 </ul>
 </li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">5.11.2.5.3.2. 第二阶段：视觉到语言的生成学习</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">第二阶段：视觉到语言的生成学习</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blip2">5.11.2.5.4. BLIP2-总结</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blip2">BLIP2-总结</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instruct-blip">5.11.2.6. Instruct-BLIP</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5.11.2.6.1. 模型结构</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">5.11.2.6.2. 训练策略</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instruct-blip">Instruct-BLIP</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">模型结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">训练策略</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">5.11.2.7. 总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">总结</a></li>
 </ul>
             </nav>
         </div>
@@ -953,12 +971,12 @@ document.write(`
                 <article class="bd-article">
                   
 <section class="tex2jax_ignore mathjax_ignore" id="blip">
-<h1><span class="section-number">5.11.2. </span>BLIP 家族: 统一理解和生成的自举多模态模型<a class="headerlink" href="#blip" title="Link to this heading">#</a></h1>
+<h1>BLIP 家族: 统一理解和生成的自举多模态模型<a class="headerlink" href="#blip" title="Link to this heading">#</a></h1>
 <p>Author By: 李佳函</p>
 <section id="id1">
-<h2><span class="section-number">5.11.2.1. </span>引言<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>引言<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <section id="id2">
-<h3><span class="section-number">5.11.2.1.1. </span>核心挑战<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3>核心挑战<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>在 BLIP 提出前，视觉-语言预训练领域已有 CLIP、ALBEF 等代表性工作，但仍存在两个关键瓶颈：</p>
 <ul class="simple">
 <li><p>问题一：<strong>任务能力割裂</strong></p>
@@ -978,7 +996,7 @@ document.write(`
 </ul>
 </section>
 <section id="id3">
-<h3><span class="section-number">5.11.2.1.2. </span>BLIP 的诞生<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<h3>BLIP 的诞生<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>基于此问题现象，BLIP 诞生了。BLIP 的作者也是 ALBEF 的作者，因此可以在 BLIP 上看到很多 ALBEF 的影子。</p>
 <p>该模型的核心思想主要有两个：</p>
 <ol class="arabic simple">
@@ -988,14 +1006,14 @@ document.write(`
 </section>
 </section>
 <section id="id4">
-<h2><span class="section-number">5.11.2.2. </span>模型架构设计<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h2>模型架构设计<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <section id="med">
-<h3><span class="section-number">5.11.2.2.1. </span>MED<a class="headerlink" href="#med" title="Link to this heading">#</a></h3>
+<h3>MED<a class="headerlink" href="#med" title="Link to this heading">#</a></h3>
 <p>MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三个任务的复合型模型。</p>
 <p><img alt="" src="../_images/02BLIP01.png" /></p>
 <p>如图所示，总共有四个模块，从左往右，分别为两个单模态编码器：图像编码器和文本编码器，两个多模态编码器：基于图像的文本编码器和解码器。</p>
 <section id="unimodal-image-encoder">
-<h4><span class="section-number">5.11.2.2.1.1. </span>图像编码器（Unimodal Image Encoder）<a class="headerlink" href="#unimodal-image-encoder" title="Link to this heading">#</a></h4>
+<h4>图像编码器（Unimodal Image Encoder）<a class="headerlink" href="#unimodal-image-encoder" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>架构：基于 Transformer 的视觉编码器（ViT），将图像划分为固定大小的 patch（如 224×224 分辨率下分割为 14×14 的 196 个 patch），每个 patch 被线性嵌入为向量。</p></li>
 <li><p>关键设计：</p>
@@ -1012,7 +1030,7 @@ document.write(`
 <p><img alt="alt text" src="../_images/02BLIP02.png" /></p>
 </section>
 <section id="unimodal-text-encoder">
-<h4><span class="section-number">5.11.2.2.1.2. </span>文本编码器（Unimodal Text Encoder）<a class="headerlink" href="#unimodal-text-encoder" title="Link to this heading">#</a></h4>
+<h4>文本编码器（Unimodal Text Encoder）<a class="headerlink" href="#unimodal-text-encoder" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>功能：将文本序列编码为上下文感知的特征表示。</p></li>
 <li><p>架构：基于 BERT 的 Transformer 编码器，对文本进行双向自注意力建模。</p></li>
@@ -1027,7 +1045,7 @@ document.write(`
 </ul>
 </section>
 <section id="image-grounded-text-encoder">
-<h4><span class="section-number">5.11.2.2.1.3. </span>基于图像的文本编码器（Image-Grounded Text Encoder）<a class="headerlink" href="#image-grounded-text-encoder" title="Link to this heading">#</a></h4>
+<h4>基于图像的文本编码器（Image-Grounded Text Encoder）<a class="headerlink" href="#image-grounded-text-encoder" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>功能：融合图像信息与文本信息，生成多模态联合表示。</p></li>
 <li><p>架构：在标准文本编码器的基础上，插入交叉注意力层（Cross-Attention Layer）。</p>
@@ -1051,7 +1069,7 @@ document.write(`
 <p><img alt="alt text" src="../_images/02BLIP04.png" /></p>
 </section>
 <section id="image-grounded-text-decoder">
-<h4><span class="section-number">5.11.2.2.1.4. </span>基于图像的文本解码器（Image-Grounded Text Decoder）<a class="headerlink" href="#image-grounded-text-decoder" title="Link to this heading">#</a></h4>
+<h4>基于图像的文本解码器（Image-Grounded Text Decoder）<a class="headerlink" href="#image-grounded-text-decoder" title="Link to this heading">#</a></h4>
 <ul class="simple">
 <li><p>功能：以图像为条件生成连贯的文本描述（如图像字幕）。</p></li>
 <li><p>架构：基于 Transformer 的解码器，采用因果掩码自注意力（Causal Self-Attention），即 decoder 只与之前出现的 token 进行 attention 操作。</p>
@@ -1076,7 +1094,7 @@ document.write(`
 </section>
 </section>
 <section id="id5">
-<h3><span class="section-number">5.11.2.2.2. </span>预训练目标<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>预训练目标<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <p>以上的四个模块，第一个作为图像编码器，另外三个作为文本的编码/解码器，共同组成了三个任务：ITC、ITM、LM。</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -1103,7 +1121,7 @@ document.write(`
 </div>
 <p>具体的模块在上文中有具体讲解，下文中具体介绍任务。</p>
 <section id="itc">
-<h4><span class="section-number">5.11.2.2.2.1. </span>图像编码器+单模态文本编码器：ITC 任务<a class="headerlink" href="#itc" title="Link to this heading">#</a></h4>
+<h4>图像编码器+单模态文本编码器：ITC 任务<a class="headerlink" href="#itc" title="Link to this heading">#</a></h4>
 <p><img alt="alt text" src="../_images/02BLIP06.png" /></p>
 <ul class="simple">
 <li><p>核心目标：通过对比学习对齐视觉和文本特征空间，使正向图像-文本对的表征更相似，负向对的表征差异更大。</p></li>
@@ -1120,7 +1138,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{ITC}}=-\frac{
 该损失函数采用双向对比，分别计算图像到文本和文本到图像的对比损失，并取平均。</p>
 </section>
 <section id="itm">
-<h4><span class="section-number">5.11.2.2.2.2. </span>图像编码器+多模态文本编码器：ITM 任务<a class="headerlink" href="#itm" title="Link to this heading">#</a></h4>
+<h4>图像编码器+多模态文本编码器：ITM 任务<a class="headerlink" href="#itm" title="Link to this heading">#</a></h4>
 <p><img alt="alt text" src="../_images/02BLIP07.png" /></p>
 <ul class="simple">
 <li><p>核心目标：学习图像与文本之间的细粒度对齐，判断图像-文本对是否匹配。通过二分类任务区分正样本（匹配）和负样本（不匹配）。</p></li>
@@ -1136,7 +1154,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{L}_{\text {ITM }}=-\frac{
 该损失函数采用交叉熵损失函数，做二分类任务，确保模型能够区分匹配与不匹配的图像-文本对。</p>
 </section>
 <section id="lm">
-<h4><span class="section-number">5.11.2.2.2.3. </span>图像编码器+多模态文本解码器：LM 任务<a class="headerlink" href="#lm" title="Link to this heading">#</a></h4>
+<h4>图像编码器+多模态文本解码器：LM 任务<a class="headerlink" href="#lm" title="Link to this heading">#</a></h4>
 <p><img alt="alt text" src="../_images/02BLIP08.png" /></p>
 <ul class="simple">
 <li><p>核心目标：基于图像生成连贯的文本描述（如图像字幕）。通过自回归建模，最大化给定图像下文本序列的似然。</p></li>
@@ -1152,7 +1170,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{LM}}=-\frac{1
 <span class="math notranslate nohighlight">\(L\)</span>：生成文本的总长度（最大长度或实际长度）。</p>
 </section>
 <section id="id6">
-<h4><span class="section-number">5.11.2.2.2.4. </span>损失函数的联合优化<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<h4>损失函数的联合优化<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
 <p>BLIP 通过联合优化这三个损失函数，实现多模态理解和生成能力的统一训练：
 $<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{Total}}=\alpha\mathcal{L}_{\mathrm{ITC}}+\beta\mathcal{L}_{\mathrm{ITM}}+\gamma\mathcal{L}_{\mathrm{LM}}\)</span><span class="math notranslate nohighlight">\(
 其中，\)</span>α,β,γ$ 是权重系数（通常设为 1 或通过实验调整）。</p>
@@ -1160,10 +1178,10 @@ $<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{Total}}=\alph
 </section>
 </section>
 <section id="data-bootstrapping-capfilt">
-<h2><span class="section-number">5.11.2.3. </span>数据自举(data Bootstrapping)：CapFilt<a class="headerlink" href="#data-bootstrapping-capfilt" title="Link to this heading">#</a></h2>
+<h2>数据自举(data Bootstrapping)：CapFilt<a class="headerlink" href="#data-bootstrapping-capfilt" title="Link to this heading">#</a></h2>
 <p>CapFilt（Captioning and Filtering）是 BLIP 提出的一种数据清洗与生成的自举机制，旨在解决从网络爬取的图像-文本对中存在噪声的问题。CapFilt 由两部分组成：Captioner（生成器）和 Filter（过滤器）。</p>
 <section id="captioner">
-<h3><span class="section-number">5.11.2.3.1. </span>Captioner（生成器）<a class="headerlink" href="#captioner" title="Link to this heading">#</a></h3>
+<h3>Captioner（生成器）<a class="headerlink" href="#captioner" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>功能：为图像生成高质量文本描述。</p></li>
 <li><p>实现方式：</p>
@@ -1176,7 +1194,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{Total}}=\alph
 </ul>
 </section>
 <section id="filter">
-<h3><span class="section-number">5.11.2.3.2. </span>Filter（过滤器）<a class="headerlink" href="#filter" title="Link to this heading">#</a></h3>
+<h3>Filter（过滤器）<a class="headerlink" href="#filter" title="Link to this heading">#</a></h3>
 <ul class="simple">
 <li><p>功能：评估图文对匹配度，过滤掉噪声样本。</p></li>
 <li><p>实现方式：</p>
@@ -1189,7 +1207,7 @@ $<span class="math notranslate nohighlight">\(\mathcal{L}_{\mathrm{Total}}=\alph
 </ul>
 </section>
 <section id="id7">
-<h3><span class="section-number">5.11.2.3.3. </span>工作流程<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<h3>工作流程<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
 <p><img alt="alt text" src="../_images/02BLIP09.png" /></p>
 <p>先来看一个简单的例子。
 如图，Captioner 生成的描述为：&quot;chocolate cake with cream frosting and chocolate sprinkles on top&quot;.
@@ -1216,7 +1234,7 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 </ol>
 </section>
 <section id="id8">
-<h3><span class="section-number">5.11.2.3.4. </span>实验结果<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<h3>实验结果<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <p>在 BLIP 的论文中，CapFilt 机制被验证能够显著提升模型性能：</p>
 <ul class="simple">
 <li><p><strong>图像-文本检索</strong>：在 COCO、Flickr30K 等数据集上，CapFilt 使 BLIP 的检索精度（Recall&#64;K）提升 10%-15%。</p></li>
@@ -1258,16 +1276,16 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 </section>
 </section>
 <section id="id9">
-<h2><span class="section-number">5.11.2.4. </span>BLIP 的局限性<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<h2>BLIP 的局限性<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
 <p>BLIP 通过<strong>架构创新</strong>、<strong>数据自举</strong>和<strong>任务统一</strong>的设计，重新定义了多模态预训练模型的能力边界。它不仅为视觉-语言任务提供了高效解决方案，还为多模态学习提供了可复用的技术范式。但其端到端训练方式对计算资源需求较高，需要训练多次模型。同时，BLIP 的架构限制了视觉编码器和语言模型的选择，适配性不足。</p>
 <p>于是衍生出来了一个问题：如何<strong>在不重新训练图像编码器和语言模型</strong>的前提下，提升模型的效率与泛化能力？</p>
 </section>
 <section id="blip-2">
-<h2><span class="section-number">5.11.2.5. </span>BLIP-2<a class="headerlink" href="#blip-2" title="Link to this heading">#</a></h2>
+<h2>BLIP-2<a class="headerlink" href="#blip-2" title="Link to this heading">#</a></h2>
 <p><img alt="alt text" src="../_images/02BLIP13.png" /></p>
 <p>在 23 年，同作者推出了 BLIP-2。其通过冻结预训练模型（如 ViT 和 LLM），仅引入轻量级的 Q-Former（Querying Transformer）作为“桥梁”，降低训练成本。</p>
 <section id="id10">
-<h3><span class="section-number">5.11.2.5.1. </span>核心思想设计<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<h3>核心思想设计<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <p>BLIP2 的核心创新在于解耦式架构，主要通过以下几点实现高效的训练和跨模态对齐：</p>
 <ul class="simple">
 <li><p><strong>冻结预训练模型：</strong></p>
@@ -1290,7 +1308,7 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 </ul>
 </section>
 <section id="q-former-querying-transformer">
-<h3><span class="section-number">5.11.2.5.2. </span>模型结构详解：Q-Former（Querying Transformer）<a class="headerlink" href="#q-former-querying-transformer" title="Link to this heading">#</a></h3>
+<h3>模型结构详解：Q-Former（Querying Transformer）<a class="headerlink" href="#q-former-querying-transformer" title="Link to this heading">#</a></h3>
 <p>Q-Former 的核心结构如图：
 <img alt="alt text" src="../_images/02BLIP11.png" /></p>
 <p>作为视觉和语言模态之间的桥梁，它共分为了两只 Transformer。</p>
@@ -1312,11 +1330,11 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 <p>Learned Queries 是一组可学习的&quot;查询向量&quot;，在经过 Self Attention 后，在 Cross Attention 中作为 Q，与图像融合。在实验中，共使用了 32 个查询，每个查询有 768 维。总共参数共包含 1.88 亿个参数，远小于冻结图像特征的大小。这种瓶颈结构与预训练目标一起工作，迫使查询提取<strong>与文本最相关的视觉信息</strong>。</p>
 </section>
 <section id="id11">
-<h3><span class="section-number">5.11.2.5.3. </span>预训练过程<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<h3>预训练过程<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
 <section id="id12">
-<h4><span class="section-number">5.11.2.5.3.1. </span>第一阶段：视觉-语言表征学习<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<h4>第一阶段：视觉-语言表征学习<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
 <section id="id13">
-<h5><span class="section-number">5.11.2.5.3.1.1. </span>ITC 任务<a class="headerlink" href="#id13" title="Link to this heading">#</a></h5>
+<h5>ITC 任务<a class="headerlink" href="#id13" title="Link to this heading">#</a></h5>
 <p><img alt="alt text" src="../_images/02BLIP12.png" /></p>
 <p><strong>目标</strong>：对齐图像和文本的全局特征，最大化匹配图文对的相似度，最小化不匹配对的相似度。</p>
 <p><strong>处理流程</strong>：</p>
@@ -1351,7 +1369,7 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 </ul>
 </section>
 <section id="id14">
-<h5><span class="section-number">5.11.2.5.3.1.2. </span>ITM 任务<a class="headerlink" href="#id14" title="Link to this heading">#</a></h5>
+<h5>ITM 任务<a class="headerlink" href="#id14" title="Link to this heading">#</a></h5>
 <p><img alt="alt text" src="../_images/02BLIP14.png" /></p>
 <p><strong>目标</strong>：判断图像和文本是否匹配（二分类任务，正样本为匹配，负样本为不匹配）</p>
 <p>Learned Queries：32 个 Queries，<strong>与文本拼接后送入 Q-Former</strong>。</p>
@@ -1379,7 +1397,7 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 <p><strong>掩码策略</strong>：<strong>双向自注意掩码</strong>，Queries 与文本相互可见。这样设计，可以允许 Queries 和文本标记之间互相感知，从而捕捉图像和文本的局部交互</p>
 </section>
 <section id="itg">
-<h5><span class="section-number">5.11.2.5.3.1.3. </span>ITG 任务<a class="headerlink" href="#itg" title="Link to this heading">#</a></h5>
+<h5>ITG 任务<a class="headerlink" href="#itg" title="Link to this heading">#</a></h5>
 <p><img alt="alt text" src="../_images/02BLIP15.png" /></p>
 <p><strong>目标</strong>：基于图像生成文本（如图像描述），训练 Q-Former 提取图像特征并引导文本生成。</p>
 <p><strong>处理流程</strong>：</p>
@@ -1410,7 +1428,7 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 </section>
 </section>
 <section id="id15">
-<h4><span class="section-number">5.11.2.5.3.2. </span>第二阶段：视觉到语言的生成学习<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<h4>第二阶段：视觉到语言的生成学习<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
 <p><img alt="alt text" src="../_images/02BLIP16.png" /></p>
 <p>第二阶段的核心目标是：</p>
 <ul class="simple">
@@ -1445,16 +1463,16 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 </section>
 </section>
 <section id="blip2">
-<h3><span class="section-number">5.11.2.5.4. </span>BLIP2-总结<a class="headerlink" href="#blip2" title="Link to this heading">#</a></h3>
+<h3>BLIP2-总结<a class="headerlink" href="#blip2" title="Link to this heading">#</a></h3>
 <p>BLIP2 的第二阶段训练通过 Q-Former 将图像特征适配到 LLM，实现了高效的视觉-语言生成能力。其核心思想是冻结单模态模型，仅训练轻量级的 Q-Former 模块，从而降低计算成本并提升模型的零样本泛化能力。这一设计使得 BLIP2 在资源有限的场景下仍能实现 SOTA 的多模态性能，成为视觉-语言预训练的代表性方法。</p>
 </section>
 </section>
 <section id="instruct-blip">
-<h2><span class="section-number">5.11.2.6. </span>Instruct-BLIP<a class="headerlink" href="#instruct-blip" title="Link to this heading">#</a></h2>
+<h2>Instruct-BLIP<a class="headerlink" href="#instruct-blip" title="Link to this heading">#</a></h2>
 <p>InstructBLIP 是 BLIP 作者团队在多模态领域的又一续作。InstructBLIP 这个工作介绍了如何把指令微调的范式做在 BLIP-2 模型上面。用指令微调方法的时候会额外有一条 instruction，如何借助这个 instruction 提取更有用的视觉特征是本文的亮点之一。所以，该模型的主要提升点在于通用性和零样本（zero-shot）泛化能力。</p>
 <p>作者将 26 个数据集转化为指令微调的格式，把它们分成 13 个 held-in 数据集用于指令微调，和 13 个 held-out 数据集用于 Zero-Shot 能力的评估。</p>
 <section id="id16">
-<h3><span class="section-number">5.11.2.6.1. </span>模型结构<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<h3>模型结构<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
 <p><img alt="alt text" src="../_images/02BLIP17.png" /></p>
 <p>Instruct-BLIP 的结构如上图所示，基本和 BLIP2 保持一致。总共由三部分组成：</p>
 <ul class="simple">
@@ -1465,7 +1483,7 @@ Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参
 <p>此外，Q-Former 的输入还包括可学习的 Queries (BLIP-2 的做法) 和 Instruction。其中，可学习的 Queries 通过 Self-Attention 和 Instruction 交互，可学习的 Queries 通过 Cross-Attention 和输入图片的特征交互，鼓励提取与任务相关的图像特征。</p>
 </section>
 <section id="id17">
-<h3><span class="section-number">5.11.2.6.2. </span>训练策略<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<h3>训练策略<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
 <p>在数据集选型上，使用了 26 个公开数据集，涵盖 11 类视觉-语言任务（如图像描述、视觉问答、视觉推理、视频问答、图像分类等）。数据集划分如下：</p>
 <ul class="simple">
 <li><p>13 个 held-in 数据集：用于指令微调训练。</p></li>
@@ -1493,7 +1511,7 @@ $<span class="math notranslate nohighlight">\(p_d=\frac{\sqrt{S_d}}{\sum_{i=1}^D
 </section>
 </section>
 <section id="id18">
-<h2><span class="section-number">5.11.2.7. </span>总结<a class="headerlink" href="#id18" title="Link to this heading">#</a></h2>
+<h2>总结<a class="headerlink" href="#id18" title="Link to this heading">#</a></h2>
 <p>三篇文章代表了多模态视觉-预研模型的演进路径。BLIP 奠定了基础架构，BLIP-2 通过 Q-Former 的轻量化设计与参数共享，提升了模型训练效率。InstructBLIP 则通过指令微调，进一步增强了模型的泛化能力，不仅会指导大模型生成文本，同时也会指导 image encoder 提取不同的视觉特征。</p>
 </section>
 </section>
@@ -1538,7 +1556,7 @@ $<span class="math notranslate nohighlight">\(p_d=\frac{\sqrt{S_d}}{\sum_{i=1}^D
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">5.11.1. </span>图文对齐基础</p>
+        <p class="prev-next-title">图文对齐基础</p>
       </div>
     </a>
     <a class="right-next"
@@ -1546,7 +1564,7 @@ $<span class="math notranslate nohighlight">\(p_d=\frac{\sqrt{S_d}}{\sum_{i=1}^D
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">6. </span>视频大模型</p>
+        <p class="prev-next-title">视频大模型</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1566,58 +1584,58 @@ $<span class="math notranslate nohighlight">\(p_d=\frac{\sqrt{S_d}}{\sum_{i=1}^D
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">5.11.2.1. 引言</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">5.11.2.1.1. 核心挑战</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5.11.2.1.2. BLIP 的诞生</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">核心挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">BLIP 的诞生</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5.11.2.2. 模型架构设计</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#med">5.11.2.2.1. MED</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-image-encoder">5.11.2.2.1.1. 图像编码器（Unimodal Image Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-text-encoder">5.11.2.2.1.2. 文本编码器（Unimodal Text Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-encoder">5.11.2.2.1.3. 基于图像的文本编码器（Image-Grounded Text Encoder）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-decoder">5.11.2.2.1.4. 基于图像的文本解码器（Image-Grounded Text Decoder）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">模型架构设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#med">MED</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-image-encoder">图像编码器（Unimodal Image Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#unimodal-text-encoder">文本编码器（Unimodal Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-encoder">基于图像的文本编码器（Image-Grounded Text Encoder）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-grounded-text-decoder">基于图像的文本解码器（Image-Grounded Text Decoder）</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5.11.2.2.2. 预训练目标</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itc">5.11.2.2.2.1. 图像编码器+单模态文本编码器：ITC 任务</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itm">5.11.2.2.2.2. 图像编码器+多模态文本编码器：ITM 任务</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lm">5.11.2.2.2.3. 图像编码器+多模态文本解码器：LM 任务</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">5.11.2.2.2.4. 损失函数的联合优化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">预训练目标</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itc">图像编码器+单模态文本编码器：ITC 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#itm">图像编码器+多模态文本编码器：ITM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#lm">图像编码器+多模态文本解码器：LM 任务</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">损失函数的联合优化</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-bootstrapping-capfilt">5.11.2.3. 数据自举(data Bootstrapping)：CapFilt</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#captioner">5.11.2.3.1. Captioner（生成器）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">5.11.2.3.2. Filter（过滤器）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">5.11.2.3.3. 工作流程</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">5.11.2.3.4. 实验结果</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-bootstrapping-capfilt">数据自举(data Bootstrapping)：CapFilt</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#captioner">Captioner（生成器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filter">Filter（过滤器）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">工作流程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">实验结果</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5.11.2.4. BLIP 的局限性</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blip-2">5.11.2.5. BLIP-2</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.11.2.5.1. 核心思想设计</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-former-querying-transformer">5.11.2.5.2. 模型结构详解：Q-Former（Querying Transformer）</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.11.2.5.3. 预训练过程</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">5.11.2.5.3.1. 第一阶段：视觉-语言表征学习</a><ul class="nav section-nav flex-column">
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">5.11.2.5.3.1.1. ITC 任务</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">5.11.2.5.3.1.2. ITM 任务</a></li>
-<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#itg">5.11.2.5.3.1.3. ITG 任务</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">BLIP 的局限性</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blip-2">BLIP-2</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">核心思想设计</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-former-querying-transformer">模型结构详解：Q-Former（Querying Transformer）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">预训练过程</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">第一阶段：视觉-语言表征学习</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">ITC 任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">ITM 任务</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#itg">ITG 任务</a></li>
 </ul>
 </li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">5.11.2.5.3.2. 第二阶段：视觉到语言的生成学习</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">第二阶段：视觉到语言的生成学习</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blip2">5.11.2.5.4. BLIP2-总结</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blip2">BLIP2-总结</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instruct-blip">5.11.2.6. Instruct-BLIP</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5.11.2.6.1. 模型结构</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">5.11.2.6.2. 训练策略</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#instruct-blip">Instruct-BLIP</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">模型结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">训练策略</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">5.11.2.7. 总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">总结</a></li>
 </ul>
   </nav></div>
 
@@ -1651,7 +1669,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 31, 2025.
+  Last updated on Sep 01, 2025.
   <br/>
 </p>
   </div>

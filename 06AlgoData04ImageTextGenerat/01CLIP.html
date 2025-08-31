@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="5.11.1. 图文对齐基础" />
+<meta property="og:title" content="图文对齐基础" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData04ImageTextGenerat/01CLIP.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
@@ -19,7 +19,7 @@
 <meta name="description" content="Author by: 李佳函 引言：打破模态壁垒的开端: 传统 AI 的局限: 人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。 更深层的矛盾在于：视觉信息与文本描述的语义鸿沟始终未被弥合 ——机器无法像人类一样，将&quot;红色茶杯&quot;的视觉特征与&quot;咖啡杯&quot;的..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>5.11.1. 图文对齐基础 &#8212; AIInfra AI基础设施</title>
+    <title>图文对齐基础 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型" href="02BLIP.html" />
-    <link rel="prev" title="5. 图文生成与理解" href="README.html" />
+    <link rel="next" title="BLIP 家族: 统一理解和生成的自举多模态模型" href="02BLIP.html" />
+    <link rel="prev" title="图文生成与理解" href="README.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 01, 2025"/>
 
 <link
   rel="alternate"
@@ -243,45 +243,60 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">大模型训练与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">大模型推理与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">AI Infra 未来发展趋势</a></li>
+</ul>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">1. AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">2. 计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">2.3.1. 高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">2.3.2. HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">2.3.3. HPC 软件与应用趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">2.3.4. 计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">2.3.5. 计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">2.3.6. AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">2.3.7. AI 集群系统架构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">3. L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">3.3.1. 服务器节点初探</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">3.3.2. 服务器风冷实践与思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">3.3.3. 服务器液冷技术发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">3.3.4. 液冷挑战与实践思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">3.3.5. 服务器机柜深度认识</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">3.3.6. 集群机房供电</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">AI 集群供配电系统</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">4. 万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">4.3.1. AI 万卡集群建设挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">4.3.2. AI 万卡集群建设交付</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">4.3.3. 03 AI 万卡集群测试步骤</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">4.3.4. NVIDIA Blackwell 演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">4.3.5. NV Blackwell 深度解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">4.3.6. NV GB200 网络演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">4.3.7. NV GB200 集群互联方案</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">4.3.8. XAI 十万卡集群解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">4.3.9. 十万卡 AI 集群思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03 AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">十万卡 AI 集群思考</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">5. 集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">5.4.1. GPU 与 NPU 精度误差</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">5.4.2. 基于 RWKV 的 RNN 范式革新</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">Ai 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">精度性能：大模型性能问题定位</a></li>
 </ul>
 </details></li>
 </ul>
@@ -402,7 +417,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Practice01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -429,82 +446,83 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">1. 大模型算法与数据概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">2. Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">2.3.1. Transformer 结构介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">2.3.2. 大模型 Tokenizer 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">2.3.3. 大模型 Embedding 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">2.3.4. Attention 注意力机制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">2.3.5. Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">2.3.6. Transformer 长序列架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">2.3.7. 大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">2.3.8. 搭建迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">2.3.9. 从零实现 Transformer 训练(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">2.3.10. 实战 Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">2.3.12. 手把手实现核心机制 BPE 分词算法(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">2.3.13. 手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">2.3.14. 深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">3. MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">3.2.1. MoE 算法架构(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">3.2.2. MOE 前世今生(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">3.2.3. MOE 奠基论文(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">3.2.4. MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">3.2.5. GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">3.2.6. Switch Trans 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">3.2.7. GLaM &amp; ST-MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">3.2.8. DeepSeek MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">3.2.9. MOE 模型可视化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">3.2.10. MoE 参数与专家</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">3.2.11. 单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">3.2.12. 基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">3.2.13. 从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">3.2.14. MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">3.2.15. MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">4. 大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">4.2.1. 高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">4.2.2. 基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">4.2.3. Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">4.2.4. RetNet：混合训练实战(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">4.2.5. RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">4.2.6. Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">5. 图文生成与理解</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">5.11.1. 图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02BLIP.html">5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">图文生成与理解</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">6. 视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">7. 语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">8. 数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">8.2.1. 概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">8.2.2. 预训练数据预处理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">8.2.4. 数据源概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">8.2.5. 后训练数据集概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">8.2.6. 预训练数据处理概览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">8.2.7. 概述</a></li>
-
-
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
 
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">8.2.14. Llama3.1</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">8.2.18. 充当 Linux 终端</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
 
 
 
@@ -635,11 +653,11 @@
 
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">9. DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">9.2.1. ChatGPT 解读</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">10. 向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -889,44 +907,44 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">5.11.1.1. 引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ai">5.11.1.1.1. 传统 AI 的局限</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5.11.1.1.2. 多模态需求崛起</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ai">传统 AI 的局限</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">多模态需求崛起</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5.11.1.2. 图文对齐：多模态学习的核心基石</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5.11.1.2.1. 传统方法的局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">5.11.1.2.2. Transformer 的影响：从单模态到跨模态统一</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">5.11.1.2.3. 对比学习：无监督语义对齐的范式</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clip">5.11.1.2.4. 图文对齐：CLIP 奠定基础</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">图文对齐：多模态学习的核心基石</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">传统方法的局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer 的影响：从单模态到跨模态统一</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">对比学习：无监督语义对齐的范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clip">图文对齐：CLIP 奠定基础</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">5.11.1.3. 技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">5.11.1.3.1. 数据集制作：高质量图文对的构建</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5.11.1.3.2. 双塔结构设计</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-encoder">5.11.1.3.2.1. 图像编码器 Image Encoder</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#text-encoder">5.11.1.3.2.2. 文本编码器 Text Encoder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">数据集制作：高质量图文对的构建</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">双塔结构设计</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-encoder">图像编码器 Image Encoder</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#text-encoder">文本编码器 Text Encoder</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.11.1.3.3. 对比学习机制</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.11.1.3.3.1. 对比损失函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">对比学习机制</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">对比损失函数</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering-and-ensembling">5.11.1.3.4. Prompt Engineering and Ensembling</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering">5.11.1.3.4.1. 提示工程（Prompt Engineering）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-ensembling">5.11.1.3.4.2. 提示集成（Prompt Ensembling）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering-and-ensembling">Prompt Engineering and Ensembling</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering">提示工程（Prompt Engineering）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-ensembling">提示集成（Prompt Ensembling）</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">5.11.1.4. 能力全景：CLIP 的典型应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">5.11.1.5. 模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">5.11.1.5.1. 性能与效率局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">5.11.1.5.2. 任务能力缺陷</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5.11.1.5.3. 架构与评估偏差</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">能力全景：CLIP 的典型应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">性能与效率局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">任务能力缺陷</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">架构与评估偏差</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">5.11.1.6. 总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">总结</a></li>
 </ul>
             </nav>
         </div>
@@ -939,23 +957,23 @@ document.write(`
                 <article class="bd-article">
                   
 <section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1><span class="section-number">5.11.1. </span>图文对齐基础<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>图文对齐基础<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
 <p>Author by: 李佳函</p>
 <section id="id2">
-<h2><span class="section-number">5.11.1.1. </span>引言：打破模态壁垒的开端<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h2>引言：打破模态壁垒的开端<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <section id="ai">
-<h3><span class="section-number">5.11.1.1.1. </span>传统 AI 的局限<a class="headerlink" href="#ai" title="Link to this heading">#</a></h3>
+<h3>传统 AI 的局限<a class="headerlink" href="#ai" title="Link to this heading">#</a></h3>
 <p>人工智能领域长期存在&quot;数据孤岛&quot;现象：图像识别依赖标注的像素数据，自然语言处理依赖分词与句法分析，两者在语义层面难以互通。这种割裂导致模型需要为每个任务单独训练，开发成本高昂且泛化能力有限。<strong>更深层的矛盾在于：视觉信息与文本描述的语义鸿沟始终未被弥合</strong>——机器无法像人类一样，将&quot;红色茶杯&quot;的视觉特征与&quot;咖啡杯&quot;的文本描述自然关联。</p>
 </section>
 <section id="id3">
-<h3><span class="section-number">5.11.1.1.2. </span>多模态需求崛起<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<h3>多模态需求崛起<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>现实场景中，人类通过综合视觉、听觉、语言等多模态信息进行决策。例如，医生需要结合医学影像与病历描述诊断疾病，自动驾驶系统需融合摄像头画面与语音指令。这种需求推动了多模态学习的发展，而本文要讲到的 CLIP（Contrastive Language-Image Pre-training）正是这一领域的里程碑式成果。</p>
 </section>
 </section>
 <section id="id4">
-<h2><span class="section-number">5.11.1.2. </span>图文对齐：多模态学习的核心基石<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h2>图文对齐：多模态学习的核心基石<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <section id="id5">
-<h3><span class="section-number">5.11.1.2.1. </span>传统方法的局限性<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>传统方法的局限性<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <p>前文提到，视觉信息与文本描述的语义存在割裂现象。例如，在做图文对齐的时候主要依赖单模态的特征提取与简单的融合：</p>
 <ul class="simple">
 <li><p>图像特征提取：采用卷积神经网络（CNN）提取图像中的颜色、纹理、形状等低阶特征，但忽略了高阶语义信息，泛化能力不够强（如&quot;咖啡杯&quot;和&quot;茶杯&quot;）</p></li>
@@ -965,17 +983,17 @@ document.write(`
 <p>这种割裂的特征提取方式，使得模型在面对复杂场景时表现不佳。</p>
 </section>
 <section id="transformer">
-<h3><span class="section-number">5.11.1.2.2. </span>Transformer 的影响：从单模态到跨模态统一<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h3>
+<h3>Transformer 的影响：从单模态到跨模态统一<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h3>
 <p>随着 Transformer 架构的突破性创新，人工智能领域迎来了跨模态学习的范式转变。自注意力机制（Self-Attention） 的引入，不仅解决了传统模型（如 CNN+RNN）在长距离依赖建模上的局限，更开创性地为文本与图像的语义对齐提供了统一的框架。</p>
 <p>这一进展直接推动了 CLIP（Contrastive Language-Image Pre-training）等里程碑式模型的诞生，标志着图文对齐技术从“特征拼接”迈向“图文对齐”、“语义融合”的关键跨越。</p>
 </section>
 <section id="id6">
-<h3><span class="section-number">5.11.1.2.3. </span>对比学习：无监督语义对齐的范式<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<h3>对比学习：无监督语义对齐的范式<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <p>对比学习（Contrastive Learning）通过最大化正样本（匹配对）的相似度、最小化负样本（不匹配对）的相似度，直接建模数据间的语义关系。这一方法在多模态中显得尤为关键。</p>
 <p>通过对比损失优化模型，使得正样本在共享语义空间中更接近，负样本更远离。</p>
 </section>
 <section id="clip">
-<h3><span class="section-number">5.11.1.2.4. </span>图文对齐：CLIP 奠定基础<a class="headerlink" href="#clip" title="Link to this heading">#</a></h3>
+<h3>图文对齐：CLIP 奠定基础<a class="headerlink" href="#clip" title="Link to this heading">#</a></h3>
 <p>Transformer 和对比学习的结合，催生了 CLIP 的诞生。</p>
 <p>2021 年，<strong>OpenAI 发布的 CLIP 首次实现了 zero-shot，即零样本迁移能力——无需微调即可将训练时学到的跨模态知识直接应用于新任务</strong>。结合 Transformer、对比学习、“完形填空”等强大的自监督训练方式，使得 CLIP 可以在完全没有见过的分类中，正确预测结果。作者在超过 30 个数据集上做了测试，涵盖了 OCR、视频动作检测、坐标定位等等。最震撼的是，在没有使用 ImageNet 训练集任意一张照片的情况下，直接 zero-shot 做推理，可以和 ResNet-50 取得相同的效果。</p>
 <p>它的这一突破标志着 AI 开始接近人类&quot;理解&quot;世界的方式，为后续多模态模型（如 DALL·E、Stable Diffusion）奠定了基础。</p>
@@ -983,9 +1001,9 @@ document.write(`
 </section>
 </section>
 <section id="id7">
-<h2><span class="section-number">5.11.1.3. </span>技术解构：CLIP 的原理解析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<h2>技术解构：CLIP 的原理解析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
 <section id="id8">
-<h3><span class="section-number">5.11.1.3.1. </span>数据集制作：高质量图文对的构建<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<h3>数据集制作：高质量图文对的构建<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
 <p>OpenAI 在开发 CLIP 的时候构建和使用了一个名为 WebImageText 的自定义数据集，数据集主要来源于<strong>互联网上的大规模图像-文本对</strong>，其主要特点包括：</p>
 <ul class="simple">
 <li><p><strong>规模巨大</strong>： 包含了大约 4 亿个图像-文本对。这个数量级对于训练像 CLIP 这样强大的模型至关重要。</p></li>
@@ -1011,10 +1029,10 @@ document.write(`
 </ul>
 </section>
 <section id="id9">
-<h3><span class="section-number">5.11.1.3.2. </span>双塔结构设计<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<h3>双塔结构设计<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
 <p>CLIP 的核心目标是将图像和文本映射到同一个语义空间中。使得图片和文本能够在共享的、课比较的向量语义空间进行有效的对比。</p>
 <section id="image-encoder">
-<h4><span class="section-number">5.11.1.3.2.1. </span>图像编码器 Image Encoder<a class="headerlink" href="#image-encoder" title="Link to this heading">#</a></h4>
+<h4>图像编码器 Image Encoder<a class="headerlink" href="#image-encoder" title="Link to this heading">#</a></h4>
 <p>CLIP 的研究并非局限于单一架构，而是系统地探索了两种在当时代表不同技术路线的骨干网络。</p>
 <ul class="simple">
 <li><p><strong>卷积神经网络</strong>：使用了经过验证且高效的<strong>ResNet</strong>架构（特别是 ResNet-50, ResNet-101 以及更大的定制化 ResNet 变种，如<code class="docutils literal notranslate"><span class="pre">ResNet-50x4</span></code>, <code class="docutils literal notranslate"><span class="pre">ResNet-50x16</span></code>, <code class="docutils literal notranslate"><span class="pre">ResNet-50x64</span></code>，这里的乘数表示模型宽度和计算量的增加）。ResNet 通过残差连接有效缓解了深层网络的梯度消失问题，是计算机视觉领域的基石模型。</p></li>
@@ -1072,7 +1090,7 @@ document.write(`
 </ol>
 </section>
 <section id="text-encoder">
-<h4><span class="section-number">5.11.1.3.2.2. </span>文本编码器 Text Encoder<a class="headerlink" href="#text-encoder" title="Link to this heading">#</a></h4>
+<h4>文本编码器 Text Encoder<a class="headerlink" href="#text-encoder" title="Link to this heading">#</a></h4>
 <p>CLIP 的文本编码器是一个基于 Transformer 编码器架构的神经网络。它将输入的自然语言文本（经过分词、嵌入）转化为一个上下文感知的序列表示，并最终汇聚于 <code class="docutils literal notranslate"><span class="pre">[EOS]</span></code> 位置的输出向量作为整个文本的语义表示。该表示随后被线性投影到与图像嵌入维度相同的共享语义空间，并进行 L2 归一化，得到一个单位向量 <span class="math notranslate nohighlight">\(T_j\)</span>。</p>
 <blockquote>
 <div><p>为什么选择[EOS]而非[CLS]？
@@ -1081,14 +1099,14 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </section>
 </section>
 <section id="id10">
-<h3><span class="section-number">5.11.1.3.3. </span>对比学习机制<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<h3>对比学习机制<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <p>在预训练的过程中，模型的输入是一个图片和文字的配对，比如如下图片画的是一条狗，配对的文字是<code class="docutils literal notranslate"><span class="pre">Pepper</span> <span class="pre">the</span> <span class="pre">aussie</span> <span class="pre">pup</span></code>。图片通过了图片编码器得到特征（ResNet 或 ViT）；句子通过文本编码器得到文本的特征。</p>
 <p><img alt="" src="../_images/01CLIP02.png" /></p>
 <p>假如一个 batch 里面有 n 个这样的文本对，那么就会得到 n 个图片特征和 n 个文本特征。</p>
 <p><strong>对比学习非常灵活，只需要一个正样本和负样本的定义</strong>。这里的正样本即是配对的本文对，即特征矩阵里面对角线上的。剩下非对角线的元素都是负样本。那么在该特征矩阵中有 <span class="math notranslate nohighlight">\(n\)</span> 个正样本，<span class="math notranslate nohighlight">\(n^{2}-n\)</span> 个负样本。</p>
 <p>尽管如此，CLIP 只能获取到视觉和文本上的特征，但是并没有在分类的任务上做训练或者微调，所以是没有分类头的。那么没有分类如何做推理呢？作者于是想到了 prompt template。</p>
 <section id="id11">
-<h4><span class="section-number">5.11.1.3.3.1. </span>对比损失函数<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
+<h4>对比损失函数<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
 <p>CLIP 使用了一个对称的交叉熵损失（Symmetric Cross-Entropy Loss）来驱动学习：</p>
 <ul class="simple">
 <li><p>图像→文本损失 (Image-to-Text)： 对于每一个图像 <span class="math notranslate nohighlight">\(I_i\)</span>，将其视为一个“类别”，目标是将其对应的正文本 <span class="math notranslate nohighlight">\(T_i\)</span> 的相似度 <span class="math notranslate nohighlight">\(S_{i,i}\)</span> 尽可能提高，而将其与批次内所有其他负文本 <span class="math notranslate nohighlight">\(T_j (j≠i)\)</span> 的相似度 <span class="math notranslate nohighlight">\(S_{i,j}\)</span> 尽可能降低。这相当于一个以图像为查询、文本为类别的多分类问题，使用标准的交叉熵损失：<span class="math notranslate nohighlight">\(L_{i2t}(i) = -log [ exp(S_{i,i} / τ) / Σ_{k=1}^N exp(S_{i,k} / τ) ]\)</span></p></li>
@@ -1100,9 +1118,9 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </section>
 </section>
 <section id="prompt-engineering-and-ensembling">
-<h3><span class="section-number">5.11.1.3.4. </span>Prompt Engineering and Ensembling<a class="headerlink" href="#prompt-engineering-and-ensembling" title="Link to this heading">#</a></h3>
+<h3>Prompt Engineering and Ensembling<a class="headerlink" href="#prompt-engineering-and-ensembling" title="Link to this heading">#</a></h3>
 <section id="prompt-engineering">
-<h4><span class="section-number">5.11.1.3.4.1. </span>提示工程（Prompt Engineering）<a class="headerlink" href="#prompt-engineering" title="Link to this heading">#</a></h4>
+<h4>提示工程（Prompt Engineering）<a class="headerlink" href="#prompt-engineering" title="Link to this heading">#</a></h4>
 <p>CLIP 先把 ImageNet 里面的 1000 个类，变成了一个句子，即<code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">photo</span> <span class="pre">of</span> <span class="pre">a</span> <span class="pre">{object}</span></code>，用类的名称替换掉 object。这里就会生成 1000 个句子。这 1000 个句子通过预训练好的文本编码器，生成 1000 个文本特征。此时，输入的一张图片进入图片编码器后，将图片特征与每一个文本特征做<code class="docutils literal notranslate"><span class="pre">cosine</span> <span class="pre">similarity</span></code>获取相似性，最终，最高相似性所对应的文本特征，就完成了分类的任务。</p>
 <p><img alt="" src="../_images/01CLIP03.png" /></p>
 <p><strong>为什么使用句子而不使用单词？</strong></p>
@@ -1112,7 +1130,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 <p>在推理的时候，1000 个类的类别可以任意替换，图片也可以是任意图片。CLIP 甚至可以推理出没有训练过的类。例如，假设你训练时没有训练三轮车，但当你的 1000 个类别里面有三轮车的时候，你输入一张三轮车的图片，也可以分类出来。而如果采用以前的分类方法，最多把他判别成车或者自行车。因此，他的泛化能力特别强，CLIP 彻底摆脱了 categorical label。</p>
 </section>
 <section id="prompt-ensembling">
-<h4><span class="section-number">5.11.1.3.4.2. </span>提示集成（Prompt Ensembling）<a class="headerlink" href="#prompt-ensembling" title="Link to this heading">#</a></h4>
+<h4>提示集成（Prompt Ensembling）<a class="headerlink" href="#prompt-ensembling" title="Link to this heading">#</a></h4>
 <p>单一提示模板可能引入特定偏见或无法全面捕捉类别的所有方面。提示集成通过<strong>为同一个类别构造多个不同的提示模板</strong>，然后<strong>聚合</strong>这些不同提示生成的文本嵌入向量，来获得更鲁棒、更全面、偏差更小的类别表示。</p>
 <p>例如，为类 别 y 设计 M 个不同的、有意义的提示模板：</p>
 <ul class="simple">
@@ -1124,7 +1142,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </section>
 </section>
 <section id="id12">
-<h2><span class="section-number">5.11.1.4. </span>能力全景：CLIP 的典型应用<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<h2>能力全景：CLIP 的典型应用<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
 <p>CLIP 的主要应用场景包括以下几个方面：</p>
 <ul class="simple">
 <li><p>图像搜索：通过给定的文本描述，CLIP 可以在大量图像中找到与该描述最相关的图像。这个功能非常适合于视觉搜索、内容管理和推荐系统。</p></li>
@@ -1134,10 +1152,10 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </ul>
 </section>
 <section id="id13">
-<h2><span class="section-number">5.11.1.5. </span>模型的不足与局限性<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
+<h2>模型的不足与局限性<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
 <p>尽管 CLIP 的泛化性做的如此之好，但仍有以下的一些不足与局限性。</p>
 <section id="id14">
-<h3><span class="section-number">5.11.1.5.1. </span>性能与效率局限性<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<h3>性能与效率局限性<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
 <li><p><strong>与 SOTA 模型存在显著差距</strong></p></li>
 </ol>
@@ -1159,7 +1177,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </ul>
 </section>
 <section id="id15">
-<h3><span class="section-number">5.11.1.5.2. </span>任务能力缺陷<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<h3>任务能力缺陷<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
 <ol class="arabic simple" start="4">
 <li><p><strong>细粒度分类表现差</strong></p></li>
 </ol>
@@ -1193,7 +1211,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </ul>
 </section>
 <section id="id16">
-<h3><span class="section-number">5.11.1.5.3. </span>架构与评估偏差<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
+<h3>架构与评估偏差<a class="headerlink" href="#id16" title="Link to this heading">#</a></h3>
 <ol class="arabic simple" start="7">
 <li><p><strong>生成能力缺失</strong></p></li>
 </ol>
@@ -1209,7 +1227,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
 </section>
 </section>
 <section id="id17">
-<h2><span class="section-number">5.11.1.6. </span>总结<a class="headerlink" href="#id17" title="Link to this heading">#</a></h2>
+<h2>总结<a class="headerlink" href="#id17" title="Link to this heading">#</a></h2>
 <p>CLIP 通过对比学习和双塔结构实现了图文跨模态对齐，开启了零样本迁移和多模态应用的新纪元。然而，其全局对齐的局限性和文本长度限制仍需改进。一些 CLIP 的变种如 FG-CLIP、Long-CLIP 有效解决了 CLIP 在长文本处理、细粒度对齐和复杂任务中的局限性。</p>
 </section>
 </section>
@@ -1254,7 +1272,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">5. </span>图文生成与理解</p>
+        <p class="prev-next-title">图文生成与理解</p>
       </div>
     </a>
     <a class="right-next"
@@ -1262,7 +1280,7 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">5.11.2. </span>BLIP 家族: 统一理解和生成的自举多模态模型</p>
+        <p class="prev-next-title">BLIP 家族: 统一理解和生成的自举多模态模型</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1282,44 +1300,44 @@ CLIP 的文本编码器基于 GPT 架构（Transformer 解码器），而 GPT �
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">5.11.1.1. 引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ai">5.11.1.1.1. 传统 AI 的局限</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5.11.1.1.2. 多模态需求崛起</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">引言：打破模态壁垒的开端</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ai">传统 AI 的局限</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">多模态需求崛起</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5.11.1.2. 图文对齐：多模态学习的核心基石</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5.11.1.2.1. 传统方法的局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">5.11.1.2.2. Transformer 的影响：从单模态到跨模态统一</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">5.11.1.2.3. 对比学习：无监督语义对齐的范式</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clip">5.11.1.2.4. 图文对齐：CLIP 奠定基础</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">图文对齐：多模态学习的核心基石</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">传统方法的局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">Transformer 的影响：从单模态到跨模态统一</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">对比学习：无监督语义对齐的范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clip">图文对齐：CLIP 奠定基础</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">5.11.1.3. 技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">5.11.1.3.1. 数据集制作：高质量图文对的构建</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5.11.1.3.2. 双塔结构设计</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-encoder">5.11.1.3.2.1. 图像编码器 Image Encoder</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#text-encoder">5.11.1.3.2.2. 文本编码器 Text Encoder</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">技术解构：CLIP 的原理解析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">数据集制作：高质量图文对的构建</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">双塔结构设计</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#image-encoder">图像编码器 Image Encoder</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#text-encoder">文本编码器 Text Encoder</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.11.1.3.3. 对比学习机制</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.11.1.3.3.1. 对比损失函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">对比学习机制</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">对比损失函数</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering-and-ensembling">5.11.1.3.4. Prompt Engineering and Ensembling</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering">5.11.1.3.4.1. 提示工程（Prompt Engineering）</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-ensembling">5.11.1.3.4.2. 提示集成（Prompt Ensembling）</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering-and-ensembling">Prompt Engineering and Ensembling</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-engineering">提示工程（Prompt Engineering）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#prompt-ensembling">提示集成（Prompt Ensembling）</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">5.11.1.4. 能力全景：CLIP 的典型应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">5.11.1.5. 模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">5.11.1.5.1. 性能与效率局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">5.11.1.5.2. 任务能力缺陷</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5.11.1.5.3. 架构与评估偏差</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">能力全景：CLIP 的典型应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型的不足与局限性</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">性能与效率局限性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">任务能力缺陷</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">架构与评估偏差</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">5.11.1.6. 总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">总结</a></li>
 </ul>
   </nav></div>
 
@@ -1353,7 +1371,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 31, 2025.
+  Last updated on Sep 01, 2025.
   <br/>
 </p>
   </div>

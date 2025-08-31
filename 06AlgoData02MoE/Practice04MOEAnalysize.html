@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="3.2.15. MoE 分布式性能分析(DONE)" />
+<meta property="og:title" content="MoE 分布式性能分析(DONE)" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData02MoE/Practice04MOEAnalysize.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
@@ -19,7 +19,7 @@
 <meta name="description" content="Author by: ZOMI 为什么需要专门对 MOE 进行性能分析？ MoE 架构的核心价值，源于其 条件计算 的特性——面对输入数据时，模型不会激活所有专家网络，仅选择少量与当前输入匹配的专家进行计算。 这种稀疏激活模式本应大幅降低单样本计算成本，但在分布式部署场景中，路由器可能因参数偏向性，将大量样本集中到少数专家，导致部分设备满载、部分设备闲置，计算资源严重浪费。 专家通常分散在多..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>3.2.15. MoE 分布式性能分析(DONE) &#8212; AIInfra AI基础设施</title>
+    <title>MoE 分布式性能分析(DONE) &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="4. 大模型创新架构" href="../06AlgoData03NewArch/README.html" />
-    <link rel="prev" title="3.2.14. MoE 从原理到分布式实现(DONE)" href="Practice03IntrtaMOE.html" />
+    <link rel="next" title="大模型创新架构" href="../06AlgoData03NewArch/README.html" />
+    <link rel="prev" title="MoE 从原理到分布式实现(DONE)" href="Practice03IntrtaMOE.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 01, 2025"/>
 
 <link
   rel="alternate"
@@ -243,45 +243,60 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">大模型训练与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">大模型推理与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">AI Infra 未来发展趋势</a></li>
+</ul>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">1. AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">2. 计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">2.3.1. 高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">2.3.2. HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">2.3.3. HPC 软件与应用趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">2.3.4. 计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">2.3.5. 计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">2.3.6. AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">2.3.7. AI 集群系统架构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">3. L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">3.3.1. 服务器节点初探</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">3.3.2. 服务器风冷实践与思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">3.3.3. 服务器液冷技术发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">3.3.4. 液冷挑战与实践思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">3.3.5. 服务器机柜深度认识</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">3.3.6. 集群机房供电</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">AI 集群供配电系统</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">4. 万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">4.3.1. AI 万卡集群建设挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">4.3.2. AI 万卡集群建设交付</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">4.3.3. 03 AI 万卡集群测试步骤</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">4.3.4. NVIDIA Blackwell 演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">4.3.5. NV Blackwell 深度解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">4.3.6. NV GB200 网络演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">4.3.7. NV GB200 集群互联方案</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">4.3.8. XAI 十万卡集群解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">4.3.9. 十万卡 AI 集群思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03 AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">十万卡 AI 集群思考</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">5. 集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">5.4.1. GPU 与 NPU 精度误差</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">5.4.2. 基于 RWKV 的 RNN 范式革新</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">Ai 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">精度性能：大模型性能问题定位</a></li>
 </ul>
 </details></li>
 </ul>
@@ -402,7 +417,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Practice01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -429,82 +446,83 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">1. 大模型算法与数据概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">2. Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">2.3.1. Transformer 结构介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">2.3.2. 大模型 Tokenizer 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">2.3.3. 大模型 Embedding 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">2.3.4. Attention 注意力机制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">2.3.5. Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">2.3.6. Transformer 长序列架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">2.3.7. 大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">2.3.8. 搭建迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">2.3.9. 从零实现 Transformer 训练(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">2.3.10. 实战 Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">2.3.12. 手把手实现核心机制 BPE 分词算法(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">2.3.13. 手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">2.3.14. 深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">3. MoE 混合专家</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01MOEIntroducion.html">3.2.1. MoE 算法架构(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02MOEHistory.html">3.2.2. MOE 前世今生(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03MOECreate.html">3.2.3. MOE 奠基论文(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">3.2.4. MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">3.2.5. GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06MOESwitch.html">3.2.6. Switch Trans 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07GLaM_STMOE.html">3.2.7. GLaM &amp; ST-MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">3.2.8. DeepSeek MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09MoECore.html">3.2.9. MOE 模型可视化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="10MOELLM.html">3.2.10. MoE 参数与专家</a></li>
-<li class="toctree-l2"><a class="reference internal" href="12MOEFuture.html">3.2.11. 单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice01MOEInfer.html">3.2.12. 基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice02SignalMOE.html">3.2.13. 从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice03IntrtaMOE.html">3.2.14. MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">3.2.15. MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">MoE 混合专家</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice01MOEInfer.html">基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice02SignalMOE.html">从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice03IntrtaMOE.html">MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">4. 大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">4.2.1. 高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">4.2.2. 基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">4.2.3. Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">4.2.4. RetNet：混合训练实战(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">4.2.5. RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">4.2.6. Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">5. 图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">5.11.1. 图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">6. 视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">7. 语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">8. 数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">8.2.1. 概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">8.2.2. 预训练数据预处理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">8.2.4. 数据源概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">8.2.5. 后训练数据集概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">8.2.6. 预训练数据处理概览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">8.2.7. 概述</a></li>
-
-
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
 
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">8.2.14. Llama3.1</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">8.2.18. 充当 Linux 终端</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
 
 
 
@@ -635,11 +653,11 @@
 
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">9. DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">9.2.1. ChatGPT 解读</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">10. 向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -889,32 +907,32 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.2.15.1. 1. 性能分析实现</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.2.15.1.1. 1.1 分析器实现</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.2.15.1.2. 1.2 关键性能指标采集</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.2.15.1.3. 1.3 负载均衡度量化</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 性能分析实现</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 分析器实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.2 关键性能指标采集</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.3 负载均衡度量化</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">3.2.15.2. 2. MoE 模型性能注入</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.2.15.2.1. 2.1 路由性能监控</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2.15.2.2. 2.2 通信耗时分段测量</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2.15.2.3. 2.3 专家计算性能剖析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">2. MoE 模型性能注入</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.1 路由性能监控</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 通信耗时分段测量</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.3 专家计算性能剖析</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.2.15.3. 3 分布式训练集成</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.2.15.3.1. 3.1 分析器与模型绑定</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2.15.3.2. 3.2 训练循环中的性能重置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3 分布式训练集成</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.1 分析器与模型绑定</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2 训练循环中的性能重置</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.2.15.4. 4. 性能报告与可视化</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.2.15.4.1. 4.1 发现路由瓶颈</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.2.15.4.2. 4.2 解决负载不均</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">3.2.15.4.3. 4.3 降低通信开销</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">3.2.15.4.4. 4.4 结论与优化收益</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">4. 性能报告与可视化</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.1 发现路由瓶颈</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.2 解决负载不均</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">4.3 降低通信开销</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.4 结论与优化收益</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">3.2.15.5. 5 总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">3.2.15.6. 附录：启动命令示</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">附录：启动命令示</a></li>
 </ul>
             </nav>
         </div>
@@ -928,16 +946,16 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="moe-done">
-<h1><span class="section-number">3.2.15. </span>MoE 分布式性能分析(DONE)<a class="headerlink" href="#moe-done" title="Link to this heading">#</a></h1>
+<h1>MoE 分布式性能分析(DONE)<a class="headerlink" href="#moe-done" title="Link to this heading">#</a></h1>
 <p>Author by: ZOMI</p>
 <p>为什么需要专门对 MOE 进行性能分析？</p>
 <p>MoE 架构的核心价值，源于其<strong>条件计算</strong>的特性——面对输入数据时，模型不会激活所有专家网络，仅选择少量与当前输入匹配的专家进行计算。</p>
 <p>这种稀疏激活模式本应大幅降低单样本计算成本，但在分布式部署场景中，路由器可能因参数偏向性，将大量样本集中到少数专家，导致部分设备满载、部分设备闲置，计算资源严重浪费。</p>
 <p>专家通常分散在多 GPU 或多节点上，样本从原设备传输到专家所在设备、再将计算结果传回，这一过程的通信成本会随设备数量增加呈线性甚至超线性增长。另外为防止单专家过载设计的动态容量策略，若参数设置不当，可能导致样本被频繁拒绝或重新分配，反而增加额外开销。</p>
 <section id="id1">
-<h2><span class="section-number">3.2.15.1. </span>1. 性能分析实现<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>1. 性能分析实现<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <section id="id2">
-<h3><span class="section-number">3.2.15.1.1. </span>1.1 分析器实现<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3>1.1 分析器实现<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>分析器采用<strong>按 epoch 独立记录</strong>的设计：每次训练 epoch 开始时调用 <code class="docutils literal notranslate"><span class="pre">reset()</span></code> 清空历史数据，结束后生成单独日志文件。</p>
 <p>能清晰对比不同 epoch 下的性能变化——比如观察训练过程中，专家负载是否随参数更新逐渐失衡。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ExpertPerformanceAnalyzer</span><span class="p">:</span>
@@ -954,7 +972,7 @@ document.write(`
 </div>
 </section>
 <section id="id3">
-<h3><span class="section-number">3.2.15.1.2. </span>1.2 关键性能指标采集<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<h3>1.2 关键性能指标采集<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>关键性能指标的设计逻辑，对应 MoE 前向传播的四阶段流程：</p>
 <ol class="arabic simple">
 <li><p><strong>路由阶段</strong>：门控网络计算每个专家的权重，选择 top-k 专家，<code class="docutils literal notranslate"><span class="pre">router_time</span></code> 记录这一过程的总耗时；</p></li>
@@ -974,7 +992,7 @@ document.write(`
 </div>
 </section>
 <section id="id4">
-<h3><span class="section-number">3.2.15.1.3. </span>1.3 负载均衡度量化<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<h3>1.3 负载均衡度量化<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <p>为了让“负载均衡”从定性描述转为定量指标，我们采用<strong>归一化方差</strong>公式：</p>
 <div class="math notranslate nohighlight">
 \[
@@ -1004,9 +1022,9 @@ document.write(`
 </section>
 </section>
 <section id="moe">
-<h2><span class="section-number">3.2.15.2. </span>2. MoE 模型性能注入<a class="headerlink" href="#moe" title="Link to this heading">#</a></h2>
+<h2>2. MoE 模型性能注入<a class="headerlink" href="#moe" title="Link to this heading">#</a></h2>
 <section id="id5">
-<h3><span class="section-number">3.2.15.2.1. </span>2.1 路由性能监控<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>2.1 路由性能监控<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <p>路由模块的时间复杂度为 <span class="math notranslate nohighlight">\(O(b \times n)\)</span>（其中，<span class="math notranslate nohighlight">\(b\)</span> 为批次大小，<span class="math notranslate nohighlight">\(n\)</span> 为专家数）。</p>
 <p>当专家数从 8 增加到 64 时，若批次大小不变，路由耗时可能呈线性增长。因此这里的计时需精确到每一次前向传播，才能捕捉到“专家数增加导致路由瓶颈”的问题。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
@@ -1023,7 +1041,7 @@ document.write(`
 </div>
 </section>
 <section id="id6">
-<h3><span class="section-number">3.2.15.2.2. </span>2.2 通信耗时分段测量<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<h3>2.2 通信耗时分段测量<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">dist.all_reduce</span></code> 是分布式训练中典型的<strong>集体通信操作</strong>，其耗时与设备数、数据量正相关——在 8 卡集群中，这种操作的耗时可能是单卡场景的 5-10 倍。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># 专家使用统计（带通信计时）：跨设备聚合专家样本数，需单独记录通信耗时</span>
         <span class="n">comm_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
@@ -1039,7 +1057,7 @@ document.write(`
 </div>
 </section>
 <section id="id7">
-<h3><span class="section-number">3.2.15.2.3. </span>2.3 专家计算性能剖析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<h3>2.3 专家计算性能剖析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
 <p>将“数据传输+专家计算+结果返回”的完整流程，拆分为“通信耗时”和“计算耗时”两部分。这种拆分能解决一个关键问题：某专家耗时过长，到底是因为计算量大，还是因为设备间带宽差？</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="k">for</span> <span class="n">expert_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_experts</span><span class="p">):</span>
             <span class="c1"># ... [专家选择逻辑：判断当前设备是否负责该专家] ...</span>
@@ -1065,9 +1083,9 @@ document.write(`
 </section>
 </section>
 <section id="id8">
-<h2><span class="section-number">3.2.15.3. </span>3 分布式训练集成<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<h2>3 分布式训练集成<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
 <section id="id9">
-<h3><span class="section-number">3.2.15.3.1. </span>3.1 分析器与模型绑定<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<h3>3.1 分析器与模型绑定<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
 <p>无需修改 MoE 模型的核心逻辑仅通过 <code class="docutils literal notranslate"><span class="pre">set_perf_analyzer</span></code> 方法绑定分析器。这既能避免因修改模型引入 bug，也让分析器可灵活启用/禁用。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
     <span class="c1"># 1. 创建性能分析器实例：需传入专家数和设备数，与分布式环境匹配</span>
@@ -1085,7 +1103,7 @@ document.write(`
 </div>
 </section>
 <section id="id10">
-<h3><span class="section-number">3.2.15.3.2. </span>3.2 训练循环中的性能重置<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<h3>3.2 训练循环中的性能重置<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
         <span class="c1"># ... [其他训练代码：如数据加载、优化器初始化] ...</span>
         
@@ -1103,7 +1121,7 @@ document.write(`
 </section>
 </section>
 <section id="id11">
-<h2><span class="section-number">3.2.15.4. </span>4. 性能报告与可视化<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
+<h2>4. 性能报告与可视化<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
 <p>通过负载不平衡度、各阶段平均耗时，快速判断整体瓶颈。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">log_epoch_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;在终端输出格式化的性能报告：仅主进程（rank=0）输出，避免多设备重复打印&quot;&quot;&quot;</span>
@@ -1156,7 +1174,7 @@ Expert ID | Avg Samples | Avg Compute Time | Total Samples
 </div>
 <p>基于分析器输出的性能数据，我们可以针对性解决 MoE 分布式训练中的典型问题，以下是三个常见场景：</p>
 <section id="id12">
-<h3><span class="section-number">3.2.15.4.1. </span>4.1 发现路由瓶颈<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<h3>4.1 发现路由瓶颈<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
 <p>在实际训练过程中，当发现路由模块成为性能瓶颈时，可以通过性能分析报告观察到明显的异常现象：路由阶段的耗时占到了单个批次总处理时间的 18%，显著超过了 10%的健康阈值，表明其开销已不可忽视；更严重的是，随着专家数量从 8 增加到 16，路由时间从 5 毫秒急剧上升至 14 毫秒，呈现出非线性增长趋势，严重影响模型的扩展效率。</p>
 <p>深入分析后发现，问题根源在于当前路由模块采用的是一个简单的全连接层（nn.Linear(input_dim, num_experts)），其参数量为 input_dim × num_experts。以 input_dim=1024 和 num_experts=16 为例，该层参数高达 16,384 个，导致每一步都需要进行大规模矩阵运算和 top-k 选择操作，计算负担随专家数量快速上升。</p>
 <p>为解决这一问题，优化策略是重构路由网络结构，引入“瓶颈层”，即先通过一个低维隐层将输入降维，再映射到专家数量，从而显著减少门控网络的参数量和计算复杂度，在保证路由质量的同时大幅提升计算效率。</p>
@@ -1176,7 +1194,7 @@ Expert ID | Avg Samples | Avg Compute Time | Total Samples
 <p>实际瓶颈在于“计算维度”：原始线性层的计算是 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">×</span> <span class="pre">(input_dim</span> <span class="pre">×</span> <span class="pre">num_experts)</span></code>，而优化后是 <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">×</span> <span class="pre">(input_dim</span> <span class="pre">×</span> <span class="pre">32)</span> <span class="pre">→</span> <span class="pre">激活</span> <span class="pre">→</span> <span class="pre">×</span> <span class="pre">(32</span> <span class="pre">×</span> <span class="pre">num_experts)</span></code>，中间维度从 1024 降至 32，实际计算量减少约 30 倍，路由耗时从 14ms 降至 4ms。</p>
 </section>
 <section id="id13">
-<h3><span class="section-number">3.2.15.4.2. </span>4.2 解决负载不均<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
+<h3>4.2 解决负载不均<a class="headerlink" href="#id13" title="Link to this heading">#</a></h3>
 <p>在性能分析中观察到明显的负载不均衡现象：整体负载不平衡度达到 0.23，已超过 0.2 的危险阈值，表明专家之间的任务分配严重失衡；具体来看，专家 2 和专家 6 分别处理了 1800 和 1750 个样本，而专家 3 仅处理了 800 个样本，利用率不足 50%，资源浪费显著。</p>
 <p>根本原因在于路由模块中负载均衡辅助损失的权重设置过低（仅为 0.01），导致训练过程中优化器主要聚焦于降低主任务的损失，而几乎忽略了对专家负载均衡的约束，使得门控网络倾向于持续选择少数“表现好”或“响应强”的专家，形成路径依赖。</p>
 <p>首先，适当提高负载均衡损失的权重，增强模型对专家利用率的全局调控能力，迫使路由器在路由决策时兼顾各专家的负载状态，从而实现更公平、更高效的资源分配。</p>
@@ -1201,7 +1219,7 @@ Expert ID | Avg Samples | Avg Compute Time | Total Samples
 <p>优化后，负载不平衡度从 0.23 降至 0.08，所有专家的样本处理量差异控制在 10%以内。</p>
 </section>
 <section id="id14">
-<h3><span class="section-number">3.2.15.4.3. </span>4.3 降低通信开销<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
+<h3>4.3 降低通信开销<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>
 <p>通信耗时占单个批次总处理时间的 45%，虽尚未突破 50%的危险阈值，但已接近临界水平，严重影响整体训练效率；同时观察到设备间的传输负载极不均衡。</p>
 <p>为此，一方面引入低精度传输（如 FP16 或 BF16）或梯度压缩技术，显著减少传输数据量；另一方面在路由过程中引入通信感知机制，动态调整专家分配策略，避免将过多任务集中到特定设备，从而实现通信负载的均衡化，降低整体通信开销与等待延迟。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 原始实现：以 FP32 格式传输完整数据，数据量大</span>
@@ -1232,7 +1250,7 @@ Expert ID | Avg Samples | Avg Compute Time | Total Samples
 <p>优化后，通信耗时占比从 45%降至 28%，设备间数据传输量差异控制在 50%以内。</p>
 </section>
 <section id="id15">
-<h3><span class="section-number">3.2.15.4.4. </span>4.4 结论与优化收益<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<h3>4.4 结论与优化收益<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
 <p>通过上述性能分析与优化方案，我们在 8 专家 MoE 模型（基于 8 卡 GPU 集群训练）中实现了显著的性能提升，具体收益如下表所示：</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -1269,13 +1287,13 @@ Expert ID | Avg Samples | Avg Compute Time | Total Samples
 </section>
 </section>
 <section id="id16">
-<h2><span class="section-number">3.2.15.5. </span>5 总结与思考<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
+<h2>5 总结与思考<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
 <p>本文构建了一套系统化、可落地的 MoE 分布式性能分析与优化框架，通过引入全链路耗时监控、专家负载统计与通信均衡性指标，实现了对路由、计算、通信等关键环节的细粒度洞察。</p>
 <p>基于采集的核心指标，结合占比分析与明细定位，能够快速识别性能瓶颈并实施针对性优化，如数据压缩缓解通信压力、调整负载均衡损失改善专家利用率。方案采用非侵入式集成，兼容性强，真正将 MoE 训练从“黑盒运行”转变为“可观测、可诊断、可优化”的工程实践。</p>
 <p>其核心价值在于，在模型规模持续扩大的背景下，通过精细化管理计算与通信资源，显著提升训练效率与资源利用率。未来可进一步探索自适应路由、知识蒸馏与异构调度，推动 MoE 向更高效、更智能的方向演进。</p>
 </section>
 <section id="id17">
-<h2><span class="section-number">3.2.15.6. </span>附录：启动命令示<a class="headerlink" href="#id17" title="Link to this heading">#</a></h2>
+<h2>附录：启动命令示<a class="headerlink" href="#id17" title="Link to this heading">#</a></h2>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 8 卡分布式训练启动命令（使用 torch.distributed.launch）</span>
 python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch<span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--nproc_per_node<span class="o">=</span><span class="m">8</span><span class="w"> </span><span class="se">\ </span><span class="w"> </span><span class="c1"># 每节点 GPU 数（此处为 8 卡）</span>
@@ -1330,7 +1348,7 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">3.2.14. </span>MoE 从原理到分布式实现(DONE)</p>
+        <p class="prev-next-title">MoE 从原理到分布式实现(DONE)</p>
       </div>
     </a>
     <a class="right-next"
@@ -1338,7 +1356,7 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">4. </span>大模型创新架构</p>
+        <p class="prev-next-title">大模型创新架构</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1358,32 +1376,32 @@ python<span class="w"> </span>-m<span class="w"> </span>torch.distributed.launch
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">3.2.15.1. 1. 性能分析实现</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3.2.15.1.1. 1.1 分析器实现</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.2.15.1.2. 1.2 关键性能指标采集</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.2.15.1.3. 1.3 负载均衡度量化</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 性能分析实现</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 分析器实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.2 关键性能指标采集</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.3 负载均衡度量化</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">3.2.15.2. 2. MoE 模型性能注入</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.2.15.2.1. 2.1 路由性能监控</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2.15.2.2. 2.2 通信耗时分段测量</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2.15.2.3. 2.3 专家计算性能剖析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">2. MoE 模型性能注入</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.1 路由性能监控</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 通信耗时分段测量</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.3 专家计算性能剖析</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.2.15.3. 3 分布式训练集成</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.2.15.3.1. 3.1 分析器与模型绑定</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2.15.3.2. 3.2 训练循环中的性能重置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3 分布式训练集成</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.1 分析器与模型绑定</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2 训练循环中的性能重置</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.2.15.4. 4. 性能报告与可视化</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.2.15.4.1. 4.1 发现路由瓶颈</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.2.15.4.2. 4.2 解决负载不均</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">3.2.15.4.3. 4.3 降低通信开销</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">3.2.15.4.4. 4.4 结论与优化收益</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">4. 性能报告与可视化</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">4.1 发现路由瓶颈</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4.2 解决负载不均</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">4.3 降低通信开销</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.4 结论与优化收益</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">3.2.15.5. 5 总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">3.2.15.6. 附录：启动命令示</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">附录：启动命令示</a></li>
 </ul>
   </nav></div>
 
@@ -1417,7 +1435,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 31, 2025.
+  Last updated on Sep 01, 2025.
   <br/>
 </p>
   </div>

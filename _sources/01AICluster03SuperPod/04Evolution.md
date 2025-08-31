@@ -1,8 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
-# NVIDIA Blackwell 演进
+# NVIDIA Blackwell 演进(DONE)
 
-author by: ZOMI，韩昊知
+author by: 韩昊知，ZOMI
 
 NVIDIA Blackwell 架构正引领 AI 计算进入新纪元。本节将深入解析其整体架构的演进历程以及多样化的产品形态，展示从单芯片到大规模系统部署的完整生态。
 
@@ -25,7 +25,6 @@ NVIDIA Blackwell 架构正引领 AI 计算进入新纪元。本节将深入解�
 图 2 清晰地展示了 NVIDIA 从 Ampere（代表产品 A100）发展到 Hopper（代表产品 H100、H200、GH200），再到最新的 Blackwell（代表产品 B100、B200、Full B200、GB200）的路线图。
 
 从 Ampere 到 Hopper 再到 Blackwell，NVIDIA 的 GPU 架构不断演进，这背后是对高性能计算和 AI 领域日益增长的市场需求的积极响应。每一代架构的推出，都伴随着性能的大幅提升和新技术的引入，以满足不断变化的计算需求。
-
 
 其次，**存储性能**是衡量 GPU 能力的重要指标。
 
@@ -50,7 +49,6 @@ NVLink 带宽衡量了 GPU 之间以及 GPU 与 CPU 之间的数据传输速度�
 在 Blackwell 架构问世之前，包括 Ampere 和 Hopper 在内的 NVIDIA GPU 架构均采用单晶粒（1 Die）设计。然而，Blackwell 架构则引入了革命性的双晶粒（2 Die）构造。这一设计上的根本性转变使得一张 Blackwell 架构的 B100 芯片，在计算能力和资源上，实际上等同于传统意义上的两张 GPU 卡。
 
 正因如此，在 Blackwell 架构的系统配置中，例如在一个计算托盘（Trays 板）内，您会观察到它可能包含 8 张 Ampere 或 Hopper 架构的 GPU 芯片，但若配置 Blackwell 架构的 B 系列芯片，则仅需 4 张 B 系列芯片即可达到相同的总卡概念（即 4 张 B 芯片等同于 8 张单 Die 卡的算力），这充分体现了双晶粒设计在提升单芯片集成度和性能密度方面的显著优势。
-
 
 ### 关于 DGX B200 推理
 

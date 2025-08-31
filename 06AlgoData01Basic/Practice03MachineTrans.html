@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="2.3.10. 实战 Transformer 机器翻译(DONE)" />
+<meta property="og:title" content="实战 Transformer 机器翻译(DONE)" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData01Basic/Practice03MachineTrans.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
@@ -19,7 +19,7 @@
 <meta name="description" content="author by: ZOMI 本次将把之前实现的 Transformer 模型应用于真实的机器翻译任务，使用 IWSLT 2016 英德数据集 。该数据集包含英德双语平行语料，句子长度适中（多为日常对话或短文本），适合验证 Transformer 在中低资源翻译任务中的效果。 我们将引入一些训练过程的最佳实践，包括学习率调度、标签平滑、梯度裁剪等优化技巧——这些技术是解决 Transfor..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>2.3.10. 实战 Transformer 机器翻译(DONE) &#8212; AIInfra AI基础设施</title>
+    <title>实战 Transformer 机器翻译(DONE) &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)" href="Practice04Sinusoidal.html" />
-    <link rel="prev" title="2.3.9. 从零实现 Transformer 训练(DONE)" href="Practice02TransformerTrain.html" />
+    <link rel="next" title="手把手实现核心机制 Sinusoidal 编码(DONE)" href="Practice04Sinusoidal.html" />
+    <link rel="prev" title="从零实现 Transformer 训练(DONE)" href="Practice02TransformerTrain.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Aug 31, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 01, 2025"/>
 
 <link
   rel="alternate"
@@ -243,45 +243,60 @@
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">大模型训练与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">大模型推理与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">AI Infra 未来发展趋势</a></li>
+</ul>
+</details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">1. AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">2. 计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">2.3.1. 高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">2.3.2. HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">2.3.3. HPC 软件与应用趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">2.3.4. 计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">2.3.5. 计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">2.3.6. AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">2.3.7. AI 集群系统架构</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">3. L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">3.3.1. 服务器节点初探</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">3.3.2. 服务器风冷实践与思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">3.3.3. 服务器液冷技术发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">3.3.4. 液冷挑战与实践思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">3.3.5. 服务器机柜深度认识</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">3.3.6. 集群机房供电</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">AI 集群供配电系统</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">4. 万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">4.3.1. AI 万卡集群建设挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">4.3.2. AI 万卡集群建设交付</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">4.3.3. 03 AI 万卡集群测试步骤</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">4.3.4. NVIDIA Blackwell 演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">4.3.5. NV Blackwell 深度解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">4.3.6. NV GB200 网络演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">4.3.7. NV GB200 集群互联方案</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">4.3.8. XAI 十万卡集群解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">4.3.9. 十万卡 AI 集群思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03 AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">十万卡 AI 集群思考</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">5. 集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01AccAna.html">5.4.1. GPU 与 NPU 精度误差</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Environment.html">5.4.2. 基于 RWKV 的 RNN 范式革新</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">Ai 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">精度性能：大模型性能问题定位</a></li>
 </ul>
 </details></li>
 </ul>
@@ -402,7 +417,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Practice01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -429,82 +446,83 @@
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">1. 大模型算法与数据概述</a></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">2. Transformer 架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01Transformer.html">2.3.1. Transformer 结构介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02Tokenizer.html">2.3.2. 大模型 Tokenizer 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03Embeding.html">2.3.3. 大模型 Embedding 算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04Attention.html">2.3.4. Attention 注意力机制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05GQAMLA.html">2.3.5. Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06LongSeq.html">2.3.6. Transformer 长序列架构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07Parameter.html">2.3.7. 大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice01MiniTranformer.html">2.3.8. 搭建迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice02TransformerTrain.html">2.3.9. 从零实现 Transformer 训练(DONE)</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">2.3.10. 实战 Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice04Sinusoidal.html">2.3.11. 手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice05BPE.html">2.3.12. 手把手实现核心机制 BPE 分词算法(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice06Embedding.html">2.3.13. 手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice07Attention.html">2.3.14. 深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">Transformer 架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01Transformer.html">Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02Tokenizer.html">大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03Embeding.html">大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04Attention.html">Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05GQAMLA.html">Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06LongSeq.html">Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07Parameter.html">大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice01MiniTranformer.html">搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice02TransformerTrain.html">从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">实战 Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice04Sinusoidal.html">手把手实现核心机制 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice05BPE.html">手把手实现核心机制 BPE 分词算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Practice07Attention.html">深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">3. MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">3.2.1. MoE 算法架构(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">3.2.2. MOE 前世今生(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">3.2.3. MOE 奠基论文(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">3.2.4. MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">3.2.5. GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">3.2.6. Switch Trans 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">3.2.7. GLaM &amp; ST-MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">3.2.8. DeepSeek MOE 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">3.2.9. MOE 模型可视化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">3.2.10. MoE 参数与专家</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">3.2.11. 单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">3.2.12. 基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">3.2.13. 从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">3.2.14. MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">3.2.15. MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">基于 Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">4. 大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Efficient_Transformer.html">4.2.1. 高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">4.2.2. 基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">4.2.3. Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">4.2.4. RetNet：混合训练实战(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/RWKV_%E5%9C%A8Transformer%E6%97%B6%E4%BB%A3%E9%87%8D%E5%A1%91RNNs.html">4.2.5. RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Transformer%E5%9B%9E%E9%A1%BE%E5%8F%8A%E6%A0%B8%E5%BF%83%E6%8C%91%E6%88%98.html">4.2.6. Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/%E6%9C%AA%E6%9D%A5%E4%B9%8B%E8%B7%AF%E6%89%93%E7%A0%B4Transformer%E7%93%B6%E9%A2%88%E6%8E%A2%E7%B4%A2.html">4.2.7. Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">5. 图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">5.11.1. 图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">5.11.2. BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">6. 视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">7. 语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">8. 数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">8.2.1. 概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">8.2.2. 预训练数据预处理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataPreprocessing.html">预训练数据预处理</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">8.2.4. 数据源概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">8.2.5. 后训练数据集概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">8.2.6. 预训练数据处理概览</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">8.2.7. 概述</a></li>
-
-
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/DataSources.html">数据源概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/Pretraining.html">预训练数据处理概览</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/PromptEngineering.html">概述</a></li>
 
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">8.2.14. Llama3.1</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/SOTA_procssing.html">Llama3.1</a></li>
 
 
 
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">8.2.18. 充当 Linux 终端</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/awesomePrompt.html">充当 Linux 终端</a></li>
 
 
 
@@ -635,11 +653,11 @@
 
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">9. DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">9.2.1. ChatGPT 解读</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">10. 向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
 </ul>
@@ -889,35 +907,35 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.3.10.1. 1. 环境准备与数据加载</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.3.10.1.1. 1.1 加载和预处理数据</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 环境准备与数据加载</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 加载和预处理数据</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.3.10.2. 2. 模型构建与优化技术</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">2.3.10.2.1. 2.1 构建 Transformer 模型</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#label-smoothing">2.3.10.2.2. 2.2 标签平滑 (Label Smoothing)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-scheduling">2.3.10.2.3. 2.3 学习率调度 (Learning Rate Scheduling)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-clipping">2.3.10.2.4. 2.4 梯度裁剪 (Gradient Clipping)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 模型构建与优化技术</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">2.1 构建 Transformer 模型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#label-smoothing">2.2 标签平滑 (Label Smoothing)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-scheduling">2.3 学习率调度 (Learning Rate Scheduling)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-clipping">2.4 梯度裁剪 (Gradient Clipping)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.3.10.3. 3. 训练与验证</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.3.10.3.1. 3.1 训练循环</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.3.10.3.2. 3.2 验证循环</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.3.10.3.3. 3.3 训练模型</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. 训练与验证</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 训练循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 验证循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.3 训练模型</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.3.10.4. 4. 推理解码算法</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">2.3.10.4.1. 4.1 贪婪搜索 (Greedy Search)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">2.3.10.4.2. 4.2 束搜索 (Beam Search)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 推理解码算法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">4.1 贪婪搜索 (Greedy Search)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">4.2 束搜索 (Beam Search)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">2.3.10.5. 5. 模型评估</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2.3.10.5.1. 5.1 翻译函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">2.3.10.5.2. 5.2 BLEU 分数评估</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2.3.10.5.3. 5.3 推理翻译</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5. 模型评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.1 翻译函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">5.2 BLEU 分数评估</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.3 推理翻译</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">2.3.10.6. 6. 总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">6. 总结</a></li>
 </ul>
             </nav>
         </div>
@@ -931,12 +949,12 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="transformer-done">
-<h1><span class="section-number">2.3.10. </span>实战 Transformer 机器翻译(DONE)<a class="headerlink" href="#transformer-done" title="Link to this heading">#</a></h1>
+<h1>实战 Transformer 机器翻译(DONE)<a class="headerlink" href="#transformer-done" title="Link to this heading">#</a></h1>
 <p>author by: ZOMI</p>
 <p>本次将把之前实现的 Transformer 模型应用于真实的机器翻译任务，使用 <a class="reference external" href="https://www.kaggle.com/datasets/tttzof351/iwslt-2016-de-en">IWSLT 2016 英德数据集</a>。该数据集包含英德双语平行语料，句子长度适中（多为日常对话或短文本），适合验证 Transformer 在中低资源翻译任务中的效果。</p>
 <p>我们将引入一些训练过程的最佳实践，包括学习率调度、标签平滑、梯度裁剪等优化技巧——这些技术是解决 Transformer 训练不稳定性（如梯度爆炸、过拟合）和提升泛化能力的核心手段，并实现贪婪搜索和束搜索算法进行推理解码（两种算法分别平衡推理速度与翻译质量），最后使用 BLEU 分数评估翻译质量（机器翻译领域的标准自动评估指标）。</p>
 <section id="id1">
-<h2><span class="section-number">2.3.10.1. </span>1. 环境准备与数据加载<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>1. 环境准备与数据加载<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>首先，我们导入必要的库并设置环境。这里需要重点说明：PyTorch 的随机种子设置（<code class="docutils literal notranslate"><span class="pre">torch.manual_seed</span></code>等）是为了确保实验可重现——Transformer 模型参数规模大，随机初始化的微小差异可能导致训练结果波动，固定种子后可排除随机因素对实验结论的干扰。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
@@ -969,7 +987,7 @@ document.write(`
 </pre></div>
 </div>
 <section id="id2">
-<h3><span class="section-number">2.3.10.1.1. </span>1.1 加载和预处理数据<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3>1.1 加载和预处理数据<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>我们将使用 torchtext 库加载 IWSLT 2016 英德翻译数据集，并进行预处理。数据预处理是机器翻译的关键步骤，核心目标是将原始文本转换为模型可处理的数值序列，同时保留语言的语义和结构信息。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 加载英语和德语的 spacy 模型用于分词</span>
 <span class="k">try</span><span class="p">:</span>
@@ -1050,9 +1068,9 @@ document.write(`
 </section>
 </section>
 <section id="id3">
-<h2><span class="section-number">2.3.10.2. </span>2. 模型构建与优化技术<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>2. 模型构建与优化技术<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <section id="transformer">
-<h3><span class="section-number">2.3.10.2.1. </span>2.1 构建 Transformer 模型<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h3>
+<h3>2.1 构建 Transformer 模型<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h3>
 <p>我们将使用之前实现的 Transformer 模型，但进行一些调整以适应机器翻译任务。尽管我们使用了较小的模型（D_MODEL=256，N_LAYERS=3），Transformer 仍然能够学习英德翻译的基本模式，生成语法基本正确的翻译结果——这得益于 Transformer 的自注意力机制，能有效捕捉语言的长距离依赖（如德语的后置定语与英语的前置定语对应关系）。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 导入之前实现的 Transformer 组件</span>
 <span class="kn">from</span> <span class="nn">transformer_components</span> <span class="kn">import</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">PositionalEncoding</span><span class="p">,</span> <span class="n">MultiHeadAttention</span>
@@ -1121,7 +1139,7 @@ document.write(`
 </div>
 </section>
 <section id="label-smoothing">
-<h3><span class="section-number">2.3.10.2.2. </span>2.2 标签平滑 (Label Smoothing)<a class="headerlink" href="#label-smoothing" title="Link to this heading">#</a></h3>
+<h3>2.2 标签平滑 (Label Smoothing)<a class="headerlink" href="#label-smoothing" title="Link to this heading">#</a></h3>
 <p>标签平滑是一种正则化技术，通过软化硬标签来防止模型过度自信，提高泛化能力。在机器翻译中，硬标签（one-hot 编码）会让模型对&quot;正确词&quot;的预测概率趋近于 1，对其他词趋近于 0，导致模型对微小输入变化敏感（如源语言中一个词的歧义），泛化到测试集时容易出错。</p>
 <p><strong>原理公式</strong>：</p>
 <div class="math notranslate nohighlight">
@@ -1179,7 +1197,7 @@ y_{\text{smooth}} = (1 - \epsilon) \cdot y + \frac{\epsilon}{K}
 </div>
 </section>
 <section id="learning-rate-scheduling">
-<h3><span class="section-number">2.3.10.2.3. </span>2.3 学习率调度 (Learning Rate Scheduling)<a class="headerlink" href="#learning-rate-scheduling" title="Link to this heading">#</a></h3>
+<h3>2.3 学习率调度 (Learning Rate Scheduling)<a class="headerlink" href="#learning-rate-scheduling" title="Link to this heading">#</a></h3>
 <p>Transformer 使用带 warmup 的学习率调度策略，先线性增加学习率，然后按步数的平方根反比衰减。这一策略是为了解决 Transformer 训练的两个核心问题：1）训练初期参数随机，小学习率避免参数震荡；2）训练后期参数接近最优，小学习率微调避免过拟合。</p>
 <p><strong>原理公式</strong>：</p>
 <div class="math notranslate nohighlight">
@@ -1248,7 +1266,7 @@ y_{\text{smooth}} = (1 - \epsilon) \cdot y + \frac{\epsilon}{K}
 </div>
 </section>
 <section id="gradient-clipping">
-<h3><span class="section-number">2.3.10.2.4. </span>2.4 梯度裁剪 (Gradient Clipping)<a class="headerlink" href="#gradient-clipping" title="Link to this heading">#</a></h3>
+<h3>2.4 梯度裁剪 (Gradient Clipping)<a class="headerlink" href="#gradient-clipping" title="Link to this heading">#</a></h3>
 <p>梯度裁剪可以防止训练过程中梯度爆炸问题，提高训练稳定性。Transformer 的残差连接虽能缓解梯度消失，但多层叠加（即使是 3 层）仍可能导致部分参数的梯度 norms 过大，进而导致参数更新幅度过大，模型震荡甚至发散。</p>
 <p>梯度裁剪的核心逻辑：计算所有可训练参数梯度的 L2 范数（整体梯度规模），若超过预设的 max_norm，则按比例（max_norm / 实际范数）缩放所有梯度，确保梯度在合理范围内。例如 max_norm=1.0 是常见阈值，既允许足够的更新幅度，又避免梯度爆炸。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">clip_gradients</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">max_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
@@ -1278,9 +1296,9 @@ y_{\text{smooth}} = (1 - \epsilon) \cdot y + \frac{\epsilon}{K}
 </section>
 </section>
 <section id="id4">
-<h2><span class="section-number">2.3.10.3. </span>3. 训练与验证<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h2>3. 训练与验证<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <section id="id5">
-<h3><span class="section-number">2.3.10.3.1. </span>3.1 训练循环<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>3.1 训练循环<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <p>训练循环的核心是实现 Transformer 的前向传播、损失计算、反向传播和参数更新，其中<strong>掩码机制</strong>是确保 Transformer 正确工作的关键——需分别处理源序列的 pad 掩码和目标序列的自回归掩码。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">iterator</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">clip</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1344,7 +1362,7 @@ y_{\text{smooth}} = (1 - \epsilon) \cdot y + \frac{\epsilon}{K}
 </div>
 </section>
 <section id="id6">
-<h3><span class="section-number">2.3.10.3.2. </span>3.2 验证循环<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<h3>3.2 验证循环<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <p>验证循环与训练循环逻辑相似，但需关闭梯度计算（节省显存、加速推理），且不更新参数、不启用 Dropout，确保验证结果反映模型的泛化能力。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">iterator</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1385,7 +1403,7 @@ y_{\text{smooth}} = (1 - \epsilon) \cdot y + \frac{\epsilon}{K}
 </div>
 </section>
 <section id="id7">
-<h3><span class="section-number">2.3.10.3.3. </span>3.3 训练模型<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<h3>3.3 训练模型<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
 <p>训练过程中需监控训练损失和验证损失：若验证损失下降，说明模型泛化能力提升；若验证损失上升，可能出现过拟合，需提前停止训练（此处通过保存&quot;最佳模型&quot;实现，即仅保存验证损失最低的模型参数）。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 训练参数</span>
 <span class="n">N_EPOCHS</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># 小模型训练 10 个 epoch 足够收敛，大模型需更多 epoch</span>
@@ -1436,10 +1454,10 @@ Epoch: 10 | Time: 3m 42s
 </section>
 </section>
 <section id="id8">
-<h2><span class="section-number">2.3.10.4. </span>4. 推理解码算法<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<h2>4. 推理解码算法<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
 <p>训练完成后，需通过<strong>解码算法</strong>将模型的输出（词汇表概率分布）转换为可读的目标语言序列。常用的解码算法有贪婪搜索和束搜索，二者在速度和翻译质量上存在权衡。</p>
 <section id="greedy-search">
-<h3><span class="section-number">2.3.10.4.1. </span>4.1 贪婪搜索 (Greedy Search)<a class="headerlink" href="#greedy-search" title="Link to this heading">#</a></h3>
+<h3>4.1 贪婪搜索 (Greedy Search)<a class="headerlink" href="#greedy-search" title="Link to this heading">#</a></h3>
 <p>贪婪搜索在每一步选择概率最高的词作为当前输出，优点是速度快（每步仅需一次 argmax 操作），缺点是容易陷入<strong>局部最优</strong>——例如某一步选择概率最高的词，但后续无法组成语义通顺的句子（如德语&quot;Können Sie&quot;翻译时，第一步选&quot;Can&quot;是最优，但第二步若选&quot;you&quot;而非&quot;you please&quot;，可能导致后续翻译不完整）。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">greedy_decode</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">start_symbol</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1488,7 +1506,7 @@ Epoch: 10 | Time: 3m 42s
 </div>
 </section>
 <section id="beam-search">
-<h3><span class="section-number">2.3.10.4.2. </span>4.2 束搜索 (Beam Search)<a class="headerlink" href="#beam-search" title="Link to this heading">#</a></h3>
+<h3>4.2 束搜索 (Beam Search)<a class="headerlink" href="#beam-search" title="Link to this heading">#</a></h3>
 <p><strong>解码策略比较</strong>：束搜索（beam search）通常比贪婪搜索（greedy search）能产生质量更高的翻译结果，因为它考虑了更多可能的翻译路径——贪婪搜索每步仅保留 1 个候选序列，束搜索每步保留<code class="docutils literal notranslate"><span class="pre">beam_size</span></code>个候选序列（如 beam_size=5），通过多路径探索避免局部最优；但束搜索速度较慢（候选数越多，计算量越大），需在速度和质量间权衡。</p>
 <p>束搜索的核心逻辑：1）初始化<code class="docutils literal notranslate"><span class="pre">beam_size</span></code>个候选序列（均从<sos>开始）；2）每步对每个候选序列扩展所有可能的下一个词，计算序列的累积概率；3）保留概率最高的<code class="docutils literal notranslate"><span class="pre">beam_size</span></code>个候选序列；4）重复步骤 2-3，直到所有序列生成<eos>或达到 max_len；5）应用<strong>长度惩罚</strong>（避免生成过短序列），选择最优序列。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">beam_search_decode</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">start_symbol</span><span class="p">,</span> <span class="n">beam_size</span><span class="p">,</span> <span class="n">length_penalty</span><span class="o">=</span><span class="mf">0.6</span><span class="p">):</span>
@@ -1575,9 +1593,9 @@ Epoch: 10 | Time: 3m 42s
 </section>
 </section>
 <section id="id9">
-<h2><span class="section-number">2.3.10.5. </span>5. 模型评估<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<h2>5. 模型评估<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
 <section id="id10">
-<h3><span class="section-number">2.3.10.5.1. </span>5.1 翻译函数<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<h3>5.1 翻译函数<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
 <p>翻译函数是解码算法的上层封装，负责将原始文本（如德语句子）转换为模型可处理的数值序列，调用束搜索解码后，再将数值序列转换为可读的目标语言文本（如英语句子）。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">translate_sentence</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">src_field</span><span class="p">,</span> <span class="n">trg_field</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">beam_size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1619,7 +1637,7 @@ Epoch: 10 | Time: 3m 42s
 </div>
 </section>
 <section id="bleu">
-<h3><span class="section-number">2.3.10.5.2. </span>5.2 BLEU 分数评估<a class="headerlink" href="#bleu" title="Link to this heading">#</a></h3>
+<h3>5.2 BLEU 分数评估<a class="headerlink" href="#bleu" title="Link to this heading">#</a></h3>
 <p>BLEU (Bilingual Evaluation Understudy) 是机器翻译中最常用的自动评估指标，通过比较机器翻译输出（hypothesis）与参考翻译（reference）的<strong>n-gram 重叠度</strong>来评估质量。n-gram 是指连续的 n 个词，如 1-gram（单个词）、2-gram（词组）、3-gram（短语）等，重叠度越高，BLEU 分数越高（满分 100）。</p>
 <p>BLEU 的核心逻辑：</p>
 <ol class="arabic simple">
@@ -1675,7 +1693,7 @@ Epoch: 10 | Time: 3m 42s
 </div>
 </section>
 <section id="id11">
-<h3><span class="section-number">2.3.10.5.3. </span>5.3 推理翻译<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<h3>5.3 推理翻译<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
 <p>通过实际示例验证模型的翻译效果，选择常见的德语句子，观察模型是否能生成语义正确、语法通顺的英语翻译。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 测试一些示例翻译</span>
 <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span>
@@ -1709,7 +1727,7 @@ Epoch: 10 | Time: 3m 42s
 </section>
 </section>
 <section id="id12">
-<h2><span class="section-number">2.3.10.6. </span>6. 总结<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<h2>6. 总结<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
 <p>在本实验中，我们完成使用 torchtext 加载 IWSLT 2016 英德数据集，并进行分词和词汇表构建。实现推理解码，最后使用 BEU 进行评分。</p>
 <p>总体而言，本实验成功地将 Transformer 模型应用于英德翻译任务，并验证了多种优化技术的有效性。通过调整模型架构和训练参数，可以进一步提高翻译质量。不仅将 Transformer 模型应用于真实的机器翻译任务，还学习了工业界常用的优化技术和评估方法。这些技术对于训练高质量的大模型至关重要，也是深度学习实践中不可或缺的部分。</p>
 <p>你可以尝试调整超参数（如模型大小、学习率调度参数、束搜索宽度等），观察它们对翻译质量的影响，进一步加深对机器翻译任务的理解。</p>
@@ -1756,7 +1774,7 @@ Epoch: 10 | Time: 3m 42s
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title"><span class="section-number">2.3.9. </span>从零实现 Transformer 训练(DONE)</p>
+        <p class="prev-next-title">从零实现 Transformer 训练(DONE)</p>
       </div>
     </a>
     <a class="right-next"
@@ -1764,7 +1782,7 @@ Epoch: 10 | Time: 3m 42s
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title"><span class="section-number">2.3.11. </span>手把手实现核心机制 Sinusoidal 编码(DONE)</p>
+        <p class="prev-next-title">手把手实现核心机制 Sinusoidal 编码(DONE)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1784,35 +1802,35 @@ Epoch: 10 | Time: 3m 42s
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.3.10.1. 1. 环境准备与数据加载</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.3.10.1.1. 1.1 加载和预处理数据</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 环境准备与数据加载</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 加载和预处理数据</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.3.10.2. 2. 模型构建与优化技术</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">2.3.10.2.1. 2.1 构建 Transformer 模型</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#label-smoothing">2.3.10.2.2. 2.2 标签平滑 (Label Smoothing)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-scheduling">2.3.10.2.3. 2.3 学习率调度 (Learning Rate Scheduling)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-clipping">2.3.10.2.4. 2.4 梯度裁剪 (Gradient Clipping)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 模型构建与优化技术</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">2.1 构建 Transformer 模型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#label-smoothing">2.2 标签平滑 (Label Smoothing)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-scheduling">2.3 学习率调度 (Learning Rate Scheduling)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-clipping">2.4 梯度裁剪 (Gradient Clipping)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.3.10.3. 3. 训练与验证</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.3.10.3.1. 3.1 训练循环</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.3.10.3.2. 3.2 验证循环</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.3.10.3.3. 3.3 训练模型</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. 训练与验证</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 训练循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 验证循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.3 训练模型</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.3.10.4. 4. 推理解码算法</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">2.3.10.4.1. 4.1 贪婪搜索 (Greedy Search)</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">2.3.10.4.2. 4.2 束搜索 (Beam Search)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 推理解码算法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">4.1 贪婪搜索 (Greedy Search)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">4.2 束搜索 (Beam Search)</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">2.3.10.5. 5. 模型评估</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">2.3.10.5.1. 5.1 翻译函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">2.3.10.5.2. 5.2 BLEU 分数评估</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">2.3.10.5.3. 5.3 推理翻译</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5. 模型评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.1 翻译函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">5.2 BLEU 分数评估</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.3 推理翻译</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">2.3.10.6. 6. 总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">6. 总结</a></li>
 </ul>
   </nav></div>
 
@@ -1846,7 +1864,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Aug 31, 2025.
+  Last updated on Sep 01, 2025.
   <br/>
 </p>
   </div>

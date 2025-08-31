@@ -394,9 +394,7 @@ https://zh.wikipedia.org/wiki/OpenMP
 https://www.incredibuild.cn/blog/cuda-vs-opencl-gpu-bianchenggaiyongshenme
 https://zhuanlan.zhihu.com/p/697611565
 https://www.intel.com/content/www/us/en/developer/tools/oneapi/overview.html
-https://www.intel.cn/content/www/cn/zh/developer/articles/technical/oneapi-what-is-it.html
 https://www.hiascend.com/software/cann
-https://developer.huawei.com/home/forum/kunpeng/thread-02106154315995186024-1-1.html
 https://e.huawei.com/cn/news/ebg/2022/bisheng-c-upgrades-bisheng-compiler
 https://baike.baidu.com/item/%E6%AF%95%E6%98%87/53936900?fr=aladdin#reference-3
 https://developer.aliyun.com/article/1644057
@@ -404,10 +402,8 @@ https://cloud.tencent.com/developer/article/2540075
 https://www.eecs.harvard.edu/~htk/publication/2019-mapl-tillet-kung-cox.pdf
 https://zhuanlan.zhihu.com/p/12890124532
 https://zhuanlan.zhihu.com/p/1895776568367894849
-https://ia800600.us.archive.org/5/items/ittushu-2470/%E6%B8%85%E5%8D%8E%E5%A4%A7%E5%AD%A6%E5%9B%BE%E4%B9%A6%E9%A6%86-%E6%88%98%E7%96%AB%E7%89%88/%E6%96%87%E6%B3%89sp1%E8%A1%A5%E4%B8%81/3207901_%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0_%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB%E6%8A%80%E6%9C%AF%E5%AE%9E%E8%B7%B5_text.pdf
 https://zh.wikipedia.org/wiki/BLAS
 https://zh.wikipedia.org/wiki/LAPACK
-https://massedcompute.com/faq-answers/?question=How%20do%20cuSPARSE%20and%20SuiteSparse%20compare%20to%20other%20sparse%20linear%20algebra%20libraries%20such%20as%20MKL%20and%20PETSc?
 https://zhuanlan.zhihu.com/p/353918898
 https://zhuanlan.zhihu.com/p/625259682
 https://docs.sciml.ai/Overview/stable/overview/
@@ -420,12 +416,7 @@ https://www.bytezonex.com/archives/Uh18Kp6l.html
 https://www.ctyun.cn/developer/article/680317292572741
 https://www.zhihu.com/question/31168972/answer/3520497725
 https://blog.csdn.net/bandaoyu/article/details/112859853
-https://blog.csdn.net/rgv23456789/article/details/149535923                            
-https://blog.csdn.net/weixin_33831673/article/details/90350564?spm=1001.2101.3001.6650.2&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-2-90350564-blog-147961628.235%5Ev43%5Epc_blog_bottom_relevance_base8&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-2-90350564-blog-147961628.235%5Ev43%5Epc_blog_bottom_relevance_base8&utm_relevant_index=5
 https://zhuanlan.zhihu.com/p/710878933
 https://blog.csdn.net/weixin_43728590/article/details/107211981
-https://blog.csdn.net/weixin_43728590/article/details/107211981?spm=1001.2101.3001.6650.14&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-14-107211981-blog-147961628.235%5Ev43%5Epc_blog_bottom_relevance_base8&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-14-107211981-blog-147961628.235%5Ev43%5Epc_blog_bottom_relevance_base8&utm_relevant_index=20
 https://blog.csdn.net/zhengxianghdu/article/details/132226610
-https://community.intel.com/t5/Blogs/Tech-Innovation/Artificial-Intelligence-AI/Intel-Shows-OCI-Optical-I-O-Chiplet-Co-packaged-with-CPU-at/post/1582541?profile.language=zh-CN
-https://baike.baidu.com/item/%E7%A1%85%E5%85%89%E5%AD%90%E6%8A%80%E6%9C%AF/3273912 
 https://blogs.oracle.com/research/post/a-beginners-guide-to-slurm
