@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# NV GB200 集群互联方案
+# 07.NV GB200 集群互联方案
 
 Author by: 
 

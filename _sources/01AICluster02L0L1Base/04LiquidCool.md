@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 液冷挑战与实践思考
+# 04.液冷挑战与实践思考
 
 Author by: 
 

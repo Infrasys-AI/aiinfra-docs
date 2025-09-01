@@ -20,7 +20,7 @@ Author by: 张艺蓉
 1. Prefill 阶段（Prompt phase）：Prefill 阶段的目标是一次性地、并行地处理用户输入的全部 Prompt，计算出用于预测第一个新 Token 的初始状态。
 2. Decode 阶段（Token generation phase）：在 Prefill 阶段完成后，模型进入逐个 Token 的生成阶段。在每一步中，模型都将上一步生成的 Token 加入到历史序列中，并以此为基础预测下一个 Token，直到生成结束符或达到最大长度。
 
->>>>>>>>>增加图更清楚 PD 两个阶段
+!!!!!!!!!!!!!!增加图更清楚 PD 两个阶段
 
 ### 大模型推理计算分析
 
@@ -86,7 +86,7 @@ $$
 
 ## KV Cache 基本原理
 
->>>>>>>> KV Cache 的原理可以参考这个增加更多的图例 https://zhuanlan.zhihu.com/p/662498827
+!!!!!!! KV Cache 的原理可以参考这个增加更多的图例 https://zhuanlan.zhihu.com/p/662498827
 
 因为有了上一节的分析，我们知道了每个 token decode 阶段具体需要用到哪些东西，由于大模型的推理是 Masked Self-Attention 每个 token 只能够看到其之前的 token 信息，因此当我们输入第 $t$ 个 token 的时候，$K_t$，$V_t$ 计算之后就是确定的，之后计算新的 attention 的时候，前面计算的 key 和 value 值并不会改变，我们自然想到直接将之前计算出的 key 和 value 向量缓存。
 
@@ -114,7 +114,7 @@ $$
 
 ### 早期 KV Cache 实现
 
->>>>>>>> 给具体的代码加上中文注释哦
+!!!!!!! 给具体的代码加上中文注释哦
 
 我们以 huggingface 的 Transformer 库的 gpt2 的实现为例[transformers/src/transformers/models/gpt2/modeling_gpt2.py](https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py)来看具体实现过程。
 
@@ -215,7 +215,7 @@ if past_key_value is not None:
 
 ## KV Cache 显存分析
 
->>>>>>>> 可以增加在长序列场景，KVCache 的增加的分析，特别是现在推理都需要长序列，对显存的影响
+!!!!!!! 可以增加在长序列场景，KVCache 的增加的分析，特别是现在推理都需要长序列，对显存的影响
 
 值得注意的是，KV Cache 的显存占用不可忽视。KV Cache 的显存占用公式如下：
 
@@ -269,7 +269,7 @@ $$
 - https://www.cnblogs.com/rossiXYZ/p/18799503
 - https://zhuanlan.zhihu.com/p/630832593
 - https://zhuanlan.zhihu.com/p/662498827
->>>>>>> 可以参考下面提供的链接，再补充一些小细节
+!!!!!!!! 可以参考下面提供的链接，再补充一些小细节
 - https://zhuanlan.zhihu.com/p/662498827
 - https://blog.csdn.net/taoqick/article/details/137476233
 - https://blog.csdn.net/ningyanggege/article/details/134564203

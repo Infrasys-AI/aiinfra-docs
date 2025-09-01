@@ -4,7 +4,7 @@
 
 Author: 郭鑫杰
 
->>>>>>>>>>>>>
+!!!!!!!!!!!!!!
 这一节内容要介绍什么？想要传达什么？看完后我基本上看不懂，得好好捋一下逻辑
 
 ## 通信域优先级图示
@@ -21,7 +21,7 @@ Intra Node 指将通信更多放在机内，对带宽要求比较高；Inter Nod
 
 ### rank generator
 
->>>>>>>>>>>>>>>
+!!!!!!!!!!!!!!!!!!!!!
 什么分为两个类型，缺乏指代主语？
 
 分为两个类型，稠密部分（tp-cp-dp-pp），MoE 部分（tp-ep-dp-pp）也叫做（etp-ep-edp-pp）与 world_size 的关系为：
@@ -34,24 +34,24 @@ $$world\_size = tp * cp * dp * pp = etp * ep * edp * pp$$
 
 ### Dense 模型 TP4-PP2-DP2
 
->>>>>>>>>>>>>>>
+!!!!!!!!!!!!!!!!!!!!!
 补充文字
 
 ### MoE 模型 ETP1-PP2-EP4-EDP2
 
->>>>>>>>>>>>>>>
+!!!!!!!!!!!!!!!!!!!!!
 补充文字
 
 ![rank_generator](.../images/04Train01ParallelBegin/05MGConfig03.jpg)
 
 ## 通信域划分 Ranks
 
->>>>>>>>>>>>>>>
+!!!!!!!!!!!!!!!!!!!!!
 这段话不完整，什么核心在于什么？
 
 核心在于 [rank_generator.py](./rank_generator.py) 中 `generate_masked_orthogonal_groups`.根据通信优先级图示，建立通信组的关键在于**依据 $order$ 生成 `ranks`**.默认建立通信域 $order$ 为 `tp-cp-ep-dp-pp`，两个主要步骤，即求得 group_index 与 global_rank。
 
->>>>>>>>>>>>>>>
+!!!!!!!!!!!!!!!!!!!!!
 如果代码是来源于 megatron，那么可以直接引用 megtron，要不就直接贴在这里面，只贴重点的代码，其他用省略号。
 
 先看 TP4-PP2-DP2 求 DP 域，原始 `order(tp-cp-ep-dp-pp)` 确定通信域中的 ranks，没有 cp 域与 ep 域，直接跳过即可。

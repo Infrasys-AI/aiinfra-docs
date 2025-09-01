@@ -291,7 +291,7 @@ Selective Batching是在Continuous Batching基础上，对Transformer的不同�
 
 实际跑下来能感觉到，Continuous Batching主要解决了"Batching动态更新"的问题，让GPU一直有活干；而Selective Batching则在此基础上，进一步优化了计算效率——尤其是当请求的序列长度差异较大时，Selective Batching的Attention层分组处理能明显减少冗余计算。比如同样处理3个请求，Continuous Batching的每步计算时间大概在75ms左右，而Selective Batching能降到60ms上下。虽然这里是简化模拟，但和vLLM、ORCA论文里的结论一致：在真实场景中，这两种技术结合能让大模型推理的吞吐量提升2-3倍，同时延迟更稳定。
 
-## 六、总结与扩展
+## 5. 总结与思考
 
 本实验实现了两种批处理策略的核心逻辑：
 

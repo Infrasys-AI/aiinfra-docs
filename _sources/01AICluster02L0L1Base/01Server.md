@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 服务器节点初探
+# 01.服务器节点初探
 
 > Author by: ZOMI
 

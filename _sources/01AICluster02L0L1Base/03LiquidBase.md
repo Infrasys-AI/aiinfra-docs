@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# AI 服务器液冷技术发展
+# 03.AI 服务器液冷技术发展
 
 Author by: 
 

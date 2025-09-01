@@ -1,24 +1,26 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 通信域与 PyTorch 实现
+# 06.通信域与 PyTorch 实现
 
 Author by: SingularityKChen
 
-本章围绕 **通信域（Communicator）** 与 **PyTorch 分布式**，介绍：
+本节围绕 **通信域（Communicator）** 与 **PyTorch 分布式**，介绍：
+
 1) 通信域、进程、进程组与 Rank 的关系；
 2) 模型并行/数据并行/流水并行下的通信域划分；
 3) PyTorch 如何通过 `torch.distributed` 调用 P2P 与集合通信原语；
 4) 训练时“计算–通信”并行（overlap）的底层机制。
 
-## 课程位置
-
 本章是集合通信概览的最后一部分，如下图所示，与模型训练中的“分布式并行”和 AI 集群建设中的“网络”紧密对应。
 
 ![05PyTorchCC01](../images/02StorComm03CollectComm/05PyTorchCC01.png)
 
-## 通信域与 Rank
+## 通信域、Rank、进程和进程组关系
 
-### 通信域（Communicator）
+!!!!!!!!!!!!!!!!
+内容和几个技术点有点凌乱，再深入梳理下
+
+### 通信域
 
 通信域（Communicator）是 MPI 与深度学习分布式系统的核心抽象。**所有 MPI 通信都在通信域的控制与维护下进行**；**所有通信操作都会直接或间接接收通信域参数**；**对通信域的重组与划分能方便地完成任务划分**。
 
@@ -55,6 +57,9 @@ Author by: SingularityKChen
 
 ## PyTorch 通信调用
 
+!!!!!!!!!!!!!!!!
+这里是本篇的重点，应该自己去看看 PyTorch 的通信是怎么实现的，一定一定要自己去深入看代码，深入技术，不要在视频的表面，自己要做的比视频要更加深入
+
 ### 模块分层与调用路径
 
 PyTorch 的分布式能力位于 `torch.distributed`
@@ -77,17 +82,12 @@ PyTorch 的分布式能力位于 `torch.distributed`
 
 ### P2P Communication 操作
 
+!!!!!!!!!!!!!!!!
+代码不要截图，插入代码，然后解读
+
 1) **初始化**：在每个进程中调用 `torch.distributed.init_process_group` 指定后端、`rank` 与 `world_size`，对分布式模块进行初始化。
-
-![05PyTorchCC08](../images/02StorComm03CollectComm/05PyTorchCC08.png)
-
 2) **通信逻辑**：按 `rank_id` 分支业务；`dist.send()/dist.recv()` 为同步版本，`isend()/irecv()` 为异步版本。
-
-![05PyTorchCC09](../images/02StorComm03CollectComm/05PyTorchCC09.png)
-
 3) **任务启动**：使用 `torch.multiprocessing` 启动多进程；`set_start_method('spawn')` 仅继承必要资源，便于跨进程安全初始化。
-
-![05PyTorchCC10](../images/02StorComm03CollectComm/05PyTorchCC10.png)
 
 ## PyTorch 的“计算–通信”并行
 
@@ -113,6 +113,9 @@ Host 下发与 Device 执行是**异步**的：先 Record event，再在目标 S
 
 ### 计算流与通信流的同步与内存池归属
 
+!!!!!!!!!!!!!!!!
+你真的懂了吗？
+
 在 `ProcessGroupXCCL` 中，集合通信接口会经由 `ProcessGroupXCCL::collective()` 把实际的 XCCL 调用 FN 下发到 **通信流（xcclStreams）**。如下图所示，如果 OP1 的输出 Tensor 仍归属于**计算流的内存池**，会出现“OP1 写、XCCL1 读”的潜在竞争，需要在两条流之间建立事件依赖；需要用于通信的 Tensor，其内存应由对应 Stream 的内存池管理。
 
 ![05PyTorchCC14](../images/02StorComm03CollectComm/05PyTorchCC14.png)
@@ -127,7 +130,7 @@ Host 下发与 Device 执行是**异步**的：先 Record event，再在目标 S
 
 > 小结：**解耦计算与通信**、并通过事件把两者“正确且尽早”地拼起来，是大模型训练中提升 MFU 的关键路径；这也是各类分布式加速库（Megatron-LM/DeepSpeed/ColossalAI 等）在框架层面做策略优化与异步调度的原因。
 
-## 小结与思考
+## 总结与思考
 
 - **通信域—进程—进程组—Rank**：一对多映射，同一进程可加入多个通信域并行工作。
 - **多维并行对应多个通信域**：TP/PP/DP/MP 交错存在，单个 rank 可能在多个域中承担不同职责。

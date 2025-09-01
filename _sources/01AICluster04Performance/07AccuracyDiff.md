@@ -1,6 +1,6 @@
 <!--Copyright 适用于[License](https://github.com/chenzomi12/AIInfra)版权许可-->
 
-# GPU 与 NPU 精度误差分析
+# 07.GPU 与 NPU 精度误差分析
 
 Author: 陈春昀
 

@@ -1,8 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# HPC 硬件发展趋势(DONE)
+# 02.HPC 硬件发展趋势(DONE)
 
->>>>>>>>>>>
+!!!!!!!!!!!!!!!
 很赞，我简单修改了下文字，把字数减少了，你通读下，看看有没有技术的逻辑错误。有些图片我删掉了，因为不是高清的。如果没有问题就可以删掉这行字了。
 
 Author by: 陈悦孜

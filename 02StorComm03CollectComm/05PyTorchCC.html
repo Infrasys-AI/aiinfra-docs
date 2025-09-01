@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="通信域与 PyTorch 实现" />
+<meta property="og:title" content="06.通信域与 PyTorch 实现" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="02StorComm03CollectComm/05PyTorchCC.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: SingularityKChen 本章围绕 通信域（Communicator） 与 PyTorch 分布式 ，介绍： 通信域、进程、进程组与 Rank 的关系；, 模型并行/数据并行/流水并行下的通信域划分；, PyTorch 如何通过 torch.distributed 调用 P2P 与集合通信原语；, 训练时“计算–通信”并行（overlap）的底层机制。. 课程位..." />
+<meta property="og:description" content="Author by: SingularityKChen 本节围绕 通信域（Communicator） 与 PyTorch 分布式 ，介绍： 通信域、进程、进程组与 Rank 的关系；, 模型并行/数据并行/流水并行下的通信域划分；, PyTorch 如何通过 torch.distributed 调用 P2P 与集合通信原语；, 训练时“计算–通信”并行（overlap）的底层机制。. 本章是..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: SingularityKChen 本章围绕 通信域（Communicator） 与 PyTorch 分布式 ，介绍： 通信域、进程、进程组与 Rank 的关系；, 模型并行/数据并行/流水并行下的通信域划分；, PyTorch 如何通过 torch.distributed 调用 P2P 与集..." />
-<meta name="description" content="Author by: SingularityKChen 本章围绕 通信域（Communicator） 与 PyTorch 分布式 ，介绍： 通信域、进程、进程组与 Rank 的关系；, 模型并行/数据并行/流水并行下的通信域划分；, PyTorch 如何通过 torch.distributed 调用 P2P 与集合通信原语；, 训练时“计算–通信”并行（overlap）的底层机制。. 课程位..." />
+<meta property="og:image" content="/_images/social_previews/summary_02StorComm03CollectComm_05PyTorchCC_6dca63bb.png" />
+<meta property="og:image:alt" content="Author by: SingularityKChen 本节围绕 通信域（Communicator） 与 PyTorch 分布式 ，介绍： 通信域、进程、进程组与 Rank 的关系；, 模型并行/数据并行/流水并行下的通信域划分；, PyTorch 如何通过 torch.distributed 调用 P2P 与集..." />
+<meta name="description" content="Author by: SingularityKChen 本节围绕 通信域（Communicator） 与 PyTorch 分布式 ，介绍： 通信域、进程、进程组与 Rank 的关系；, 模型并行/数据并行/流水并行下的通信域划分；, PyTorch 如何通过 torch.distributed 调用 P2P 与集合通信原语；, 训练时“计算–通信”并行（overlap）的底层机制。. 本章是..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>通信域与 PyTorch 实现 &#8212; AIInfra AI基础设施</title>
+    <title>06.通信域与 PyTorch 实现 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -79,12 +79,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="AI 芯片内互联技术" href="06CCInChip.html" />
-    <link rel="prev" title="AI 对集合通信算法诉求" href="04CCAlgorithm.html" />
+    <link rel="next" title="06.AI 芯片内互联技术" href="06CCInChip.html" />
+    <link rel="prev" title="05.AI 对集合通信算法诉求" href="04CCAlgorithm.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 01, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 02, 2025"/>
 
 <link
   rel="alternate"
@@ -242,81 +242,89 @@
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">Scaling Law 总体解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">大模型 Scaling Law</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">Inference Time Scaling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">大模型训练与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">大模型推理与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">AI Infra 未来发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 未来发展趋势</a></li>
 </ul>
 </details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">高性能计算 HPC 定义(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">HPC 软件与应用趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">计算集群初期历史回顾</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">计算集群当代与未来发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">AI 计算集群挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">AI 集群系统架构</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">03.HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">服务器节点初探</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">AI 服务器风冷实践与思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">AI 服务器液冷技术发展</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">液冷挑战与实践思考</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">AI 机柜深度认识</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">AI 集群供配电系统</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">02.L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">01.服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">02.AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">03.AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">04.液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">05.AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">06.AI 集群供配电系统</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">万卡 AI 集群建设挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">AI 万卡集群建设方案</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03 AI 万卡集群交付与测试</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">NVIDIA Blackwell 演进(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">NV Blackwell 深度解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">NV GB200 网络演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">NV GB200 集群互联方案</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">XAI 十万卡集群解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">十万卡 AI 集群思考</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">05.NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">06.NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">07.NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">08.XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">10.十万卡 AI 集群思考</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">HPC 总算力计算标准</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">大模型训推性能建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">AI 集群计算建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">Ai 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">大模型推理内存与参数计算</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">GPU 与 NPU 精度误差分析</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">精度性能：大模型精度问题定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">04.集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">01.HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/Practice01Modeling.html">CODE:拆解 Transformer-Decoder</a></li>
+
+
 </ul>
 </details></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">01.AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/01Introduction.html">01.AI 集群网络基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/02HPCDeepDive.html">02.HPC 网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/03AIDeepDive.html">03.AI 集群网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/04AINetwork.html">04.AI 集群网络基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/05PlaneDivision.html">05.AI 集群网络平面划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/06Summary.html">06.万卡集群组网思考</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">集合通信原理</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01Introduce.html">大模型集合通信介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02CCOverview.html">为什么需要集合通信</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03CCPrimtive.html">集合通信操作/原语/算子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04CCAlgorithm.html">AI 对集合通信算法诉求</a></li>
-
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">通信域与 PyTorch 实现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06CCInChip.html">AI 芯片内互联技术</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07CCCluster.html">大模型集群互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01Introduce.html">01.大模型集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02CCOverview.html">02.集合通信关键作用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06CCInChip.html">06.AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07CCCluster.html">07.大模型集群互联技术</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -326,7 +334,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
 </ul>
@@ -371,7 +380,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02.FlashAttn.html">计算优化：Flash Attention 优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04.MultiTokenGen.html">多 Token 推理与生成(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化： Ring Attention 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06.RingAttn.html">序列优化：Ring Attention 算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/comput_total_parameters.html">Dense 计算总参</a></li>
 
 </ul>
@@ -494,6 +503,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -895,7 +905,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>通信域与 PyTorch 实现</h1>
+    <h1>06.通信域与 PyTorch 实现</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -905,9 +915,8 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">课程位置</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rank">通信域与 Rank</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#communicator">通信域（Communicator）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rank">通信域、Rank、进程和进程组关系</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">通信域</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">进程、进程组与 Rank</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">并行方式与通信域</a></li>
 </ul>
@@ -924,7 +933,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">计算流与通信流的同步与内存池归属</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">小结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">总结与思考</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">本节视频</a></li>
 </ul>
             </nav>
@@ -939,24 +948,23 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="pytorch">
-<h1>通信域与 PyTorch 实现<a class="headerlink" href="#pytorch" title="Link to this heading">#</a></h1>
+<h1>06.通信域与 PyTorch 实现<a class="headerlink" href="#pytorch" title="Link to this heading">#</a></h1>
 <p>Author by: SingularityKChen</p>
-<p>本章围绕 <strong>通信域（Communicator）</strong> 与 <strong>PyTorch 分布式</strong>，介绍：</p>
+<p>本节围绕 <strong>通信域（Communicator）</strong> 与 <strong>PyTorch 分布式</strong>，介绍：</p>
 <ol class="arabic simple">
 <li><p>通信域、进程、进程组与 Rank 的关系；</p></li>
 <li><p>模型并行/数据并行/流水并行下的通信域划分；</p></li>
 <li><p>PyTorch 如何通过 <code class="docutils literal notranslate"><span class="pre">torch.distributed</span></code> 调用 P2P 与集合通信原语；</p></li>
 <li><p>训练时“计算–通信”并行（overlap）的底层机制。</p></li>
 </ol>
-<section id="id1">
-<h2>课程位置<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>本章是集合通信概览的最后一部分，如下图所示，与模型训练中的“分布式并行”和 AI 集群建设中的“网络”紧密对应。</p>
 <p><img alt="05PyTorchCC01" src="../_images/05PyTorchCC01.png" /></p>
-</section>
 <section id="rank">
-<h2>通信域与 Rank<a class="headerlink" href="#rank" title="Link to this heading">#</a></h2>
-<section id="communicator">
-<h3>通信域（Communicator）<a class="headerlink" href="#communicator" title="Link to this heading">#</a></h3>
+<h2>通信域、Rank、进程和进程组关系<a class="headerlink" href="#rank" title="Link to this heading">#</a></h2>
+<p>!!!!!!!!!!!!!!!!
+内容和几个技术点有点凌乱，再深入梳理下</p>
+<section id="id1">
+<h3>通信域<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
 <p>通信域（Communicator）是 MPI 与深度学习分布式系统的核心抽象。<strong>所有 MPI 通信都在通信域的控制与维护下进行</strong>；<strong>所有通信操作都会直接或间接接收通信域参数</strong>；<strong>对通信域的重组与划分能方便地完成任务划分</strong>。</p>
 <p>通信域包含 <strong>上下文（context）</strong>、<strong>进程组（group）<strong>和</strong>虚拟拓扑（topology）</strong>；其中<strong>进程组</strong>是一组要互相通信的进程集合，一个通信域对应一个进程组；同一进程可同时加入多个通信域，互不干扰。</p>
 <p><img alt="05PyTorchCC02" src="../_images/05PyTorchCC02.png" /></p>
@@ -991,6 +999,8 @@ document.write(`
 </section>
 <section id="id4">
 <h2>PyTorch 通信调用<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>!!!!!!!!!!!!!!!!
+这里是本篇的重点，应该自己去看看 PyTorch 的通信是怎么实现的，一定一定要自己去深入看代码，深入技术，不要在视频的表面，自己要做的比视频要更加深入</p>
 <section id="id5">
 <h3>模块分层与调用路径<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
 <p>PyTorch 的分布式能力位于 <code class="docutils literal notranslate"><span class="pre">torch.distributed</span></code></p>
@@ -1021,18 +1031,13 @@ document.write(`
 </section>
 <section id="p2p-communication">
 <h3>P2P Communication 操作<a class="headerlink" href="#p2p-communication" title="Link to this heading">#</a></h3>
+<p>!!!!!!!!!!!!!!!!
+代码不要截图，插入代码，然后解读</p>
 <ol class="arabic simple">
 <li><p><strong>初始化</strong>：在每个进程中调用 <code class="docutils literal notranslate"><span class="pre">torch.distributed.init_process_group</span></code> 指定后端、<code class="docutils literal notranslate"><span class="pre">rank</span></code> 与 <code class="docutils literal notranslate"><span class="pre">world_size</span></code>，对分布式模块进行初始化。</p></li>
-</ol>
-<p><img alt="05PyTorchCC08" src="../_images/05PyTorchCC08.png" /></p>
-<ol class="arabic simple" start="2">
 <li><p><strong>通信逻辑</strong>：按 <code class="docutils literal notranslate"><span class="pre">rank_id</span></code> 分支业务；<code class="docutils literal notranslate"><span class="pre">dist.send()/dist.recv()</span></code> 为同步版本，<code class="docutils literal notranslate"><span class="pre">isend()/irecv()</span></code> 为异步版本。</p></li>
-</ol>
-<p><img alt="05PyTorchCC09" src="../_images/05PyTorchCC09.png" /></p>
-<ol class="arabic simple" start="3">
 <li><p><strong>任务启动</strong>：使用 <code class="docutils literal notranslate"><span class="pre">torch.multiprocessing</span></code> 启动多进程；<code class="docutils literal notranslate"><span class="pre">set_start_method('spawn')</span></code> 仅继承必要资源，便于跨进程安全初始化。</p></li>
 </ol>
-<p><img alt="05PyTorchCC10" src="../_images/05PyTorchCC10.png" /></p>
 </section>
 </section>
 <section id="id7">
@@ -1056,6 +1061,8 @@ PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event�
 </section>
 <section id="id9">
 <h3>计算流与通信流的同步与内存池归属<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p>!!!!!!!!!!!!!!!!
+你真的懂了吗？</p>
 <p>在 <code class="docutils literal notranslate"><span class="pre">ProcessGroupXCCL</span></code> 中，集合通信接口会经由 <code class="docutils literal notranslate"><span class="pre">ProcessGroupXCCL::collective()</span></code> 把实际的 XCCL 调用 FN 下发到 <strong>通信流（xcclStreams）</strong>。如下图所示，如果 OP1 的输出 Tensor 仍归属于<strong>计算流的内存池</strong>，会出现“OP1 写、XCCL1 读”的潜在竞争，需要在两条流之间建立事件依赖；需要用于通信的 Tensor，其内存应由对应 Stream 的内存池管理。</p>
 <p><img alt="05PyTorchCC14" src="../_images/05PyTorchCC14.png" /></p>
 <p>为解决上述异步问题，<code class="docutils literal notranslate"><span class="pre">collective()</span></code> 内部通过 <strong><code class="docutils literal notranslate"><span class="pre">syncStream()</span></code></strong>：在<strong>计算流</strong>上 Record event，并在<strong>通信流</strong>上执行 <strong>notify/wait</strong>，确保“先写后读”，消除并发读写问题。其时序图如下。</p>
@@ -1068,7 +1075,7 @@ PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event�
 </section>
 </section>
 <section id="id10">
-<h2>小结与思考<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<h2>总结与思考<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><strong>通信域—进程—进程组—Rank</strong>：一对多映射，同一进程可加入多个通信域并行工作。</p></li>
 <li><p><strong>多维并行对应多个通信域</strong>：TP/PP/DP/MP 交错存在，单个 rank 可能在多个域中承担不同职责。</p></li>
@@ -1081,7 +1088,8 @@ PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event�
 <h2>本节视频<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
 <html>
 <iframe src="https://player.bilibili.com/player.html?aid=1155715743&bvid=BV1VZ421g7jY&cid=1582802300&page=1&as_wide=1&high_quality=1&danmaku=0&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"></iframe>
-</html></section>
+</html>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -1124,7 +1132,7 @@ PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event�
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">AI 对集合通信算法诉求</p>
+        <p class="prev-next-title">05.AI 对集合通信算法诉求</p>
       </div>
     </a>
     <a class="right-next"
@@ -1132,7 +1140,7 @@ PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event�
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">AI 芯片内互联技术</p>
+        <p class="prev-next-title">06.AI 芯片内互联技术</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1152,9 +1160,8 @@ PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event�
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">课程位置</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rank">通信域与 Rank</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#communicator">通信域（Communicator）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rank">通信域、Rank、进程和进程组关系</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">通信域</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">进程、进程组与 Rank</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">并行方式与通信域</a></li>
 </ul>
@@ -1171,7 +1178,7 @@ PyTorch 通信与计算并行，主要通过 Stream（并行能力）与 Event�
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">计算流与通信流的同步与内存池归属</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">小结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">总结与思考</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">本节视频</a></li>
 </ul>
   </nav></div>
@@ -1206,7 +1213,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 01, 2025.
+  Last updated on Sep 02, 2025.
   <br/>
 </p>
   </div>

@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# AI 集群供配电系统
+# 06.AI 集群供配电系统
 
 Author by: 
 

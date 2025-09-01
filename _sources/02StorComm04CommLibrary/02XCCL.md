@@ -144,11 +144,13 @@ TCCL（Tencent Collective Communication Library）是针对腾讯云星脉网络
 
 ![腾讯云星脉网络架构](../images/02StorComm04CommLibrary/02XCCL20.png)
 
-TCCL 主要特性包括双网口动态聚合优化，端网协同自研协议栈，发挥 GPU 性能极限。全局哈希路由（Global Hash Routing），实现负载均衡从而避免拥塞。同时支持拓扑亲和组网，流量调度监控，最小化流量绕行，自研交换机和可编程 RDMA 拥塞控制算法。
+腾讯自研星脉高性能计算网络支持单集群 10 万卡组网，规模翻倍网络通信效率提升 60%，让大模型训练效率提升 20%。集合通信库 TCCL2.0 采用 NVLINK+NET 异构并行通信，相当于为 GPU 新建了一条网络通道，以实现数据的并行传输。通信性能提升 30%，让大模型的训练效率再提升 10%。TCCL 主要特性包括双网口动态聚合优化，端网协同自研协议栈，发挥 GPU 性能极限。全局哈希路由（Global Hash Routing），实现负载均衡从而避免拥塞。同时支持拓扑亲和组网，流量调度监控，最小化流量绕行，自研交换机和可编程 RDMA 拥塞控制算法。
 
-![腾讯 TCCL 组网](../images/02StorComm04CommLibrary/02XCCL21.png)
+图6（a）中蓝色线的性能上限表示，在1 Gbit/s 通信量下 AllReduce 的集合通信带宽的理论上限（单机8 个网卡带宽之和，即200 Gbit/s）。在相同条件下，TCCL 几乎达到该理论极限，较NCCL 提升了22%。对于64 MB 及以上的通信量，采用异构通信优化的TCCL 始终优于NCCL，性能提升幅度为9%～25%。然而，当通信量小于64 MB 时，TCCL 与 NCCL 性能相近。这是因为此时性能受限于通信网络时延，所有的数据都会优先通过NVLink 网络传输（NVLink 的传输时延为200 ns，远小于RoCE 的传输时延2 μs）。这意味着 TCCL 方案效果和NCCL 方案一致，因此两者最终的AllReduce Busbw 性能也一致。异构并行策略优化不仅对AllRe‐duce 场景有效，还能提升其他集合通信操作（如AlltoAll）的性能。如图6（b）所示，在1 GB 通信量下采用异构并行优化的 AlltoAll 性能提升了20%。
 
-腾讯自研星脉高性能计算网络支持单集群 10 万卡组网，规模翻倍网络通信效率提升 60%，让大模型训练效率提升 20%。集合通信库 TCCL2.0 采用 NVLINK+NET 异构并行通信，相当于为 GPU 新建了一条网络通道，以实现数据的并行传输。通信性能提升 30%，让大模型的训练效率再提升 10%。由于腾讯云的星脉网络架构不开源且参考资料较少，因此无法进一步探究更多技术细节。
+为进一步验证该优化的有效性，在64 台 H800 服务器上开展对比实验，分别使用TCCL 与 NCCL 对类 GPT 模型进行训练，并对两者的耗时情况进行对比分析。如图6（c）所示，采用异构通信优化的TCCL 在每轮训练迭代中平均节省约 2.5% 的时间。此外，如图6（d）所示，运行时对 TP AllReduce 的带宽监测显示，AllGather 和 ReduceScatter 操作分别实现了 8% 和 11% 的性能提升。这些结果充分证明了异构通信优化在不同类型集合通信操作中的广泛有效性。
+
+![TCCL 异构并行通信优化的性能评估](../images/02StorComm04CommLibrary/02XCCL21.png)
 
 ## 百度 BCCL
 
@@ -168,17 +170,17 @@ BCCL 针对百度智能云提供的主流的 GPU 芯片进行了深度优化。�
 
 不同 XCCL 通信库的对比如下表所示，比较了不同通信库的优缺点以及核心设计目标，其中英伟达的 NCCL 处于行业标杆的位置，Intel、AMD 和华为分别基于自己的硬件设计了自己的通信库，但是 AMD 的 ACCL 和华为的 HCCL 无法支持异构通信。腾讯、阿里等互联网大厂则是基于 NCCL 开发了属于自己的通信库。
 
-| 通信库 | 厂商	| 是否基于 NCCL| 是否开源 | 是否支持异构通信 | 拓扑感知强化 | 流量监控强化 | 集群容错 | 核心设计目标 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| NCCL	 | NVIDIA	 | 是	 | 是	 | 否	 | 是	 | 是	 | 是	 | 针对 NVIDIA GPU 调优，集合通信标杆 |
-| RCCL	 | AMD	 | 否	 | 是	 | 否	 | 是	 | 是	 | 是	 | 为 AMD 的 NPU 硬件进行通信加速 |
-| oneCCL	 | Intel	 | 否	 | 是	 | 是	 | 是	 | 是	 | 是	 | 为 Intel 的异构芯片进行加速 |
-| Gloo	 | Mate	 | 否	 | 是	 | 是	 | 是	 | 是	 | 是	 | 为 CPU-GPU 之间通信进行加速 |
-| MSCCL | Microsoft | 是 | 是 | 是 | 是 | 是 | 是 | 专为自己的云平台提供异构加速，自定义通信算法 |
-| ACCL | 阿里 | 是 | 否 | 是 | 是 | 是 | 是 | 面向阿里云灵骏架构设计优化性能 |
-| TCCL | 腾讯 | 是 | 否 | 是 | 是 | 是 | 是 | 为腾讯星脉网络定制通信库极致优化性能 |
-| BCCL | 百度 | 是 | 否 | 是 | 是 | 是 | 是 | 异构通信故障诊断容错性能优化 |
-| HCCL | 华为 | 否 | 是 | 否 | 是 | 是 | 是 | 基于昇腾硬件 NPU 之间通信进行加速 |
+| 通信库 | 厂商      | 是否基于 NCCL | 是否开源 | 是否支持异构通信 | 拓扑感知强化 | 流量监控强化 | 集群容错 | 核心设计目标                                 |
+| ------ | --------- | ------------- | -------- | ---------------- | ------------ | ------------ | -------- | -------------------------------------------- |
+| NCCL   | NVIDIA    | 是            | 是       | 否               | 是           | 是           | 是       | 针对 NVIDIA GPU 调优，集合通信标杆           |
+| RCCL   | AMD       | 否            | 是       | 否               | 是           | 是           | 是       | 为 AMD 的 GPU 硬件进行通信加速               |
+| oneCCL | Intel     | 否            | 是       | 是               | 是           | 是           | 是       | 为 Intel 的异构芯片进行加速                  |
+| Gloo   | Mate      | 否            | 是       | 是               | 是           | 是           | 是       | 为 CPU-GPU 之间通信进行加速                  |
+| MSCCL  | Microsoft | 是            | 是       | 是               | 是           | 是           | 是       | 专为自己的云平台提供异构加速，自定义通信算法 |
+| ACCL   | 阿里      | 是            | 否       | 是               | 是           | 是           | 是       | 面向阿里云灵骏架构设计优化性能               |
+| TCCL   | 腾讯      | 是            | 否       | 是               | 是           | 是           | 是       | 为腾讯星脉网络定制通信库极致优化性能         |
+| BCCL   | 百度      | 是            | 否       | 是               | 是           | 是           | 是       | 异构通信故障诊断容错性能优化                 |
+| HCCL   | 华为      | 否            | 是       | 否               | 是           | 是           | 是       | 基于昇腾硬件 NPU 之间通信进行加速            |
 
 ## 内容参考
 
@@ -190,21 +192,20 @@ RCCL [https://github.com/rocm/rccl,](https://github.com/rocm/rccl,) [https://roc
 
 oneCCL [https://github.com/intel/torch-ccl,](https://github.com/intel/torch-ccl,)  [https://oneapi-src.github.io/oneCCL/introduction/sample.html](https://oneapi-src.github.io/oneCCL/introduction/sample.html)
 
-Gloo [https://github.com/pytorch/gloo,](https://github.com/pytorch/gloo,) 
+Gloo [https://github.com/pytorch/gloo,](https://github.com/pytorch/gloo,)
 
 MSCCL [https://github.com/microsoft/msccl,](https://github.com/microsoft/msccl,) [https://arxiv.org/pdf/2201.11840v1](https://arxiv.org/pdf/2201.11840v1)
 
 ACCL [https://help.aliyun.com/zh/pai/user-guide/accl-alibaba-high-performance-collective-communication-library](https://help.aliyun.com/zh/pai/user-guide/accl-alibaba-high-performance-collective-communication-library), EFLOPS: Algorithm and System Co-design for a High Performance Distributed Training Platform (2021)
 
 TCCL [https://cloud.tencent.com/document/product/1646/93319](https://cloud.tencent.com/document/product/1646/93319), [https://mp.weixin.qq.com/s/w5lG3maG1_2RFQKIF8yhYQ](https://mp.weixin.qq.com/s/w5lG3maG1_2RFQKIF8yhYQ)
+李宝嘉, 何春志, 夏寅贲, 等. 星脉网络：面向GPU 集群集合通信与集中式路由的协同优化 [J]. 中兴通讯技术, 2025, 31(2): 3-13.DOI: 10.12142/ZTETJ.202502002
 
 BCCL [https://mp.weixin.qq.com/s/SJ7SCA2T0ILqZ4Ln5Zvg-Q](https://mp.weixin.qq.com/s/SJ7SCA2T0ILqZ4Ln5Zvg-Q)
 
 HCCL [https://gitee.com/ascend/cann-hccl](https://gitee.com/ascend/cann-hccl), [https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha002/hccl/hcclug/hcclug_000001.html](https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/82RC1alpha002/hccl/hcclug/hcclug_000001.html)
 
-智算场景下集合通信库的挑战与发展趋势:
-
-[https://www.telecomsci.com/zh/article/doi/10.11959/j.issn.1000-0801.2025048/](https://www.telecomsci.com/zh/article/doi/10.11959/j.issn.1000-0801.2025048/)
+智算场景下集合通信库的挑战与发展趋势([https://www.telecomsci.com/zh/article/doi/10.11959/j.issn.1000-0801.2025048/](https://www.telecomsci.com/zh/article/doi/10.11959/j.issn.1000-0801.2025048/))
 
 ## 本节视频
 

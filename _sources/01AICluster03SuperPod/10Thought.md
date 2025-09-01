@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 十万卡 AI 集群思考
+# 10.十万卡 AI 集群思考
 
 Author by: 
 
