@@ -1,4 +1,6 @@
-# Kubernetes 资源管理与作业调度
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+
+# K8S 资源管理与作业调度
 Kubernetes 的作业调度与资源管理系统如同集群的"智能大脑"和"资源管家"：
 - 调度器是决策中枢：通过智能算法将工作负载精准分配到最佳位置。
 - 资源管理是保障系统：确保每个应用获得所需资源而不相互干扰。
@@ -114,6 +116,8 @@ preemptionPolicy: PreemptLowerPriority  # 抢占策略（可选，默认 Preempt
 - 不可抢占的 Pod：优先级 ≥ 高优先级 Pod 的 Pod。
 具有 preemptionPolicy: Never 的 Pod。系统关键 Pod（如 kube-system 命名空间下的 kube-dns）。
 
+## 总结与思考
 
-## 参考文档
-https://www.thebyte.com.cn/container/kube-scheduler.html
+## 参考与引用
+
+- https://www.thebyte.com.cn/container/kube-scheduler.html

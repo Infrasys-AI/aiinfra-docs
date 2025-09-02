@@ -27,7 +27,7 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
-05.ZeRO
-10_pipeline
-PP基本原理
+01DSZero
+07Gpipe
+08PPInterleaved
 ```

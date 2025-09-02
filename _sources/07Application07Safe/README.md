@@ -10,8 +10,8 @@
 
 | 大纲 | 小节 | 链接 |
 |:--- |:---- |:-------------------- |
-| AI 安全 | 苹果 Swith HE 同态加密作用  | [PPT](./01Introduction.pptx), [视频](https://www.bilibili.com/video/BV1gmBuYjEhD) |
-| AI 安全 | 隐私技术全分析  | [PPT](./02TechDetails.pptx), [视频](https://www.bilibili.com/video/BV1AecAe3Err) |
+| AI 安全 | 苹果 Swith HE 同态加密作用  | [PPT](./01Introduction.pdf), [视频](https://www.bilibili.com/video/BV1gmBuYjEhD) |
+| AI 安全 | 隐私技术全分析  | [PPT](./02TechDetails.pdf), [视频](https://www.bilibili.com/video/BV1AecAe3Err) |
 
 ## 备注
 

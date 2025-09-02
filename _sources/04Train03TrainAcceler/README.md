@@ -29,14 +29,15 @@ XXXXXX
 ```{toctree}
 :maxdepth: 1
 
-01.Introduction
-02.FlashAttn
-03.DSGEMM
-04.MultiTokenGen
-05.Ulysses
-06.RingAttn
-07.MLA
-08.Checkpoint
-09.HybridPrecision
-comput_total_parameters
+01Introduction
+02FlashAttn
+03DSGEMM
+04MultiTokenGen
+05Ulysses
+06RingAttn
+07MLA
+08Checkpoint
+09HybridPrecision
+10Domino
+11FLUX
 ```

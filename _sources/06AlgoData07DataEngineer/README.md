@@ -2,14 +2,9 @@
 
 # 数据工程
 
-[![Continuous Integration](https://github.com/d2l-ai/d2l-en/actions/workflows/ci.yml/badge.svg)](https://github.com/d2l-ai/d2l-en/actions/workflows/ci.yml)
-[![Build Docker Image](https://github.com/d2l-ai/d2l-en/actions/workflows/build-docker.yml/badge.svg)](https://github.com/d2l-ai/d2l-en/actions/workflows/build-docker.yml)
-
 《数据工程 Data Engine》最近 LLM 大模型开源社区研究热点开始从 Model Engineering 转移到 Data Engineering，越来越多人开始意识到数据质量、向量数据库、开源数据集、Prompt 等数据相关对大模型的重要性。
 
 不过相对模型层面的研究 Data Engineering 其理论还不太成熟，例如：好数据的准确定义是什么？如何优化数据的结构组成？数据的优化目标是什么？对训练模型的影响是什么？因此对 Data Engineering 进行理论分析和研究可以帮助大模型更好地训练和学习。
-
-![思维导图](../images/06AlgoData07DataEngineer/Introduction01.png)
 
 ## 内容大纲
 
@@ -17,10 +12,9 @@
 >
 > 建议优先下载 PDF 版本，PPT 版本会因为字体缺失等原因导致版本很丑哦~
 
-| 大纲 | 小节 | 链接|
+| 大纲 | 小节 | 链接 |
 |:--:|:--:|:--:|
-| 向量数据库 | 01 大模型遇到 AI Agent | [PPT](./01Introduction.pdf), [视频](https://www.bilibili.com/video/BV11w411p7dW/) |
-| 向量数据库 | 02 AI Agent 具体组成 | [PPT](./02Component.pdf), [视频](https://www.bilibili.com/video/BV11u4y1P73P/) |
+|   |   |   |
 
 ## 备注
 
@@ -35,12 +29,11 @@
 ```{toctree}
 :maxdepth: 1
 
-DataCuration
-DataPreprocessing
-DataSources
-PostTrainingDataPrepraing
-Pretraining
-PromptEngineering
-SOTA_procssing
-awesomePrompt
+01DataOverview
+02DataSources
+03PreProcess
+05Pretraining
+07PostTraining
+08Prompt
+09Example01
 ```
