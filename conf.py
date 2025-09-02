@@ -4,13 +4,12 @@ from urllib.request import urlopen
 from pathlib import Path
 
 project = "AIInfra & AIInfra (大模型系统原理)"
-# copyright = "2025"
-# author = "ZOMI"
-language = "cn"  # For testing language translations
+copyright = "2025"
+author = "ZOMI"
+language = "cn"
 master_doc = "index"
 
 # -- General configuration ------
-
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
@@ -74,29 +73,21 @@ myst_enable_extensions = [
 # a list of builtin themes.
 #
 html_theme = "sphinx_book_theme"
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]
 html_logo = "_static/logo-wide.svg"
-html_title = "AI Infra"
-html_copy_source = True
 html_favicon = "_static/logo-square.svg"
+html_title = "AIInfra AI基础设施"
+html_copy_source = True
 html_last_updated_fmt = ""
 
-# html_sidebars = {
-#     "reference/blog/*": [
-#         "navbar-logo.html",
-#         "search-field.html",
-#         "ablog/postcard.html",
-#         "ablog/recentposts.html",
-#         "ablog/tagcloud.html",
-#         "ablog/categories.html",
-#         "ablog/archives.html",
-#         "sbt-sidebar-nav.html",
-#     ]
-# }
+pygments_style = 'monokai'
+sectnum_depth = 2
+html_secnumber_suffix = ". "
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
-html_css_files = ["custom.css"]
 nb_execution_mode = "cache"
 thebe_config = {
     "repository_url": "https://github.com/binder-examples/jupyter-stacks-datascience",
@@ -105,26 +96,18 @@ thebe_config = {
 
 html_theme_options = {
     "path_to_docs": "",
-    "repository_url": "https://github.com/chenzomi12/chenzomi12.github.io/",
+    "repository_url": "https://github.com/Infrasys-AI/AIInfra/",
     "repository_branch": "master",
-    "launch_buttons": {
-        "binderhub_url": "https://mybinder.org",
-        "colab_url": "https://colab.research.google.com/",
-        "deepnote_url": "https://deepnote.com/",
-        "notebook_interface": "jupyterlab",
-        "thebe": True,
-        # "jupyterhub_url": "https://datahub.berkeley.edu",  # For testing
-    },
-    "use_edit_page_button": True,
+    "use_edit_page_button": False,
     "use_source_button": True,
     "use_issues_button": True,
-    # "use_repository_button": True,
+    "use_repository_button": True,
     "use_download_button": True,
     "use_sidenotes": True,
-    "show_toc_level": 3,
+    "toc_title": "本节目录 Contents",           # 目录标题
+    "show_toc_level": 2,                       # 显示层级深度
     "logo": {
         "image_dark": "_static/logo-wide.svg",
-        # "text": html_title,  # Uncomment to try text with logo
     },
     "icon_links": [
         {
@@ -141,23 +124,11 @@ html_theme_options = {
             "icon": "fa-brands fa-bilibili",
         }
     ],
-    # For testing
-    # "use_fullscreen_button": False,
-    # "home_page_in_toc": True,
-    # "extra_footer": "<a href='https://google.com'>Test</a>",  # DEPRECATED KEY
-    # "show_navbar_depth": 2,
-    # Testing layout areas
-    # "navbar_start": ["test.html"],
-    # "navbar_center": ["test.html"],
-    # "navbar_end": ["test.html"],
-    # "navbar_persistent": ["test.html"],
-    # "footer_start": ["test.html"],
-    # "footer_end": ["test.html"]
 }
 
 # sphinxext.opengraph
 ogp_social_cards = {
-    "image": "_static/logo-square.svg",
+    "image": "_static/logo-square.png",
 }
 
 # # -- ABlog config ----
@@ -169,6 +140,7 @@ post_auto_image = 1
 post_auto_excerpt = 2
 nb_execution_show_tb = "READTHEDOCS" in os.environ
 bibtex_bibfiles = ["references.bib"]
+
 # To test that style looks good with common bibtex config
 bibtex_reference_style = "author_year"
 bibtex_default_style = "plain"
