@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 04: 专家并行与大规模训练
+# CODE 04: 专家并行大规模训练
 
 本实验旨在深入理解混合专家模型(MoE)架构中的专家并行技术，掌握大规模模型训练的基本原理，并实践权重转换技术。通过简化但完整的代码实现，帮助初学者理解 MoE 架构的核心概念和实现方法。
 
@@ -21,6 +21,8 @@ $$y = \sum_{i=1}^{n} G(x)_i \cdot E_i(x)$$
 门控网络通常使用 softmax 函数确保所有权重之和为 1：
 
 $$G(x) = \text{softmax}(W_g \cdot x + b_g)$$
+
+![](./../images/04Train02ParallelAdv/Code04Expert01.png)
 
 ## 2. 基础 MoE 层实现
 
@@ -246,7 +248,7 @@ def expand_model_weights(small_model, large_model, expansion_factor=2):
     small_state_dict = small_model.state_dict()
     large_state_dict = large_model.state_dict()
     
-    # 复制共享参数（如门控网络）
+    # 复制共享参数
     for name, param in small_state_dict.items():
         if name in large_state_dict and param.size() == large_state_dict[name].size():
             large_state_dict[name] = param
@@ -257,7 +259,7 @@ def expand_model_weights(small_model, large_model, expansion_factor=2):
             # 获取专家索引
             expert_idx = int(name.split('.')[1])  # 假设名称格式为 "experts.0.weight"
             
-            # 复制到多个专家（简单复制）
+            # 复制到多个专家
             for i in range(expansion_factor):
                 new_expert_idx = expert_idx * expansion_factor + i
                 new_name = name.replace(f"{expert_idx}", f"{new_expert_idx}")
@@ -429,7 +431,7 @@ print(f"负载均衡熵值: {entropy.item():.4f} (值越高表示负载越均衡
 负载均衡熵值: 2.0672 (值越高表示负载越均衡)
 ```
 
-## 总结
+## 总结与思考
 
 MoE 技术的核心价值在于能够创建参数量极大但计算效率较高的模型。通过将大型模型分解为多个专家，每个输入只使用少数专家，MoE 可以在保持合理计算成本的同时显著增加模型容量。
 

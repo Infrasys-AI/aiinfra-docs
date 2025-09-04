@@ -6,20 +6,13 @@
 
 ## 内容大纲
 
-| 大纲 | 小节 | 链接|
-|:-- |:-- |:-- |
-| 分布式并行 | 01 分布式并行框架介绍  | [PPT](./01Introduction.pdf), [视频](https://www.bilibili.com/video/BV1op421C7wp) |
-| 分布式并行 | 02 DeepSpeed 介绍  | [PPT](./02DeepSpeed.pdf), [视频](https://www.bilibili.com/video/BV1tH4y1J7bm) |
-| 分布式并行 | 03 优化器并行 ZeRO1/2/3 原理  | [PPT](./03DSZero.pdf), [视频](https://www.bilibili.com/video/BV1fb421t7KN) |
-| 分布式并行 | 04 Megatron-LM 代码概览  | [PPT](./04Megatron.pdf), [视频](https://www.bilibili.com/video/BV12J4m1K78y) |
-| 分布式并行 | 05 大模型并行与 GPU 集群配置  | [PPT](./05MGConfig.pdf), [视频](https://www.bilibili.com/video/BV1NH4y1g7w4) |
-| 分布式并行 | 06  大模型并行与 GPU 集群配置  | [PPT](./06MGTPPrinc.pdf), [视频](https://www.bilibili.com/video/BV1ji421C7jH) |
-| 分布式并行 | 07 Megatron-LM TP 原理  | [PPT](./07MGTPCode.pdf), [视频](https://www.bilibili.com/video/BV1yw4m1S71Y) |
-| 分布式并行 | 08 Megatron-LM TP 代码解析  | [PPT](./07MGTPCode.pdf), [视频](https://www.bilibili.com/video/BV1cy411Y7B9) |
-| 分布式并行 | 09 Megatron-LM SP 代码解析  | [PPT](./08MGSPPrinc.pdf), [视频](https://www.bilibili.com/video/BV1EM4m1r7tm) |
-| 分布式并行 | 10 Megatron-LM PP 基本原理  | [PPT](./10MGPPCode.pdf), [视频](https://www.bilibili.com/video/BV18f42197Sx) |
-| 分布式并行 | 11 流水并行 1F1B/1F1B Interleaved 原理  | [PPT](./10MGPPCode.pdf), [视频](https://www.bilibili.com/video/BV1aD421g7yZ) |
-| 分布式并行 | 12 Megatron-LM 流水并行 PP 代码解析  | [PPT](./10MGPPCode), [视频](https://www.bilibili.com/video/BV1hs421g7vN) |
+| 大纲 | 小节 | 链接| 状态 |
+|:-- |:-- |:-- |:---- |
+| 分布式并行 | 01 分布式并行框架介绍  | [PPT](./01Introduction.pdf), [视频](https://www.bilibili.com/video/BV1op421C7wp) | |
+| 分布式并行 | 02 DeepSpeed 介绍  | [PPT](./02DeepSpeed.pdf), [视频](https://www.bilibili.com/video/BV1tH4y1J7bm) | |
+|:sparkling_heart:|:star2:|:sparkling_heart:| |
+| 并行 实践 :computer: | CODE 01: 从零构建 PyTorch DDP | [Markdown](./Code01DDP.md), [Jupyter](./Code01DDP.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train01ParallelBegin/Code01DDP.html) | :white_check_mark: |
+| 并行 实践 :computer: | CODE 02: PyTorch 实现模型并行 | [Markdown](./Code02MP.md), [Jupyter](./Code02MP.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train01ParallelBegin/Code02MP.html) | :white_check_mark: |
 
 ## 备注
 

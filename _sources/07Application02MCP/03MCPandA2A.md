@@ -40,9 +40,30 @@ MCP 制定统一规范，不管是连接数据库、第三方 API，还是本地
 
 - 已经开发出的 MCP Server，因为协议是通用的，能够直接开放出来给大家使用，也大幅减少了开发者的重复劳动。
 
+以下是 MCP 与 Function Call 的对比总结：
+
+||MCP|Function Call|
+|--|---|-------------|
+|定义|模型和其它设备集成的标准接口，Tool 的函数约定了输入输出的协议规范。|将模型连接到外部数据和系统，平铺式的罗列 Tools 工具。|
+|协议|JSON-RPC，支持双向通信、可发现性|JSON-Schema，静态函数调用。|
+|调用方式|STDIO / SSE / 同进程调用|同进程调用 / 编程语言对应的函数|
+|适用场景|更适合动态、复杂的交互场景|单一特定工具、静态函数执行调用|
+|集成难度|高|简单|
+|工程程度|高|低|
+
 ### MCP Demo 演示
 
+以下演示在 Cherry Studio 客户端中进行，[下载地址](https://www.cherry-ai.com/download)
+
+![](../images/07Application02MCP/03MCPandA2A_04.png)
+
+点击右上角右上角设置，在设置页面中可以在模型服务菜单中添加模型，在 MCP 菜单中添加 MCP 服务。
+
 ## MCP 核心原理
+
+![](../images/07Application02MCP/03MCPandA2A_03.png)
+
+上图是类比于USB-C来看MCP，核心设计理念上是要成为AI的USB-C，架构上的核心组件则是 MCP server 、 MCP client 、 MCP host。下面将进行详细的介绍。
 
 ### MCP 设计理念
 

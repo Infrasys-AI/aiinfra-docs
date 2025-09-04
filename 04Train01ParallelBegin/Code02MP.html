@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="CODE02：PyTorch 实现模型并行" />
+<meta property="og:title" content="CODE 02: PyTorch 实现模型并行" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train01ParallelBegin/Code02MP.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="随着深度学习模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。 模型并行的核心思想是将单个模型的不同部分分布到不同的计算设备上，每个设备只负责计算模型的一个子集。这..." />
+<meta property="og:description" content="随着 AI 模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。 模型并行的核心思想是将单个模型的不同部分分布到不同的计算设备上，每个设备只负责计算模型的一个子集。这..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="随着深度学习模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。 模型并行的核心思想是..." />
-<meta name="description" content="随着深度学习模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。 模型并行的核心思想是将单个模型的不同部分分布到不同的计算设备上，每个设备只负责计算模型的一个子集。这..." />
+<meta property="og:image" content="/_images/social_previews/summary_04Train01ParallelBegin_Code02MP_dd6ea59e.png" />
+<meta property="og:image:alt" content="随着 AI 模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。 模型并行的核心思想是..." />
+<meta name="description" content="随着 AI 模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。 模型并行的核心思想是将单个模型的不同部分分布到不同的计算设备上，每个设备只负责计算模型的一个子集。这..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>CODE02：PyTorch 实现模型并行 &#8212; AIInfra AI基础设施</title>
+    <title>CODE 02: PyTorch 实现模型并行 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -82,11 +82,11 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="大模型并行进阶" href="../04Train02ParallelAdv/README.html" />
-    <link rel="prev" title="CODE 01:从零构建 PyTorch DDP" href="Code01DDP.html" />
+    <link rel="prev" title="CODE 01: 从零构建 PyTorch DDP" href="Code01DDP.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 04, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
 
 <link
   rel="alternate"
@@ -371,18 +371,18 @@
 <li class="toctree-l2"><a class="reference internal" href="03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04.data_parallel_implement.html">数据并行实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code01DDP.html">CODE 01:从零构建 PyTorch DDP</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE02：PyTorch 实现模型并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/07Gpipe.html">07.PP 并行：基本原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01：ZeRO 显存优化实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行与大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -540,6 +540,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -550,11 +551,22 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
 </ul>
 </details></li>
@@ -814,7 +826,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>CODE02：PyTorch 实现模型并行</h1>
+    <h1>CODE 02: PyTorch 实现模型并行</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -824,16 +836,12 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 模型并行原理</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 数学基础</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.2 设备间通信</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2. 环境设置</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3. 具体实现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">4. 完整训练</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">5. 性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">6. 总结与展望</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 模型并行原理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 环境设置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3. 具体实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4. 完整训练</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5. 性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">6. 总结与展望</a></li>
 </ul>
             </nav>
         </div>
@@ -846,30 +854,24 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="code02-pytorch">
-<h1>CODE02：PyTorch 实现模型并行<a class="headerlink" href="#code02-pytorch" title="Link to this heading">#</a></h1>
-<p>随着深度学习模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。</p>
+<section class="tex2jax_ignore mathjax_ignore" id="code-02-pytorch">
+<h1>CODE 02: PyTorch 实现模型并行<a class="headerlink" href="#code-02-pytorch" title="Link to this heading">#</a></h1>
+<p>随着 AI 模型的规模不断扩大，单个 GPU 的内存容量已经无法容纳整个模型。以 GPT-3 为例，其 1750 亿参数如果使用 FP32 精度存储，就需要 700GB 的内存空间，这远远超过了单个 GPU 的容量限制。模型并行技术通过将模型分割到多个设备上，解决了大模型训练的内存瓶颈问题。</p>
 <p>模型并行的核心思想是将单个模型的不同部分分布到不同的计算设备上，每个设备只负责计算模型的一个子集。这种方法与数据并行形成鲜明对比——在数据并行中，每个设备都有完整的模型副本，但处理不同的数据批次。</p>
 <section id="id1">
 <h2>1. 模型并行原理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<section id="id2">
-<h3>1.1 数学基础<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
 <p>从数学角度看，模型并行可以表示为将模型函数 <span class="math notranslate nohighlight">\(f(x)\)</span> 分解为多个子函数的组合：</p>
 <div class="math notranslate nohighlight">
 \[f(x) = fₙ(fₙ₋₁(...f₁(x)...))\]</div>
 <p>其中每个子函数 <span class="math notranslate nohighlight">\(fᵢ\)</span> 可以放置在不同的设备上执行。前向传播时，数据从第一个设备流向最后一个设备；反向传播时，梯度则沿着相反的方向传播。</p>
-</section>
-<section id="id3">
-<h3>1.2 设备间通信<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>模型并行的关键挑战在于设备间的通信效率。当模型被分割到多个设备上时，每个计算步骤完成后都需要将中间结果传输到下一个设备。这种通信开销可能成为性能瓶颈，特别是在使用 PCIe 等相对低速的连接时。</p>
 <p>通信量可以用以下公式估算：</p>
 <div class="math notranslate nohighlight">
 \[C = ∑(sᵢ × b) × 2\]</div>
 <p>其中 <span class="math notranslate nohighlight">\(sᵢ\)</span> 是第 <span class="math notranslate nohighlight">\(i\)</span> 层输出的尺寸，<span class="math notranslate nohighlight">\(b\)</span> 是批次大小，系数 2 表示前向和反向传播都需要通信。</p>
 </section>
-</section>
-<section id="id4">
-<h2>2. 环境设置<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h2>2. 环境设置<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <p>在开始编写代码前，我们需要确保环境正确配置。以下代码检查可用的 GPU 设备数量，这是模型并行的基础。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
@@ -891,8 +893,8 @@ document.write(`
 </div>
 <p>在实际应用中，我们通常使用 NCCL 作为分布式训练的后端，它针对 NVIDIA GPU 进行了高度优化，能够提供高效的设备间通信。</p>
 </section>
-<section id="id5">
-<h2>3. 具体实现<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<section id="id3">
+<h2>3. 具体实现<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <p>下面我们实现一个简单的模型并行网络，将网络的不同部分放在不同的设备上。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ModelParallelDemo</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dev0</span><span class="p">,</span> <span class="n">dev1</span><span class="p">):</span>
@@ -950,8 +952,8 @@ document.write(`
 </div>
 <p>这个实现展示了模型并行的核心概念：<strong>设备分配</strong>和<strong>数据传输</strong>。在前向传播过程中，数据需要在设备间移动，这是模型并行的主要开销来源。</p>
 </section>
-<section id="id6">
-<h2>4. 完整训练<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<section id="id4">
+<h2>4. 完整训练<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <p>下面我们实现一个完整的训练循环，展示如何使用模型并行网络进行训练。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">model_parallel_experiment</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;完整的模型并行训练实验&quot;&quot;&quot;</span>
@@ -993,8 +995,8 @@ document.write(`
 </pre></div>
 </div>
 </section>
-<section id="id7">
-<h2>5. 性能分析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<section id="id5">
+<h2>5. 性能分析<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">可用</span> <span class="n">GPU</span> <span class="n">数量</span><span class="p">:</span> <span class="mi">2</span>
 <span class="n">Epoch</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">0.6932</span>
 <span class="n">第一部分权重所在设备</span><span class="p">:</span> <span class="n">cuda</span><span class="p">:</span><span class="mi">0</span>
@@ -1024,8 +1026,8 @@ document.write(`
 <p>其中 <span class="math notranslate nohighlight">\(α\)</span> 是模型中可以并行化的部分比例，<span class="math notranslate nohighlight">\(n\)</span> 是设备数量。这个公式基于 Amdahl 定律，揭示了即使增加大量设备，通信开销也会限制最终的性能提升。</p>
 <p>在实际应用中，我们需要权衡模型分割的策略。过于细粒度的分割会增加通信开销，而过于粗粒度的分割则可能无法充分利用多个设备。</p>
 </section>
-<section id="id8">
-<h2>6. 总结与展望<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<section id="id6">
+<h2>6. 总结与展望<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
 <p>模型并行是训练超大神经网络的关键技术之一。通过将模型分布到多个设备上，我们能够突破单个设备的内存限制，训练之前无法实现的大型模型。</p>
 <p>然而，模型并行也引入了新的挑战，主要是设备间通信的开销。在实际应用中，需要仔细设计模型分割策略，平衡计算和通信的开销，才能获得最佳的并行效率。</p>
 </section>
@@ -1071,7 +1073,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">CODE 01:从零构建 PyTorch DDP</p>
+        <p class="prev-next-title">CODE 01: 从零构建 PyTorch DDP</p>
       </div>
     </a>
     <a class="right-next"
@@ -1099,16 +1101,12 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 模型并行原理</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 数学基础</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.2 设备间通信</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2. 环境设置</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3. 具体实现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">4. 完整训练</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">5. 性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">6. 总结与展望</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 模型并行原理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 环境设置</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3. 具体实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">4. 完整训练</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">5. 性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">6. 总结与展望</a></li>
 </ul>
   </nav></div>
 
@@ -1142,7 +1140,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 04, 2025.
+  Last updated on Sep 05, 2025.
   <br/>
 </p>
   </div>

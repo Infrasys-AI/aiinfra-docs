@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="CODE 02: Megatron 张量并行实践" />
+<meta property="og:title" content="CODE 02: Megatron 张量并行复现" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train02ParallelAdv/Code02Megatron.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是张量并行技术的典型代表，它专门针对 Transformer 架构进行了优化。 本实验将深入探讨 Megatron 风格的张量并行原理，并通过 可执行的代码实现 展示如何在 Transform..." />
+<meta property="og:description" content="在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是 TP 技术的典型代表，它专门针对 Transformer 架构进行了优化。 本实验将深入探讨 Megatron 风格的 TP 原理，并通过可执行的代码实现展示如何在 Transformer..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是张量并行技术的典型代表，它专门针对 Transformer 架构进行了优化。 本实验将深入探讨 Megatro..." />
-<meta name="description" content="在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是张量并行技术的典型代表，它专门针对 Transformer 架构进行了优化。 本实验将深入探讨 Megatron 风格的张量并行原理，并通过 可执行的代码实现 展示如何在 Transform..." />
+<meta property="og:image" content="/_images/social_previews/summary_04Train02ParallelAdv_Code02Megatron_7c12056a.png" />
+<meta property="og:image:alt" content="在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是 TP 技术的典型代表，它专门针对 Transformer 架构进行了优化。 本实验将深入探讨 Megatro..." />
+<meta name="description" content="在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是 TP 技术的典型代表，它专门针对 Transformer 架构进行了优化。 本实验将深入探讨 Megatron 风格的 TP 原理，并通过可执行的代码实现展示如何在 Transformer..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>CODE 02: Megatron 张量并行实践 &#8212; AIInfra AI基础设施</title>
+    <title>CODE 02: Megatron 张量并行复现 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -82,11 +82,11 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="CODE 03: Pipeline 并行实践" href="Code03Pipeline.html" />
-    <link rel="prev" title="CODE 01：ZeRO 显存优化实践" href="Code01ZeRO.html" />
+    <link rel="prev" title="CODE 01: ZeRO 显存优化实践" href="Code01ZeRO.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 04, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
 
 <link
   rel="alternate"
@@ -371,18 +371,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01:从零构建 PyTorch DDP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE02：PyTorch 实现模型并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型并行进阶</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01DSZero.html">分布式优化器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07Gpipe.html">07.PP 并行：基本原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code01ZeRO.html">CODE 01：ZeRO 显存优化实践</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 02: Megatron 张量并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code04Expert.html">CODE 04: 专家并行与大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -540,6 +540,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -550,11 +551,22 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
 </ul>
 </details></li>
@@ -814,7 +826,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>CODE 02: Megatron 张量并行实践</h1>
+    <h1>CODE 02: Megatron 张量并行复现</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -824,14 +836,14 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 张量并行基础原理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tp">1.  TP 基础原理</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlp-tp">2. MLP 层 TP 实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-tp">3. Attention 层 TP 实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">4. 完整并行 Transformer</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embedding">5. Embedding 层并行</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">6. 完整并行 Transformer</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">7. 实验与性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">6. 完整 Transformer 并行</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">7. 实验与性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结与思考</a></li>
 </ul>
             </nav>
         </div>
@@ -845,13 +857,13 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="code-02-megatron">
-<h1>CODE 02: Megatron 张量并行实践<a class="headerlink" href="#code-02-megatron" title="Link to this heading">#</a></h1>
-<p>在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是张量并行技术的典型代表，它专门针对 Transformer 架构进行了优化。</p>
-<p>本实验将深入探讨 Megatron 风格的张量并行原理，并通过<strong>可执行的代码实现</strong>展示如何在 Transformer 模型中应用这一技术。我们将重点关注 MLP 层和 Attention 层的并行化策略、相关通信模式。</p>
-<section id="id1">
-<h2>1. 张量并行基础原理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>张量并行的核心思想是将大型矩阵运算分解到多个设备上执行。考虑一个简单的矩阵乘法运算：<span class="math notranslate nohighlight">\(Y = XW\)</span>，其中 <span class="math notranslate nohighlight">\(X\)</span> 是输入矩阵，<span class="math notranslate nohighlight">\(W\)</span> 是权重矩阵。</p>
-<p>在张量并行中，我们将权重矩阵 <span class="math notranslate nohighlight">\(W\)</span> 按列分割为多个子矩阵：</p>
+<h1>CODE 02: Megatron 张量并行复现<a class="headerlink" href="#code-02-megatron" title="Link to this heading">#</a></h1>
+<p>在大模型训练中，张量并行（Tensor Parallelism, TP）是一种关键技术，它通过将模型的单个层或操作分布在多个设备上来解决内存限制和计算瓶颈。NVIDIA 的 Megatron-LM 框架是 TP 技术的典型代表，它专门针对 Transformer 架构进行了优化。</p>
+<p>本实验将深入探讨 Megatron 风格的 TP 原理，并通过可执行的代码实现展示如何在 Transformer 模型中应用。</p>
+<section id="tp">
+<h2>1.  TP 基础原理<a class="headerlink" href="#tp" title="Link to this heading">#</a></h2>
+<p>TP 核心思想是将大矩阵运算分解到多个设备上执行。考虑一个简单的矩阵乘法运算：<span class="math notranslate nohighlight">\(Y = XW\)</span>，其中 <span class="math notranslate nohighlight">\(X\)</span> 是输入矩阵，<span class="math notranslate nohighlight">\(W\)</span> 是权重矩阵。</p>
+<p>在 TP 中，我们将权重矩阵 <span class="math notranslate nohighlight">\(W\)</span> 按列分割为多个子矩阵：</p>
 <div class="math notranslate nohighlight">
 \[W = [W_1, W_2, ..., W_n]\]</div>
 <p>每个设备 <span class="math notranslate nohighlight">\(i\)</span> 计算部分结果：</p>
@@ -863,6 +875,7 @@ document.write(`
 <p>这种分割方式的数学表达为：</p>
 <div class="math notranslate nohighlight">
 \[Y = XW = X[W_1, W_2, ..., W_n] = [XW_1, XW_2, ..., XW_n]\]</div>
+<p><img alt="" src="../_images/Code02Megatron01.png" /></p>
 <p>对于反向传播，梯度也需要相应的分割和聚合操作。这种并行策略特别适合 Transformer 架构，因为其核心组件（MLP 和 Attention）都包含大量的矩阵运算。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
@@ -910,14 +923,14 @@ document.write(`
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">gathered</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>这些基础工具函数为张量并行提供了必要的通信原语，两者均支持自动微分，确保反向传播时梯度能正确传递。</p>
+<p>这些基础工具函数为 TP 提供了必要的通信原语，两者均支持自动微分，确保反向传播时梯度能正确传递。</p>
 </section>
 <section id="mlp-tp">
 <h2>2. MLP 层 TP 实现<a class="headerlink" href="#mlp-tp" title="Link to this heading">#</a></h2>
 <p>在 Transformer 的 MLP 层中，通常包含两个线性变换和一个激活函数：</p>
 <div class="math notranslate nohighlight">
 \[MLP(x) = Activation(xW_1 + b_1)W_2 + b_2\]</div>
-<p>张量并行将这两个线性变换分割到多个设备上，核心策略是<strong>列并行+行并行</strong>的组合，平衡计算量与通信开销：</p>
+<p>TP 将这两个线性变换分割到多个设备上，核心策略是<strong>列并行+行并行</strong>的组合，平衡计算量与通信开销：</p>
 <ol class="arabic simple">
 <li><p>第一个线性变换（<span class="math notranslate nohighlight">\(xW_1\)</span>）按列分割权重 <span class="math notranslate nohighlight">\(W_1\)</span>，每个设备计算部分输出后通过 All-Gather 聚合；</p></li>
 <li><p>第二个线性变换（<span class="math notranslate nohighlight">\(Activation(...)W_2\)</span>）按行分割权重 <span class="math notranslate nohighlight">\(W_2\)</span>，输入先通过 Reduce-Scatter 分散后再计算。</p></li>
@@ -931,7 +944,7 @@ document.write(`
         <span class="c1"># 本地权重：仅保存当前设备负责的列分片（维度：local_out_dim × in_dim）</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_out_dim</span><span class="p">,</span> <span class="n">in_dim</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">local_out_dim</span><span class="p">))</span>
-        <span class="c1"># 初始化权重（ Xavier 均匀分布）和偏置（全零）</span>
+        <span class="c1"># 初始化权重（ Xavier 均匀分布）</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">zeros_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
     
@@ -974,13 +987,17 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">gelu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
 </pre></div>
 </div>
-<p>该实现的核心优势是<strong>无计算冗余</strong>：每个设备仅计算部分矩阵乘法，通过两次通信操作（All-Gather+Reduce-Scatter）确保最终结果与单卡计算完全一致，同时将单卡内存占用降低至 <span class="math notranslate nohighlight">\(1/world_size\)</span>（忽略通信缓存）。</p>
+<p>该实现的核心优势是<strong>无计算冗余</strong>：每个设备仅计算部分矩阵乘法，通过两次通信操作（All-Gather+Reduce-Scatter）确保最终结果与单卡计算完全一致，同时将单卡内存占用降低至 <span class="math notranslate nohighlight">\(1/world_size\)</span>。</p>
+<p><img alt="" src="../_images/Code02Megatron03.png" /></p>
 </section>
 <section id="attention-tp">
 <h2>3. Attention 层 TP 实现<a class="headerlink" href="#attention-tp" title="Link to this heading">#</a></h2>
 <p>Transformer 的 Attention 层包含三个核心计算：Q（查询）、K（键）、V（值）的投影，以及 Attention 分数计算与加权求和。其数学表达为：</p>
-<p><span class="math notranslate nohighlight">\(Attention(Q, K, V) = Softmax(\frac{QK^T}{\sqrt{d_k}})V\)</span>$</p>
-<p>在张量并行中，核心策略是<strong>注意力头分片</strong>：将所有注意力头均匀分配到多个设备，每个设备仅计算部分头的 Attention 结果，最后通过输出投影层聚合。</p>
+<div class="math notranslate nohighlight">
+\[
+Attention(Q, K, V) = Softmax(\frac{QK^T}{\sqrt{d_k}})V
+\]</div>
+<p>在 TP 中，核心策略是<strong>注意力头分片</strong>：将所有注意力头均匀分配到多个设备，每个设备仅计算部分头的 Attention 结果，最后通过输出投影层聚合。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ParallelAttention</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;并行 Attention 层（注意力头分片，Q/K/V 投影列并行，输出投影行并行）&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
@@ -1022,11 +1039,12 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_proj</span><span class="p">(</span><span class="n">attn_output</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>该实现的关键设计是<strong>头级并行</strong>：每个设备仅存储部分 Q/K/V 投影权重，计算部分注意力头，避免了全量 Attention 计算的内存开销（如 12 头 Attention 用 2 卡并行，单卡仅需处理 6 个头）。</p>
+<p>该实现的关键设计是<strong>头级并行</strong>：每个设备仅存储部分 Q/K/V 投影权重，计算部分注意力头，避免了全量 Attention 计算的内存开销。</p>
+<p><img alt="" src="../_images/Code02Megatron02.png" /></p>
 </section>
 <section id="transformer">
 <h2>4. 完整并行 Transformer<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h2>
-<p>完整的 Transformer 块包含“多头注意力层+MLP 层”，并配合残差连接和层归一化。在张量并行中，层归一化需在所有设备上<strong>独立同步执行</strong>（因为层归一化的参数在设备间共享，输入均值/方差需基于全局数据计算，但本实现中因张量并行的通信已确保输入一致性，故可本地执行）。</p>
+<p>完整的 Transformer 块包含“多头注意力层+MLP 层”，并配合残差连接和层归一化。在 TP 中，层归一化需在所有设备上<strong>独立同步执行</strong>。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ParallelTransformerBlock</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;并行 Transformer 块（组合并行 Attention 与并行 MLP）&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">ffn_size</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
@@ -1049,9 +1067,9 @@ document.write(`
 </section>
 <section id="embedding">
 <h2>5. Embedding 层并行<a class="headerlink" href="#embedding" title="Link to this heading">#</a></h2>
-<p>在大型语言模型中，词汇表规模常达数万至数十万（如 GPT-3 词汇表约 5 万），导致嵌入层占用大量内存（如 5 万词×768 维=3840 万参数，约 15MB，看似不大，但多层叠加后内存压力显著）。词汇并行通过<strong>词汇表分片</strong>解决这一问题：每个设备仅保存部分词嵌入，通过掩码和 All-Gather 聚合完整结果。</p>
+<p>在大型语言模型中，词汇表规模常达数万至数十万，导致嵌入层占用大量内存。Embedding Parallel 通过<strong>词汇表分片</strong>解决这一问题：每个设备仅保存部分词嵌入，通过掩码和 All-Gather 聚合完整结果。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ParallelEmbedding</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;词汇并行嵌入层（词汇表分片存储，输入掩码后本地计算，输出 All-Gather 聚合）&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; EP（词汇表分片存储，输入掩码后本地计算，输出 All-Gather 聚合）&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="n">vocab_size</span>
@@ -1088,14 +1106,14 @@ document.write(`
 </pre></div>
 </div>
 </section>
-<section id="id2">
-<h2>6. 完整并行 Transformer<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p>将上述并行组件（词汇并行嵌入、并行 Transformer 块、并行输出层）组合，形成完整的张量并行 Transformer 模型。输出层采用列并行，确保与词汇并行嵌入的分割策略一致。</p>
+<section id="id1">
+<h2>6. 完整 Transformer 并行<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>将上述并行组件（ EP 嵌入、Transformer 并行、并行输出层）组合，形成完整的 TP。输出层采用列并行，确保与 EP 的分割策略一致。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ParallelTransformer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;完整的并行 Transformer 模型（词汇并行+张量并行）&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;完整的并行 Transformer 模型（ EP + TP ）&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">ffn_size</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">rank</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="c1"># 词汇并行嵌入层</span>
+        <span class="c1">#  EP 嵌入层</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">ParallelEmbedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
         <span class="c1"># 位置嵌入（固定长度 1024，实际应用可改为动态长度或旋转位置编码）</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pos_embed</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">))</span>
@@ -1106,7 +1124,7 @@ document.write(`
         <span class="p">])</span>
         <span class="c1"># 输出层归一化</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">)</span>
-        <span class="c1"># 输出投影层（列并行，与词汇并行嵌入匹配，输出词汇表维度）</span>
+        <span class="c1"># 输出投影层（列并行，与 EP 嵌入匹配，输出词汇表维度）</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">ColumnLinear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">rank</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">):</span>
@@ -1120,13 +1138,13 @@ document.write(`
 </pre></div>
 </div>
 </section>
-<section id="id3">
-<h2>7. 实验与性能分析<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h2>7. 实验与性能分析<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_example</span><span class="p">():</span>
     <span class="c1"># 1. 初始化分布式环境</span>
     <span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span> <span class="o">=</span> <span class="n">init_distributed</span><span class="p">()</span>
     
-    <span class="c1"># 2. 模型配置（与 BERT-Base 规模相近：12 层、768 维、12 头）</span>
+    <span class="c1"># 2. 模型配置</span>
     <span class="n">model</span> <span class="o">=</span> <span class="n">ParallelTransformer</span><span class="p">(</span>
         <span class="n">vocab_size</span><span class="o">=</span><span class="mi">30000</span><span class="p">,</span>    <span class="c1"># 词汇表大小</span>
         <span class="n">hidden_size</span><span class="o">=</span><span class="mi">768</span><span class="p">,</span>     <span class="c1"># 隐藏层维度</span>
@@ -1163,7 +1181,7 @@ document.write(`
 <span class="n">train_example</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>训练过程中，仅<code class="docutils literal notranslate"><span class="pre">rank=0</span></code>每 100 步打印损失值，模型从随机初始化的高损失逐渐下降（符合预期）：</p>
+<p>训练过程中，仅<code class="docutils literal notranslate"><span class="pre">rank=0</span></code>每 100 步打印损失值，模型从随机初始化的高损失逐渐下降：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Step</span>    <span class="mi">0</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">10.3145</span>  <span class="c1"># 初始损失≈log(30000)，符合随机初始化特性</span>
 <span class="n">Step</span>  <span class="mi">100</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">8.7652</span>  <span class="c1"># 100 步后，模型学习到基础词汇嵌入规律</span>
 <span class="n">Step</span>  <span class="mi">200</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">7.2190</span>  <span class="c1"># 损失持续下降，注意力机制开始生效</span>
@@ -1176,12 +1194,12 @@ document.write(`
 <span class="n">Step</span>  <span class="mi">900</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">1.5785</span>
 </pre></div>
 </div>
-<p>张量并行的核心优势是<strong>降低单卡内存占用</strong>。以<code class="docutils literal notranslate"><span class="pre">world_size=2</span></code>为例，对比单卡训练与 2 卡张量并行的内存峰值（模型规模：12 层、768 维、12 头）：</p>
+<p>TP 的核心优势是<strong>降低单卡内存占用</strong>。以<code class="docutils literal notranslate"><span class="pre">world_size=2</span></code>为例，对比单卡训练与 2 卡 TP 的内存峰值：</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>训练模式</p></th>
 <th class="head"><p>单卡内存占用（峰值）</p></th>
-<th class="head"><p>2 卡张量并行单卡内存占用（峰值）</p></th>
+<th class="head"><p>2 卡 TP 单卡内存占用（峰值）</p></th>
 <th class="head"><p>内存节省比例</p></th>
 </tr>
 </thead>
@@ -1191,7 +1209,7 @@ document.write(`
 <td><p>-</p></td>
 <td><p>-</p></td>
 </tr>
-<tr class="row-odd"><td><p>2 卡张量并行</p></td>
+<tr class="row-odd"><td><p>2 卡 TP</p></td>
 <td><p>-</p></td>
 <td><p>~7GB</p></td>
 <td><p>~41.7%</p></td>
@@ -1200,10 +1218,10 @@ document.write(`
 </table>
 </div>
 </section>
-<section id="id4">
-<h2>总结与思考<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
-<p>本实验通过可执行的代码深入探讨了 Megatron 风格的张量并行原理与实现，并验证了张量并行在内存节省上的有效性。</p>
-<p>列并行线性层​​：将权重矩阵按列分割，前向传播需要 All-Gather 操作；​​行并行线性层​​：将权重矩阵按行分割，前向传播需要 Reduce-Scatter 操作；​​并行 Attention​​：将注意力头分布到多个设备，每个设备处理部分头；​​词汇并行嵌入​​：将大型词汇表分割到多个设备，减少单个设备的内存压力。</p>
+<section id="id3">
+<h2>总结与思考<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>本实验通过可执行的代码深入探讨了 Megatron 风格的 TP 原理与实现，并验证了 TP 在内存节省上的有效性。</p>
+<p>列并行线性层​​：将权重矩阵按列分割，前向传播需要 All-Gather 操作；​​行并行线性层​​：将权重矩阵按行分割，前向传播需要 Reduce-Scatter 操作；​​并行 Attention​​：将注意力头分布到多个设备，每个设备处理部分头；​​ EP 嵌入​​：将大型词汇表分割到多个设备，减少单个设备的内存压力。</p>
 </section>
 </section>
 
@@ -1247,7 +1265,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">CODE 01：ZeRO 显存优化实践</p>
+        <p class="prev-next-title">CODE 01: ZeRO 显存优化实践</p>
       </div>
     </a>
     <a class="right-next"
@@ -1275,14 +1293,14 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 张量并行基础原理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tp">1.  TP 基础原理</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlp-tp">2. MLP 层 TP 实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention-tp">3. Attention 层 TP 实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">4. 完整并行 Transformer</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#embedding">5. Embedding 层并行</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">6. 完整并行 Transformer</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">7. 实验与性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">6. 完整 Transformer 并行</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">7. 实验与性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结与思考</a></li>
 </ul>
   </nav></div>
 
@@ -1316,7 +1334,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 04, 2025.
+  Last updated on Sep 05, 2025.
   <br/>
 </p>
   </div>

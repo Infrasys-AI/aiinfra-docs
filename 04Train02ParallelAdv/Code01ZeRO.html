@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="CODE 01：ZeRO 显存优化实践" />
+<meta property="og:title" content="CODE 01: ZeRO 显存优化实践" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train02ParallelAdv/Code01ZeRO.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
 <meta property="og:description" content="在大模型训练过程中，显存限制是主要瓶颈之一。微软开发的 ZeRO （Zero Redundancy Optimizer）技术通过消除数据并行中的显存冗余，显著降低了训练大模型所需的显存。本实验将深入探讨 ZeRO 的各级优化技术，通过实际代码演示和分析，理解不同级别的 ZeRO 如何实现显存优化。 1. 模型显存占用分析: 在深度学习训练中，显存主要被以下组件占用： 模型参数 （Parame..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
+<meta property="og:image" content="/_images/social_previews/summary_04Train02ParallelAdv_Code01ZeRO_93fc6239.png" />
 <meta property="og:image:alt" content="在大模型训练过程中，显存限制是主要瓶颈之一。微软开发的 ZeRO （Zero Redundancy Optimizer）技术通过消除数据并行中的显存冗余，显著降低了训练大模型所需的显存。本实验将深入探讨 ZeRO 的各级优化技术，通过实际代码演示和分析，理解不同级别的 ZeRO 如何实现显存优化。 1. 模型显存..." />
 <meta name="description" content="在大模型训练过程中，显存限制是主要瓶颈之一。微软开发的 ZeRO （Zero Redundancy Optimizer）技术通过消除数据并行中的显存冗余，显著降低了训练大模型所需的显存。本实验将深入探讨 ZeRO 的各级优化技术，通过实际代码演示和分析，理解不同级别的 ZeRO 如何实现显存优化。 1. 模型显存占用分析: 在深度学习训练中，显存主要被以下组件占用： 模型参数 （Parame..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>CODE 01：ZeRO 显存优化实践 &#8212; AIInfra AI基础设施</title>
+    <title>CODE 01: ZeRO 显存优化实践 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -74,17 +74,19 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '04Train02ParallelAdv/Code01ZeRO';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="CODE 02: Megatron 张量并行实践" href="Code02Megatron.html" />
+    <link rel="next" title="CODE 02: Megatron 张量并行复现" href="Code02Megatron.html" />
     <link rel="prev" title="PP 并行：1F1B/1F1B Interleaved" href="08PPInterleaved.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 04, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
 
 <link
   rel="alternate"
@@ -369,18 +371,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01:从零构建 PyTorch DDP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE02：PyTorch 实现模型并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型并行进阶</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01DSZero.html">分布式优化器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07Gpipe.html">07.PP 并行：基本原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 01：ZeRO 显存优化实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code02Megatron.html">CODE 02: Megatron 张量并行实践</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code04Expert.html">CODE 04: 专家并行与大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -538,6 +540,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -548,11 +551,22 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
 </ul>
 </details></li>
@@ -812,7 +826,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>CODE 01：ZeRO 显存优化实践</h1>
+    <h1>CODE 01: ZeRO 显存优化实践</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -828,7 +842,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-3">4. ZeRO-3: 参数分片</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-offload">5. Zero Offload 技术</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">6. 性能分析与实验结果</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结与思考</a></li>
 </ul>
             </nav>
         </div>
@@ -842,7 +856,7 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="code-01-zero">
-<h1>CODE 01：ZeRO 显存优化实践<a class="headerlink" href="#code-01-zero" title="Link to this heading">#</a></h1>
+<h1>CODE 01: ZeRO 显存优化实践<a class="headerlink" href="#code-01-zero" title="Link to this heading">#</a></h1>
 <p>在大模型训练过程中，显存限制是主要瓶颈之一。微软开发的<strong>ZeRO</strong>（Zero Redundancy Optimizer）技术通过消除数据并行中的显存冗余，显著降低了训练大模型所需的显存。本实验将深入探讨 ZeRO 的各级优化技术，通过实际代码演示和分析，理解不同级别的 ZeRO 如何实现显存优化。</p>
 <section id="id1">
 <h2>1. 模型显存占用分析<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
@@ -958,19 +972,20 @@ document.write(`
 <p>ZeRO-1 的核心思想是：每个 GPU 只保存一部分优化器状态，当需要更新参数时，通过集合通信操作获取完整的梯度信息。</p>
 <p>数学表达上，对于 Adam 优化器，每个 GPU 原本需要存储：</p>
 <ul class="simple">
-<li><p>参数：Θ</p></li>
-<li><p>梯度：∇Θ</p></li>
-<li><p>动量：m</p></li>
-<li><p>方差：v</p></li>
+<li><p>参数：<span class="math notranslate nohighlight">\(Θ\)</span></p></li>
+<li><p>梯度：<span class="math notranslate nohighlight">\(∇Θ\)</span></p></li>
+<li><p>动量：<span class="math notranslate nohighlight">\(m\)</span></p></li>
+<li><p>方差：<span class="math notranslate nohighlight">\(v\)</span></p></li>
 </ul>
 <p>ZeRO-1 分片后，每个 GPU 只存储：</p>
 <ul class="simple">
-<li><p>完整参数：Θ</p></li>
-<li><p>完整梯度：∇Θ</p></li>
-<li><p>1/N 的动量：m_i</p></li>
-<li><p>1/N 的方差：v_i</p></li>
+<li><p>完整参数：<span class="math notranslate nohighlight">\(Θ\)</span></p></li>
+<li><p>完整梯度：<span class="math notranslate nohighlight">\(∇Θ\)</span></p></li>
+<li><p>1/N 的动量：<span class="math notranslate nohighlight">\(m_i\)</span></p></li>
+<li><p>1/N 的方差：<span class="math notranslate nohighlight">\(v_i\)</span></p></li>
 </ul>
 <p>其中 N 是 GPU 数量。</p>
+<p><img alt="" src="../_images/Code01ZeRO01.png" /></p>
 <p>ZeRO-1 优化器状态分片</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Zero1Optimizer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;简化的 ZeRO-1 优化器实现&quot;&quot;&quot;</span>
@@ -1040,10 +1055,11 @@ document.write(`
 <section id="zero-2">
 <h2>3. ZeRO-2: 梯度分片<a class="headerlink" href="#zero-2" title="Link to this heading">#</a></h2>
 <p>ZeRO-2 在 ZeRO-1 的基础上进一步优化，不仅分片优化器状态，还分片梯度。这进一步减少了显存占用，因为梯度通常与参数大小相同。</p>
+<p><img alt="" src="../_images/Code01ZeRO02.png" /></p>
 <p>在反向传播过程中，每个 GPU 计算其分配到的参数的梯度，然后通过 Reduce-Scatter 操作聚合梯度。这样每个 GPU 只保存一部分梯度，而不是全部梯度。梯度分片的数学表达：</p>
 <ul class="simple">
-<li><p>传统方法：每个 GPU 存储完整梯度 ∇Θ</p></li>
-<li><p>ZeRO-2：每个 GPU 存储 1/N 的梯度 ∇Θ_i</p></li>
+<li><p>传统方法：每个 GPU 存储完整梯度 <span class="math notranslate nohighlight">\(∇Θ\)</span></p></li>
+<li><p>ZeRO-2：每个 GPU 存储 1/N 的梯度 <span class="math notranslate nohighlight">\(∇Θ_i\)</span></p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Zero2Optimizer</span><span class="p">(</span><span class="n">Zero1Optimizer</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;简化的 ZeRO-2 优化器实现，在 ZeRO-1 基础上增加梯度分片&quot;&quot;&quot;</span>
@@ -1104,6 +1120,7 @@ document.write(`
 <section id="zero-3">
 <h2>4. ZeRO-3: 参数分片<a class="headerlink" href="#zero-3" title="Link to this heading">#</a></h2>
 <p>ZeRO-3 是 ZeRO 系列的最终形态，它不仅分片优化器状态和梯度，还分片模型参数本身。这意味着每个 GPU 只存储模型的一小部分参数，大大降低了单个 GPU 的显存需求。</p>
+<p><img alt="" src="../_images/Code01ZeRO03.png" /></p>
 <p>ZeRO-3 的工作原理：</p>
 <ol class="arabic simple">
 <li><p>前向传播时，每个 GPU 只计算它拥有的参数部分</p></li>
@@ -1113,8 +1130,8 @@ document.write(`
 </ol>
 <p>参数分片的数学表达：</p>
 <ul class="simple">
-<li><p>传统方法：每个 GPU 存储完整参数 Θ</p></li>
-<li><p>ZeRO-3：每个 GPU 存储 1/N 的参数 Θ_i</p></li>
+<li><p>传统方法：每个 GPU 存储完整参数 <span class="math notranslate nohighlight">\(Θ\)</span></p></li>
+<li><p>ZeRO-3：每个 GPU 存储 1/N 的参数 <span class="math notranslate nohighlight">\(Θ_i\)</span></p></li>
 </ul>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Zero3Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;简化的 ZeRO-3 参数分片模型&quot;&quot;&quot;</span>
@@ -1183,6 +1200,7 @@ document.write(`
 <section id="zero-offload">
 <h2>5. Zero Offload 技术<a class="headerlink" href="#zero-offload" title="Link to this heading">#</a></h2>
 <p>Zero Offload 技术将优化器状态、梯度和参数卸载到 CPU 内存或 NVMe 存储，进一步扩展了可训练的模型规模。这种技术特别适合在有限 GPU 内存环境下训练超大模型。</p>
+<p><img alt="" src="../_images/Code01ZeRO04.png" /></p>
 <p>Offload 的核心思想是利用 CPU 内存和 NVMe 存储作为 GPU 显存的扩展，通过异步数据传输和计算重叠来最小化性能影响。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CPUOffloadOptimizer</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;简化的 CPU Offload 优化器&quot;&quot;&quot;</span>
@@ -1284,7 +1302,7 @@ document.write(`
 </div>
 </section>
 <section id="id3">
-<h2>总结<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>总结与思考<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <p>ZeRO 技术通过分片优化器状态、梯度和参数，显著降低了大模型训练的显存需求。本实验通过代码实现和原理分析，深入探讨了：</p>
 <ol class="arabic simple">
 <li><p><strong>ZeRO-1</strong>：优化器状态分片，减少约 4 倍显存占用</p></li>
@@ -1344,7 +1362,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">CODE 02: Megatron 张量并行实践</p>
+        <p class="prev-next-title">CODE 02: Megatron 张量并行复现</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1370,7 +1388,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-3">4. ZeRO-3: 参数分片</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-offload">5. Zero Offload 技术</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">6. 性能分析与实验结果</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结与思考</a></li>
 </ul>
   </nav></div>
 
@@ -1404,7 +1422,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 04, 2025.
+  Last updated on Sep 05, 2025.
   <br/>
 </p>
   </div>

@@ -169,7 +169,7 @@ lrwxrwxrwx 1 root root 0 Aug  1 12:00 uts -> uts:[4026531838]
 
 这些都是链接文件。链接文件的内容的格式为 xxx:[inode number]。其中的 xxx 为 namespace 的类型，inode number 则用来标识一个 namespace，可以理解为 namespace 的 ID。如果两个进程的某个 namespace 文件指向同一个链接文件，说明其相关资源在同一个 namespace 中。
 
-## 总结
+## 总结与思考
 
 **容器的隔离，本质就是资源的隔离**，技术上利用了 Linux 内核提供的两大特性：Namespace 负责构建“与世隔绝”的独立视图；而 Cgroups 则像一个“资源管家”，严格限制每个容器能消耗的资源配额。
 

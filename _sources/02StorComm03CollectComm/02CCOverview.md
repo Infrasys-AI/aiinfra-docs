@@ -78,7 +78,7 @@ Author by: SingularityKChen
 
 ![02CCOverview07](../images/02StorComm03CollectComm/02CCOverview07.gif)
 
-张量并行适用于模型规模特别大的场景，它将单个模型层内的大型矩阵或张量计算分割到多个设备上并行处理。计算完成后，使用集合通信原语 **AllGather** 汇总计算结果。张量并行的关键是高效切分计算任务并降低通信成本。
+张量并行适用于模型规模特别大的场景，它将单个模型层内的大矩阵或张量计算分割到多个设备上并行处理。计算完成后，使用集合通信原语 **AllGather** 汇总计算结果。张量并行的关键是高效切分计算任务并降低通信成本。
 
 #### 专家并行 Expert Parallelism
 

@@ -10,9 +10,36 @@
 
 ## 课程简介
 
-- [**《分布式并行》**](./01Parallel/)：大模型分布式并行通过数据并行、模型并行和流水线并行等策略，将计算任务分布到多个设备上，以解决单设备内存和算力不足的问题。数据并行复制模型，分发数据；模型并行分割参数；流水线并行分阶段处理。混合并行结合多种方法优化效率，同时需解决通信开销和负载均衡等挑战，提升训练速度与扩展性。
+- [**《1. 分布式并行基础》**](./01ParallelBegin/)：大模型分布式并行通过数据并行、模型并行和流水线并行等策略，将计算任务分布到多个设备上，以解决单设备内存和算力不足的问题。数据并行复制模型，分发数据；模型并行分割参数；流水线并行分阶段处理。混合并行结合多种方法优化效率，同时需解决通信开销和负载均衡等挑战，提升训练速度与扩展性。
+
+| 大纲 | 小节 | 链接| 状态 |
+|:-- |:-- |:-- |:--: |
+| 分布式并行 | 01 分布式并行框架介绍  | [PPT](./01ParallelBegin/01Introduction.pdf), [视频](https://www.bilibili.com/video/BV1op421C7wp) | |
+| 分布式并行 | 02 DeepSpeed 介绍  | [PPT](./01ParallelBegin/02DeepSpeed.pdf), [视频](https://www.bilibili.com/video/BV1tH4y1J7bm) | |
+| 并行 实践 :computer: | CODE 01: CODE 01: 从零构建 PyTorch DDP | [Markdown](./01ParallelBegin/Code01DDP.md), [Jupyter](./01ParallelBegin/Code01DDP.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train01ParallelBegin/Code01DDP.html) | :white_check_mark: |
+| 并行 实践 :computer: | CODE 02: CODE 01: PyTorch 实现模型并行 | [Markdown](./01ParallelBegin/Code02MP.md), [Jupyter](./01ParallelBegin/Code02MP.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train01ParallelBegin/Code02MP.html) | :white_check_mark: |
+
+- [**《2. 分布式并行进阶》**](./02ParallelAdv/)：大模型分布式并行通过数据并行、模型并行和流水线并行等策略，将计算任务分布到多个设备上，以解决单设备内存和算力不足的问题。数据并行复制模型，分发数据；模型并行分割参数；流水线并行分阶段处理。混合并行结合多种方法优化效率，同时需解决通信开销和负载均衡等挑战，提升训练速度与扩展性。
+
+| 大纲 | 小节 | 链接 | 状态 |
+|:-- |:-- |:-- |:--:|
+| 分布式并行 | 01 优化器并行 ZeRO1/2/3 原理  | [PPT](./02ParallelAdv/01DSZero.pdf), [视频](https://www.bilibili.com/video/BV1fb421t7KN) | |
+| 分布式并行 | 02 Megatron-LM 代码概览  | [PPT](./02ParallelAdv/02Megatron.pdf), [视频](https://www.bilibili.com/video/BV12J4m1K78y) | |
+| 分布式并行 | 03 大模型并行与 GPU 集群配置  | [PPT](./02ParallelAdv/03MGConfig.pdf), [视频](https://www.bilibili.com/video/BV1NH4y1g7w4) | |
+| 分布式并行 | 04 Megatron-LM TP 原理  | [PPT](./02ParallelAdv/04MGTPPrinc.pdf), [视频](https://www.bilibili.com/video/BV1yw4m1S71Y) | |
+| 分布式并行 | 05 Megatron-LM TP 代码解析  | [PPT](./02ParallelAdv/05MGTPCode.pdf), [视频](https://www.bilibili.com/video/BV1cy411Y7B9) | |
+| 分布式并行 | 06 Megatron-LM SP 代码解析  | [PPT](./02ParallelAdv/06MGSPPrinc.pdf), [视频](https://www.bilibili.com/video/BV1EM4m1r7tm) | |
+| 分布式并行 | 07 Megatron-LM PP 基本原理  | [PPT](./02ParallelAdv/07MGPPPrinc.pdf), [视频](https://www.bilibili.com/video/BV18f42197Sx) | |
+| 分布式并行 | 08 流水并行 1F1B/1F1B Interleaved 原理  | [PPT](./02ParallelAdv/08MGPPCode.pdf), [视频](https://www.bilibili.com/video/BV1aD421g7yZ) | |
+| 分布式并行 | 09 Megatron-LM 流水并行 PP 代码解析  | [PPT](./02ParallelAdv/08MGPPCode.pdf), [视频](https://www.bilibili.com/video/BV1hs421g7vN) | |
+|:sparkling_heart:|:star2:|:sparkling_heart:| |
+| 并行 实践 :computer: | CODE 01: ZeRO 显存优化实践 | [Markdown](./02ParallelAdv/Code01ZeRO.md), [Jupyter](./02ParallelAdv/Code01ZeRO.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train02ParallelAdv/Code01ZeRO.html) | :white_check_mark: |
+| 并行 实践 :computer: | CODE 02: Megatron 张量并行复现 | [Markdown](./02ParallelAdv/Code02Megatron.md), [Jupyter](./02ParallelAdv/Code02Megatron.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train02ParallelAdv/Code02Megatron.html) | :white_check_mark: |
+| 并行 实践 :computer: | CODE 03: Pipeline 并行实践 | [Markdown](./02ParallelAdv/Code03Pipeline.md), [Jupyter](./02ParallelAdv/Code03Pipeline.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train02ParallelAdv/Code03Pipeline.html) | :white_check_mark: |
+| 并行 实践 :computer: | CODE 04: 专家并行大规模训练 | [Markdown](./02ParallelAdv/Code04Expert.md), [Jupyter](./02ParallelAdv/Code04Expert.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train02ParallelAdv/Code04Expert.html) | :white_check_mark: |
 
 - [**《PyTorch 框架》**](./02PyTorch/)：PyTorch 在大模型时代以动态计算图为核心，提供灵活性和易用性，支持自动微分与 GPU 加速。其模块化设计便于扩展，兼容分布式训练（如 torch.distributed），助力数据、模型和流水线并行。通过 TorchScript 支持静态图部署，结合生态系统（如 Hugging Face、DeepSpeed），优化大规模模型的训练与推理效率，满足高性能需求。
+
 
 - [**《模型微调与后训练》**](./03Finetune/)：大模型微调与后训练旨在适应特定任务或领域，通过调整预训练模型参数或部分参数实现高效迁移。微调通常使用小规模标注数据，更新全量或部分参数；后训练则在大规模未标注数据上继续训练，增强泛化能力。两者均需权衡计算成本与性能，常结合技术如 LoRA、量化等优化效率，同时避免过拟合和灾难性遗忘问题。
 

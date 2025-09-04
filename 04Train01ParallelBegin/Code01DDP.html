@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="CODE 01:从零构建 PyTorch DDP" />
+<meta property="og:title" content="CODE 01: 从零构建 PyTorch DDP" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train01ParallelBegin/Code01DDP.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="随着深度学习模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。 1. DP 的基本原理: 数据并行的核心思想是将模型复制到多个设备（或进程）上，每个设备处理不同的数据集子集，然后聚合梯度..." />
+<meta property="og:description" content="随着 AI 模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。 本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。 1. DP 基本原理: 数据并行的核心思想是将模型复制到多个设备上，每个设备处理不同的数据集子集，然后聚合梯度进行参数更..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="随着深度学习模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。 1. DP 的基本原理: 数据并行的核心思..." />
-<meta name="description" content="随着深度学习模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。 1. DP 的基本原理: 数据并行的核心思想是将模型复制到多个设备（或进程）上，每个设备处理不同的数据集子集，然后聚合梯度..." />
+<meta property="og:image" content="/_images/social_previews/summary_04Train01ParallelBegin_Code01DDP_0d047ddd.png" />
+<meta property="og:image:alt" content="随着 AI 模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。 本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。 1. DP 基本原理: 数据并行的核心思..." />
+<meta name="description" content="随着 AI 模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。 本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。 1. DP 基本原理: 数据并行的核心思想是将模型复制到多个设备上，每个设备处理不同的数据集子集，然后聚合梯度进行参数更..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>CODE 01:从零构建 PyTorch DDP &#8212; AIInfra AI基础设施</title>
+    <title>CODE 01: 从零构建 PyTorch DDP &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="CODE02：PyTorch 实现模型并行" href="Code02MP.html" />
+    <link rel="next" title="CODE 02: PyTorch 实现模型并行" href="Code02MP.html" />
     <link rel="prev" title="Megatron-LM 并行策略与通信域" href="05MGConfig.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 04, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
 
 <link
   rel="alternate"
@@ -371,18 +371,18 @@
 <li class="toctree-l2"><a class="reference internal" href="03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04.data_parallel_implement.html">数据并行实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 01:从零构建 PyTorch DDP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code02MP.html">CODE02：PyTorch 实现模型并行</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/07Gpipe.html">07.PP 并行：基本原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01：ZeRO 显存优化实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行与大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -540,6 +540,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -550,11 +551,22 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
 </ul>
 </details></li>
@@ -814,7 +826,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>CODE 01:从零构建 PyTorch DDP</h1>
+    <h1>CODE 01: 从零构建 PyTorch DDP</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -824,20 +836,15 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dp">1. DP 的基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ddp">2. DDP 实验实现</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.1. 导入必要的库</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.2 创建简单数据集</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.3. 定义简单模型</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.4. 单卡训练函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.5. 分布式数据并行训练函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.6. 启动分布式训练的函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.7. 主函数与实验对比</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3. 实验结果分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4. 局限性与扩展</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5. 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dp">1. DP 基本原理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2 导入必要的库</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 创建数据集和模型</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 单卡训练函数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5. 分布式数据并行训练</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">6. 启动分布式训练函数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">7. 主函数与实验对比</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">8. 实验结果分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">9. 总结与思考</a></li>
 </ul>
             </nav>
         </div>
@@ -851,22 +858,24 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="code-01-pytorch-ddp">
-<h1>CODE 01:从零构建 PyTorch DDP<a class="headerlink" href="#code-01-pytorch-ddp" title="Link to this heading">#</a></h1>
-<p>随着深度学习模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。</p>
+<h1>CODE 01: 从零构建 PyTorch DDP<a class="headerlink" href="#code-01-pytorch-ddp" title="Link to this heading">#</a></h1>
+<p>随着 AI 模型规模的不断增长和数据集的持续扩大，单卡训练已经难以满足实际需求。分布式训练成为突破计算瓶颈的关键技术，而数据并行是其中最简单也最常用的方法。</p>
+<p>本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。</p>
 <p><img alt="" src="../_images/Code01DDP01.png" /></p>
 <section id="dp">
-<h2>1. DP 的基本原理<a class="headerlink" href="#dp" title="Link to this heading">#</a></h2>
-<p>数据并行的核心思想是将模型复制到多个设备（或进程）上，每个设备处理不同的数据集子集，然后聚合梯度进行参数更新。这种方法特别适合数据量大但模型结构相对较小的场景。</p>
+<h2>1. DP 基本原理<a class="headerlink" href="#dp" title="Link to this heading">#</a></h2>
+<p>数据并行的核心思想是将模型复制到多个设备上，每个设备处理不同的数据集子集，然后聚合梯度进行参数更新。这种方法特别适合数据量大但模型结构相对较小的场景。</p>
 <p>假设我们有 N 个 GPU 参与训练，数据并行的基本流程如下：</p>
 <ol class="arabic simple">
 <li><p>将完整数据集均匀划分为 N 个子集（每个子集大小为总样本数 <span class="math notranslate nohighlight">\(B\)</span>，其中 B 为总 batch size）</p></li>
-<li><p>在每个 GPU 上复制一份完整模型（初始参数相同）</p></li>
+<li><p>在每个 GPU 上复制一份完整模型</p></li>
 <li><p>每个 GPU 使用分配给它的数据集子集进行前向计算，得到损失</p></li>
-<li><p>计算每个 GPU 上的梯度，并将所有 GPU 的梯度进行聚合（通常是求和或平均）</p></li>
-<li><p>使用聚合后的梯度更新所有 GPU 上的模型参数（此时所有模型回到一致状态）</p></li>
+<li><p>计算每个 GPU 上的梯度，并将所有 GPU 的梯度进行聚合</p></li>
+<li><p>使用聚合后的梯度更新所有 GPU 上的模型参数</p></li>
 </ol>
 <p>从数学角度看，假设我们有一个损失函数 <span class="math notranslate nohighlight">\(L(w)\)</span>，其中 $<span class="math notranslate nohighlight">\(w\)</span> 是模型参数。在单卡训练中，我们使用梯度下降更新参数：</p>
-<p><span class="math notranslate nohighlight">\(w = w - η·∇L(w)\)</span></p>
+<div class="math notranslate nohighlight">
+\[w = w - η·∇L(w)\]</div>
 <p>其中 <span class="math notranslate nohighlight">\(η\)</span> 是学习率，<span class="math notranslate nohighlight">\(∇L(w)\)</span> 是损失函数关于参数的梯度。</p>
 <p>在数据并行中，假设我们将数据分成 K 个批次，每个设备处理一个批次。每个设备 i 计算出梯度 <span class="math notranslate nohighlight">\(g_i = ∇L_i(w)\)</span>，其中 <span class="math notranslate nohighlight">\(L_i\)</span> 是设备 <span class="math notranslate nohighlight">\(i\)</span> 上的损失。全局梯度则为所有设备梯度的平均值：</p>
 <div class="math notranslate nohighlight">
@@ -876,10 +885,8 @@ document.write(`
 \[w = w - η·g\]</div>
 <p>这种方法的优势在于可以线性扩展 batch size，理论加速比接近参与训练的设备数量。但实际中由于通信开销等因素，加速比会略低。</p>
 </section>
-<section id="ddp">
-<h2>2. DDP 实验实现<a class="headerlink" href="#ddp" title="Link to this heading">#</a></h2>
 <section id="id1">
-<h3>2.1. 导入必要的库<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<h2>2 导入必要的库<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>我们需要导入 PyTorch 的核心库以及分布式训练相关的模块：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
@@ -894,10 +901,10 @@ document.write(`
 <span class="kn">import</span> <span class="nn">time</span>
 </pre></div>
 </div>
-<p>这里我们导入 PyTorch 的核心模块（nn, optim 等）用于构建模型和优化器，分布式训练相关模块（dist, DDP, mp 等）和数据加载相关工具（Dataset, DataLoader, DistributedSampler）</p>
+<p>这里我们导入 PyTorch 的核心模块（nn, optim 等）用于构建模型和优化器，分布式训练相关模块（dist, DDP, mp 等）和数据加载相关工具（Dataset, DataLoader, DistributedSampler）。</p>
 </section>
 <section id="id2">
-<h3>2.2 创建简单数据集<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h2>3. 创建数据集和模型<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <p>为了演示，我们创建一个简单的合成数据集。假设我们要训练一个线性回归模型，数据集满足 y = 2x + 3 + 噪声的关系：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">10000</span><span class="p">):</span>
@@ -913,10 +920,7 @@ document.write(`
 </pre></div>
 </div>
 <p>这个数据集类遵循 PyTorch 的 Dataset 接口，实现了<code class="docutils literal notranslate"><span class="pre">__len__</span></code>和<code class="docutils literal notranslate"><span class="pre">__getitem__</span></code>方法，方便后续使用 DataLoader 进行数据加载。</p>
-</section>
-<section id="id3">
-<h3>2.3. 定义简单模型<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>我们定义一个简单的线性回归模型作为演示。在实际应用中，这可以是任何复杂的神经网络：</p>
+<p>我们定义一个简单的线性回归模型作为演示：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SimpleModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -926,10 +930,10 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>这个模型非常简单，只包含一个线性层，对应我们要学习的 y = wx + b 关系。</p>
+<p>这个模型非常简单，只包含一个线性层，对应 y = wx + b。</p>
 </section>
-<section id="id4">
-<h3>2.4. 单卡训练函数<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h2>4. 单卡训练函数<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <p>为了对比，我们先实现一个单卡训练的函数，作为基准：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">single_gpu_training</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;单卡训练函数，作为性能对比基准&quot;&quot;&quot;</span>
@@ -983,24 +987,14 @@ document.write(`
     <span class="k">return</span> <span class="n">total_time</span>
 </pre></div>
 </div>
-<p>单卡训练函数首先设置了核心超参数：batch size 为 32（这是深度学习中常用的批量大小，兼顾计算效率与梯度稳定性），学习率为 0.01（适合 SGD 优化器在小数据集上的收敛），训练轮数为 10（足够让线性模型收敛到接近真实值的参数）。</p>
-<p>接着，我们创建数据集和 DataLoader：SimpleDataset 生成 10000 个样本，DataLoader 负责批量加载数据，同时开启 shuffle=True 以打乱数据顺序，避免模型学习到数据的排列规律。</p>
-<p>之后是模型、损失函数与优化器的初始化：SimpleModel 实例化线性模型，nn.MSELoss () 定义均方误差损失（适合回归任务），optim.SGD 则是随机梯度下降优化器，传入模型参数和学习率。训练开始前，我们用 time.time () 记录起始时间，用于后续统计总训练时长。</p>
+<p>单卡训练函数首先设置了核心超参数：batch size 为 32，学习率为 0.01，训练轮数为 10。</p>
+<p>接着，我们创建数据集和 <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code>：<code class="docutils literal notranslate"><span class="pre">SimpleDataset</span></code> 生成 10000 个样本，<code class="docutils literal notranslate"><span class="pre">DataLoader</span></code> 负责批量加载数据，同时开启 <code class="docutils literal notranslate"><span class="pre">shuffle=True</span></code> 以打乱数据顺序，避免模型学习到数据的排列规律。</p>
+<p>之后是模型、损失函数与优化器的初始化：<code class="docutils literal notranslate"><span class="pre">SimpleModel</span></code> 实例化线性模型，<code class="docutils literal notranslate"><span class="pre">nn.MSELoss()</span></code> 定义均方误差损失（适合回归任务），<code class="docutils literal notranslate"><span class="pre">optim.SGD</span></code> 则是随机梯度下降优化器，传入模型参数和学习率。训练开始前，我们用 <code class="docutils literal notranslate"><span class="pre">time.time()</span></code> 记录起始时间，用于后续统计总训练时长。</p>
 </section>
-<section id="id5">
-<h3>2.5. 分布式数据并行训练函数<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<section id="id4">
+<h2>5. 分布式数据并行训练<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <p>接下来，我们实现分布式数据并行训练的核心函数。分布式训练需要处理进程初始化、通信等额外步骤：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">ddp_train</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">epochs</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">learning_rate</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    DDP 训练函数，将在每个进程中运行</span>
-<span class="sd">    </span>
-<span class="sd">    参数:</span>
-<span class="sd">        rank: 当前进程的编号</span>
-<span class="sd">        world_size: 总进程数</span>
-<span class="sd">        epochs: 训练轮数</span>
-<span class="sd">        batch_size: 每个进程的 batch size</span>
-<span class="sd">        learning_rate: 学习率</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># 初始化进程组，使用 NCCL 后端（适合 GPU）</span>
     <span class="c1"># 对于 CPU 训练，可以使用 gloo 后端</span>
     <span class="n">dist</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span>
@@ -1070,7 +1064,7 @@ document.write(`
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;[</span><span class="si">{</span><span class="n">epoch</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s1">] loss: </span><span class="si">{</span><span class="n">running_loss</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">100</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">running_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
     
-    <span class="c1"># 计算总训练时间（只在主进程）</span>
+    <span class="c1"># 计算总训练时间</span>
     <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">total_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;DDP 训练完成，总时间: </span><span class="si">{</span><span class="n">total_time</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">秒&#39;</span><span class="p">)</span>
@@ -1090,11 +1084,11 @@ document.write(`
 <li><p><strong>进程初始化</strong>：使用<code class="docutils literal notranslate"><span class="pre">dist.init_process_group</span></code>初始化分布式环境，每个进程有唯一的 rank 标识</p></li>
 <li><p><strong>分布式采样</strong>：<code class="docutils literal notranslate"><span class="pre">DistributedSampler</span></code>负责将数据集划分为多个子集，确保每个进程处理不同的数据</p></li>
 <li><p><strong>模型包装</strong>：使用<code class="docutils literal notranslate"><span class="pre">DDP</span></code>包装模型，这会自动处理模型复制、梯度聚合等操作</p></li>
-<li><p><strong>设备分配</strong>：每个进程使用不同的设备（GPU），数据和模型都需要移动到相应设备</p></li>
+<li><p><strong>设备分配</strong>：每个进程使用不同的 GPU，数据和模型都需要移动到相应设备</p></li>
 </ol>
 </section>
-<section id="id6">
-<h3>2.6. 启动分布式训练的函数<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<section id="id5">
+<h2>6. 启动分布式训练函数<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
 <p>我们需要一个函数来启动多个进程进行分布式训练：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">run_ddp_training</span><span class="p">(</span><span class="n">world_size</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;启动多个进程进行 DDP 训练&quot;&quot;&quot;</span>
@@ -1110,8 +1104,8 @@ document.write(`
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">mp.spawn</span></code>是 PyTorch 提供的便捷函数，用于启动多个进程。它会为每个进程分配一个唯一的 rank（从 0 开始），并调用我们定义的<code class="docutils literal notranslate"><span class="pre">ddp_train</span></code>函数。</p>
 </section>
-<section id="id7">
-<h3>2.7. 主函数与实验对比<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<section id="id6">
+<h2>7. 主函数与实验对比<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
 <p>最后，我们编写主函数来运行单卡训练和分布式训练，并对比它们的性能：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 设置随机种子，确保实验可复现</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
@@ -1166,13 +1160,12 @@ document.write(`
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;理论加速比: </span><span class="si">{</span><span class="n">single_time</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">single_time</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">world_size</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">x (实际加速比可能因通信开销略低)&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>值得注意的是，当我们增加总 batch size 时（通过使用多个 GPU），通常需要按比例增加学习率。这是因为更大的 batch size 意味着每次参数更新基于更多的样本，梯度估计更稳定，可以使用更大的学习率。</p>
+<p>值得注意的是，当我们增加总 batch size 时，通常需要按比例增加学习率。这是因为更大的 batch size 意味着每次参数更新基于更多的样本，梯度估计更稳定，可以使用更大的学习率。</p>
 </section>
-</section>
-<section id="id8">
-<h2>3. 实验结果分析<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<section id="id7">
+<h2>8. 实验结果分析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
 <p>单卡训练最终参数接近真实值（weight≈2，bias≈3），损失稳定在 0.01 左右（对应数据集的噪声水平 0.1²=0.01，符合预期）。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>可用 GPU 数量: 1
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>可用 GPU 数量: 1
 
 ===== 开始单卡训练 =====
 [1, 100] loss: 0.85623
@@ -1186,7 +1179,7 @@ linear.bias: 2.9912
 </pre></div>
 </div>
 <p>多卡 DDP 训练结果：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>===== 开始 DDP 训练 (使用 2 个 GPU，总 batch size: 64) =====
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>===== 开始 DDP 训练 (使用 2 个 GPU，总 batch size: 64) =====
 [1, 100] loss: 0.86124
 [1, 200] loss: 0.02215
 ...（中间 epoch 输出省略）
@@ -1196,24 +1189,14 @@ linear.weight: 1.9903
 linear.bias: 2.9897
 </pre></div>
 </div>
-<p>单卡训练和 DDP 训练最终都能学到接近真实值（w=2, b=3）的参数；使用 N 个 GPU 的 DDP 训练速度应该比单卡训练快约 N 倍（考虑到一些通信开销，实际加速比会略低）；两种方法的损失下降趋势应该相似，因为它们执行的是本质上相同的优化过程。</p>
+<p>单卡训练和 DDP 训练最终都能学到接近真实值（w=2, b=3）的参数；使用 N 个 GPU 的 DDP 训练速度应该比单卡训练快约 N 倍；两种方法的损失下降趋势应该相似，因为它们执行的是本质上相同的优化过程。</p>
 <p>加速比是衡量分布式训练效率的重要指标，定义为：</p>
 <p>加速比 = 单卡训练时间 / 分布式训练时间</p>
 </section>
-<section id="id9">
-<h2>4. 局限性与扩展<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
-<p>虽然数据并行是一种简单有效的分布式训练方法，但它也有一些局限性：</p>
-<ol class="arabic simple">
-<li><p>模型必须能够放入单个 GPU 内存中，因为每个 GPU 都需要保存完整模型</p></li>
-<li><p>通信开销会随着 GPU 数量增加而增大，导致加速比无法线性扩展</p></li>
-<li><p>对于非常大的模型（如一些大型语言模型），数据并行可能不再适用</p></li>
-</ol>
-<p>当模型大到无法在单个 GPU 上容纳时，我们需要采用模型并行（Model Parallelism）或更先进的混合并行策略。模型并行将模型的不同部分放置在不同 GPU 上，每个 GPU 只负责计算模型的一部分。</p>
-<p>另一种常用的方法是流水线并行（Pipeline Parallelism），它将模型分成多个阶段，每个阶段在不同 GPU 上运行，并像流水线一样处理数据，提高计算效率。</p>
-</section>
-<section id="id10">
-<h2>5. 总结与思考<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
-<p>本文通过一个简单的线性回归示例，介绍了数据并行训练的基本原理和 PyTorch DDP 的使用方法。数据并行是分布式训练中最基础也最常用的技术，掌握它对于训练大型深度学习模型至关重要。在实际应用中，还需要考虑更多细节，如学习率调整、负载均衡、故障恢复等，但本文介绍的基础原理和方法是进一步学习的重要基石。</p>
+<section id="id8">
+<h2>9. 总结与思考<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<p>本文通过一个简单的线性回归示例，介绍了数据并行训练的基本原理和 PyTorch DDP 的使用方法。数据并行是分布式训练中最基础也最常用的技术，掌握它对于训练大型 AI 模型至关重要。</p>
+<p>在实际应用中，还需要考虑更多细节，如学习率调整、负载均衡、故障恢复等，但本文介绍的基础原理和方法是进一步学习的重要基石。</p>
 </section>
 </section>
 
@@ -1265,7 +1248,7 @@ linear.bias: 2.9897
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">CODE02：PyTorch 实现模型并行</p>
+        <p class="prev-next-title">CODE 02: PyTorch 实现模型并行</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1285,20 +1268,15 @@ linear.bias: 2.9897
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dp">1. DP 的基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ddp">2. DDP 实验实现</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2.1. 导入必要的库</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.2 创建简单数据集</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.3. 定义简单模型</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.4. 单卡训练函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.5. 分布式数据并行训练函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.6. 启动分布式训练的函数</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.7. 主函数与实验对比</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3. 实验结果分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4. 局限性与扩展</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5. 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dp">1. DP 基本原理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2 导入必要的库</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. 创建数据集和模型</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">4. 单卡训练函数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">5. 分布式数据并行训练</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">6. 启动分布式训练函数</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">7. 主函数与实验对比</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">8. 实验结果分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">9. 总结与思考</a></li>
 </ul>
   </nav></div>
 
@@ -1332,7 +1310,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 04, 2025.
+  Last updated on Sep 05, 2025.
   <br/>
 </p>
   </div>

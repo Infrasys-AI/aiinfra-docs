@@ -30,10 +30,14 @@
 :maxdepth: 1
 
 01DataOverview
+02DataPreprocessing
 02DataSources
+03DataCuration
 03PreProcess
 05Pretraining
 07PostTraining
+07PostTrainingDataPrepraing
 08Prompt
+08PromptEngineering
 09Example01
 ```

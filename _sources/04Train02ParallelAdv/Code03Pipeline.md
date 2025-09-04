@@ -6,13 +6,15 @@
 
 ## 1. Pipeline 并行基础
 
-在 Pipeline 并行中，前向传播（数据从第一阶段流向最后阶段）和反向传播（梯度从最后阶段流向第一阶段）需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即**空泡现象**。
+在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即**空泡现象**。
 
 数学上，模型可表示为函数复合：$F(x) = f_n(f_{n-1}(...f_1(x)...))$，其中每个 $f_i$（模型层/层组）对应 Pipeline 的一个“阶段”，分配到不同设备上执行。
 
 ## 2. 基础 Pipeline 并行
 
 首先，我们实现一个基础的流水线并行框架，包含模型分割和简单的流水线调度。
+
+![](./../images/04Train02ParallelAdv/Code03Pipeline01.png)
 
 ```python
 import torch
@@ -21,13 +23,10 @@ import torch.nn.functional as F
 from torch.nn.parameter import Parameter
 
 def get_available_devices(max_devices=4):
-    """自动获取可用设备（优先 GPU，无则用 CPU），解决原代码设备硬编码问题"""
+    """自动获取可用设备，解决原代码设备硬编码问题"""
     devices = []
-    if torch.cuda.is_available():
-        num_cuda = torch.cuda.device_count()
-        devices = [torch.device(f"cuda:{i}") for i in range(min(num_cuda, max_devices))]
-    else:
-        devices = [torch.device("cpu")]  # 单 CPU 设备兼容
+    num_cuda = torch.cuda.device_count()
+    devices = [torch.device(f"cuda:{i}") for i in range(min(num_cuda, max_devices))]
     print(f"当前使用设备列表: {[str(dev) for dev in devices]}")
     return devices
 
@@ -67,7 +66,9 @@ class PipelineParallel(nn.Module):
 
 ## 3. 1F1B 调度策略实现
 
-1F1B(One-Forward-One-Backward)调度是一种优化的流水线并行策略，它通过交替执行前向和反向传播来减少内存使用和空泡时间。
+1F1B(One-Forward-One-Backward) 调度是一种优化的流水线并行策略，它通过交替执行前向和反向传播来减少内存使用和空泡时间。
+
+![](./../images/04Train02ParallelAdv/Code03Pipeline02.png)
 
 ```python
 class PipelineParallel1F1B(nn.Module):
@@ -82,7 +83,7 @@ class PipelineParallel1F1B(nn.Module):
         self.num_microbatches = num_microbatches  # 微批次数量
         self.num_stages = len(self.stages)  # Pipeline 阶段数
         
-        # 阶段设备分配（复用自动检测的设备列表）
+        # 阶段设备分配 
         for i, (stage, dev) in enumerate(zip(self.stages, device_ids)):
             self.stages[i] = stage.to(dev)
     
@@ -140,15 +141,15 @@ class PipelineParallel1F1B(nn.Module):
 1. 减少内存使用：不需要存储所有微批次的前向传播中间结果
 2. 降低空泡率：通过更早开始反向传播，减少设备空闲时间
 
-在实际实现中，1F1B 调度需要复杂的协调机制，确保前向和反向传播正确交替执行。上面的代码提供了一个简化的框架，实际应用需要更完整的实现。
-
 ## 4. 空泡率分析与计算
 
 空泡率是衡量流水线并行效率的重要指标，表示由于流水线填充和排空造成的计算资源浪费比例。空泡率的计算基于流水线填充和排空的时间开销。当微批次数量远大于流水线阶段数时，空泡率会降低，因为填充和排空时间相对于总计算时间的比例变小。
 
 数学上，空泡率可以表示为：
 
-空泡率 = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2) / (M + S - 1)
+$$
+Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2) / (M + S - 1)
+$$
 
 其中 S 是流水线阶段数，M 是微批次数量。
 
@@ -281,8 +282,8 @@ class ExampleModel(nn.Module):
 input_size, hidden_size, output_size = 100, 200, 10
 base_model = ExampleModel(input_size, hidden_size, output_size)
 
-# 2. 自动获取设备（假设至少 4 个设备：2 数据并行×2Pipeline 阶段）
-device_ids = [dev.index for dev in get_available_devices(max_devices=4)]  # 提取设备索引（适配 DataParallel）
+# 2. 自动获取设备
+device_ids = [dev.index for dev in get_available_devices(max_devices=4)]
 
 # 3. 调整并行配置以匹配设备数
 dp_size = 2 if len(device_ids) >= 4 else 1
@@ -327,7 +328,7 @@ def pipeline_parallel_experiment(num_epochs=5, batch_size=64):
     num_stages = len(device_ids)  # Pipeline 阶段数=设备数
     input_size, output_size = 100, 10  # 输入维度 100，输出类别 10
     
-    # 2. 构建 Pipeline 模型（动态适配设备数，避免原代码硬编码阶段数）
+    # 2. 构建 Pipeline 模型
     base_model_parts = [
         nn.Sequential(nn.Linear(100, 200), nn.ReLU()),
         nn.Sequential(nn.Linear(200, 300), nn.ReLU()),
@@ -345,7 +346,7 @@ def pipeline_parallel_experiment(num_epochs=5, batch_size=64):
     # 4. 训练循环
     print(f"\n=== 开始 Pipeline 并行训练（共{num_epochs}轮）===")
     for epoch in range(num_epochs):
-        # 模拟训练数据（标签与最后阶段设备对齐，避免设备不匹配）
+        # 模拟训练数据
         x = torch.randn(batch_size, input_size)
         y = torch.randint(0, output_size, (batch_size,), device=device_ids[-1])
         
@@ -364,7 +365,7 @@ def pipeline_parallel_experiment(num_epochs=5, batch_size=64):
         # 打印每轮训练信息
         print(f"Epoch {epoch+1:2d}/{num_epochs}, 损失值: {loss.item():.4f}")
     
-    # 5. 空泡率分析（假设使用 4 个微批次，符合建议的 M≥4S）
+    # 5. 空泡率分析
     num_microbatches = 4
     bubble_rate = calculate_bubble_rate(num_stages=num_stages, num_microbatches=num_microbatches)
     
@@ -378,9 +379,8 @@ def pipeline_parallel_experiment(num_epochs=5, batch_size=64):
     
     return losses, bubble_rate
 
-# 运行完整实验（直接执行即可）
-if __name__ == "__main__":
-    losses, bubble_rate = pipeline_parallel_experiment(num_epochs=5, batch_size=64)
+# 运行完整实验
+losses, bubble_rate = pipeline_parallel_experiment(num_epochs=5, batch_size=64)
 ```
 
 这个完整实验展示了流水线并行的实际应用，包括模型分割、训练循环和空泡率分析。在实际应用中，还需要考虑梯度同步、设备间通信优化等复杂问题。
@@ -425,8 +425,8 @@ Epoch  5/5, 损失值: 2.1326
 5. 训练结论：损失下降更快（并行加速梯度更新），空泡率可通过增加微批次降低
 ```
 
-## 总结
+## 总结与思考
 
 Pipeline 并行的核心价值在于能够训练超出单个设备内存容量的大型模型。通过将模型分割到多个设备，并采用优化的调度策略如 1F1B，可以显著提高训练效率。空泡率作为衡量 Pipeline 效率的重要指标，可以通过增加微批次数量来降低。
 
-混合并行结合了数据并行、Pipeline 并行和张量并行的优势，是现代大模型训练的主流方法。实际系统中，如 DeepSpeed 和 Megatron-LM，实现了复杂的混合并行策略，支持千亿参数模型的训练。
+混合并行结合了数据并行、Pipeline 并行和张量并行的优势，是大模型训练的主流方法。

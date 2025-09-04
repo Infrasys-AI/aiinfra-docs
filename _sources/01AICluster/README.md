@@ -18,6 +18,13 @@
 
 - [**04 集群性能分析**](./04Performance/)：本系列将系统讲解​​集群性能的全方位分析与优化实践​​，涵盖以下核心内容：从硬件资源、模型效率、利用率到业务指标的集群性能评估；基于 TOP500 和 MLPerf 的算力计算方法；网络通信带宽与线性度的量化分析；大模型训练/推理的内存需求测算；MFU（模型浮点运算利用率）的评估；以及能效与成本扩展计算，构建从基础指标到成本控制的完整性能优化体系。
 
+| 大纲 | 小节 | 链接 | 状态 |
+|:--- |:---- |:-------------------- |:---- |
+|:sparkling_heart:|:star2:|:sparkling_heart:| |
+| 性能 实践 :computer: | CODE 01: 拆解 Transformer-Decoder | [Markdown](./04Performance/CODE01Modeling.md), [Jupyter](./04Performance/CODE01Modeling.md), [文章](https://infrasys-ai.github.io/aiinfra-docs/01AICluster04Performance/CODE01Modeling.html) | :white_check_mark: |
+| 性能 实践 :computer: | CODE 02: MOE 参数量和计算量 | [Markdown](./04Performance/CODE02MOE.md), [Jupyter](./04Performance/CODE02MOE.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/01AICluster04Performance/CODE02MOE.html) | :white_check_mark: |
+| 性能 实践 :computer: | CODE 03: MFU 模型利用率评估 | [Markdown](./04Performance/CODE03MFU.md), [Jupyter](./04Performance/CODE03MFU.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/01AICluster04Performance/CODE03MFU.html) | :white_check_mark: |
+
 ## 课程知识
 
 ![AIInfra](./../images/01AICluster/arch02.png)

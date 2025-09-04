@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train02ParallelAdv/Code03Pipeline.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播（数据从第一阶段流向最后阶段）和反向传播（梯度从最后阶段流向第一阶段）需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函数复合： F(x) ..." />
+<meta property="og:description" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函数复合： F(x) = f_n(f_{n-1}(...f_1(x)...)) ，..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播（数据从第一阶段流向最后阶段）和反向传播（梯度从最后阶段流向第一阶段）需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段..." />
-<meta name="description" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播（数据从第一阶段流向最后阶段）和反向传播（梯度从最后阶段流向第一阶段）需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函数复合： F(x) ..." />
+<meta property="og:image" content="/_images/social_previews/summary_04Train02ParallelAdv_Code03Pipeline_28adb20d.png" />
+<meta property="og:image:alt" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函..." />
+<meta name="description" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函数复合： F(x) = f_n(f_{n-1}(...f_1(x)...)) ，..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>CODE 03: Pipeline 并行实践 &#8212; AIInfra AI基础设施</title>
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="CODE 04: 专家并行与大规模训练" href="Code04Expert.html" />
-    <link rel="prev" title="CODE 02: Megatron 张量并行实践" href="Code02Megatron.html" />
+    <link rel="next" title="CODE 04: 专家并行大规模训练" href="Code04Expert.html" />
+    <link rel="prev" title="CODE 02: Megatron 张量并行复现" href="Code02Megatron.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 04, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
 
 <link
   rel="alternate"
@@ -371,18 +371,18 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01:从零构建 PyTorch DDP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE02：PyTorch 实现模型并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型并行进阶</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01DSZero.html">分布式优化器</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07Gpipe.html">07.PP 并行：基本原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code01ZeRO.html">CODE 01：ZeRO 显存优化实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code02Megatron.html">CODE 02: Megatron 张量并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code04Expert.html">CODE 04: 专家并行与大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -540,6 +540,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -550,11 +551,22 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
 </ul>
 </details></li>
@@ -830,7 +842,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4. 空泡率分析与计算</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5. 混合并行策略</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6. 完整实验与性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结与思考</a></li>
 </ul>
             </nav>
         </div>
@@ -848,25 +860,23 @@ document.write(`
 <p>本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。</p>
 <section id="pipeline">
 <h2>1. Pipeline 并行基础<a class="headerlink" href="#pipeline" title="Link to this heading">#</a></h2>
-<p>在 Pipeline 并行中，前向传播（数据从第一阶段流向最后阶段）和反向传播（梯度从最后阶段流向第一阶段）需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即<strong>空泡现象</strong>。</p>
+<p>在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即<strong>空泡现象</strong>。</p>
 <p>数学上，模型可表示为函数复合：<span class="math notranslate nohighlight">\(F(x) = f_n(f_{n-1}(...f_1(x)...))\)</span>，其中每个 <span class="math notranslate nohighlight">\(f_i\)</span>（模型层/层组）对应 Pipeline 的一个“阶段”，分配到不同设备上执行。</p>
 </section>
 <section id="id1">
 <h2>2. 基础 Pipeline 并行<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>首先，我们实现一个基础的流水线并行框架，包含模型分割和简单的流水线调度。</p>
+<p><img alt="" src="../_images/Code03Pipeline01.png" /></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">from</span> <span class="nn">torch.nn.parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
 
 <span class="k">def</span> <span class="nf">get_available_devices</span><span class="p">(</span><span class="n">max_devices</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;自动获取可用设备（优先 GPU，无则用 CPU），解决原代码设备硬编码问题&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;自动获取可用设备，解决原代码设备硬编码问题&quot;&quot;&quot;</span>
     <span class="n">devices</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
-        <span class="n">num_cuda</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
-        <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">num_cuda</span><span class="p">,</span> <span class="n">max_devices</span><span class="p">))]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)]</span>  <span class="c1"># 单 CPU 设备兼容</span>
+    <span class="n">num_cuda</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">num_cuda</span><span class="p">,</span> <span class="n">max_devices</span><span class="p">))]</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;当前使用设备列表: </span><span class="si">{</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">dev</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">devices</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">devices</span>
 
@@ -906,7 +916,8 @@ document.write(`
 </section>
 <section id="f1b">
 <h2>3. 1F1B 调度策略实现<a class="headerlink" href="#f1b" title="Link to this heading">#</a></h2>
-<p>1F1B(One-Forward-One-Backward)调度是一种优化的流水线并行策略，它通过交替执行前向和反向传播来减少内存使用和空泡时间。</p>
+<p>1F1B(One-Forward-One-Backward) 调度是一种优化的流水线并行策略，它通过交替执行前向和反向传播来减少内存使用和空泡时间。</p>
+<p><img alt="" src="../_images/Code03Pipeline02.png" /></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PipelineParallel1F1B</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    1F1B 调度策略的 Pipeline 并行</span>
@@ -919,7 +930,7 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span> <span class="o">=</span> <span class="n">num_microbatches</span>  <span class="c1"># 微批次数量</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">)</span>  <span class="c1"># Pipeline 阶段数</span>
         
-        <span class="c1"># 阶段设备分配（复用自动检测的设备列表）</span>
+        <span class="c1"># 阶段设备分配 </span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
     
@@ -977,13 +988,15 @@ document.write(`
 <li><p>减少内存使用：不需要存储所有微批次的前向传播中间结果</p></li>
 <li><p>降低空泡率：通过更早开始反向传播，减少设备空闲时间</p></li>
 </ol>
-<p>在实际实现中，1F1B 调度需要复杂的协调机制，确保前向和反向传播正确交替执行。上面的代码提供了一个简化的框架，实际应用需要更完整的实现。</p>
 </section>
 <section id="id2">
 <h2>4. 空泡率分析与计算<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <p>空泡率是衡量流水线并行效率的重要指标，表示由于流水线填充和排空造成的计算资源浪费比例。空泡率的计算基于流水线填充和排空的时间开销。当微批次数量远大于流水线阶段数时，空泡率会降低，因为填充和排空时间相对于总计算时间的比例变小。</p>
 <p>数学上，空泡率可以表示为：</p>
-<p>空泡率 = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2) / (M + S - 1)</p>
+<div class="math notranslate nohighlight">
+\[
+Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2) / (M + S - 1)
+\]</div>
 <p>其中 S 是流水线阶段数，M 是微批次数量。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_bubble_rate</span><span class="p">(</span><span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1111,8 +1124,8 @@ document.write(`
 <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span>
 <span class="n">base_model</span> <span class="o">=</span> <span class="n">ExampleModel</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
 
-<span class="c1"># 2. 自动获取设备（假设至少 4 个设备：2 数据并行×2Pipeline 阶段）</span>
-<span class="n">device_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">get_available_devices</span><span class="p">(</span><span class="n">max_devices</span><span class="o">=</span><span class="mi">4</span><span class="p">)]</span>  <span class="c1"># 提取设备索引（适配 DataParallel）</span>
+<span class="c1"># 2. 自动获取设备</span>
+<span class="n">device_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">get_available_devices</span><span class="p">(</span><span class="n">max_devices</span><span class="o">=</span><span class="mi">4</span><span class="p">)]</span>
 
 <span class="c1"># 3. 调整并行配置以匹配设备数</span>
 <span class="n">dp_size</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="k">else</span> <span class="mi">1</span>
@@ -1155,7 +1168,7 @@ document.write(`
     <span class="n">num_stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span>  <span class="c1"># Pipeline 阶段数=设备数</span>
     <span class="n">input_size</span><span class="p">,</span> <span class="n">output_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span>  <span class="c1"># 输入维度 100，输出类别 10</span>
     
-    <span class="c1"># 2. 构建 Pipeline 模型（动态适配设备数，避免原代码硬编码阶段数）</span>
+    <span class="c1"># 2. 构建 Pipeline 模型</span>
     <span class="n">base_model_parts</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()),</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">300</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()),</span>
@@ -1173,7 +1186,7 @@ document.write(`
     <span class="c1"># 4. 训练循环</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 开始 Pipeline 并行训练（共</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">轮）===&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
-        <span class="c1"># 模拟训练数据（标签与最后阶段设备对齐，避免设备不匹配）</span>
+        <span class="c1"># 模拟训练数据</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">output_size</span><span class="p">,</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">device_ids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         
@@ -1192,7 +1205,7 @@ document.write(`
         <span class="c1"># 打印每轮训练信息</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">, 损失值: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     
-    <span class="c1"># 5. 空泡率分析（假设使用 4 个微批次，符合建议的 M≥4S）</span>
+    <span class="c1"># 5. 空泡率分析</span>
     <span class="n">num_microbatches</span> <span class="o">=</span> <span class="mi">4</span>
     <span class="n">bubble_rate</span> <span class="o">=</span> <span class="n">calculate_bubble_rate</span><span class="p">(</span><span class="n">num_stages</span><span class="o">=</span><span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="o">=</span><span class="n">num_microbatches</span><span class="p">)</span>
     
@@ -1206,9 +1219,8 @@ document.write(`
     
     <span class="k">return</span> <span class="n">losses</span><span class="p">,</span> <span class="n">bubble_rate</span>
 
-<span class="c1"># 运行完整实验（直接执行即可）</span>
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">losses</span><span class="p">,</span> <span class="n">bubble_rate</span> <span class="o">=</span> <span class="n">pipeline_parallel_experiment</span><span class="p">(</span><span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
+<span class="c1"># 运行完整实验</span>
+<span class="n">losses</span><span class="p">,</span> <span class="n">bubble_rate</span> <span class="o">=</span> <span class="n">pipeline_parallel_experiment</span><span class="p">(</span><span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>这个完整实验展示了流水线并行的实际应用，包括模型分割、训练循环和空泡率分析。在实际应用中，还需要考虑梯度同步、设备间通信优化等复杂问题。</p>
@@ -1250,9 +1262,9 @@ Epoch  5/5, 损失值: 2.1326
 </div>
 </section>
 <section id="id5">
-<h2>总结<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<h2>总结与思考<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
 <p>Pipeline 并行的核心价值在于能够训练超出单个设备内存容量的大型模型。通过将模型分割到多个设备，并采用优化的调度策略如 1F1B，可以显著提高训练效率。空泡率作为衡量 Pipeline 效率的重要指标，可以通过增加微批次数量来降低。</p>
-<p>混合并行结合了数据并行、Pipeline 并行和张量并行的优势，是现代大模型训练的主流方法。实际系统中，如 DeepSpeed 和 Megatron-LM，实现了复杂的混合并行策略，支持千亿参数模型的训练。</p>
+<p>混合并行结合了数据并行、Pipeline 并行和张量并行的优势，是大模型训练的主流方法。</p>
 </section>
 </section>
 
@@ -1296,7 +1308,7 @@ Epoch  5/5, 损失值: 2.1326
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">CODE 02: Megatron 张量并行实践</p>
+        <p class="prev-next-title">CODE 02: Megatron 张量并行复现</p>
       </div>
     </a>
     <a class="right-next"
@@ -1304,7 +1316,7 @@ Epoch  5/5, 损失值: 2.1326
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">CODE 04: 专家并行与大规模训练</p>
+        <p class="prev-next-title">CODE 04: 专家并行大规模训练</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1330,7 +1342,7 @@ Epoch  5/5, 损失值: 2.1326
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4. 空泡率分析与计算</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5. 混合并行策略</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6. 完整实验与性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结与思考</a></li>
 </ul>
   </nav></div>
 
@@ -1364,7 +1376,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 04, 2025.
+  Last updated on Sep 05, 2025.
   <br/>
 </p>
   </div>
