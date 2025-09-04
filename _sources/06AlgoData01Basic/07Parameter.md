@@ -1,9 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 大模型参数设置
+# 07.大模型参数设置
 
-解读 by: [XXXX]
-
+Author by:  XXXX
 欢迎您贡献技术文章和技术原理解读哦
 
 XXX

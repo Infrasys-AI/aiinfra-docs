@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 手把手实现核心机制 Sinusoidal 编码(DONE)
+# CODE04:实现 Sinusoidal 编码(DONE)
 
 Author by: lwh & ZOMI
 

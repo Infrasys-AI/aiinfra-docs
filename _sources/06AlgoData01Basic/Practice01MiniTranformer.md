@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra  )版权许可-->
 
-# 搭建迷你 Transformer(DONE)
+# CODE01:迷你 Transformer(DONE)
 
 Author by: lwh & ZOMI
 

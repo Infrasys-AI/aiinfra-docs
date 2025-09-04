@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# MOE 前世今生(DONE)
+# 02.MOE 前世今生(DONE)
 
 Author by: 张晓天
 
@@ -112,9 +112,9 @@ MoE 的核心差异在于 **门控函数（Gating/Router）如何选择专家**�
 
 ![Moe 前世今生](../images/06AlgoData02MoE/02MOEHistory_04.png)
 
-稠密 MoE 的核心特征为**全专家激活**，对每个输入 token，门控网络生成所有专家的权重 $G(x) \in \mathbb{R}^N$。优势是保留所有专家信息，无需处理负载均衡问题，适合需要细粒度融合的任务（如多模态），但劣势是计算成本随专家数量线性增长 $O(N)$，难以扩展。稠密混合专家 MoE 模型广泛用在 EvoMoE、MoLE、LoRAMoE 和 DS-MoE 等研究。
+稠密 MoE 的核心特征为**全专家激活**，对每个输入 token，门控网络生成所有专家的权重 $G(x) \in \mathbb{R}^N$。优势是保留所有专家信息，无需处理负载均衡问题，适合需要细粒度融合的任务（如多模态），但劣势是计算成本随专家数量线性增长 $O(N)$，难以扩展。稠密 MoE 模型广泛用在 EvoMoE、MoLE、LoRAMoE 和 DS-MoE 等研究。
 
-稀疏 MoE 的核心特征为条件计算，仅激活 **Top-K 专家**（通常 $K=1$ 或 $2$），其余专家权重置零。存在的问题是门控网络可能偏向少数专家，导致其他专家未被充分训练，需要通过负载均衡来解决，还需要添加可学习噪声（Noisy Top-K Gating）防止路由坍缩。稀疏混合专家 MoE 模型常见的有 Switch Transformer、GShard 和 DeepSeekMoE 等研究。
+稀疏 MoE 的核心特征为条件计算，仅激活 **Top-K 专家**（通常 $K=1$ 或 $2$），其余专家权重置零。存在的问题是门控网络可能偏向少数专家，导致其他专家未被充分训练，需要通过负载均衡来解决，还需要添加可学习噪声（Noisy Top-K Gating）防止路由坍缩。稀疏 MoE 模型常见的有 Switch Transformer、GShard 和 DeepSeekMoE 等研究。
 
 软 MoE 的核心特征为专家特征混合，不显式选择专家，而是将输入 token 与专家特征加权融合。优点是完全可微，适合端到端训练，避免路由离散性带来的梯度估计问题。劣势为计算成本与稠密 MoE 相当，专家专业化程度较低。典型的研究有 Soft MoE、Expert Choice Routing 等。
 

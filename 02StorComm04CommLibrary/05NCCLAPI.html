@@ -1,0 +1,1340 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="NCCL API 解读" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="02StorComm04CommLibrary/05NCCLAPI.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。 NCCL 基本概念: NCCL 是一个通信库，为高性能应用程序提供优化的 GP..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/None" />
+<meta property="og:image:alt" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。..." />
+<meta name="description" content="Author by: 刘军 当前使用英伟达 GPU 训练大模型时，PyTorch 等 AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。 NCCL 基本概念: NCCL 是一个通信库，为高性能应用程序提供优化的 GP..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>NCCL API 解读 &#8212; AIInfra AI基础设施</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=17a93d66" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '02StorComm04CommLibrary/05NCCLAPI';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="AI 集群存储之路" href="../02StorComm05StorforAI/README.html" />
+    <link rel="prev" title="NCCL 基本介绍" href="04NCCLIntro.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Sep 04, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AIInfra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 未来发展趋势</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">03.HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">02.L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">01.服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">02.AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">03.AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">04.液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">05.AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">06.AI 集群供配电系统</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">05.NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">06.NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">07.NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">08.XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">10.十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">04.集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">01.HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">01.AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/01Introduction.html">01.AI 集群网络基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/02HPCDeepDive.html">02.HPC 网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/03AIDeepDive.html">03.AI 集群网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/04AINetwork.html">04.AI 集群网络基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/05PlaneDivision.html">05.AI 集群网络平面划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/06Summary.html">06.万卡集群组网思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">集合通信库</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04NCCLIntro.html">NCCL 基本介绍</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">NCCL API 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">K8S 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">K8S 容器持网络</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01:从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE02：PyTorch 实现模型并行</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/07Gpipe.html">07.PP 并行：基本原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01：ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行与大规模训练</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/07MLA.html">07.内存优化：MLA 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/08Checkpoint.html">08.内存优化：梯度检查点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/09HybridPrecision.html">09.混合精度：FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/10Domino.html">10.通算融合：DS Domino 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/11FLUX.html">11.通算融合：FLUX 计算通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code01FlashAtten.html">CODE 01: Flash Attention 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code04KTransformer.html">CODE 04: KTransformers 核心实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">01.Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">02.大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">01.MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2014.html">01.2012-2014 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2015.html">02.2015 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2016.html">03.2016 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2017.html">04.2017 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2018.html">05.2018 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2019.html">06.2019 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2020.html">07.2020 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2021.html">08.2021 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2022.html">09.2022 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2023.html">10.2023 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2024.html">11.2024 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/History.html">12.历史 AI 大事件</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/02StorComm04CommLibrary/05NCCLAPI.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F02StorComm04CommLibrary/05NCCLAPI.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/02StorComm04CommLibrary/05NCCLAPI.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>NCCL API 解读</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nccl">NCCL 基本概念</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#communicator">Communicator 的生命周期</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling 错误处理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fault-tolerance">Fault Tolerance 容错</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#collective-operations">集合通信 Collective Operations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclallreduce">全局归约 (ncclAllReduce)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclbroadcast-ncclbcast">广播 (ncclBroadcast / ncclBcast)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclreduce">归约 (ncclReduce)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclallgather">全收集 (ncclAllGather)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclreducescatter">归约散播 (ncclReduceScatter)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">NCCL 组操作原理解析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclgroupstart">组操作开始 (<code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclgroupend">组操作结束 (<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclgroupsimulateend">组操作模拟 (<code class="docutils literal notranslate"><span class="pre">ncclGroupSimulateEnd</span></code>)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#point-to-point">点对点通信 Point-to-point</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclsend">数据发送 (<code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclrecv">数据接收 (<code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">内容参考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">本节视频</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<section class="tex2jax_ignore mathjax_ignore" id="nccl-api">
+<h1>NCCL API 解读<a class="headerlink" href="#nccl-api" title="Link to this heading">#</a></h1>
+<p>Author by: 刘军</p>
+<p>当前使用英伟达 GPU 训练大模型时，PyTorch 等  AI 框架都集成了 NCCL，本节主要介绍如何使用 NCCL 的 API。本节将从六个方面来讲解 NCCL 的相关 API，具体包括 Communicator 生命周期、错误处理和终止、通信容错、集合通信、组间调用和点对点通信。</p>
+<section id="nccl">
+<h2>NCCL 基本概念<a class="headerlink" href="#nccl" title="Link to this heading">#</a></h2>
+<p>NCCL 是一个通信库，为高性能应用程序提供优化的 GPU 与 GPU 通信。与 MPI 不同，它不提供包含进程启动器和管理器的并行环境。CPU、GPU/NPU 作为最基本的物理设备，再往上是 PCIe、CXL、RoCE 等链路层，然后使用 Ring 或者 Tree 进行拓扑组网，在一定拓扑的基础上有负责数据传输的通信库，集合通信库 NCCL，HCCL 会向上提供通信相关 API，相关 API 会集成在相关分布式加速库或者 AI 框架中。</p>
+<p><img alt="high-bandwidth-NVLink-connections" src="../_images/05NCCLAPI01.png" /></p>
+<p>NCCL 在通信方面发挥着重要的作用：</p>
+<ul class="simple">
+<li><p>1 NCCL 可以在多个 GPU 间进行通信，同时 NCCL 支持与 CUDA 流（Streams）集成，实现异步通信和并行计算；</p></li>
+<li><p>2 在分布式计算中，同步（Synchronization）是至关重要，NCCL 提供各种同步原语，比如使用 barrier 同步，以确保进程在执行集合通信时保持一致的状态；</p></li>
+<li><p>3 完成通信的性能优化（Performance Optimization），提供集体通信合并、数据传输批量处理、信道拆分、数据拆分、通信与计算并行等优化的方式；</p></li>
+<li><p>4 NCCL 支持多种集合通信操作（Collective Operations），可以在多个 GPU 或节点间进行数据同步和合并。包括广播（Broadcast）、规约（Reduction）、聚合（Aggregation）、AllReduce、AllGather 等；</p></li>
+<li><p>5 NCCL 中进程 表示参与通信的计算节点，进程可以组织成组 ，以便在组内进行集合通信；</p></li>
+<li><p>6 通信者（Communicators）指定参与通信的进程组和具体的通信操作，其定义了一组能够互相发消息的进程，进程中每个进程会被分配一个序号，称作 Rank，进程间显性地通过指定 Rank 来进行通信。</p></li>
+</ul>
+<p>更多详细内容可以参考相关开源实现（<a class="github reference external" href="https://github.com/NVIDIA/nccl">NVIDIA/nccl</a>）。</p>
+</section>
+<section id="communicator">
+<h2>Communicator 的生命周期<a class="headerlink" href="#communicator" title="Link to this heading">#</a></h2>
+<p>创建单个 Communicator 时需要先使用 <code class="docutils literal notranslate"><span class="pre">ncclUniqueId</span></code> 为每个 CUDA 设备指定一个 unique rank，然后可以创建 communicator 对象，每个 comminutor 关联固定的 Rank。</p>
+<p>同时在创建过程中，使用 <code class="docutils literal notranslate"><span class="pre">ncclGetUniqueId()</span></code> 创建 unique ID，通过广播的方式发送给所有相关线程和进程，Unique ID 被所有进程和线程共享，让他们进行同步。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclCommInitAll</span><span class="p">(</span><span class="n">ncclComm_t</span><span class="o">*</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">ndev</span><span class="p">,</span><span class="w"> </span><span class="n">constint</span><span class="o">*</span><span class="w"> </span><span class="n">devlist</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="c1">//为每个 CUDA 设备指定一个 unique rank</span>
+<span class="w">    </span><span class="n">ncclUniqueId</span><span class="w"> </span><span class="n">Id</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">//创建 uniqueId，广播给所有相关线程和进程</span>
+<span class="w">    </span><span class="n">ncclGetUniqueId</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Id</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ncclGroupStart</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ndev</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cudaSetDevice</span><span class="p">(</span><span class="n">devlist</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="w">        </span><span class="c1">//创建 communicator 对象，每个 comminutor 关联固定的 rank</span>
+<span class="w">        </span><span class="c1">//uniqueId 被所有进程和线程共享，让它们进行同步</span>
+<span class="w">        </span><span class="n">ncclCommInitRank</span><span class="p">(</span><span class="n">comm</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">ndev</span><span class="p">,</span><span class="w"> </span><span class="n">Id</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="n">ncclGroupEnd</span><span class="p">();</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>同时也支持创建多个 Communicator，使用 ncclCommSplit 对已有 Communicator 进行划分，将其划分成多个 sub-partitions。也可以通过 <code class="docutils literal notranslate"><span class="pre">ncclCommCount</span></code> 复制一个现有的 Communicator，创建一个拥有更少的 ranks 的单个 communitor。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">rank</span><span class="p">;</span>
+<span class="n">ncclCommUserRank</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rank</span><span class="p">);</span>
+<span class="n">ncclCommSplit</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">newcomm</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>也可以将 Communicator 分成两个：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="n">nranks</span><span class="p">;</span>
+<span class="n">ncclCommUserRank</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rank</span><span class="p">);</span>
+<span class="n">ncclCommCount</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nranks</span><span class="p">);</span>
+<span class="n">ncclCommSplit</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="o">/</span><span class="p">(</span><span class="n">nranks</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">rank</span><span class="o">%</span><span class="p">(</span><span class="n">nranks</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">newcomm</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>函数需要原始 communicator 中所有 ranks 一起调用，即便是某些 rank 将不再是这个 communicator 一部分，也需要将 color 参数设置为 <code class="docutils literal notranslate"><span class="pre">NCCL_SPLIT_NOCOLOR</span></code> 来调用。这将创建一个仅具有前 2 个等级的通信器：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="n">rank</span><span class="p">;</span>
+<span class="n">ncclCommUserRank</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rank</span><span class="p">);</span>
+<span class="n">ncclCommSplit</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="w"> </span><span class="n">NCCL_SPLIT_NOCOLOR</span><span class="p">,</span><span class="w"> </span><span class="n">rank</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">newcomm</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>需要注意的是，在使用多个 NCCL Communicator 时需要注意同步，否则会造成死锁。NCCL kernel 会因为等待数据到来而阻塞，在此期间任何 CUDA 操作都会导致设备同步，意味着需要等待所有的 NCCL kernel 完成。NCCL kernel 在等待数据到来期间如果有任何 CUDA operation 进入了队列就会导致死锁，因为 NCCL 也会执行 CUDA 调用，而 NCCL 的 CUDA 调用会进入队列中等待前一个 CUDA 操作执行完毕。</p>
+<p>在完成通信之后，<code class="docutils literal notranslate"><span class="pre">ncclCommFinalize</span></code> 会把一个 communicator 从 <code class="docutils literal notranslate"><span class="pre">ncclSuccess</span></code> 状态转变为 <code class="docutils literal notranslate"><span class="pre">ncclInProgress</span></code> 状态，开始完成 background 中的各种操作并与其他 ranks 之间进行同步。</p>
+<p><code class="docutils literal notranslate"><span class="pre">ncclCommFinalize</span></code>会将所有未完成的操作以及与该 communicator 所属的网络相关的资源会被 flushed 并被释放掉。一旦所有的 NCCL 操作都完成了，communicator 会将状态转换成 ncclSuccess，可以通过 <code class="docutils literal notranslate"><span class="pre">ncclCommGetAsyncError</span></code>来查询状态。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclCommFinalize</span><span class="p">(</span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>一个 Communicator 被 Finalize 之后，下一步就是释放掉它所拥有的全部资源，包括它自己也会被释放。<code class="docutils literal notranslate"><span class="pre">ncclCommDestroy</span></code>函数会释放掉一个 Communicator 的本地所属资源。</p>
+<p>调用 <code class="docutils literal notranslate"><span class="pre">ncclCommDestroy</span></code> 时候如果对应的 Communicator 的状态是 ncclSuccess，那么可以保证这个调用是非阻塞，否则这个调用可能会被阻塞。会释放掉一个 Communicator 的所有资源然后返回，对应的 Communicator 也不能再被使用。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclCommDestroy</span><span class="p">(</span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="error-handling">
+<h2>Error handling 错误处理<a class="headerlink" href="#error-handling" title="Link to this heading">#</a></h2>
+<p>在实际通信过程中，往往要处理很多错误告警，NCCL 也提供了相关 API，很多其它通信库也专门针对 error 进行了相关定制化场景的处理，本小节主要讲解 NCCL 如何处理相关 error。</p>
+<p>所有的 NCCL 调用都会返回一个 NCCL 错误码（error code），如果某个 NCCL 调用返回的 error code 不是 ncclSuccess 或者 ncclInternalError，并且 NCCL_DEBUG 设置为 WARN，NCCL 会打印出 human-readable 的信息来解释内部发生了什么导致该错误的发生。如果 NCCL_DEBUG 设置为 INFO，NCCL 也会打印出导致该错误的调用栈，以便帮助用户定位和修复问题。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">int</span><span class="w"> </span><span class="nf">ncclStreamSynchronize</span><span class="p">(</span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">,</span><span class="w"> </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">cudaError_t</span><span class="w"> </span><span class="n">cudaErr</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclErr</span><span class="p">,</span><span class="w"> </span><span class="n">ncclAsyncErr</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">cudaErr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cudaStreamQuery</span><span class="p">(</span><span class="n">stream</span><span class="p">);</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cudaErr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cudaSuccess</span><span class="p">)</span>
+<span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cudaErr</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">cudaErrorNotReady</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;CUDA Error : cudaStreamQuery returned %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">cudaErr</span><span class="p">);</span>
+<span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="n">ncclErr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncclCommGetAsyncError</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ncclAsyncErr</span><span class="p">);</span>
+
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ncclErr</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ncclSuccess</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;NCCL Error : ncclCommGetAsyncError returned %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ncclErr</span><span class="p">);</span>
+<span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ncclAsyncErr</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ncclSuccess</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">     </span><span class="c1">// An asynchronous error happened. Stop the operation and destroy</span>
+<span class="w">     </span><span class="c1">// the communicator</span>
+<span class="w">     </span><span class="n">ncclErr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ncclCommAbort</span><span class="p">(</span><span class="n">comm</span><span class="p">);</span>
+
+<span class="w">     </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ncclErr</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ncclSuccess</span><span class="p">)</span>
+<span class="w">       </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;NCCL Error : ncclCommDestroy returned %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ncclErr</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Caller may abort or try to create a new communicator.</span>
+<span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<span class="w">   </span><span class="p">}</span>
+
+<span class="w">   </span><span class="c1">// We might want to let other threads (including NCCL threads) use the CPU.</span>
+<span class="w">   </span><span class="n">sched_yield</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="fault-tolerance">
+<h2>Fault Tolerance 容错<a class="headerlink" href="#fault-tolerance" title="Link to this heading">#</a></h2>
+<p>NCC 提供了许多特性来让我们的应用从严重的错误中恢复到正常，比如网络连接失败、节点宕机以及进程挂掉等。当这样的错误发生的时候，应用应该能够调用 <code class="docutils literal notranslate"><span class="pre">ncclCommAbort</span></code> 方法来释放相应的 <code class="docutils literal notranslate"><span class="pre">communicator</span></code> 的资源，然后创建一个新的 communicator 继续之前的任务。为了保证 <code class="docutils literal notranslate"><span class="pre">ncclCommAbout</span></code> 能够在任何时间点被调用，所有的 NCCL 调用都可以是非阻塞（异步）的操作。</p>
+<p>为了正确的弃用，当一个 communicator 中任何一个 rank 出错了的时候，所有其他的 rank 都需要调用 <code class="docutils literal notranslate"><span class="pre">ncclCommAbort</span></code> 来启用它们自己的 NCCL communicator。用户可以实现方法来决定什么时候以及是否弃用这些 communicator 并重新开始当前的 NCCL 操作。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="n">globalFlag</span><span class="p">;</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">abortFlag</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+<span class="n">ncclConfig_t</span><span class="w"> </span><span class="n">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">NCCL_CONFIG_INITIALIZER</span><span class="p">;</span>
+
+<span class="cm">/* set communicator as nonblocking */</span>
+<span class="n">config</span><span class="p">.</span><span class="n">blocking</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">CHECK</span><span class="p">(</span><span class="n">ncclCommInitRankConfig</span><span class="p">(</span><span class="o">&amp;</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">nRanks</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">,</span><span class="w"> </span><span class="n">myRank</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">config</span><span class="p">));</span>
+
+<span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">CHECK</span><span class="p">(</span><span class="n">ncclCommGetAsyncError</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="o">&amp;</span><span class="n">state</span><span class="p">));</span>
+<span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="p">(</span><span class="n">state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ncclInProgress</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">checkTimeout</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">checkTimeout</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ncclSuccess</span><span class="p">)</span><span class="w"> </span><span class="n">abortFlag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="cm">/* sync abortFlag among all healthy ranks. */</span>
+<span class="n">reportErrorGlobally</span><span class="p">(</span><span class="n">abortFlag</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">globalFlag</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">globalFlag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="cm">/* time is out or initialization failed: every rank needs to abort and restart. */</span>
+<span class="w">  </span><span class="n">ncclCommAbort</span><span class="p">(</span><span class="n">comm</span><span class="p">);</span>
+<span class="w">  </span><span class="cm">/* restart NCCL; this is a user implemented function, it might include</span>
+<span class="cm">   * resource cleanup and ncclCommInitRankConfig() to create new communicators. */</span>
+<span class="w">  </span><span class="n">restartNCCL</span><span class="p">(</span><span class="o">&amp;</span><span class="n">comm</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* nonblocking communicator split. */</span>
+<span class="n">CHECK</span><span class="p">(</span><span class="n">ncclCommSplit</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">color</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">childComm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">config</span><span class="p">));</span>
+
+<span class="k">do</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">CHECK</span><span class="p">(</span><span class="n">ncclCommGetAsyncError</span><span class="p">(</span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">state</span><span class="p">));</span>
+<span class="p">}</span><span class="w"> </span><span class="k">while</span><span class="p">(</span><span class="n">state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ncclInProgress</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">checkTimeout</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">checkTimeout</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">true</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ncclSuccess</span><span class="p">)</span><span class="w"> </span><span class="n">abortFlag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+
+<span class="cm">/* sync abortFlag among all healthy ranks. */</span>
+<span class="n">reportErrorGlobally</span><span class="p">(</span><span class="n">abortFlag</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">globalFlag</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">globalFlag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">ncclCommAbort</span><span class="p">(</span><span class="n">comm</span><span class="p">);</span>
+<span class="w">  </span><span class="cm">/* if chilComm is not NCCL_COMM_NULL, user should abort child communicator</span>
+<span class="cm">   * here as well for resource reclamation. */</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">childComm</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">NCCL_COMM_NULL</span><span class="p">)</span><span class="w"> </span>
+<span class="w">    </span><span class="n">ncclCommAbort</span><span class="p">(</span><span class="n">childComm</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">restartNCCL</span><span class="p">(</span><span class="o">&amp;</span><span class="n">comm</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cm">/* application workload */</span>
+</pre></div>
+</div>
+</section>
+<section id="collective-operations">
+<h2>集合通信 Collective Operations<a class="headerlink" href="#collective-operations" title="Link to this heading">#</a></h2>
+<p>集体操作（Collective Operation）需要被每个 rank 都调用，从而形成一次集体的操作。如果失败的话可能会导致其他 rank 陷入无尽的等待。可以参考 NCCL 官方文档提供的相关 API，NCCL 的集合通信函数是分布式训练的核心。<code class="docutils literal notranslate"><span class="pre">AllReduce</span></code>实现全局同步，<code class="docutils literal notranslate"><span class="pre">Broadcast</span></code>用于数据分发，<code class="docutils literal notranslate"><span class="pre">Reduce</span></code>实现中心化聚合，<code class="docutils literal notranslate"><span class="pre">AllGather</span></code>汇聚所有数据，<code class="docutils literal notranslate"><span class="pre">ReduceScatter</span></code>则融合归约与块分发。</p>
+<p>理解其语义和原位操作条件，是构建高效多 GPU 应用的基础。开发者需根据同步需求（全局同步/中心收集/数据分发）和显存布局选择合适的原语。在分布式深度学习训练中，多 GPU 间高效的数据同步至关重要。NVIDIA 的 NCCL 库为此提供了高性能的集合通信原语，接下来解析其核心函数。</p>
+<section id="ncclallreduce">
+<h3>全局归约 (ncclAllReduce)<a class="headerlink" href="#ncclallreduce" title="Link to this heading">#</a></h3>
+<p>所有参与 GPU 将各自 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据，使用指定操作（如求和 <code class="docutils literal notranslate"><span class="pre">ncclSum</span></code>）进行<strong>全局归约</strong>，并将<strong>最终相同的结果</strong>复制到各自的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。可以实现高效的全局同步（如梯度汇总），当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span></code> 时触发。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclAllReduce</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span><span class="w"> </span>
+<span class="w">            </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span>
+<span class="w">            </span><span class="n">ncclRedOp_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</section>
+<section id="ncclbroadcast-ncclbcast">
+<h3>广播 (ncclBroadcast / ncclBcast)<a class="headerlink" href="#ncclbroadcast-ncclbcast" title="Link to this heading">#</a></h3>
+<p>由指定的 <code class="docutils literal notranslate"><span class="pre">root</span></code> GPU 将其 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据<strong>完整复制</strong>到所有 GPU（包括自身）的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。 用于分发初始数据（如模型权重）。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclBroadcast</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span>
+<span class="w">        </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclBcast</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">buff</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="ncclreduce">
+<h3>归约 (ncclReduce)<a class="headerlink" href="#ncclreduce" title="Link to this heading">#</a></h3>
+<p>所有 GPU 将各自 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>中的数据，使用指定操作进行<strong>归约</strong>，但<strong>仅将最终结果</strong>存放到指定 <code class="docutils literal notranslate"><span class="pre">root</span></code> GPU 的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中，其他 GPU 的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>被忽略。中心化收集计算结果。当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span></code> 时触发（仅在 root 上有意义）。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclReduce</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="n">ncclRedOp_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="ncclallgather">
+<h3>全收集 (ncclAllGather)<a class="headerlink" href="#ncclallgather" title="Link to this heading">#</a></h3>
+<p>每个 GPU 提供长度为 <code class="docutils literal notranslate"><span class="pre">sendcount</span></code>的数据块。所有 GPU 将这些块<strong>按 GPU 序号拼接</strong>成一个完整的大数据块（总长度 = <code class="docutils literal notranslate"><span class="pre">GPU</span> <span class="pre">数量</span> <span class="pre">*</span> <span class="pre">sendcount</span></code>），并将这个<strong>完整拼接结果</strong>存放到各自的 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。 汇聚所有 GPU 的局部数据（如收集嵌入向量）。当 <code class="docutils literal notranslate"><span class="pre">sendbuff</span> <span class="pre">==</span> <span class="pre">recvbuff</span> <span class="pre">+</span> <span class="pre">rank</span> <span class="pre">*</span> <span class="pre">sendcount</span></code> 时触发（需严格满足内存偏移）。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclAllGather</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">sendcount</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="ncclreducescatter">
+<h3>归约散播 (ncclReduceScatter)<a class="headerlink" href="#ncclreducescatter" title="Link to this heading">#</a></h3>
+<p>每个 GPU 提供一个<strong>大输入数组</strong> <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>（长度 = <code class="docutils literal notranslate"><span class="pre">GPU</span> <span class="pre">数量</span> <span class="pre">*</span> <span class="pre">recvcount</span></code>）。首先按元素位置对所有 GPU 的 <code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>进行<strong>归约</strong>（例如，所有 GPU 的第 0 个 <code class="docutils literal notranslate"><span class="pre">recvcount</span></code>块归约在一起，第 1 个块归约在一起...），然后每个 GPU<strong>只接收</strong>归约后结果中对应于自己序号的那一块（长度为 <code class="docutils literal notranslate"><span class="pre">recvcount</span></code>），存放到 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>中。融合归约与数据分发，常见于模型并行。当 recvbuff == sendbuff + rank * recvcount 时触发（需严格满足内存偏移）。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span>
+<span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclReduceScatter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">recvbuff</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">recvcount</span><span class="p">,</span><span class="w"> </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span>
+<span class="w">        </span><span class="n">ncclRedOp_t</span><span class="w"> </span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w"> </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>在使用相关 API 时需要注意以下几点要求：</p>
+<p>1.多数函数支持输入输出缓冲区重叠（<code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>和 <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>指向相同或特定偏移的内存），节省显存但需严格满足条件。</p>
+<p>2.所有操作均关联 <code class="docutils literal notranslate"><span class="pre">cudaStream_t</span></code>，确保与 CUDA 内核执行的正确同步。</p>
+<p>3.调用者需确保缓冲区（<code class="docutils literal notranslate"><span class="pre">sendbuff</span></code>, <code class="docutils literal notranslate"><span class="pre">recvbuff</span></code>）已正确分配且在 GPU 显存上。</p>
+<p>4.<code class="docutils literal notranslate"><span class="pre">AllGather</span></code>和 <code class="docutils literal notranslate"><span class="pre">ReduceScatter</span></code>对输入/输出缓冲区大小有明确要求（<code class="docutils literal notranslate"><span class="pre">nranks</span> <span class="pre">*</span> <span class="pre">sendcount/recvcount</span></code>），需严格遵守。</p>
+</section>
+</section>
+<section id="id1">
+<h2>NCCL 组操作原理解析<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>在并行计算中，CPU 线程阻塞会严重影响效率，NCCL 的<strong>组操作原语</strong> (<code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code>/<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code>) 提供了关键的非阻塞协作机制，组函数可以将多个调用合并成一个，其核心功能在于：</p>
+<p>+<strong>消除 CPU 阻塞</strong>：将多个 NCCL 调用（如集合通信或通信器初始化）封装在组操作内，可避免操作间的 CPU 线程同步等待。</p>
+<p>+<strong>支持多线程并发</strong>：不同线程可独立发起各自的组操作，无需互斥锁保护，显著提升多线程程序的并行效率。</p>
+<section id="ncclgroupstart">
+<h3>组操作开始 (<code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code>)<a class="headerlink" href="#ncclgroupstart" title="Link to this heading">#</a></h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclGroupStart</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>标记组操作的起始点。调用后，<strong>后续所有 NCCL 函数调用</strong>（如 <code class="docutils literal notranslate"><span class="pre">ncclAllReduce</span></code>, <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code> 等）将：</p>
+<p>-<strong>延迟执行</strong>：仅记录操作，不立即提交到硬件。</p>
+<p>-<strong>跳过 CPU 同步</strong>：避免操作间不必要的线程阻塞。</p>
+</section>
+<section id="ncclgroupend">
+<h3>组操作结束 (<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code>)<a class="headerlink" href="#ncclgroupend" title="Link to this heading">#</a></h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclGroupEnd</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>标记组操作的结束点，触发组内操作提交。</p>
+<p>-<strong>批量提交</strong>：将组内累积的所有操作<strong>一次性提交</strong>到对应的 CUDA 流 (<code class="docutils literal notranslate"><span class="pre">stream</span></code>)。</p>
+<p>-<strong>非阻塞返回</strong>：函数返回仅表示操作<strong>已加入 CUDA 流队列</strong>，<strong>不保证完成</strong>。</p>
+<p>-<strong>通信器初始化特例</strong>：当组内包含 <code class="docutils literal notranslate"><span class="pre">ncclCommInitRank</span></code> 时，<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code><strong>会阻塞等待</strong>所有通信器完成初始化。</p>
+</section>
+<section id="ncclgroupsimulateend">
+<h3>组操作模拟 (<code class="docutils literal notranslate"><span class="pre">ncclGroupSimulateEnd</span></code>)<a class="headerlink" href="#ncclgroupsimulateend" title="Link to this heading">#</a></h3>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclGroupSimulateEnd</span><span class="p">(</span><span class="n">ncclSimInfo_t</span><span class="w"> </span><span class="o">*</span><span class="n">simInfo</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>模拟</strong>执行组操作，预测通信性能特征。将模拟结果（如算法选择、预期耗时等）写入 <code class="docutils literal notranslate"><span class="pre">simInfo</span></code> 结构体。</p>
+<p>-<strong>无实际执行</strong>：不进行真实的数据传输。</p>
+<p>-<strong>性能预分析</strong>：用于优化策略选择或资源预估。</p>
+<p>典型的工作流程如下，可以避免频繁的 CPU-GPU 同步，释放 CPU 线程处理其他任务。将多个独立操作合并提交，减少启动开销。不同线程可安全调用独立组操作，简化并发设计。结合 ncclCommInitRank 实现多通信器高效创建。通过 ncclGroupSimulateEnd 预判通信成本，优化算法选择。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclGroupStart</span><span class="p">();</span><span class="w">          </span><span class="c1">// 开始组操作</span>
+<span class="n">ncclAllReduce</span><span class="p">(...,</span><span class="w"> </span><span class="n">stream1</span><span class="p">);</span><span class="w"> </span><span class="c1">// 操作 1：加入组 (不阻塞)</span>
+<span class="n">ncclBroadcast</span><span class="p">(...,</span><span class="w"> </span><span class="n">stream2</span><span class="p">);</span><span class="w"> </span><span class="c1">// 操作 2：加入组 (不阻塞)</span>
+<span class="n">ncclGroupEnd</span><span class="p">();</span><span class="w">            </span><span class="c1">// 提交组内所有操作到流</span>
+<span class="c1">// 此处操作已加入流队列，但 GPU 可能仍在执行</span>
+</pre></div>
+</div>
+<p>需要注意的是 <code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code><strong>必须成对调用</strong>。同时 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code> 返回<strong>不保证</strong>操作完成，需通过 CUDA 事件或流查询同步。组操作仅作用于<strong>当前线程</strong>的 NCCL 调用，<code class="docutils literal notranslate"><span class="pre">ncclGroupSimulateEnd</span></code> 不影响真实通信状态。</p>
+<p>NCCL 组操作原语是构建高效异步程序的关键工具。通过将操作封装在 <code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code> 和 <code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code> 之间，开发者可消除冗余的 CPU 阻塞，实现多操作批量提交与多线程安全调用。配合模拟功能，还能在部署前预判通信性能，为分布式训练提供底层优化支撑。</p>
+</section>
+</section>
+<section id="point-to-point">
+<h2>点对点通信 Point-to-point<a class="headerlink" href="#point-to-point" title="Link to this heading">#</a></h2>
+<p>在复杂分布式计算场景中，当 GPU 间需要<strong>非对称数据交换</strong>（如参数服务器、图计算等），NCCL 的点对点通信（P2P）提供了灵活的数据传输能力。与集合通信不同，P2P 支持任意两个 GPU 间的定向数据流动。NCCL 的点对点通信主要有 <code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>和 <code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>，然后由此组成 One-to-all、All-to-one、All-to-all、Neighbor exchange。</p>
+<section id="ncclsend">
+<h3>数据发送 (<code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>)<a class="headerlink" href="#ncclsend" title="Link to this heading">#</a></h3>
+<p>将当前 GPU 中 sendbuff 内的 count 个元素发送给指定 peer GPU。在使用该函数时，目标 GPU <strong>必须同步调用</strong> <code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>，且 <code class="docutils literal notranslate"><span class="pre">count</span></code>和 <code class="docutils literal notranslate"><span class="pre">datatype</span></code>参数需完全一致。在数据被完全发送前，GPU 执行流会阻塞（不阻塞 CPU 线程）,sendbuff 需位于 GPU 显存，且发送期间内容不可修改。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="n">ncclSend</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">sendbuff</span><span class="p">,</span><span class="w">  </span><span class="c1">// 发送数据地址</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w">          </span><span class="c1">// 数据元素数量</span>
+<span class="w">    </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="c1">// 数据类型 (如 ncclFloat)</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">peer</span><span class="p">,</span><span class="w">              </span><span class="c1">// 目标 GPU 的通信序号</span>
+<span class="w">    </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w">       </span><span class="c1">// 通信器对象</span>
+<span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="w">    </span><span class="c1">// 关联的 CUDA 流</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="ncclrecv">
+<h3>数据接收 (<code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>)<a class="headerlink" href="#ncclrecv" title="Link to this heading">#</a></h3>
+<p>从指定 peer GPU 接收 count 个元素，存储到当前 GPU 的 recvbuff。参数必须与发送端的 ncclSend 完全匹配（相同 peer、count、datatype）。在数据完全到达前，GPU 执行流暂停。recvbuff 需预先分配足够显存，接收完成前不可访问。</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">ncclResult_t</span><span class="w"> </span><span class="nf">ncclRecv</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">recvbuff</span><span class="p">,</span><span class="w">        </span><span class="c1">// 接收数据地址</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="p">,</span><span class="w">          </span><span class="c1">// 数据元素数量</span>
+<span class="w">    </span><span class="n">ncclDataType_t</span><span class="w"> </span><span class="n">datatype</span><span class="p">,</span><span class="w"> </span><span class="c1">// 数据类型</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">peer</span><span class="p">,</span><span class="w">              </span><span class="c1">// 源 GPU 的通信序号</span>
+<span class="w">    </span><span class="n">ncclComm_t</span><span class="w"> </span><span class="n">comm</span><span class="p">,</span><span class="w">       </span><span class="c1">// 通信器对象</span>
+<span class="w">    </span><span class="n">cudaStream_t</span><span class="w"> </span><span class="n">stream</span><span class="w">    </span><span class="c1">// 关联的 CUDA 流</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p>NCCL 点对点通信突破了集合通信的对称性限制，为非常规数据流提供了底层支持。通过 <code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>/<code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>的精确配对和组操作封装，开发者可实现高效的定向数据传输。需要始终警惕参数匹配、死锁规避和 GPU 阻塞三大核心问题，结合拓扑感知与流并行化技术，充分发挥多 GPU 系统的通信潜力。</p>
+</section>
+</section>
+<section id="id2">
+<h2>总结与思考<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>NCCL 是一个通信库，为高性能应用程序提供优化的 GPU 与 GPU 通信。NCCL 向开发者提供了集合通信、组操作、点对点通信等相关 API，同时支持错误处理和容错机制，使通信更加高效，同时在使用相关 API 的同时需要遵守相关 API 的规范，以此发挥 NCCL GPU 集群的通信潜力。</p>
+</section>
+<section id="id3">
+<h2>内容参考<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>NCCL 官方文档（<a class="reference external" href="https://docs.nvidia.com/deeplearning/nccl/">https://docs.nvidia.com/deeplearning/nccl/</a>）</p>
+</section>
+<section id="id4">
+<h2>本节视频<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<html>
+<iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=113080130339806&bvid=BV1BnpPesE5B&cid=25740314429&p=1" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+</html>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./02StorComm04CommLibrary"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="04NCCLIntro.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">NCCL 基本介绍</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../02StorComm05StorforAI/README.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">AI 集群存储之路</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#nccl">NCCL 基本概念</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#communicator">Communicator 的生命周期</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#error-handling">Error handling 错误处理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fault-tolerance">Fault Tolerance 容错</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#collective-operations">集合通信 Collective Operations</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclallreduce">全局归约 (ncclAllReduce)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclbroadcast-ncclbcast">广播 (ncclBroadcast / ncclBcast)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclreduce">归约 (ncclReduce)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclallgather">全收集 (ncclAllGather)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclreducescatter">归约散播 (ncclReduceScatter)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">NCCL 组操作原理解析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclgroupstart">组操作开始 (<code class="docutils literal notranslate"><span class="pre">ncclGroupStart</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclgroupend">组操作结束 (<code class="docutils literal notranslate"><span class="pre">ncclGroupEnd</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclgroupsimulateend">组操作模拟 (<code class="docutils literal notranslate"><span class="pre">ncclGroupSimulateEnd</span></code>)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#point-to-point">点对点通信 Point-to-point</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclsend">数据发送 (<code class="docutils literal notranslate"><span class="pre">ncclSend</span></code>)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ncclrecv">数据接收 (<code class="docutils literal notranslate"><span class="pre">ncclRecv</span></code>)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">内容参考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">本节视频</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ZOMI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Sep 04, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

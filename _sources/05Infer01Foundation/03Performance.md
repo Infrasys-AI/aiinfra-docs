@@ -11,7 +11,7 @@ Author by：杨小珑
 
 - Latency 延迟
 
-在大语言模型领域延迟 Latency 指标衡量从请求提交到获得响应所需的时间，对于实时交互式应用至关重要。关于 Latency 延迟相关的指标，又可以细化分为：首 Token 生成时间/延迟（Time to First Token, TTFT）、逐个 Token 生成时间/延迟（Time Per Output Token, TPOT）、端到端请求时间/延迟（End-to-End Request Latency）。接下来逐个介绍他们的定义。
+在 LLM 领域延迟 Latency 指标衡量从请求提交到获得响应所需的时间，对于实时交互式应用至关重要。关于 Latency 延迟相关的指标，又可以细化分为：首 Token 生成时间/延迟（Time to First Token, TTFT）、逐个 Token 生成时间/延迟（Time Per Output Token, TPOT）、端到端请求时间/延迟（End-to-End Request Latency）。接下来逐个介绍他们的定义。
 
 **首 Token 生成时间/延迟（Time to First Token, TTFT）：** TTFT 衡量的是从用户提交查询到接收到第一个输出 Token 所需的时间。这包括了整个初始处理流程，如请求排队时间、预填充 Prefill 阶段以及任何网络延迟 。TTFT 对于对话式 AI 等实时交互应用至关重要。低的 TTFT 能确保响应迅速的用户体验，因为它决定了用户感知模型开始生成输出的速度。
 

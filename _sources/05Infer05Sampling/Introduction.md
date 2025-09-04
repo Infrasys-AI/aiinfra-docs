@@ -1,5 +1,5 @@
   1. 输出采样基础 1（随机采样、贪婪采样、束搜索采样 beam search）
-  2. 输出采样基础 2（Top-k 采样、 Top-p 采样、温度采样、Self-Consistency、联合采样）
+  2. 输出采样基础 2（Top-k 采样、 Top-P 采样、温度采样、Self-Consistency、联合采样）
   3. 采样加速 1：投机采样（Speculative Decoding、Medusa、EAGLE1、EAGLE2）
   4. 采样加速 2：并行采样（Multi-Token Prediction、Lookahead Decoding）
   5. 采样加速 3：早退 Early exiting 与级联推理 Cascade inference

@@ -27,4 +27,7 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+Code01Precision
+Code02Quant
+Code03Distiallation
 ```

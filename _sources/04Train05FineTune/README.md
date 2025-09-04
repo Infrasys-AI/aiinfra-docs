@@ -32,4 +32,6 @@ xxx
 05LoRA Variants
 06Selective算法：Unstructural Masking
 07Selective算法：Structural Masking
+Code01DataRealtion
+Code02SDLoRA
 ```

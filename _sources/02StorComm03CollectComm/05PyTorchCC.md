@@ -64,7 +64,7 @@ Author by: SingularityKChen
 
 PyTorch 的分布式能力位于 `torch.distributed`
 - 向上提供 **P2P** 与 **Collective** 两类 API
-  - Point-2-Point Communication：提供 send 和recv 语义，用于任务间通信；
+  - Point-2-Point Communication：提供 send 和 recv 语义，用于任务间通信；
   - Collective Communication：提供 scatter/broadcast/gather/reduce/all reduce/all gather 通信操作；
 - 向下通过 **ProcessGroup** 适配 **NCCL / HCCL / Gloo / MPI** 等后端
   - 如下图所示，`distributed.py`依赖于 `reducer.h` 和 `comm.h` 相关 API 的封装，其基于 `ProcessGroup.hpp`的 NCCL/GLOO/MPI/HCCL 等后端通信库实现。

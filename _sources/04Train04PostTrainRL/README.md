@@ -27,6 +27,9 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+Code01InstructGPT
+Code02DPOPPO
+Code03GRPO
 DAPO
 GRPO
 GSPO

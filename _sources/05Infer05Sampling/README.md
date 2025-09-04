@@ -27,5 +27,8 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+Code01Speculative
+Code02MinP
+Code03Affect
 Introduction
 ```

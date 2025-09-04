@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 08.数据处理：Prompt工程
+# 08.数据处理：Prompt 工程
 
 Author by: 潘江
 

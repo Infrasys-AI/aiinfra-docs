@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# MoE 从原理到分布式实现(DONE)
+# CODE03:MoE 从原理到分布式实现(DONE)
 
 Author by: ZOMI
 

@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 深入注意力机制 MHA、MQA、GQA、MLA(DONE)
+# CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)
 
 本实验将从头实现标准的多头注意力（MHA），并在此基础上，逐步实现其三种重要的变体：**MQA**、**GQA** 和 **MLA**。通过对比它们的代码差异和性能指标，我们将深入理解它们的设计动机和优劣。
 

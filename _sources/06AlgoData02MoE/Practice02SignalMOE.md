@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 从零开始手撕 MoE(DONE)
+# CODE02:从零开始手撕 MoE(DONE)
 
 Author by: ZOMI
 

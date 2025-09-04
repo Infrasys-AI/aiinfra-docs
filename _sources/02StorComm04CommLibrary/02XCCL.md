@@ -146,15 +146,15 @@ TCCL（Tencent Collective Communication Library）是针对腾讯云星脉网络
 
 腾讯自研星脉高性能计算网络支持单集群 10 万卡组网，规模翻倍网络通信效率提升 60%，让大模型训练效率提升 20%。集合通信库 TCCL2.0 采用 NVLINK+NET 异构并行通信，相当于为 GPU 新建了一条网络通道，以实现数据的并行传输。通信性能提升 30%，让大模型的训练效率再提升 10%。TCCL 主要特性包括双网口动态聚合优化，端网协同自研协议栈，发挥 GPU 性能极限。全局哈希路由（Global Hash Routing），实现负载均衡从而避免拥塞。同时支持拓扑亲和组网，流量调度监控，最小化流量绕行，自研交换机和可编程 RDMA 拥塞控制算法。
 
-图6（a）中蓝色线的性能上限表示，在1 Gbit/s 通信量下 AllReduce 的集合通信带宽的理论上限（单机8 个网卡带宽之和，即200 Gbit/s）。在相同条件下，TCCL 几乎达到该理论极限，较NCCL 提升了22%。对于64 MB 及以上的通信量，采用异构通信优化的TCCL 始终优于NCCL，性能提升幅度为9%～25%。然而，当通信量小于64 MB 时，TCCL 与 NCCL 性能相近。这是因为此时性能受限于通信网络时延，所有的数据都会优先通过NVLink 网络传输（NVLink 的传输时延为200 ns，远小于RoCE 的传输时延2 μs）。这意味着 TCCL 方案效果和NCCL 方案一致，因此两者最终的AllReduce Busbw 性能也一致。异构并行策略优化不仅对AllRe‐duce 场景有效，还能提升其他集合通信操作（如AlltoAll）的性能。如图6（b）所示，在1 GB 通信量下采用异构并行优化的 AlltoAll 性能提升了20%。
+图 6（a）中蓝色线的性能上限表示，在 1 Gbit/s 通信量下 AllReduce 的集合通信带宽的理论上限（单机 8 个网卡带宽之和，即 200 Gbit/s）。在相同条件下，TCCL 几乎达到该理论极限，较 NCCL 提升了 22%。对于 64 MB 及以上的通信量，采用异构通信优化的 TCCL 始终优于 NCCL，性能提升幅度为 9%～25%。然而，当通信量小于 64 MB 时，TCCL 与 NCCL 性能相近。这是因为此时性能受限于通信网络时延，所有的数据都会优先通过 NVLink 网络传输（NVLink 的传输时延为 200 ns，远小于 RoCE 的传输时延 2 μs）。这意味着 TCCL 方案效果和 NCCL 方案一致，因此两者最终的 AllReduce Busbw 性能也一致。异构并行策略优化不仅对 AllRe‐duce 场景有效，还能提升其他集合通信操作（如 AlltoAll）的性能。如图 6（b）所示，在 1 GB 通信量下采用异构并行优化的 AlltoAll 性能提升了 20%。
 
-为进一步验证该优化的有效性，在64 台 H800 服务器上开展对比实验，分别使用TCCL 与 NCCL 对类 GPT 模型进行训练，并对两者的耗时情况进行对比分析。如图6（c）所示，采用异构通信优化的TCCL 在每轮训练迭代中平均节省约 2.5% 的时间。此外，如图6（d）所示，运行时对 TP AllReduce 的带宽监测显示，AllGather 和 ReduceScatter 操作分别实现了 8% 和 11% 的性能提升。这些结果充分证明了异构通信优化在不同类型集合通信操作中的广泛有效性。
+为进一步验证该优化的有效性，在 64 台 H800 服务器上开展对比实验，分别使用 TCCL 与 NCCL 对类 GPT 模型进行训练，并对两者的耗时情况进行对比分析。如图 6（c）所示，采用异构通信优化的 TCCL 在每轮训练迭代中平均节省约 2.5% 的时间。此外，如图 6（d）所示，运行时对 TP AllReduce 的带宽监测显示，AllGather 和 ReduceScatter 操作分别实现了 8% 和 11% 的性能提升。这些结果充分证明了异构通信优化在不同类型集合通信操作中的广泛有效性。
 
 ![TCCL 异构并行通信优化的性能评估](../images/02StorComm04CommLibrary/02XCCL21.png)
 
 ## 百度 BCCL
 
-百度百舸 AI 异构计算平台是面向大规模深度学习的高性能云原生 AI 计算平台，为模型算法专家和运维专家提供全面的集群运维支持和任务全生命周期管理，在网络方面，百舸支持了万卡级别的 RDMA 网络，配合拓扑感知调度和高性能通信库 BCCL 可以有效降低网络延迟，提升带宽利用率。其中 BCCL（Baidu Collective Communication Library） 是百度智能云推出的一款面向大模型训练场景优化的集合通信库，基于开源的 NCCL 进行了功能扩展和能力增强。
+百度百舸 AI 异构计算平台是面向大模型的高性能云原生 AI 计算平台，为模型算法专家和运维专家提供全面的集群运维支持和任务全生命周期管理，在网络方面，百舸支持了万卡级别的 RDMA 网络，配合拓扑感知调度和高性能通信库 BCCL 可以有效降低网络延迟，提升带宽利用率。其中 BCCL（Baidu Collective Communication Library） 是百度智能云推出的一款面向大模型训练场景优化的集合通信库，基于开源的 NCCL 进行了功能扩展和能力增强。
 
 BCCL 支持集合通信带宽实时统计功能，为故障诊断排除、训练性能调优等提供数据支撑。支持集合通信 hang 时故障诊断能力，快速进行任务的异常检测。网络故障容错能力增强，针对于偶发性异常故障场景（如单端口的偶发 updown），增加相应重试重传超次机制，提升训练任务的健壮性。
 
@@ -166,7 +166,7 @@ BCCL 针对百度智能云提供的主流的 GPU 芯片进行了深度优化。�
 
 ![All_gather 算法百度 BCCL 与 NCCL 对比](../images/02StorComm04CommLibrary/02XCCL24.png)
 
-## 小结
+## 总结与思考
 
 不同 XCCL 通信库的对比如下表所示，比较了不同通信库的优缺点以及核心设计目标，其中英伟达的 NCCL 处于行业标杆的位置，Intel、AMD 和华为分别基于自己的硬件设计了自己的通信库，但是 AMD 的 ACCL 和华为的 HCCL 无法支持异构通信。腾讯、阿里等互联网大厂则是基于 NCCL 开发了属于自己的通信库。
 
@@ -199,7 +199,7 @@ MSCCL [https://github.com/microsoft/msccl,](https://github.com/microsoft/msccl,)
 ACCL [https://help.aliyun.com/zh/pai/user-guide/accl-alibaba-high-performance-collective-communication-library](https://help.aliyun.com/zh/pai/user-guide/accl-alibaba-high-performance-collective-communication-library), EFLOPS: Algorithm and System Co-design for a High Performance Distributed Training Platform (2021)
 
 TCCL [https://cloud.tencent.com/document/product/1646/93319](https://cloud.tencent.com/document/product/1646/93319), [https://mp.weixin.qq.com/s/w5lG3maG1_2RFQKIF8yhYQ](https://mp.weixin.qq.com/s/w5lG3maG1_2RFQKIF8yhYQ)
-李宝嘉, 何春志, 夏寅贲, 等. 星脉网络：面向GPU 集群集合通信与集中式路由的协同优化 [J]. 中兴通讯技术, 2025, 31(2): 3-13.DOI: 10.12142/ZTETJ.202502002
+李宝嘉, 何春志, 夏寅贲, 等. 星脉网络：面向 GPU 集群集合通信与集中式路由的协同优化 [J]. 中兴通讯技术, 2025, 31(2): 3-13.DOI: 10.12142/ZTETJ.202502002
 
 BCCL [https://mp.weixin.qq.com/s/SJ7SCA2T0ILqZ4Ln5Zvg-Q](https://mp.weixin.qq.com/s/SJ7SCA2T0ILqZ4Ln5Zvg-Q)
 

@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra  )版权许可-->
 
-# 从零实现 Transformer 训练(DONE)
+# CODE02:从零实现 Transformer(DONE)
 
 author by: ZOMI
 

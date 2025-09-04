@@ -182,7 +182,7 @@ All to All 操作是对 All-Gather 的扩展，但不同的节点向某一节点
 | 序列并行 SP                                                                                  | All-Reduce、All-Gather、Reduce-Scatter | ~理论无限          | MB~GB | 计算通信可隐藏                   |
 | 专家并行 EP                                                                                  | All2All                             | ~理论无限          | ~MB   | 计算通信串行，不可隐藏               | 
 
-## 小结与思考
+## 总结与思考
 
 在学习了本章内容后，我们对集合通信原语有了更加深入的理解：
 

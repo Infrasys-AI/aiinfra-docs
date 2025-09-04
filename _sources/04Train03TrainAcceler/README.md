@@ -2,7 +2,7 @@
 
 # 大模型训练加速
 
-系统讲解大模型训练加速的核心算法与技术，涵盖计算优化（Flash Attention的演进、DS GEMM稀疏计算与MTP并行）、序列优化（Ulysses多流调度与Ring Attention长序列处理）、内存优化（MLA注意力机制与梯度检查点）、混合精度训练（FP8表示与稳定性）以及通算融合（DeepSpeed-Domini与FLUX的通信计算重叠）等关键方向，旨在通过原理剖析与实现细节全面了解如何提升大模型训练效率。
+系统讲解大模型训练加速的核心算法与技术，涵盖计算优化（Flash Attention 的演进、DS GEMM 稀疏计算与 MTP 并行）、序列优化（Ulysses 多流调度与 Ring Attention 长序列处理）、内存优化（MLA 注意力机制与梯度检查点）、混合精度训练（FP8 表示与稳定性）以及通算融合（DeepSpeed-Domini 与 FLUX 的通信计算重叠）等关键方向，旨在通过原理剖析与实现细节全面了解如何提升大模型训练效率。
 
 ## 详细内容
 
@@ -40,4 +40,8 @@ XXXXXX
 09HybridPrecision
 10Domino
 11FLUX
+Code01FlashAtten
+Code02GradCheck
+Code03FP8
+Code04RingAttn
 ```

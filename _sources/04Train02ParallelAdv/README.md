@@ -30,4 +30,8 @@ xxx
 01DSZero
 07Gpipe
 08PPInterleaved
+Code01ZeRO
+Code02Megatron
+Code03Pipeline
+Code04Expert
 ```

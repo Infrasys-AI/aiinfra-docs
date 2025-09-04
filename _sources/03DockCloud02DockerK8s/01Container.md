@@ -7,7 +7,7 @@ Author by: 张柯帆
 !!!!!!!!!
 聚焦展开下面三个内容，下面的内容都有点浅显，不是很深入，图和技术点也相对较少
 ​​Namespaces​​：实现隔离（进程、网络、文件系统挂载等）。
-​​Cgroups​​：实现资源限制（CPU、内存、磁盘IO等）。
+​​Cgroups​​：实现资源限制（CPU、内存、磁盘 IO 等）。
 ​​Union File Systems​​：实现镜像的分层与叠加（AUFS， overlay2）。
 
 ## 容器的出现

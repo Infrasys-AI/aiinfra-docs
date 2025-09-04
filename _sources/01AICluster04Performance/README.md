@@ -12,7 +12,9 @@
 |:--- |:---- |:-------------------- |:---- |
 | 集群性能 | 01  | [PPT](), [视频]() | :white_check_mark: |
 |:sparkling_heart:|:star2:|:sparkling_heart:| |
-| 性能 实践 :computer: | 01 | [Markdown](), [Jupyter]() | :white_check_mark: |
+| 性能 实践 :computer: | CODE 01: 拆解 Transformer-Decoder | [Markdown](./CODE01Modeling.md), [Jupyter](./CODE01Modeling.md) | :white_check_mark: |
+| 性能 实践 :computer: | CODE 02: MOE 参数量和计算量 | [文章](https://infrasys-ai.github.io/aiinfra-docs/01AICluster04Performance/Practice01Modeling.html), [Markdown](./CODE02MOE.md), [Jupyter](./CODE02MOE.ipynb) | :white_check_mark: |
+| 性能 实践 :computer: | CODE 03: MFU 模型利用率评估 | [文章](), [Markdown](./CODE03MFU.md), [Jupyter](./CODE03MFU.ipynb) | :white_check_mark: |
 
 ## 备注
 
@@ -36,5 +38,7 @@
 07AccuracyDiff
 08AccuracyDefine
 09PerformanceDefine
-Practice01Modeling
+CODE01Modeling
+CODE02MOE
+CODE03MFU
 ```

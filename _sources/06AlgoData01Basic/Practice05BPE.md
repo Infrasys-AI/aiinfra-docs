@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 手把手实现核心机制 BPE 分词算法(DONE)
+# CODE05:实现 BPE 分词(DONE)
 
 author by: ZOMI
 
@@ -350,4 +350,4 @@ for text in test_texts:
 2. 训练过程：迭代合并最频繁的字符对
 3. 分词过程：应用学习到的合并规则对新文本进行分词
 
-BPE 作为现代大语言模型的基础技术之一，理解其原理和实现对于深入掌握大模型技术至关重要。希望本文能帮助你打下坚实的基础！
+BPE 作为现代 LLM 的基础技术之一，理解其原理和实现对于深入掌握大模型技术至关重要。希望本文能帮助你打下坚实的基础！

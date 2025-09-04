@@ -27,4 +27,5 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+Code01OpenCompass
 ```

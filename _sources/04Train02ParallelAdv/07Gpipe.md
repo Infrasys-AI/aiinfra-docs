@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 07.PP并行：基本原理
+# 07.PP 并行：基本原理
 
 ***Megatron-Core：PP 基本原理（朴素流水并行原理，Bubble 空泡率计算，Gpipe 原理解析与动态内存峰值分析）***
 

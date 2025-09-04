@@ -109,7 +109,7 @@ mgmtd 的选主机制基于租约和 FoundationDB 读写事务实现。租约信
 
 ![客户端服务架构图](../images/02StorComm05StorforAI/08Deepseek3FS05.png)
 
-3FS提供了FUSE 客户端 hf3fs_fuse 和原生客户端 USRBIO：
+3FS 提供了 FUSE 客户端 hf3fs_fuse 和原生客户端 USRBIO：
 
 - FUSE 客户端适配门槛较低，开箱即用。在 FUSE 客户端中，用户进程每个请求都需要经过内核 VFS、FUSE 转发给用户态 FUSE Daemon 进行处理，存在 4 次“内核 - 用户态”上下文切换，数据经过 1-2 次拷贝。这些上下文切换和数据拷贝开销导致 FUSE 客户端的性能存在瓶颈；
 - USRBIO 是一套用户态、异步、零拷贝 API，使用时需要业务修改源代码来适配，使用门槛高。每个读写请求直接从用户进程发送给 FUSE Daemon，消除了上下文切换和数据拷贝开销，从而实现了极致的性能。
@@ -125,14 +125,14 @@ UFUSE 客户端基于 libfuse lowlevel api 实现，要求 libfuse 3.16.1 及以
 
 | **分类** | **实现** | **分析** |
 | :---: | :---: | :---: |
-| POSIX兼容性 | 不支持文件锁、xattr，其他主流操作均支持 | 文件锁功能对于有多机强一致性要求的业务（如数据库）比较重要。 |
-| 目录遍历 | 实现了 readdirplus 版本的接口。<br><br>一次完整的目录遍历会包含一次 opendir、一次 closedir、多次 readdirplus 调用，其中 opendir 和 closedir 会分别触发一次 FUSE 请求，readdirplus 会触发多次 FUSE 请求。<br><br>第一次调用 readdirplus 时，3FS 分批从 Meta Service 获取到完整的文件列表（不包含文件属性），缓存到内存中。这个缓存会在 closedir 的时候释放。<br><br>每次 readdirplus 时，从缓存中拿到本次要返回的文件列表，向 Meta Service 发送一次 RPC 批量获取到这些文件的属性。 | 该实现对文件属性的获取优化如下：<br>1. 相比 readdir 版本，readdirplus 版本会将文件属性信息一并待会给内核缓存，可以有效减少接下来一段时间的 stat 调用。<br>2. 在获取属性的时候采取了批量方式，比并行多个操作更高效。<br>这个实现对于有着千万级及以上文件的巨型目录不够友好：<br>1. 第一次readdirplus调用会卡住非常长时间。<br>2. 缓存住全部文件列表需要的内存较多。<br>以上缺点可通过业务侧的合理控制目录大小来规避。 |
+| POSIX 兼容性 | 不支持文件锁、xattr，其他主流操作均支持 | 文件锁功能对于有多机强一致性要求的业务（如数据库）比较重要。 |
+| 目录遍历 | 实现了 readdirplus 版本的接口。<br><br>一次完整的目录遍历会包含一次 opendir、一次 closedir、多次 readdirplus 调用，其中 opendir 和 closedir 会分别触发一次 FUSE 请求，readdirplus 会触发多次 FUSE 请求。<br><br>第一次调用 readdirplus 时，3FS 分批从 Meta Service 获取到完整的文件列表（不包含文件属性），缓存到内存中。这个缓存会在 closedir 的时候释放。<br><br>每次 readdirplus 时，从缓存中拿到本次要返回的文件列表，向 Meta Service 发送一次 RPC 批量获取到这些文件的属性。 | 该实现对文件属性的获取优化如下：<br>1. 相比 readdir 版本，readdirplus 版本会将文件属性信息一并待会给内核缓存，可以有效减少接下来一段时间的 stat 调用。<br>2. 在获取属性的时候采取了批量方式，比并行多个操作更高效。<br>这个实现对于有着千万级及以上文件的巨型目录不够友好：<br>1. 第一次 readdirplus 调用会卡住非常长时间。<br>2. 缓存住全部文件列表需要的内存较多。<br>以上缺点可通过业务侧的合理控制目录大小来规避。 |
 | 预读 | FUSE readahead 参数默认调整到 16MB。 | 16MB readahead 参数对于顺序读场景（如模型加载）比较友好。 |
 | 读写缓存 | dio 写直接落到后端。<br>buffered IO 启用了 page cache。 每个文件的写只有单路并发，会维护一个 1MB（可调整） write bufffer，顺序写积累到某一阈值再往下刷写。 | write buffer 的设计是一个面向写吞吐优化的设计，对顺序写比较友好。 |
 | 文件长度延迟更新 | 数据下刷后不会马上向 Meta Service 更新文件 size，而是由后台任务周期（默认 30s ）或者 close、fsync 触发更新。 | 该设计是可降低 Meta Service 的写压力，但是相对地松懈了写数据的一致性。 |
 | 异步 close | close 操作会立即返回，不会等待数据落盘。 | 该设计是为了提高写性能，但是会降低写数据的一致性。 |
 | 写打开文件延迟删除 | 文件以写模式打开时，会和 Meta Service 建立 session，可以保护文件在使用过程中不被删除。<br>文件以读模式打开时无此保护，在读的时候文件如果被删除会报错。 | 分开处理读写模式在语义和效率之间取得一定平衡。 |
-| 递归删除目录 | 提供了定制的 rm -rf 能力，将目录直接发送到 Meta Service 后台处理，客户侧直接返回结果。 | rm -rf 在现实中是非常高频的使用方式，但是大目录执行会非常慢，因为 POSIX 标准并没有定义递归删除目录的接口，会以“递归遍历所有目录 + 单并发删除”的方式模拟。<br>3FS的实现方式借鉴了 HDFS 的实现方式，在实现效率和用户体验上都会有大幅提升。 |
+| 递归删除目录 | 提供了定制的 rm -rf 能力，将目录直接发送到 Meta Service 后台处理，客户侧直接返回结果。 | rm -rf 在现实中是非常高频的使用方式，但是大目录执行会非常慢，因为 POSIX 标准并没有定义递归删除目录的接口，会以“递归遍历所有目录 + 单并发删除”的方式模拟。<br>3FS 的实现方式借鉴了 HDFS 的实现方式，在实现效率和用户体验上都会有大幅提升。 |
 
 ### USRBIO 客户端
 
@@ -231,7 +231,7 @@ FFRecord 文件格式具有以下特点：
 
 | **分类** | **实现** | **分析** |
 | :---: | :--- | :--- |
-| 文件创建 | 同一个读写事务内：写目标文件的 dentry、inode、file session（写打开创建）；将父目录 inode、目标 dentry 加入读冲突列表。<br><br>创建文件时，根据父目录配置的条带（stripe）配置，从 chain table 中选取复制链（replication chains）。创建目录时则继承自父目录的条带配置。<br><br>1. 孤儿节点<br>文件创建和父目录删除并发的场景，可能导致孤儿节点的产生。3FS 通过在同一读写事务中把父目录 inode 加入读写冲突列表（addConflictRange），避免父目录被删除导致孤儿节点产生；<br><br>2. inode_id 分配<br>元数据服务以积累批量处理（一次 4096 个）的方式分配 inode_id，并通过拆解 key（默认32），进一步减少事务冲突。 | 1. 元数据内部通过 parent inode_id hash 保证同目录下创建请求发到固定的元数据节点上，并在元数据点上对这些请求进行合并处理，减少事务冲突和提高吞吐量；<br><br>2. 依靠FoundationDB 的事务能力使文件创建操作变得简单，但没有元数据缓存，每次都需要先从底层读取父目录 inode 信息，不能进一步减少延迟；<br><br>3. 标准的 POSIX 语义创建文件、目录时是需要更新父目录的属性（nlink、atime/ctime）的，3FS为了减少冲突，并没有更新父目录属性，这样的裁剪型做法，更偏向于特定场景的性能极致优化，忽略通用文件语义的需求；<br><br>4. 每个节点批量分配 inode_id，提升了文件创建性能。 | 
+| 文件创建 | 同一个读写事务内：写目标文件的 dentry、inode、file session（写打开创建）；将父目录 inode、目标 dentry 加入读冲突列表。<br><br>创建文件时，根据父目录配置的条带（stripe）配置，从 chain table 中选取复制链（replication chains）。创建目录时则继承自父目录的条带配置。<br><br>1. 孤儿节点<br>文件创建和父目录删除并发的场景，可能导致孤儿节点的产生。3FS 通过在同一读写事务中把父目录 inode 加入读写冲突列表（addConflictRange），避免父目录被删除导致孤儿节点产生；<br><br>2. inode_id 分配<br>元数据服务以积累批量处理（一次 4096 个）的方式分配 inode_id，并通过拆解 key（默认 32），进一步减少事务冲突。 | 1. 元数据内部通过 parent inode_id hash 保证同目录下创建请求发到固定的元数据节点上，并在元数据点上对这些请求进行合并处理，减少事务冲突和提高吞吐量；<br><br>2. 依靠 FoundationDB 的事务能力使文件创建操作变得简单，但没有元数据缓存，每次都需要先从底层读取父目录 inode 信息，不能进一步减少延迟；<br><br>3. 标准的 POSIX 语义创建文件、目录时是需要更新父目录的属性（nlink、atime/ctime）的，3FS 为了减少冲突，并没有更新父目录属性，这样的裁剪型做法，更偏向于特定场景的性能极致优化，忽略通用文件语义的需求；<br><br>4. 每个节点批量分配 inode_id，提升了文件创建性能。 | 
 
 ## 4. 存储服务
 
@@ -304,7 +304,7 @@ FFRecord 文件格式具有以下特点：
 
 ![文件布局](../images/02StorComm05StorforAI/08Deepseek3FS12.png)
 
-如图所示，一个文件在创建时，会按照父目录配置的布局规则，包括 chain table 以及 stripe size，从对应的 chain table 中选择多个 chain 来存储和并行写入文件数据。chain range 的信息会记录到 inode 元数据中，包括起始 chain id 以及 seed 信息（用来随机分摊打散）等。在这个基础上，文件数据被进一步按照父目录布局中配置的 chunk size 均分成固定大小的 chunk（官方推荐 64KB、512KB、4MB 3个设置，默认 512KB），每个 chunk 根据 index 被分配到文件的一个链上，chunk id 由 inode id + track + chunk index 构成。当前 track 始终为 0，后续会支持多 track 功能，主要给未来实现链动态扩展用。
+如图所示，一个文件在创建时，会按照父目录配置的布局规则，包括 chain table 以及 stripe size，从对应的 chain table 中选择多个 chain 来存储和并行写入文件数据。chain range 的信息会记录到 inode 元数据中，包括起始 chain id 以及 seed 信息（用来随机分摊打散）等。在这个基础上，文件数据被进一步按照父目录布局中配置的 chunk size 均分成固定大小的 chunk（官方推荐 64KB、512KB、4MB 3 个设置，默认 512KB），每个 chunk 根据 index 被分配到文件的一个链上，chunk id 由 inode id + track + chunk index 构成。当前 track 始终为 0，后续会支持多 track 功能，主要给未来实现链动态扩展用。
 
 访问数据时用户只需要访问 Meta Service 一次就能获得链的信息和文件长度，之后根据读写的字节范围就可以计算出由哪些链进行处理。
 
@@ -329,7 +329,7 @@ Chunk Engine 由 chunk data files、Allocator、LevelDB/RocksDB 组成。其中 
 | Update | 采用 Copy On Write（COW） 机制，以整块的方式进行更新，旧块可读，知道无引用才释放回收 |
 | Commit | 批量提交的方式写入 RocksDB/LevelDB |
 
-**5.Chunk相关：**
+**5.Chunk 相关：**
 
 Chunk 大小范围为 64KiB - 64MiB，按照 2 的幂次递增，共 11 种，Allocator 会选择最接近实际空间大小的物理块进行分配。
 

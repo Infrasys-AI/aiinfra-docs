@@ -2,7 +2,7 @@
 
 # Transformer 架构
 
-本系列视频将系统性地讲解 Transformer 架构的核心原理及其在大语言模型中的关键技术实现。从 Transformer 的基础结构入手，逐步深入 Tokenizer 分词算法、Embedding 向量化技术、Attention 注意力机制及其多种变种算法，并专门探讨 Transformer 在长序列处理上的架构优化方案，最后详解大模型训练与推理中的关键参数设置。为深入理解与应用前沿 AI 技术奠定坚实基础。
+本系列视频将系统性地讲解 Transformer 架构的核心原理及其在 LLM 中的关键技术实现。从 Transformer 的基础结构入手，逐步深入 Tokenizer 分词算法、Embedding 向量化技术、Attention 注意力机制及其多种变种算法，并专门探讨 Transformer 在长序列处理上的架构优化方案，最后详解大模型训练与推理中的关键参数设置。为深入理解与应用前沿 AI 技术奠定坚实基础。
 
 ## 内容大纲
 

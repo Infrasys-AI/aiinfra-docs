@@ -241,7 +241,7 @@ clean:
 
 ![MPI 程序](../images/02StorComm04CommLibrary/9MPIInterface.png)
 
-## 小结
+## 总结与思考
 
 MPI 是集合通信库 XCCL 的基础，其中包含了很多基本概念和基础 API 定义，OpenMPI 作为早期的开源集合通信库，定义了 P2P 通信、集合通信和对应的程序运行。通过对 MPI 相关定义和实现可以更好地理解之后英伟达的 NCCL 和华为的 HCCL。
 
