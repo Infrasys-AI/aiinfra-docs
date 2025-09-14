@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train02ParallelAdv/Code03Pipeline.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函数复合： F(x) = f_n(f_{n-1}(...f_1(x)...)) ，..." />
+<meta property="og:description" content="本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其核心思想是将一个庞大的神经网络模型，沿着层（Layer）的维度进行纵向切割，分割..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/_images/social_previews/summary_04Train02ParallelAdv_Code03Pipeline_28adb20d.png" />
-<meta property="og:image:alt" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函..." />
-<meta name="description" content="本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: 在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即 空泡现象 。 数学上，模型可表示为函数复合： F(x) = f_n(f_{n-1}(...f_1(x)...)) ，..." />
+<meta property="og:image" content="/None" />
+<meta property="og:image:alt" content="本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其..." />
+<meta name="description" content="本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其核心思想是将一个庞大的神经网络模型，沿着层（Layer）的维度进行纵向切割，分割..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>CODE 03: Pipeline 并行实践 &#8212; AIInfra AI基础设施</title>
@@ -86,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
 
 <link
   rel="alternate"
@@ -247,9 +247,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 未来发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
 </ul>
 </details></li>
 </ul>
@@ -358,7 +358,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
 </ul>
 </details></li>
 </ul>
@@ -387,7 +387,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -432,6 +432,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
 </ul>
 </details></li>
@@ -474,6 +475,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
@@ -498,13 +505,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -519,10 +526,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -530,10 +537,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -541,12 +551,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
 
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -837,12 +849,14 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline">1. Pipeline 并行基础</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2. 基础 Pipeline 并行</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b">3. 1F1B 调度策略实现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4. 空泡率分析与计算</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5. 混合并行策略</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6. 完整实验与性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#native-pipeline-parallelism">2. Native Pipeline Parallelism（传统流水线并行）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpipe">3. Gpipe 流水线并行</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4. 空泡率分析与计算</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b">5. 1F1B 调度策略实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interleaved-1f1b">6. Interleaved 1F1B 调度策略实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">7. 混合并行策略</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">6. 完整实验与性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
 </ul>
             </nav>
         </div>
@@ -857,15 +871,23 @@ document.write(`
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="code-03-pipeline">
 <h1>CODE 03: Pipeline 并行实践<a class="headerlink" href="#code-03-pipeline" title="Link to this heading">#</a></h1>
-<p>本实验旨在深入理解 Pipeline 并行原理，实现 1F1B 调度策略，分析空泡率现象，并实践混合并行策略。</p>
+<p>本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。</p>
 <section id="pipeline">
 <h2>1. Pipeline 并行基础<a class="headerlink" href="#pipeline" title="Link to this heading">#</a></h2>
-<p>在 Pipeline 并行中，前向传播和反向传播需跨设备协调，这会带来通信开销；同时，设备在“等待前一阶段数据”时会产生空闲，即<strong>空泡现象</strong>。</p>
-<p>数学上，模型可表示为函数复合：<span class="math notranslate nohighlight">\(F(x) = f_n(f_{n-1}(...f_1(x)...))\)</span>，其中每个 <span class="math notranslate nohighlight">\(f_i\)</span>（模型层/层组）对应 Pipeline 的一个“阶段”，分配到不同设备上执行。</p>
+<p><strong>Pipeline 并行（Pipeline Parallelism, PP）</strong> 其核心思想是将一个庞大的神经网络模型，沿着层（Layer）的维度进行纵向切割，分割成多个连续的子模块（称为“阶段”，Stage），并将这些阶段部署到不同的计算设备（如 GPU）上。</p>
+<p>数学上，模型可表示为函数复合：<span class="math notranslate nohighlight">\(F(x) = f_n(f_{n-1}(...f_1(x)...))\)</span>，其中每个 <span class="math notranslate nohighlight">\(f_i\)</span>（模型层/层组）对应 Pipeline 的一个“阶段”，分配到不同设备上执行。数据以“批次”（batch）的形式，像工厂流水线一样，依次流经各个阶段。</p>
+<p>通过这种方式，每个设备只需加载和处理模型的一部分，从而突破<strong>单卡显存的限制</strong>。</p>
+<p>然而，这种拆分也引入了新的挑战：</p>
+<ul class="simple">
+<li><p><strong>通信开销：</strong> 前向传播和反向传播过程中，相邻阶段之间需要频繁地传递中间结果（激活值和梯度），这会带来额外的通信延迟。</p></li>
+<li><p><strong>空泡现象（Bubble）：</strong> 由于流水线的“填充”（Fill）和“排空”（Drain）过程，部分设备在某些时刻会处于等待数据的空闲状态，造成计算资源的浪费。</p></li>
+</ul>
+<p><strong>后续优化方向</strong>：
+Gpipe、1F1B、Interleaved 1F1B 等调度策略，本质都是通过调整「前向」和「反向」的执行节奏，来<strong>压缩空泡时间、降低通信影响、更高效利用显存</strong> —— 这些我们将在代码实践中逐一实现和对比。</p>
 </section>
-<section id="id1">
-<h2>2. 基础 Pipeline 并行<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>首先，我们实现一个基础的流水线并行框架，包含模型分割和简单的流水线调度。</p>
+<section id="native-pipeline-parallelism">
+<h2>2. Native Pipeline Parallelism（传统流水线并行）<a class="headerlink" href="#native-pipeline-parallelism" title="Link to this heading">#</a></h2>
+<p>首先，我们实现一个基础的流水线并行框架，只考虑了模型分割和流水线调度，将数据以 batch 为单位进行处理。</p>
 <p><img alt="" src="../_images/Code03Pipeline01.png" /></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
@@ -884,14 +906,14 @@ document.write(`
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_list</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">module_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">),</span> <span class="s2">&quot;模块数量必须与设备数量相同&quot;</span>
-        
+
         <span class="bp">self</span><span class="o">.</span><span class="n">stages</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">module_list</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span> <span class="o">=</span> <span class="n">device_ids</span>
-        
+
         <span class="c1"># 将每个阶段移动到对应的设备</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        简单的前向传播 Pipeline</span>
@@ -899,7 +921,7 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">intermediates</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">current_output</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># 输入先迁移到第一阶段设备</span>
-        
+
         <span class="c1"># 数据依次通过每个阶段</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">)):</span>
             <span class="n">current_output</span> <span class="o">=</span> <span class="n">stage</span><span class="p">(</span><span class="n">current_output</span><span class="p">)</span>  <span class="c1"># 本阶段计算</span>
@@ -908,16 +930,103 @@ document.write(`
                 <span class="n">intermediates</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_output</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">clone</span><span class="p">())</span>
                 <span class="c1"># 传递到下一阶段设备</span>
                 <span class="n">current_output</span> <span class="o">=</span> <span class="n">current_output</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-        
+
         <span class="k">return</span> <span class="n">current_output</span><span class="p">,</span> <span class="n">intermediates</span>
 </pre></div>
 </div>
 <p>上面的代码实现了一个基础的流水线并行框架。它将模型分割为多个阶段，每个阶段放置在不同的设备上。在前向传播过程中，数据依次通过这些阶段，并在阶段间进行设备间的数据传输。</p>
 </section>
-<section id="f1b">
-<h2>3. 1F1B 调度策略实现<a class="headerlink" href="#f1b" title="Link to this heading">#</a></h2>
-<p>1F1B(One-Forward-One-Backward) 调度是一种优化的流水线并行策略，它通过交替执行前向和反向传播来减少内存使用和空泡时间。</p>
+<section id="gpipe">
+<h2>3. Gpipe 流水线并行<a class="headerlink" href="#gpipe" title="Link to this heading">#</a></h2>
+<p>Gpipe(Gradient Pipeline) 是一种基于流水线并行的模型并行策略，它将一个大的训练批次（Batch）拆分成多个小的微批次（Micro-batch），依次流过 Pipeline 的各个阶段，每个阶段放置在不同的设备上。</p>
 <p><img alt="" src="../_images/Code03Pipeline02.png" /></p>
+</section>
+<section id="id1">
+<h2>4. 空泡率分析与计算<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p><strong>空泡率</strong>是衡量流水线并行效率的重要指标，表示由于流水线填充和排空造成的计算资源浪费比例。空泡率的计算基于流水线填充和排空的时间开销。当微批次数量远大于流水线阶段数时，空泡率会降低，因为填充和排空时间相对于总计算时间的比例变小。</p>
+<p>我们在这里以<strong>Gpipe 流水线并行</strong>的空泡率计算为例，计算空泡率。</p>
+<p>在数学上，空泡率可以表示为：</p>
+<div class="math notranslate nohighlight">
+\[
+Bubble = (T_{fill} + T_{drain}) / (T_{total}) = (S - 1 + S - 1) / (2*(M + S - 1)) = (S - 1) / (M + S - 1)
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(S\)</span> 是流水线阶段数，<span class="math notranslate nohighlight">\(M\)</span> 是微批次数量。<span class="math notranslate nohighlight">\(T_{fill}\)</span> 表示流水线填充时间，<span class="math notranslate nohighlight">\(T_{drain}\)</span> 表示流水线排空时间,<span class="math notranslate nohighlight">\(T_{total}\)</span> 表示流水线总时间。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_bubble_rate</span><span class="p">(</span><span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算 Pipeline 并行的空泡率</span>
+
+<span class="sd">    参数:</span>
+<span class="sd">        num_stages: Pipeline 阶段数（S）</span>
+<span class="sd">        num_microbatches: 微批次数量（M）</span>
+
+<span class="sd">    返回:</span>
+<span class="sd">        空泡率（0~1 之间，值越小效率越高）</span>
+
+<span class="sd">    数学公式:</span>
+<span class="sd">        空泡率 = Pipeline 填充时间 / 总时间 = (S - 1) / (M + S - 1)</span>
+<span class="sd">        说明：1F1B 中“排空阶段”与后续微批次的前向重叠，无需额外计算排空时间</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">num_microbatches</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">num_stages</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;阶段数和微批次数量必须为正整数&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 理想时间：仅计算所有微批次的时间（无空泡）</span>
+    <span class="n">ideal_time</span> <span class="o">=</span> <span class="n">num_microbatches</span>
+    <span class="c1"># 实际时间：填充时间（S-1） + 计算时间（M）</span>
+    <span class="n">actual_time</span> <span class="o">=</span> <span class="n">num_microbatches</span> <span class="o">+</span> <span class="n">num_stages</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="c1"># 空泡率 = 空泡时间 / 实际总时间</span>
+    <span class="n">bubble_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">actual_time</span> <span class="o">-</span> <span class="n">ideal_time</span><span class="p">)</span> <span class="o">/</span> <span class="n">actual_time</span>
+
+    <span class="k">return</span> <span class="n">bubble_rate</span>
+
+<span class="n">configurations</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># 【对比组 1】固定 S=4，观察 M 增大如何降低空泡率（展示收益递减）</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>   <span class="c1"># M = S，空泡率较高，临界点</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>   <span class="c1"># M = 2S</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>  <span class="c1"># M = 4S（推荐工程起点）</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>  <span class="c1"># M = 8S</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span>  <span class="c1"># M = 16S</span>
+    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>  <span class="c1"># M = 25S，接近理想</span>
+
+    <span class="c1"># 【对比组 2】固定 M=2S，观察 S 增大时空泡率如何上升（展示规模代价）</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>  <span class="c1"># M = 2S</span>
+    <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span> <span class="c1"># M = 2S</span>
+    <span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="c1"># M = 2S（如资源允许）</span>
+
+    <span class="c1"># 【对比组 3】固定 M=4S，观察不同规模下的表现（推荐工程配置）</span>
+    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>  <span class="c1"># M = 4S</span>
+    <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="c1"># M = 4S</span>
+<span class="p">]</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== 不同配置下的空泡率计算结果 ===&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span> <span class="ow">in</span> <span class="n">configurations</span><span class="p">:</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">calculate_bubble_rate</span><span class="p">(</span><span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;阶段数: </span><span class="si">{</span><span class="n">num_stages</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">, 微批次: </span><span class="si">{</span><span class="n">num_microbatches</span><span class="si">:</span><span class="s2">3d</span><span class="si">}</span><span class="s2">, 空泡率: </span><span class="si">{</span><span class="n">rate</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">===</span> <span class="n">不同配置下的空泡率计算结果</span> <span class="o">===</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">4</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>   <span class="mi">4</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.429</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">4</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>   <span class="mi">8</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.273</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">4</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">16</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.158</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">4</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">32</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.086</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">4</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">64</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.045</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">4</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.029</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">8</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">16</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.304</span>
+<span class="n">阶段数</span><span class="p">:</span>  <span class="mi">16</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">32</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.319</span>
+<span class="n">阶段数</span><span class="p">:</span>  <span class="mi">32</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">64</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.326</span>
+<span class="n">阶段数</span><span class="p">:</span>   <span class="mi">8</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">32</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.179</span>
+<span class="n">阶段数</span><span class="p">:</span>  <span class="mi">16</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span>  <span class="mi">64</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.190</span>
+</pre></div>
+</div>
+<p>从上面代码的运行结果我们可以看出：</p>
+<ul class="simple">
+<li><p><strong>微批次的影响</strong>：当 <span class="math notranslate nohighlight">\(M \gg S\)</span> 时，空泡率趋近于 0（如 <span class="math notranslate nohighlight">\(S=4, M=100\)</span>，空泡率≈0.029），因此增加微批次是降低空泡率的核心手段。</p></li>
+<li><p><strong>阶段数的影响</strong>：<span class="math notranslate nohighlight">\(S\)</span> 越大，空泡率越高（相同 <span class="math notranslate nohighlight">\(M\)</span> 下，<span class="math notranslate nohighlight">\(S=16\)</span> 比 <span class="math notranslate nohighlight">\(S=4\)</span> 空泡率高约 20%），因此 Pipeline 阶段数需与微批次数量匹配（建议 <span class="math notranslate nohighlight">\(M \geq 4S\)</span>）。</p></li>
+</ul>
+</section>
+<section id="f1b">
+<h2>5. 1F1B 调度策略实现<a class="headerlink" href="#f1b" title="Link to this heading">#</a></h2>
+<p>1F1B(One-Forward-One-Backward) 调度是一种优化的流水线并行策略，它通过交替执行前向和反向传播来减少内存使用和空泡时间。</p>
+<p><img alt="" src="../_images/Code03Pipeline03.png" /></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PipelineParallel1F1B</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    1F1B 调度策略的 Pipeline 并行</span>
@@ -929,11 +1038,11 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span> <span class="o">=</span> <span class="n">device_ids</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span> <span class="o">=</span> <span class="n">num_microbatches</span>  <span class="c1"># 微批次数量</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">)</span>  <span class="c1"># Pipeline 阶段数</span>
-        
-        <span class="c1"># 阶段设备分配 </span>
+
+        <span class="c1"># 阶段设备分配</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">)):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        1F1B 调度核心逻辑：</span>
@@ -944,7 +1053,7 @@ document.write(`
         <span class="c1"># 存储各阶段前向结果（用于后续反向传播）</span>
         <span class="n">stage_outputs</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_stages</span><span class="p">)]</span>
         <span class="n">total_loss</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># 累计损失，用于后续平均</span>
-        
+
         <span class="c1"># 2. 1F1B 调度执行</span>
         <span class="k">for</span> <span class="n">mb_idx</span><span class="p">,</span> <span class="n">mb</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">micro_batches</span><span class="p">):</span>
             <span class="c1"># 前向传播：当前微批次通过所有 Pipeline 阶段</span>
@@ -954,7 +1063,7 @@ document.write(`
                 <span class="n">stage_outputs</span><span class="p">[</span><span class="n">stage_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_mb</span><span class="p">)</span>  <span class="c1"># 保存当前阶段输出</span>
                 <span class="k">if</span> <span class="n">stage_idx</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_stages</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                     <span class="n">current_mb</span> <span class="o">=</span> <span class="n">current_mb</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">[</span><span class="n">stage_idx</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
-            
+
             <span class="c1"># 3. 交替反向：当微批次索引 ≥ 阶段数时，对最早的微批次执行反向</span>
             <span class="k">if</span> <span class="n">mb_idx</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_stages</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="c1"># 待反向的微批次索引（最早填充的微批次：mb_idx - (S-1)）</span>
@@ -968,7 +1077,7 @@ document.write(`
                 <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
                 <span class="c1"># 模拟反向传播日志（实际场景需调用 loss.backward()并同步梯度）</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[1F1B 调度] 微批次</span><span class="si">{</span><span class="n">reverse_mb_idx</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">反向计算 | 损失: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># 4. 处理剩余未反向的微批次（最后 S-1 个微批次，Pipeline 排空阶段）</span>
         <span class="k">for</span> <span class="n">reverse_mb_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mb_idx</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_stages</span> <span class="o">-</span> <span class="mi">2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">reverse_mb_idx</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span><span class="p">:</span>
@@ -978,7 +1087,7 @@ document.write(`
             <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">final_output</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
             <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[1F1B 调度] 微批次</span><span class="si">{</span><span class="n">reverse_mb_idx</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">反向计算 | 损失: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        
+
         <span class="c1"># 返回所有微批次的平均损失</span>
         <span class="k">return</span> <span class="n">total_loss</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span>
 </pre></div>
@@ -989,67 +1098,13 @@ document.write(`
 <li><p>降低空泡率：通过更早开始反向传播，减少设备空闲时间</p></li>
 </ol>
 </section>
-<section id="id2">
-<h2>4. 空泡率分析与计算<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p>空泡率是衡量流水线并行效率的重要指标，表示由于流水线填充和排空造成的计算资源浪费比例。空泡率的计算基于流水线填充和排空的时间开销。当微批次数量远大于流水线阶段数时，空泡率会降低，因为填充和排空时间相对于总计算时间的比例变小。</p>
-<p>数学上，空泡率可以表示为：</p>
-<div class="math notranslate nohighlight">
-\[
-Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2) / (M + S - 1)
-\]</div>
-<p>其中 S 是流水线阶段数，M 是微批次数量。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_bubble_rate</span><span class="p">(</span><span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    计算 Pipeline 并行的空泡率</span>
-<span class="sd">    </span>
-<span class="sd">    参数:</span>
-<span class="sd">        num_stages: Pipeline 阶段数（S）</span>
-<span class="sd">        num_microbatches: 微批次数量（M）</span>
-<span class="sd">    </span>
-<span class="sd">    返回:</span>
-<span class="sd">        空泡率（0~1 之间，值越小效率越高）</span>
-<span class="sd">    </span>
-<span class="sd">    数学公式:</span>
-<span class="sd">        空泡率 = Pipeline 填充时间 / 总时间 = (S - 1) / (M + S - 1)</span>
-<span class="sd">        说明：1F1B 中“排空阶段”与后续微批次的前向重叠，无需额外计算排空时间</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">num_microbatches</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">num_stages</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;阶段数和微批次数量必须为正整数&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># 理想时间：仅计算所有微批次的时间（无空泡）</span>
-    <span class="n">ideal_time</span> <span class="o">=</span> <span class="n">num_microbatches</span>
-    <span class="c1"># 实际时间：填充时间（S-1） + 计算时间（M）</span>
-    <span class="n">actual_time</span> <span class="o">=</span> <span class="n">num_microbatches</span> <span class="o">+</span> <span class="n">num_stages</span> <span class="o">-</span> <span class="mi">1</span>
-    <span class="c1"># 空泡率 = 空泡时间 / 实际总时间</span>
-    <span class="n">bubble_rate</span> <span class="o">=</span> <span class="p">(</span><span class="n">actual_time</span> <span class="o">-</span> <span class="n">ideal_time</span><span class="p">)</span> <span class="o">/</span> <span class="n">actual_time</span>
-    
-    <span class="k">return</span> <span class="n">bubble_rate</span>
-
-<span class="n">configurations</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>  <span class="c1"># 4 个阶段，16 个微批次</span>
-    <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">32</span><span class="p">),</span>  <span class="c1"># 8 个阶段，32 个微批次</span>
-    <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">64</span><span class="p">),</span> <span class="c1"># 16 个阶段，64 个微批次</span>
-<span class="p">]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== 不同配置下的空泡率计算结果 ===&quot;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span> <span class="ow">in</span> <span class="n">configurations</span><span class="p">:</span>
-    <span class="n">rate</span> <span class="o">=</span> <span class="n">calculate_bubble_rate</span><span class="p">(</span><span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;阶段数: </span><span class="si">{</span><span class="n">num_stages</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">, 微批次: </span><span class="si">{</span><span class="n">num_microbatches</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">, 空泡率: </span><span class="si">{</span><span class="n">rate</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">===</span> <span class="n">不同配置下的空泡率计算结果</span> <span class="o">===</span>
-<span class="n">阶段数</span><span class="p">:</span>  <span class="mi">4</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.158</span>
-<span class="n">阶段数</span><span class="p">:</span>  <span class="mi">8</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.179</span>
-<span class="n">阶段数</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="n">微批次</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span> <span class="n">空泡率</span><span class="p">:</span> <span class="mf">0.189</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p><strong>微批次的影响</strong>：当 <span class="math notranslate nohighlight">\(M \gg S\)</span> 时，空泡率趋近于 0（如 <span class="math notranslate nohighlight">\(S=4, M=100\)</span>，空泡率≈0.038），因此增加微批次是降低空泡率的核心手段。</p></li>
-<li><p><strong>阶段数的影响</strong>：<span class="math notranslate nohighlight">\(S\)</span> 越大，空泡率越高（相同 <span class="math notranslate nohighlight">\(M\)</span> 下，<span class="math notranslate nohighlight">\(S=16\)</span> 比 <span class="math notranslate nohighlight">\(S=4\)</span> 空泡率高 20%），因此 Pipeline 阶段数需与微批次数量匹配（建议 <span class="math notranslate nohighlight">\(M \geq 4S\)</span>）。</p></li>
-</ul>
+<section id="interleaved-1f1b">
+<h2>6. Interleaved 1F1B 调度策略实现<a class="headerlink" href="#interleaved-1f1b" title="Link to this heading">#</a></h2>
+<p>Interleaved 1F1B 调度是一种改进的 1F1B 调度策略，它通过交替执行前向和反向传播，并引入额外的填充和排空步骤来减少空泡率。</p>
+<p><img alt="" src="../_images/Code03Pipeline04.png" /></p>
 </section>
-<section id="id3">
-<h2>5. 混合并行策略<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h2>7. 混合并行策略<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <p>混合并行结合了数据并行、流水线并行和张量并行，以充分利用多种并行策略的优势。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HybridParallelModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_model</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">,</span> <span class="n">dp_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">pp_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
@@ -1057,11 +1112,11 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
         <span class="bp">self</span><span class="o">.</span><span class="n">dp_size</span> <span class="o">=</span> <span class="n">dp_size</span>  <span class="c1"># 数据并行路数（每个 Pipeline 阶段的复制份数）</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pp_size</span> <span class="o">=</span> <span class="n">pp_size</span>  <span class="c1"># Pipeline 阶段数（模型分割后的段数）</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span> <span class="o">=</span> <span class="n">device_ids</span>
-        
+
         <span class="c1"># 验证设备数量：总设备数 = 数据并行路数 × Pipeline 阶段数</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span> <span class="o">==</span> <span class="n">dp_size</span> <span class="o">*</span> <span class="n">pp_size</span><span class="p">,</span> \
             <span class="sa">f</span><span class="s2">&quot;设备数需等于数据并行路数×Pipeline 阶段数（当前：</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span><span class="si">}</span><span class="s2"> != </span><span class="si">{</span><span class="n">dp_size</span><span class="si">}</span><span class="s2">×</span><span class="si">{</span><span class="n">pp_size</span><span class="si">}</span><span class="s2">）&quot;</span>
-        
+
         <span class="c1"># 1. Pipeline 分割：将基础模型拆分为 pp_size 个阶段</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_stages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_model_for_pipeline</span><span class="p">(</span><span class="n">base_model</span><span class="p">,</span> <span class="n">pp_size</span><span class="p">)</span>
         <span class="c1"># 2. 数据并行：为每个 Pipeline 阶段创建 dp_size 份副本（使用 nn.DataParallel）</span>
@@ -1074,7 +1129,7 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
             <span class="c1"># 包装为数据并行模块</span>
             <span class="n">dp_stage</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">device_ids</span><span class="o">=</span><span class="n">dp_devices</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parallel_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp_stage</span><span class="p">)</span>
-    
+
     <span class="k">def</span> <span class="nf">_split_model_for_pipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pp_size</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        辅助函数：将 ExampleModel 按 Pipeline 逻辑分割为 pp_size 个阶段</span>
@@ -1094,7 +1149,7 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
             <span class="c1"># 默认不分割（pp_size=1，仅数据并行）</span>
             <span class="n">stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">fc1</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">fc2</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">relu</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">fc3</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">stages</span>
-    
+
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        混合并行前向传播流程：</span>
@@ -1113,7 +1168,7 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
         <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
-    
+
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
@@ -1133,7 +1188,7 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
 
 <span class="c1"># 4. 创建混合并行模型</span>
 <span class="n">hybrid_model</span> <span class="o">=</span> <span class="n">HybridParallelModel</span><span class="p">(</span>
-    <span class="n">base_model</span><span class="p">,</span> 
+    <span class="n">base_model</span><span class="p">,</span>
     <span class="n">device_ids</span><span class="o">=</span><span class="n">device_ids</span><span class="p">,</span>
     <span class="n">dp_size</span><span class="o">=</span><span class="n">dp_size</span><span class="p">,</span>
     <span class="n">pp_size</span><span class="o">=</span><span class="n">pp_size</span>
@@ -1159,15 +1214,15 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
 </pre></div>
 </div>
 </section>
-<section id="id4">
-<h2>6. 完整实验与性能分析<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="id3">
+<h2>6. 完整实验与性能分析<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <p>下面是一个完整的流水线并行实验，包括训练循环和性能分析。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pipeline_parallel_experiment</span><span class="p">(</span><span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
     <span class="c1"># 1. 自动获取设备与配置</span>
     <span class="n">device_ids</span> <span class="o">=</span> <span class="n">get_available_devices</span><span class="p">(</span><span class="n">max_devices</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
     <span class="n">num_stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span>  <span class="c1"># Pipeline 阶段数=设备数</span>
     <span class="n">input_size</span><span class="p">,</span> <span class="n">output_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span>  <span class="c1"># 输入维度 100，输出类别 10</span>
-    
+
     <span class="c1"># 2. 构建 Pipeline 模型</span>
     <span class="n">base_model_parts</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()),</span>
@@ -1178,37 +1233,37 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
     <span class="c1"># 截取与设备数匹配的阶段数</span>
     <span class="n">model_parts</span> <span class="o">=</span> <span class="n">base_model_parts</span><span class="p">[:</span><span class="n">num_stages</span><span class="p">]</span>
     <span class="n">pipeline_model</span> <span class="o">=</span> <span class="n">PipelineParallel</span><span class="p">(</span><span class="n">model_parts</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">)</span>
-    
+
     <span class="c1"># 3. 优化器与训练配置</span>
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">pipeline_model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
     <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 跟踪每轮损失</span>
-    
+
     <span class="c1"># 4. 训练循环</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 开始 Pipeline 并行训练（共</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">轮）===&quot;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
         <span class="c1"># 模拟训练数据</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">input_size</span><span class="p">)</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">output_size</span><span class="p">,</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">device_ids</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        
+
         <span class="c1"># 前向传播</span>
         <span class="n">outputs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pipeline_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        
+
         <span class="c1"># 计算损失（使用交叉熵，适配分类任务）</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-        
+
         <span class="c1"># 反向传播与参数更新</span>
         <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>  <span class="c1"># 自动沿 Pipeline 反向计算梯度</span>
         <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-        
+
         <span class="c1"># 打印每轮训练信息</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">, 损失值: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    
+
     <span class="c1"># 5. 空泡率分析</span>
     <span class="n">num_microbatches</span> <span class="o">=</span> <span class="mi">4</span>
     <span class="n">bubble_rate</span> <span class="o">=</span> <span class="n">calculate_bubble_rate</span><span class="p">(</span><span class="n">num_stages</span><span class="o">=</span><span class="n">num_stages</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="o">=</span><span class="n">num_microbatches</span><span class="p">)</span>
-    
+
     <span class="c1"># 6. 实验结果汇总</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 实验性能分析报告 ===&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;1. 硬件配置：设备数=</span><span class="si">{</span><span class="n">num_stages</span><span class="si">}</span><span class="s2">（</span><span class="si">{</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">dev</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">device_ids</span><span class="p">]</span><span class="si">}</span><span class="s2">）&quot;</span><span class="p">)</span>
@@ -1216,7 +1271,7 @@ Bubble = (T_fill + T_drain) / T_total = (S - 1 + S - 1) / (M + S - 1) = (2S - 2)
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;3. 空泡率：</span><span class="si">{</span><span class="n">bubble_rate</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">（</span><span class="si">{</span><span class="n">bubble_rate</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%）&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;4. 训练损失变化：</span><span class="si">{</span><span class="p">[</span><span class="nb">round</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">l</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">losses</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;5. 训练结论：损失持续下降，Pipeline 并行训练正常&quot;</span><span class="p">)</span>
-    
+
     <span class="k">return</span> <span class="n">losses</span><span class="p">,</span> <span class="n">bubble_rate</span>
 
 <span class="c1"># 运行完整实验</span>
@@ -1261,8 +1316,8 @@ Epoch  5/5, 损失值: 2.1326
 </pre></div>
 </div>
 </section>
-<section id="id5">
-<h2>总结与思考<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<section id="id4">
+<h2>总结与思考<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <p>Pipeline 并行的核心价值在于能够训练超出单个设备内存容量的大型模型。通过将模型分割到多个设备，并采用优化的调度策略如 1F1B，可以显著提高训练效率。空泡率作为衡量 Pipeline 效率的重要指标，可以通过增加微批次数量来降低。</p>
 <p>混合并行结合了数据并行、Pipeline 并行和张量并行的优势，是大模型训练的主流方法。</p>
 </section>
@@ -1337,12 +1392,14 @@ Epoch  5/5, 损失值: 2.1326
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline">1. Pipeline 并行基础</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2. 基础 Pipeline 并行</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b">3. 1F1B 调度策略实现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">4. 空泡率分析与计算</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">5. 混合并行策略</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">6. 完整实验与性能分析</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#native-pipeline-parallelism">2. Native Pipeline Parallelism（传统流水线并行）</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpipe">3. Gpipe 流水线并行</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">4. 空泡率分析与计算</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b">5. 1F1B 调度策略实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interleaved-1f1b">6. Interleaved 1F1B 调度策略实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">7. 混合并行策略</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">6. 完整实验与性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
 </ul>
   </nav></div>
 
@@ -1376,7 +1433,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 05, 2025.
+  Last updated on Sep 14, 2025.
   <br/>
 </p>
   </div>

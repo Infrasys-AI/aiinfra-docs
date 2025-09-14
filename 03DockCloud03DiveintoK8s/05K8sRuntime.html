@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="03DockCloud03DiveintoK8s/05K8sRuntime.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="参考与引用:" />
+<meta property="og:description" content="前文中已经介绍完如何进行资源管理和调度，完成这些工作后，就需要将调度成功的 Pod 在宿主机中创建出来。 这个正是 kubelet 通过 CRI 和底层容器运行时进行交互。 为什么需要抽象出 CRI 这个概念？ 首先是统一容器生命周期管理接口，避免 Kubernetes 与特定容器运行时强绑定。支持多种容器运行时（Docker、containered、CRI-O）。 CRI 核心组件: ku..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="参考与引用:" />
-<meta name="description" content="参考与引用:" />
+<meta property="og:image:alt" content="前文中已经介绍完如何进行资源管理和调度，完成这些工作后，就需要将调度成功的 Pod 在宿主机中创建出来。 这个正是 kubelet 通过 CRI 和底层容器运行时进行交互。 为什么需要抽象出 CRI 这个概念？ 首先是统一容器生命周期管理接口，避免 Kubernetes 与特定容器运行时强绑定。支持多种容器运行时..." />
+<meta name="description" content="前文中已经介绍完如何进行资源管理和调度，完成这些工作后，就需要将调度成功的 Pod 在宿主机中创建出来。 这个正是 kubelet 通过 CRI 和底层容器运行时进行交互。 为什么需要抽象出 CRI 这个概念？ 首先是统一容器生命周期管理接口，避免 Kubernetes 与特定容器运行时强绑定。支持多种容器运行时（Docker、containered、CRI-O）。 CRI 核心组件: ku..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>K8S 运行时 &#8212; AIInfra AI基础设施</title>
@@ -79,12 +79,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="K8S 容器持网络" href="06K8sMonitor.html" />
+    <link rel="next" title="Kubernetes 容器监控与日志" href="06K8sMonitor.html" />
     <link rel="prev" title="K8S 资源管理与作业调度" href="04K8sSource.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
 
 <link
   rel="alternate"
@@ -245,9 +245,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 未来发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
 </ul>
 </details></li>
 </ul>
@@ -356,7 +356,7 @@
 <li class="toctree-l2"><a class="reference internal" href="03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04K8sSource.html">K8S 资源管理与作业调度</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">K8S 运行时</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06K8sMonitor.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
 </ul>
 </details></li>
 </ul>
@@ -385,7 +385,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -430,6 +430,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
 </ul>
 </details></li>
@@ -472,6 +473,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
@@ -496,13 +503,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -517,10 +524,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -528,10 +535,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -539,12 +549,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
 
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -834,7 +846,17 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cri">CRI 核心组件</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kubelet-cri">kubelet 与 CRI 交互原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#syncloop">SyncLoop 是什么？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">CRI 规范</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">CRI 操作容器容器的生命周期</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cri-streaming">CRI streaming 接口</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cri-shim">为何要设计 CRI shim 这一模块？</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">参考文档</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">参考与引用</a></li>
 </ul>
             </nav>
         </div>
@@ -849,8 +871,116 @@ document.write(`
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="k8s">
 <h1>K8S 运行时<a class="headerlink" href="#k8s" title="Link to this heading">#</a></h1>
+<p>前文中已经介绍完如何进行资源管理和调度，完成这些工作后，就需要将调度成功的 Pod 在宿主机中创建出来。
+这个正是 kubelet 通过 CRI 和底层容器运行时进行交互。</p>
+<p>为什么需要抽象出 CRI 这个概念？</p>
+<blockquote>
+<div><p>首先是统一容器生命周期管理接口，避免 Kubernetes 与特定容器运行时强绑定。支持多种容器运行时（Docker、containered、CRI-O）。</p>
+</div></blockquote>
+<section id="cri">
+<h2>CRI 核心组件<a class="headerlink" href="#cri" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>kubelet：负责管理节点上的 Pod 和容器，通过 CRI 与容器运行时交互。</p></li>
+<li><p>CRI shim：实现 CRI 接口的适配层（如 dockershim、containerd-shim），作为 gRPC 服务端负责将 CRI 请求的内容转为具体的容器运行时 API 并响应。</p></li>
+<li><p>Container Runtime：实际执行容器操作的引擎（如 containerd、CRI-O）。</p></li>
+</ul>
+<p><img alt="CRI 架构" src="../_images/05cri.png" /></p>
+</section>
+<section id="kubelet-cri">
+<h2>kubelet 与 CRI 交互原理<a class="headerlink" href="#kubelet-cri" title="Link to this heading">#</a></h2>
+<p>整体架构如下图所示，当 k8s 创建一个 Pod 后，就会通过调度器选择一个具体的节点来运行。接着 kubelet 就会通过 SyncLoop 来执行具体的操作。</p>
+<p><img alt="CRI 架构" src="../_images/05criinfra.png" /></p>
+<section id="syncloop">
+<h3>SyncLoop 是什么？<a class="headerlink" href="#syncloop" title="Link to this heading">#</a></h3>
+<p>SyncLoop 是 kubelet 的工作核心，主要负责 Pod 生命周期的核心控制循环，负责保障 Pod 实际状态与期望状态一致。其核心职责包括：</p>
+<ul class="simple">
+<li><p>监控 Pod 状态：持续监听 API Server 的 Pod 配置变更（如创建、更新、删除）。</p></li>
+<li><p>协调 Pod 状态：根据最新配置，触发 Pod 的创建、更新或删除操作。</p></li>
+<li><p>处理运行时异常：检测容器崩溃、资源不足等问题，并尝试恢复。</p></li>
+</ul>
+<p>其主要输入的 Channel 包括：</p>
+<ul class="simple">
+<li><p>Pod 配置变更（来自 API Server 的 Watch 机制）。</p></li>
+<li><p>定时同步触发（默认每 10 秒一次，由 sync-frequency 参数控制）。</p></li>
+<li><p>容器运行时状态更新（如容器退出、镜像拉取失败）。</p></li>
+<li><p>探针（Probe）结果（如 Readiness/Liveness 检查失败）。</p></li>
+</ul>
+<p>主要逻辑在 syncPod 函数中执行，负责单个 Pod 的状态同步：</p>
+<p>(1) 状态对比
+对比实际状态和期望状态，期望状态来自 API Server 或静态 Pod 配置文件。实际状态通过容器运行时（如 containerd）查询当前容器状态。</p>
+<p>(2) 操作执行</p>
+<ul class="simple">
+<li><p>创建 Pod：创建 Pod 的沙箱环境（pause 容器）。按顺序启动 Init 容器和业务容器。挂载 Volume 并设置网络命名空间。</p></li>
+<li><p>更新 Pod：对比新旧配置差异，仅更新变化的容器或资源（如镜像版本、环境变量）。</p></li>
+<li><p>删除 Pod：发送 SIGTERM 信号终止容器。等待优雅终止超时后强制终止（SIGKILL）。清理 Volume 和网络资源。</p></li>
+</ul>
+<p>(3) 状态回写
+将 Pod 的当前状态（Status）和事件（Event）更新到 API Server，供控制器（如 Deployment Controller）使用。</p>
+</section>
 <section id="id1">
-<h2>参考与引用<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h3>CRI 规范<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>CRI 中主要定义了两类接口：</p>
+<ul class="simple">
+<li><p>ImageService：定义拉取、查看和删除镜像等操作。</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">//</span> <span class="n">ImageService</span> <span class="n">defines</span> <span class="n">the</span> <span class="n">public</span> <span class="n">APIs</span> <span class="k">for</span> <span class="n">managing</span> <span class="n">images</span><span class="o">.</span>
+<span class="n">service</span> <span class="n">ImageService</span> <span class="p">{</span>
+    
+    <span class="n">rpc</span> <span class="n">ListImages</span><span class="p">(</span><span class="n">ListImagesRequest</span><span class="p">)</span> <span class="n">returns</span> <span class="p">(</span><span class="n">ListImagesResponse</span><span class="p">)</span> <span class="p">{}</span>
+    
+    <span class="n">rpc</span> <span class="n">ImageStatus</span><span class="p">(</span><span class="n">ImageStatusRequest</span><span class="p">)</span> <span class="n">returns</span> <span class="p">(</span><span class="n">ImageStatusResponse</span><span class="p">)</span> <span class="p">{}</span>
+   
+    <span class="n">rpc</span> <span class="n">PullImage</span><span class="p">(</span><span class="n">PullImageRequest</span><span class="p">)</span> <span class="n">returns</span> <span class="p">(</span><span class="n">PullImageResponse</span><span class="p">)</span> <span class="p">{}</span>
+   
+   
+    <span class="n">rpc</span> <span class="n">RemoveImage</span><span class="p">(</span><span class="n">RemoveImageRequest</span><span class="p">)</span> <span class="n">returns</span> <span class="p">(</span><span class="n">RemoveImageResponse</span><span class="p">)</span> <span class="p">{}</span>
+   
+    <span class="n">rpc</span> <span class="n">ImageFsInfo</span><span class="p">(</span><span class="n">ImageFsInfoRequest</span><span class="p">)</span> <span class="n">returns</span> <span class="p">(</span><span class="n">ImageFsInfoResponse</span><span class="p">)</span> <span class="p">{}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>RuntimeService：定义容器相关的操作。管理容器的生命周期，以及与容器交互的调用等操作。主要包括 container 和 PodSandbox 相关的管理接口，包括 exec、attach 等。</p></li>
+</ul>
+</section>
+<section id="id2">
+<h3>CRI 操作容器容器的生命周期<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>通过 kubectl 来运行一个 Pod 时，会执行以下动作：</p>
+<ul class="simple">
+<li><p>首先调用 RunPodSandbox 接口来创建一个 Pod 容器，Pod 容器是用来持有容器的相关资源的，比如说网络空间、PID 空间、进程空间等资源。</p></li>
+<li><p>接着调用 CreatContainer 接口，在 Pod 容器的空间创建业务容器。</p></li>
+<li><p>然后再调用 StartContainer 接口启动容器。</p></li>
+<li><p>最后调用 StopContainer 与 RemoveContainer 接口删除容器。</p></li>
+</ul>
+<p><img alt="CRI 架构" src="../_images/05cri_cicle.png" /></p>
+</section>
+<section id="cri-streaming">
+<h3>CRI streaming 接口<a class="headerlink" href="#cri-streaming" title="Link to this heading">#</a></h3>
+<p>流式接口不仅可以节省资源，还能保证连接的可靠性。当执行 kubectl exec 命令时，其执行过程如下：</p>
+<ul class="simple">
+<li><p>第一步：kubectl 将 exec 请求封装为一个 HTTP 请求，该请求将被 API Server 解析。</p></li>
+<li><p>第二步：API Server 将请求转发至目标 Pod 所在节点的 kubelet，建立与 kubelet 的 WebSocket 连接，用于实时数据传输。</p></li>
+<li><p>第三步：kubelet 接收请求后，通过 CRI 与容器运行时交互以执行命令。</p></li>
+</ul>
+<p><img alt="CRI 架构" src="../_images/05cri_streaming.png" /></p>
+</section>
+<section id="cri-shim">
+<h3>为何要设计 CRI shim 这一模块？<a class="headerlink" href="#cri-shim" title="Link to this heading">#</a></h3>
+<p>最后再来探讨一个问题，为什么要设计 CRI shim 模块。早期 Kubernetes 最初直接依赖 Docker 的 API 管理容器，导致无法支持其他容器运行时（如 containerd、CRI-O）。还有一点原因就是用户的多样化需求，比如轻量级运行时等。</p>
+<p>CRI shim 有哪些优势呢？</p>
+<ul class="simple">
+<li><p>解耦核心组件：kubelet 仅需实现 CRI 客户端逻辑，无需为每个运行时编写适配代码。</p></li>
+<li><p>支持多运行时：支持 Docker、containerd、CRI-O 等。</p></li>
+<li><p>简化维护</p></li>
+</ul>
+</section>
+</section>
+<section id="id3">
+<h2>参考文档<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>https://www.cnblogs.com/zhangmingcheng/p/17495311.html</p>
+</section>
+<section id="id4">
+<h2>参考与引用<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 </section>
 </section>
 
@@ -902,7 +1032,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">K8S 容器持网络</p>
+        <p class="prev-next-title">Kubernetes 容器监控与日志</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -922,7 +1052,17 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cri">CRI 核心组件</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kubelet-cri">kubelet 与 CRI 交互原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#syncloop">SyncLoop 是什么？</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">CRI 规范</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">CRI 操作容器容器的生命周期</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cri-streaming">CRI streaming 接口</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cri-shim">为何要设计 CRI shim 这一模块？</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">参考文档</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">参考与引用</a></li>
 </ul>
   </nav></div>
 
@@ -956,7 +1096,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 05, 2025.
+  Last updated on Sep 14, 2025.
   <br/>
 </p>
   </div>

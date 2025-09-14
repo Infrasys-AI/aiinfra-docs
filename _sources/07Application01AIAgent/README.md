@@ -20,9 +20,9 @@ AI Agent（人工智能体）是一种能够感知环境、进行决策和执行
 
 ## 备注
 
-文字课程内容正在一节节补充更新，每晚会抽空继续更新正在 [AIInfra](https://infrasys-ai.github.io/aiinfra-docs) ，希望您多多鼓励和参与进来！！！
+文字课程内容正在一节节补充更新，每晚会抽空继续更新正在 [AI Infra](https://infrasys-ai.github.io/aiinfra-docs) ，希望您多多鼓励和参与进来！！！
 
-文字课程开源在 [AIInfra](https://infrasys-ai.github.io/aiinfra-docs)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎引用！
+文字课程开源在 [AI Infra](https://infrasys-ai.github.io/aiinfra-docs)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎引用！
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
 > 

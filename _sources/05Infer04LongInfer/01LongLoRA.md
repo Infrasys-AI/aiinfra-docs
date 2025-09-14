@@ -6,12 +6,12 @@ Self-Attention 的计算复杂度可简化为 $O(n^2)$，因此训练过程中 L
 相比 LoRA，LongLoRA 能够显著改善长序列输出质量：
 
 <figure style="text-align: center;">
-    <img src="./../images/05Infer04LongInfer/longlora_table1.png" alt="$LongLoRA" title="Shifted Sparsed Attention">
+    <img src="../images/05Infer04LongInfer/longlora_table1.png" alt="$LongLoRA" title="Shifted Sparsed Attention">
 </figure>
 
 ## Shifted Sparsed Attention ($S^2$-Attn)
 <figure style="text-align: center;">
-    <img src="./../images/05Infer04LongInfer/ssattn.png" alt="$LongLoRA" title="Shifted Sparsed Attention">
+    <img src="../images/05Infer04LongInfer/ssattn.png" alt="$LongLoRA" title="Shifted Sparsed Attention">
     <figcaption>图 1：Shifted Sparsed Attention</figcaption>
 </figure>
 

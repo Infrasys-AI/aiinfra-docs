@@ -12,7 +12,7 @@ Author by: 张柯帆
 
 ## 课程位置
 
-![AIInfra](./../images/03DockCloud/arch01.png)
+![AI Infra](../images/03DockCloud/arch01.png)
 
 ## 课程简介
 
@@ -20,7 +20,7 @@ xxx
 
 ## 课程知识
 
-![AIInfra](./../images/03DockCloud/arch02.png)
+![AI Infra](../images/03DockCloud/arch02.png)
 
 ## 备注
 

@@ -22,7 +22,7 @@ $$y = \sum_{i=1}^{n} G(x)_i \cdot E_i(x)$$
 
 $$G(x) = \text{softmax}(W_g \cdot x + b_g)$$
 
-![](./../images/04Train02ParallelAdv/Code04Expert01.png)
+![](../images/04Train02ParallelAdv/Code04Expert01.png)
 
 ## 2. 基础 MoE 层实现
 

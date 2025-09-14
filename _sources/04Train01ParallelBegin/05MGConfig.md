@@ -11,7 +11,7 @@ Author: 郭鑫杰
 
 依据通信对带宽的要求，划出通信域优先级图示：
 
-![comm_priority](.../images/04Train01ParallelBegin/05MGConfig01.jpg)
+![comm_priority](.images/05MGConfig01.jpg)
 
 Intra Node 指将通信更多放在机内，对带宽要求比较高；Inter Node 则是将通信放在机间，对带宽要求相对低。
 
@@ -42,7 +42,7 @@ $$world\_size = tp * cp * dp * pp = etp * ep * edp * pp$$
 !!!!!!!!!!!!!!!!!!!!!
 补充文字
 
-![rank_generator](.../images/04Train01ParallelBegin/05MGConfig03.jpg)
+![rank_generator](.images/05MGConfig03.jpg)
 
 ## 通信域划分 Ranks
 

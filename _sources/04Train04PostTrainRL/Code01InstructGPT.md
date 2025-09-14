@@ -35,11 +35,9 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(f"使用设备: {device}")
 ```
 
-## Stage1：监督微调 SFT
+## 2. Stage1：监督微调 SFT
 
 监督微调阶段使用人类标注的指令-回答对来微调预训练语言模型，使其初步学会遵循指令。
-
-### 技术原理
 
 在 SFT 阶段，我们使用标准的监督学习方式，使用人类标注的高质量问答对数据来微调预训练语言模型。模型的训练目标是最大化在给定指令情况下，生成人类期望回答的似然概率。
 
@@ -49,7 +47,7 @@ $$ \mathcal{L}_{SFT} = -\mathbb{E}_{(x,y)\sim D}[\log P_{\theta}(y|x)] $$
 
 其中 $x$ 是指令，$y$ 是人类标注的回答，$\theta$ 是模型参数。
 
-### 数据准备
+### 2.1 数据准备
 
 我们创建一个简化的指令-回答数据集，并实现一个简单的文本编码器：
 
@@ -87,7 +85,7 @@ class SFTDataset(Dataset):
         instr, resp = self.data[idx]
         text = f"指令：{instr} 回答：{resp}"
         tokens = self.tokenizer.encode(text)
-        # 输入是前 n-1 个 token，目标是后 n-1 个 token（预测下一个 token）
+        # 输入是前 n-1 个 token，目标是后 n-1 个 token
         return {
             'input_ids': tokens[:-1],  # [seq_len-1]
             'labels': tokens[1:]       # [seq_len-1]
@@ -113,7 +111,7 @@ sft_dataloader = DataLoader(sft_dataset, batch_size=2, shuffle=True)
 
 这里创建了一个简单的字符级编码器`SimpleTokenizer`，将文本转换为模型可以处理的数字序列。SFTDataset 类将指令和回答组合成模型输入，并构建了合理的训练目标——用前 n-1 个 token 预测第 n 个 token，这是语言模型训练的标准做法。
 
-### 模型定义
+### 2.2 模型定义
 
 定义一个简化的 Transformer 模型，包含必要的位置编码：
 
@@ -146,7 +144,7 @@ model = SimpleTransformer(vocab_size=tokenizer.vocab_size).to(device)
 
 简化 Transformer 模型包含嵌入层、位置编码和 Transformer 编码器。位置编码是关键补充，它让模型能够理解文本中的顺序信息，这是原代码缺失的重要组件。
 
-### SFT 训练
+### 2.3 SFT 训练
 
 ```python
 # SFT 训练配置
@@ -171,7 +169,7 @@ def train_sft(model, dataloader, epochs=3):
             optimizer.zero_grad()
             outputs = model(input_ids)  # [batch_size, seq_len-1, vocab_size]
             
-            # 计算损失（需要调整维度以匹配 CrossEntropyLoss 的要求）
+            # 计算损失
             loss = criterion(outputs.transpose(1, 2), labels)
             
             # 反向传播和优化
@@ -194,21 +192,21 @@ sft_losses = train_sft(model, sft_dataloader, epochs=3)
 
 训练过程中，我们使用交叉熵损失函数，目标是让模型学会预测下一个 token。注意我们忽略了 padding token(0)的损失，这是处理变长序列的标准做法。随着训练进行，损失应该逐步下降，表明模型正在学习指令和回答之间的关系。
 
-## Stage2：奖励模型 RM
+## 3. Stage2：奖励模型 RM
 
 奖励模型用于学习人类对模型回答的偏好，为强化学习阶段提供奖励信号。
-
-### 技术原理
 
 奖励模型的目标是学习人类的偏好判断，即对于同一个指令的多个回答，哪个回答更符合人类偏好。训练数据由人类标注员对模型生成回答的质量进行排名。
 
 奖励模型的训练通常使用对比学习框架，通过比较不同回答的相对质量来学习一个标量奖励函数。常用的损失函数是 pairwise ranking loss：
 
-$$ \mathcal{L}_{RM} = -\mathbb{E}_{(x,y_w,y_l)\sim D}[\log(\sigma(r_{\phi}(x,y_w) - r_{\phi}(x,y_l)))] $$
+$$
+\mathcal{L}_{RM} = -\mathbb{E}_{(x,y_w,y_l)\sim D}[\log(\sigma(r_{\phi}(x,y_w) - r_{\phi}(x,y_l)))]
+$$
 
 其中 $y_w$ 是偏好的回答，$y_l$ 是不偏好的回答，$r_{\phi}$ 是奖励模型。
 
-### 数据准备
+### 3.1 数据准备
 
 ```python
 # 创建奖励模型数据集类
@@ -263,7 +261,7 @@ rm_dataloader = DataLoader(rm_dataset, batch_size=1, shuffle=True)
 
 奖励模型需要成对的偏好数据，每个数据点包含一个指令、一个高质量回答和一个低质量回答。这种数据结构允许我们训练模型区分回答的质量差异。
 
-### 奖励模型
+### 3.2 奖励模型
 
 ```python
 # 定义奖励模型
@@ -292,7 +290,7 @@ reward_model = RewardModel(model).to(device)
 
 奖励模型基于第一阶段训练的 SFT 模型构建，这样可以利用已经学到的指令理解能力。我们添加了一个简单的线性层作为"奖励头"，将模型最后一个 token 的特征转换为一个标量奖励值。
 
-### RM 训练
+### 3.3 RM 训练
 
 ```python
 # 奖励模型训练
@@ -335,11 +333,11 @@ train_rm(reward_model, rm_dataloader, epochs=2)
 
 奖励模型的训练使用对比损失函数，目标是让模型对高质量回答给出更高的奖励值，对低质量回答给出更低的奖励值。这种成对比较的方式能够有效学习人类的偏好。随着训练进行，损失应该下降，表明模型逐渐学会了区分回答质量。
 
-## Stage3：PPO 强化学习
+## 4. Stage3：PPO 强化学习
 
 在 PPO 阶段，我们使用奖励模型提供的奖励信号来进一步优化语言模型，使其生成更符合人类偏好的回答。
 
-### 技术原理
+### 4.1 技术原理
 
 PPO(Proximal Policy Optimization)是一种强化学习算法，它通过限制策略更新的步长来确保训练稳定性。在 RLHF 中，PPO 用于优化语言模型，使其生成的回答能获得更高的奖励模型评分。
 
@@ -349,11 +347,11 @@ $$ \mathcal{L}^{PPO} = \mathbb{E}[\min(r_t(\theta)\hat{A}_t, \text{clip}(r_t(\th
 
 其中 $r_t(\theta) = \frac{\pi_{\theta}(a_t|s_t)}{\pi_{\text{old}}(a_t|s_t)}$ 是概率比，$\hat{A}_t$ 是优势估计（这里简化为奖励模型的输出），$\epsilon$ 是裁剪参数。
 
-### PPO 实现
+### 4.2 PPO 实现
 
 ```python
 def ppo_train(model, reward_model, tokenizer, epochs=2):
-    # 冻结奖励模型的参数（不再更新）
+    # 冻结奖励模型的参数
     for param in reward_model.parameters():
         param.requires_grad = False
         
@@ -373,7 +371,7 @@ def ppo_train(model, reward_model, tokenizer, epochs=2):
             input_text = f"指令：{instruction} 回答："
             input_ids = tokenizer.encode(input_text)[:-1].unsqueeze(0).to(device)  # [1, seq_len]
             
-            # 模型生成回答（简化的 greedy 生成）
+            # 模型生成回答
             generated_ids = input_ids.clone()
             for _ in range(10):  # 生成 10 个 token
                 logits = model(generated_ids)[:, -1, :]  # 获取最后一个 token 的 logits
@@ -386,7 +384,7 @@ def ppo_train(model, reward_model, tokenizer, epochs=2):
             total_reward += reward
             
             # 简化 PPO 损失计算
-            # 1. 计算旧策略的概率（用于比率计算）
+            # 1. 计算旧策略的概率
             with torch.no_grad():
                 old_logits = model(input_ids)
                 old_probs = torch.softmax(old_logits, dim=-1)
@@ -422,7 +420,7 @@ ppo_train(model, reward_model, tokenizer, epochs=2)
 
 PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。我们首先冻结奖励模型参数，确保奖励信号稳定。然后，对于每个指令，模型生成回答并获得奖励。PPO 的关键是使用裁剪机制限制策略更新的幅度，防止更新过大导致训练不稳定。随着训练进行，模型生成的回答应该能获得越来越高的奖励。
 
-## 实验结果与分析
+## 5. 实验结果与分析
 
 通过上述三个阶段的训练，我们完成了简化版的 InstructGPT 训练流程。虽然实现经过了大幅简化，但核心思想得以保留：
 
@@ -430,7 +428,7 @@ PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。�
 2. **RM 阶段**：奖励模型学会了区分回答质量
 3. **PPO 阶段**：语言模型根据奖励信号进一步优化生成策略
 
-### 训练过程可视化
+### 5.1 训练过程可视化
 
 ```python
 # 绘制训练损失曲线
@@ -449,7 +447,7 @@ plt.show()
 
 **预期结果**：SFT 阶段的损失应该呈现稳步下降趋势，表明模型正在学习指令与回答之间的关系。RM 阶段的损失也应该下降，表明奖励模型学会了区分好回答和差回答。PPO 阶段的平均奖励应该上升，表明模型生成的回答越来越符合奖励模型定义的"好"标准。
 
-### 模型效果对比
+### 5.2 模型效果对比
 
 我们可以对比 SFT 阶段和 PPO 阶段模型的生成效果：
 
@@ -487,9 +485,9 @@ for instr in test_instructions:
     print(f"回答：{response}\n")
 ```
 
-**预期结果**：经过 PPO 优化的模型生成的回答应该比仅经过 SFT 的模型更符合人类偏好（根据我们在奖励模型中定义的标准）。例如，对于"什么是 AI？"的问题，PPO 优化后的模型可能会生成更详细、更准确的回答。
+经过 PPO 优化的模型生成的回答应该比仅经过 SFT 的模型更符合人类偏好。
 
-## 总结与思考
+## 6. 总结与思考
 
 本实验通过简化实现复现了 InstructGPT 的 RLHF 三阶段流程。虽然实际应用中的实现更加复杂，但核心思想是一致的：
 

@@ -31,7 +31,7 @@
   - reward_score: 由 Reward Model 产生，为当前句子状态下，立即获取的收益分数。
   - values：由 Critic Model 产生，估计当前句子状态下到完成生成，可以获取的回报，也就是状态价值函数。
 
-![alt text](./../images/04Train04PostTrainRL/instruct_gpt.png)
+![alt text](../images/04Train04PostTrainRL/instruct_gpt.png)
 
 
 你是大模型算法专家，现在正面向大模型的学习者写一份对应的学习文档。

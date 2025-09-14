@@ -28,13 +28,13 @@
 
 ## 内容大纲
 
-![](./../images/06AlgoData01Basic/00outline.png)
+![](../images/06AlgoData01Basic/00outline.png)
 
 ## 备注
 
-文字课程内容正在一节节补充更新，每晚会抽空继续更新正在 [AIInfra](https://infrasys-ai.github.io/aiinfra-docs) ，希望您多多鼓励和参与进来！！！
+文字课程内容正在一节节补充更新，每晚会抽空继续更新正在 [AI Infra](https://infrasys-ai.github.io/aiinfra-docs) ，希望您多多鼓励和参与进来！！！
 
-文字课程开源在 [AIInfra](https://infrasys-ai.github.io/aiinfra-docs)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎引用！
+文字课程开源在 [AI Infra](https://infrasys-ai.github.io/aiinfra-docs)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎引用！
 
 > 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
 >
@@ -50,11 +50,11 @@
 05GQAMLA
 06LongSeq
 07Parameter
-Practice01MiniTranformer
-Practice02TransformerTrain
-Practice03MachineTrans
-Practice04Sinusoidal
-Practice05BPE
-Practice06Embedding
-Practice07Attention
+CODE01MiniTranformer
+CODE02TransformerTrain
+CODE03MachineTrans
+CODE04Sinusoidal
+CODE05BPE
+CODE06Embedding
+CODE07Attention
 ```

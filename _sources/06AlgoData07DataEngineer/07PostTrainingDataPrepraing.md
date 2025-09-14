@@ -7,17 +7,17 @@
 它先与大量真实或模拟用户对话，针对同一问题生成多条候选回答；随后，人类或 AI 评委依据“正确、安全、简洁、有趣”等多维标准，为回答打分并排序，训练出 Reward Model（RM）。RM 像一张实时更新的“评分表”，把人类偏好量化成可导的奖励信号。
 接着，通过 PPO、GRPO 或 DPO 等算法，模型在 RM 的监督下持续“刷题”：高分回答被强化，低分回答被抑制。经过成千上万次迭代，模型不仅进一步抑制幻觉、毒性，还学会在复杂场景里主动追问、调用工具、进行长链推理，最终完成从“听懂指令”到“主动对齐人类意图”的跃升。
 
-![alt text](./../images/06AlgoData07DataEngineer/full_time_training.png)
+![alt text](../images/06AlgoData07DataEngineer/full_time_training.png)
 
 
-## SFT数据构建
+## SFT 数据构建
 
 ### 单轮数据构建
 本质：指令-响应对（Instruction-Response Pairs）
 
 ``` python 
 {  
-  "instruction": "用Python实现斐波那契数列",  
+  "instruction": "用 Python 实现斐波那契数列",  
   "output": "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n-1) + fib(n-2)"  
 }  
 ```
@@ -26,17 +26,17 @@
 
 ``` python
 [  
-  {"role": "user", "content": "如何用PyTorch实现CNN？"},  
-  {"role": "assistant", "content": "首先导入torch.nn模块..."},  
-  {"role": "user", "content": "和TensorFlow实现有何不同？"},  
-  {"role": "assistant", "content": "主要区别在API设计上..."}  
+  {"role": "user", "content": "如何用 PyTorch 实现 CNN？"},  
+  {"role": "assistant", "content": "首先导入 torch.nn 模块..."},  
+  {"role": "user", "content": "和 TensorFlow 实现有何不同？"},  
+  {"role": "assistant", "content": "主要区别在 API 设计上..."}  
 ]  
 
 ```
 
 ### 数据质量提升
 在后训练过程中，数据的质量 >> 数据的数量。一般可以从指令的准确性，复杂性，知识密度，指令遵循等多方面提升质量。
-![alt text](./../images/06AlgoData07DataEngineer/quality_improve.png)
+![alt text](../images/06AlgoData07DataEngineer/quality_improve.png)
 
 ## 偏好数据
 便好数据构建原则：
@@ -59,7 +59,7 @@
 
 
 ## 数据飞轮
-数据飞轮（Data Flywheel）是人工智能领域中描述数据、模型和产品之间良性循环的一个重要概念。它借用“飞轮”这一物理装置的比喻，形象地说明了数据驱动AI系统在不断自我强化、持续提升的过程。
+数据飞轮（Data Flywheel）是人工智能领域中描述数据、模型和产品之间良性循环的一个重要概念。它借用“飞轮”这一物理装置的比喻，形象地说明了数据驱动 AI 系统在不断自我强化、持续提升的过程。
 
 简单来说，数据飞轮指的是：数据越多，模型越好，产品体验越佳，从而吸引更多用户产生更多数据，进一步提升模型能力，形成正向循环。
 
@@ -67,14 +67,14 @@
 
 从用户交互中自动或人工筛选出高质量的标注数据，包括问题、答案、用户评价、纠错建议等。
 
-这些数据被用于微调（Fine-tuning）、指令调优（Instruction Tuning）、强化学习（如RLHF）等后训练方法，使模型更贴近用户需求。
+这些数据被用于微调（Fine-tuning）、指令调优（Instruction Tuning）、强化学习（如 RLHF）等后训练方法，使模型更贴近用户需求。
 
 优化后的模型能够更好地理解用户意图，生成更准确、自然的回复，提升用户体验。
 
 用户满意度提升，更多人使用，产生更多高质量反馈数据，循环加速。
 
 
-![alt text](./../images/06AlgoData07DataEngineer/data_flywheel.png)
+![alt text](../images/06AlgoData07DataEngineer/data_flywheel.png)
 ## 数据蒸馏
 
 数据蒸馏（Data Distillation）是一种通过模型自身生成伪标签（pseudo-labels）或利用模型知识，自动扩充、优化训练数据集的方法。它的目标是利用已有模型的能力，产生更多高质量的训练样本，从而进一步提升模型性能。

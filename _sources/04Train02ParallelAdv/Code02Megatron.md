@@ -26,7 +26,7 @@ $$Y = [Y_1, Y_2, ..., Y_n]$$
 
 $$Y = XW = X[W_1, W_2, ..., W_n] = [XW_1, XW_2, ..., XW_n]$$
 
-![](./../images/04Train02ParallelAdv/Code02Megatron01.png)
+![](../images/04Train02ParallelAdv/Code02Megatron01.png)
 
 对于反向传播，梯度也需要相应的分割和聚合操作。这种并行策略特别适合 Transformer 架构，因为其核心组件（MLP 和 Attention）都包含大量的矩阵运算。
 
@@ -145,7 +145,7 @@ class ParallelMLP(nn.Module):
 
 该实现的核心优势是**无计算冗余**：每个设备仅计算部分矩阵乘法，通过两次通信操作（All-Gather+Reduce-Scatter）确保最终结果与单卡计算完全一致，同时将单卡内存占用降低至 $1/world_size$。
 
-![](./../images/04Train02ParallelAdv/Code02Megatron03.png)
+![](../images/04Train02ParallelAdv/Code02Megatron03.png)
 
 ## 3. Attention 层 TP 实现
 
@@ -201,7 +201,7 @@ class ParallelAttention(nn.Module):
 
 该实现的关键设计是**头级并行**：每个设备仅存储部分 Q/K/V 投影权重，计算部分注意力头，避免了全量 Attention 计算的内存开销。
 
-![](./../images/04Train02ParallelAdv/Code02Megatron02.png)
+![](../images/04Train02ParallelAdv/Code02Megatron02.png)
 
 ## 4. 完整并行 Transformer
 

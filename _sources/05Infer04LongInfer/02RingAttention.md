@@ -5,7 +5,7 @@ Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 $
 
 ## Attention 分块计算
 我们假设 $Q$、$K$、$V$ 矩阵的尺寸均为（N，d），其中 N=seq_len，d=hidden_size，为简单起见，我们将序列切分为 4 个 chunk（假设我们有 4 张卡，每张卡负责一个 chunk），每个 chunk 大小为（C，d），如下图所示：
-![](./../images/05Infer04LongInfer/02RingAttention01.jpg)
+![](../images/05Infer04LongInfer/02RingAttention01.jpg)
 
 每个块的注意力输出 $O_i$ 需要用到 $Q_i$ 矩阵（1 个 chunk）和所有的 $K$ 矩阵和 $V$ 矩阵（所有 chunk），因此在多卡计算的时候每张卡的 $Q_i$ 是固定的。在每块 GPU 上的计算流程是：
 - 传入 $K_j$ 以及 $V_j$；
@@ -14,13 +14,13 @@ Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 $
 - 传入其他 $K$、$V$ 矩阵的 chunk，重复上述过程，更新得到最后的 $O_i$。
 
 上述过程如下图所示：
-![](./../images/05Infer04LongInfer/02RingAttention02.jpg)
+![](../images/05Infer04LongInfer/02RingAttention02.jpg)
 
 这里需要注意的是 $O_i$ 是如何更新的。由于注意力机制需要对注意力分数矩阵做 softmax，因此我们需要获得分数矩阵每行的全局最大值以及 sum，记作 global max 和 global sum，但我们在分块计算的过程使用是 local max 以及 local sum。Ring Attention 更新 $O_i$ 的方式与 Flash Attention2 基本一致。
 
 ## 多 GPU 环状通信
 上面的分块流程已经提及，每次计算得到的 $O_i^j$ 只需要用到 $K_j$ 以及 $V_j$，因此每张 GPU 仅仅保留对应需要的 chunk，在下一次更新 $O_i^{j+1}$ 的时候需要从其他卡接收 $K_{j+1}$ 以及 $V_{j+1}$，这样就能够达到节约显存的目的。不过需要注意的是，这个过程会增加通信量，因此需要设计合理的 chunk size，使得计算与通信的时间相互遮盖。下面是环状通信的流程：
-![](./../images/05Infer04LongInfer/02RingAttention03.jpg)
+![](../images/05Infer04LongInfer/02RingAttention03.jpg)
 
 - 首先将 $Q$ 分块放置到每张 GPU 内，各卡上的 $Q$ 分块不变；
 - 接着，每块卡上只放一块 $(K，V)$ 对。也就是每次计算时，哪个 $(K，V)$ 对需要被这块卡用到，哪个 $(K，V)$ 对就在这块卡上放着。初始化的状态如图 iter0 所示；

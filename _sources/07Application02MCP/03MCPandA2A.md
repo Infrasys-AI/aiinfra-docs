@@ -63,7 +63,7 @@ MCP 制定统一规范，不管是连接数据库、第三方 API，还是本地
 
 ![](../images/07Application02MCP/03MCPandA2A_03.png)
 
-上图是类比于USB-C来看MCP，核心设计理念上是要成为AI的USB-C，架构上的核心组件则是 MCP server 、 MCP client 、 MCP host。下面将进行详细的介绍。
+上图是类比于 USB-C 来看 MCP，核心设计理念上是要成为 AI 的 USB-C，架构上的核心组件则是 MCP server 、 MCP client 、 MCP host。下面将进行详细的介绍。
 
 ### MCP 设计理念
 

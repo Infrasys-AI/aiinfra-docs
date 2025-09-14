@@ -103,7 +103,7 @@ CLIP 的研究并非局限于单一架构，而是系统地探索了两种在当
 6.  **线性投影与归一化：**
     *   将 $z_{[CLS]}$ 通过一个额外的**线性投影层**（有时也称为映射头或适配器层），将其维度投影到与**文本编码器输出**以及**共享嵌入空间维度** $d$ 相匹配（例如 512 维）。这个步骤确保图像和文本嵌入在同一维度空间进行比较。
     *   对投影后的 $d$ 维向量进行 **L2 归一化**，得到最终的图像嵌入向量 $I_i$，满足 $||I_i|| = 1$。归一化对于后续计算余弦相似度（点积）至关重要。
-![](./../images/06AlgoData04ImageTextGenerat/01CLIP01.png)
+![](../images/06AlgoData04ImageTextGenerat/01CLIP01.png)
 
 #### 文本编码器 Text Encoder
 
@@ -116,7 +116,7 @@ CLIP 的文本编码器是一个基于 Transformer 编码器架构的神经网�
 
 在预训练的过程中，模型的输入是一个图片和文字的配对，比如如下图片画的是一条狗，配对的文字是`Pepper the aussie pup`。图片通过了图片编码器得到特征（ResNet 或 ViT）；句子通过文本编码器得到文本的特征。
 
-![](./../images/06AlgoData04ImageTextGenerat/01CLIP02.png)
+![](../images/06AlgoData04ImageTextGenerat/01CLIP02.png)
 
 假如一个 batch 里面有 n 个这样的文本对，那么就会得到 n 个图片特征和 n 个文本特征。
 
@@ -143,7 +143,7 @@ CLIP 使用了一个对称的交叉熵损失（Symmetric Cross-Entropy Loss）�
 
 CLIP 先把 ImageNet 里面的 1000 个类，变成了一个句子，即`A photo of a {object}`，用类的名称替换掉 object。这里就会生成 1000 个句子。这 1000 个句子通过预训练好的文本编码器，生成 1000 个文本特征。此时，输入的一张图片进入图片编码器后，将图片特征与每一个文本特征做`cosine similarity`获取相似性，最终，最高相似性所对应的文本特征，就完成了分类的任务。
 
-![](./../images/06AlgoData04ImageTextGenerat/01CLIP03.png)
+![](../images/06AlgoData04ImageTextGenerat/01CLIP03.png)
 
 **为什么使用句子而不使用单词？**
 > 在训练的时候，输入的是一个句子，而在推理时输入单词，这与训练时看到的文本不一样，效果会下降。此外，句子的泛化能力更强，可以有更多的内容特征。

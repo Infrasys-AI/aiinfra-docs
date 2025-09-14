@@ -2,13 +2,13 @@
 
 Author By: 李佳函
 
-## 引言：AI生成图像的里程碑
+## 引言：AI 生成图像的里程碑
 
 2021 年，OpenAI 推出的 DALL·E 彻底改变了“文本到图像生成”的规则，它不仅能根据简单的文字描述生成逼真的图像，还能创造超越人类想象力的奇思妙想。
 
 DALL·E 的诞生并非偶然。它源于 OpenAI 对“通用人工智能”（AGI）的长期探索，试图通过多模态模型打破语言与视觉的壁垒。从 DALL·E 1 到 DALL·E 3，这一系列模型不断突破技术边界，如今已能生成高分辨率、风格多样的图像，并支持复杂的编辑功能。下面，就以 DALLE1 为例，讲解这个 AI 绘画的跨时代模型。
 
-## DALL·E的核心技术原理
+## DALL·E 的核心技术原理
 
 ### 训练过程
 
@@ -24,11 +24,11 @@ DALL·E 的训练分为两个关键阶段：
 
 3. 跨模态对齐的关键作用：dVAE 的 encoder 输出是维度为 32×32×8192 的 logits，然后通过这些 logits 索引 codebook 中的特征进行组合。codebook 的 embedding 是可学习的，这使得图像特征空间能够有效地映射到文本特征空间。这一步骤是实现文本-图像对齐的基础，相当于在视觉和语言模态之间建立了共享的语义词典。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/03DALLE01.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/03DALLE01.png)
 
 **阶段 2：训练自回归转换器**
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/03DALLE02.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/03DALLE02.png)
 
 第二阶段训练将文本和图像表示融合在一个统一的框架中：
 
@@ -36,25 +36,25 @@ DALL·E 的训练分为两个关键阶段：
 
 > 推理分为两种情况：（1）纯文本生成图像；（2）文本+图像生成图像。这两种情况的区别就在于使不使用图像的 token，如果不使用图像的 token，那么 Transformer 的输入就是 256 个文本 token；如果使用图像的 token，那么 Transformer 的输入就是 256 个文本 token+1024 个图像 token。
 
-2. 自回归建模：训练Transformer对文本和图像标记上的联合分布进行建模。在生成时，模型先处理全部文本token，然后以自回归方式逐个生成图像token，每个新token都基于之前生成的所有token和文本条件。直到生成完整的1024个图像token。
+2. 自回归建模：训练 Transformer 对文本和图像标记上的联合分布进行建模。在生成时，模型先处理全部文本 token，然后以自回归方式逐个生成图像 token，每个新 token 都基于之前生成的所有 token 和文本条件。直到生成完整的 1024 个图像 token。
 
-3. 生成的图像token序列（1024个离散值）会被 reshape 为 **32x32 的特征图**，然后输入 **dVAE 的 decoder，解码为 256x256 的 RGB 图像**。
+3. 生成的图像 token 序列（1024 个离散值）会被 reshape 为 **32x32 的特征图**，然后输入 **dVAE 的 decoder，解码为 256x256 的 RGB 图像**。
 
 ## 推理过程
 
 当用户输入文本后，输入的文本描述通过 BPE（Byte-Pair Encoding） 分词，得到最多 256 个文本 token。如果文本 token 数不足 256，则进行 padding 补足。文本 token 序列作为 Transformer 模型的 前缀（prefix），用于引导图像生成。
 
-DALL·E 1 在推理阶段会生成 多组图像（例如 12 组），每组对应不同的 token 采样路径。此时，将每张生成图像和原始文本分别输入 CLIP 的图像编码器和文本编码器，得到对应的嵌入（embedding）。计算文本嵌入与图像嵌入的余弦相似度，作为匹配分数，再根据匹配分数对所有生成图像进行排序，选择分数最高的图像作为最终输出。使用CLIP可以使得模型的生成具有一定的多样性，提升生成质量。
+DALL·E 1 在推理阶段会生成 多组图像（例如 12 组），每组对应不同的 token 采样路径。此时，将每张生成图像和原始文本分别输入 CLIP 的图像编码器和文本编码器，得到对应的嵌入（embedding）。计算文本嵌入与图像嵌入的余弦相似度，作为匹配分数，再根据匹配分数对所有生成图像进行排序，选择分数最高的图像作为最终输出。使用 CLIP 可以使得模型的生成具有一定的多样性，提升生成质量。
 
 下图是模型的整体流程。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/03DALLE03.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/03DALLE03.png)
 
 ## DALL·E 的应用场景
 
 下图展示的是论文中的实验效果图。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/03DALLE04.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/03DALLE04.png)
 
 可以看到，通过文字来生成图片，能够生成多张不同的图片，效果非常好。
 

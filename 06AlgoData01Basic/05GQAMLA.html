@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData01Basic/05GQAMLA.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: XXXX 欢迎您贡献技术文章和技术原理解读哦 本节视频:" />
+<meta property="og:description" content="Author by: 张志达 1. MQA (Multi-Query Attention) 多查询注意力: 1.1 简介: MHA vs MQA Multi-Query Attention (MQA) 是传统 Multi-Head Attention 的一种优化变体，它通过共享 Key 和 Value 矩阵来减少内存使用和计算复杂度，同时保持查询的多样性。 1.2 解决的问题: 内存效率 ：..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: XXXX 欢迎您贡献技术文章和技术原理解读哦 本节视频:" />
-<meta name="description" content="Author by: XXXX 欢迎您贡献技术文章和技术原理解读哦 本节视频:" />
+<meta property="og:image:alt" content="Author by: 张志达 1. MQA (Multi-Query Attention) 多查询注意力: 1.1 简介: MHA vs MQA Multi-Query Attention (MQA) 是传统 Multi-Head Attention 的一种优化变体，它通过共享 Key 和 Value 矩阵来减少..." />
+<meta name="description" content="Author by: 张志达 1. MQA (Multi-Query Attention) 多查询注意力: 1.1 简介: MHA vs MQA Multi-Query Attention (MQA) 是传统 Multi-Head Attention 的一种优化变体，它通过共享 Key 和 Value 矩阵来减少内存使用和计算复杂度，同时保持查询的多样性。 1.2 解决的问题: 内存效率 ：..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>05.Attention 变种算法 &#8212; AIInfra AI基础设施</title>
@@ -74,6 +74,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData01Basic/05GQAMLA';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
@@ -84,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
 
 <link
   rel="alternate"
@@ -245,9 +247,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 未来发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
 </ul>
 </details></li>
 </ul>
@@ -356,7 +358,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
 </ul>
 </details></li>
 </ul>
@@ -385,7 +387,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -430,6 +432,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
 </ul>
 </details></li>
@@ -472,6 +475,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
@@ -496,13 +505,13 @@
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">05.Attention 变种算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07Parameter.html">07.大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -517,10 +526,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -528,10 +537,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -539,12 +551,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
 
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -834,7 +848,29 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mqa-multi-query-attention">1. MQA (Multi-Query Attention) 多查询注意力</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1.1 简介</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.2 解决的问题</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.3 数学表达</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.4 伪代码实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gqa-grouped-query-attention">2. GQA (Grouped-Query Attention) 分组查询注意力</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.1 简介</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 解决的问题</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.3 数学表达</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.4 伪代码实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mla-multi-latent-attention">3. MLA (Multi-Latent Attention) 多潜在注意力</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.1 简介</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2 解决的问题</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.3 数学表达</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.4 伪代码实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4. 三种注意力机制对比</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">本节视频</a></li>
 </ul>
             </nav>
         </div>
@@ -849,10 +885,332 @@ document.write(`
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="attention">
 <h1>05.Attention 变种算法<a class="headerlink" href="#attention" title="Link to this heading">#</a></h1>
-<p>Author by:  XXXX
-欢迎您贡献技术文章和技术原理解读哦</p>
+<p>Author by:  张志达</p>
+<section id="mqa-multi-query-attention">
+<h2>1. MQA (Multi-Query Attention) 多查询注意力<a class="headerlink" href="#mqa-multi-query-attention" title="Link to this heading">#</a></h2>
 <section id="id1">
-<h2>本节视频<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h3>1.1 简介<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p><img alt="MHA vs MQA" src="../_images/MQA.png" /></p>
+<p>Multi-Query Attention (MQA) 是传统 Multi-Head Attention 的一种优化变体，它通过共享 Key 和 Value 矩阵来减少内存使用和计算复杂度，同时保持查询的多样性。</p>
+</section>
+<section id="id2">
+<h3>1.2 解决的问题<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>内存效率</strong>：减少 KV 缓存的内存占用</p></li>
+<li><p><strong>计算效率</strong>：降低注意力计算的时间复杂度</p></li>
+<li><p><strong>推理加速</strong>：在生成任务中显著提升推理速度</p></li>
+<li><p><strong>资源优化</strong>：在保持性能的同时减少模型参数量</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>1.3 数学表达<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p><strong>在 MQA 中，多个 Query 头共享同一个 Key 和 Value 矩阵</strong>：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+\text{MQA}(Q, K, V) &amp;= \text{Concat}(\text{head}_1, \ldots, \text{head}_h) W^O \\
+\text{其中}\quad \text{head}_i &amp;= \text{Attention}(Q_i W_i^Q, K W^K, V W^V) \\
+\text{Attention}(Q, K, V) &amp;= \text{softmax}\left(\frac{Q K^T}{\sqrt{d_k}}\right) V
+\end{align*}
+\end{split}\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Q_i\)</span>：第 <span class="math notranslate nohighlight">\(i\)</span> 个查询头</p></li>
+<li><p><span class="math notranslate nohighlight">\(K, V\)</span>：共享的 Key 和 Value 矩阵</p></li>
+<li><p><span class="math notranslate nohighlight">\(W_i^Q\)</span>：第 <span class="math notranslate nohighlight">\(i\)</span> 个查询头的权重矩阵</p></li>
+<li><p><span class="math notranslate nohighlight">\(W^K, W^V\)</span>：共享的 Key 和 Value 权重矩阵</p></li>
+</ul>
+</section>
+<section id="id4">
+<h3>1.4 伪代码实现<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">multi_query_attention</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">d_model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multi-Query Attention 实现</span>
+<span class="sd">    X: 输入序列 [seq_len, d_model]</span>
+<span class="sd">    num_heads: 查询头数量</span>
+<span class="sd">    d_model: 模型维度</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d_k</span> <span class="o">=</span> <span class="n">d_model</span> <span class="o">//</span> <span class="n">num_heads</span>
+    
+    <span class="c1"># 为每个查询头创建 Q 的权重矩阵</span>
+    <span class="n">W_q</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)]</span>
+    
+    <span class="c1"># 共享的 K 和 V 权重矩阵</span>
+    <span class="n">W_k</span> <span class="o">=</span> <span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span>
+    <span class="n">W_v</span> <span class="o">=</span> <span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span>
+    
+    <span class="c1"># 计算共享的 K 和 V</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_k</span>  <span class="c1"># [seq_len, d_k]</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_v</span>  <span class="c1"># [seq_len, d_k]</span>
+    
+    <span class="n">heads</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">):</span>
+        <span class="c1"># 计算第 i 个查询头</span>
+        <span class="n">Q_i</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># [seq_len, d_k]</span>
+        
+        <span class="c1"># 计算注意力分数</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">Q_i</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># [seq_len, seq_len]</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>
+        
+        <span class="c1"># 应用 softmax</span>
+        <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        
+        <span class="c1"># 加权求和</span>
+        <span class="n">head_i</span> <span class="o">=</span> <span class="n">attention_weights</span> <span class="o">@</span> <span class="n">V</span>
+        <span class="n">heads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head_i</span><span class="p">)</span>
+    
+    <span class="c1"># 拼接所有头的输出</span>
+    <span class="n">concat_heads</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span><span class="n">heads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [seq_len, d_model]</span>
+    
+    <span class="c1"># 最终线性变换</span>
+    <span class="n">W_o</span> <span class="o">=</span> <span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">concat_heads</span> <span class="o">@</span> <span class="n">W_o</span>
+    
+    <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="gqa-grouped-query-attention">
+<h2>2. GQA (Grouped-Query Attention) 分组查询注意力<a class="headerlink" href="#gqa-grouped-query-attention" title="Link to this heading">#</a></h2>
+<section id="id5">
+<h3>2.1 简介<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p><img alt="MHA vs MQA vs GQA" src="../_images/GQA.png" /></p>
+<p>Grouped-Query Attention (GQA) 是 MQA 和传统 Multi-Head Attention 之间的折中方案，它将查询头分组，每组共享一个 Key 和 Value 矩阵，在性能和效率之间取得平衡。</p>
+</section>
+<section id="id6">
+<h3>2.2 解决的问题<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>平衡性能与效率</strong>：在 MQA 和 MHA 之间找到最佳平衡点</p></li>
+<li><p><strong>灵活配置</strong>：支持不同的分组策略</p></li>
+<li><p><strong>渐进优化</strong>：可以逐步从 MHA 迁移到 MQA</p></li>
+<li><p><strong>任务适应性</strong>：根据任务需求调整分组数量</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>2.3 数学表达<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p><strong>在 GQA 中，查询头被分为 <span class="math notranslate nohighlight">\(G\)</span> 组，每组共享 Key 和 Value</strong>：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+\text{GQA}(Q, K, V) &amp;= \text{Concat}(\text{head}_1, \ldots, \text{head}_h) W^O \\
+\text{其中}\quad \text{head}_i &amp;= \text{Attention}(Q_i W_i^Q, K_{g(i)} W_{g(i)}^K, V_{g(i)} W_{g(i)}^V) \\
+g(i) &amp;= \lfloor i / (h/G) \rfloor
+\end{align*}
+\end{split}\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(G\)</span>：分组数量</p></li>
+<li><p><span class="math notranslate nohighlight">\(g(i)\)</span>：第 <span class="math notranslate nohighlight">\(i\)</span> 个查询头所属的组</p></li>
+<li><p><span class="math notranslate nohighlight">\(K_{g(i)}, V_{g(i)}\)</span>：第 <span class="math notranslate nohighlight">\(g(i)\)</span> 组共享的 Key 和 Value 矩阵</p></li>
+</ul>
+</section>
+<section id="id8">
+<h3>2.4 伪代码实现<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">grouped_query_attention</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">num_groups</span><span class="p">,</span> <span class="n">d_model</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Grouped-Query Attention 实现</span>
+<span class="sd">    X: 输入序列 [seq_len, d_model]</span>
+<span class="sd">    num_heads: 查询头数量</span>
+<span class="sd">    num_groups: 分组数量</span>
+<span class="sd">    d_model: 模型维度</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d_k</span> <span class="o">=</span> <span class="n">d_model</span> <span class="o">//</span> <span class="n">num_heads</span>
+    <span class="n">heads_per_group</span> <span class="o">=</span> <span class="n">num_heads</span> <span class="o">//</span> <span class="n">num_groups</span>
+    
+    <span class="c1"># 为每个查询头创建 Q 的权重矩阵</span>
+    <span class="n">W_q</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)]</span>
+    
+    <span class="c1"># 为每个组创建共享的 K 和 V 权重矩阵</span>
+    <span class="n">W_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_groups</span><span class="p">)]</span>
+    <span class="n">W_v</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_groups</span><span class="p">)]</span>
+    
+    <span class="c1"># 计算每组的 K 和 V</span>
+    <span class="n">K_groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">V_groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_groups</span><span class="p">):</span>
+        <span class="n">K_g</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_k</span><span class="p">[</span><span class="n">g</span><span class="p">]</span>  <span class="c1"># [seq_len, d_k]</span>
+        <span class="n">V_g</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_v</span><span class="p">[</span><span class="n">g</span><span class="p">]</span>  <span class="c1"># [seq_len, d_k]</span>
+        <span class="n">K_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">K_g</span><span class="p">)</span>
+        <span class="n">V_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">V_g</span><span class="p">)</span>
+    
+    <span class="n">heads</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">):</span>
+        <span class="c1"># 确定当前头所属的组</span>
+        <span class="n">group_id</span> <span class="o">=</span> <span class="n">i</span> <span class="o">//</span> <span class="n">heads_per_group</span>
+        
+        <span class="c1"># 计算第 i 个查询头</span>
+        <span class="n">Q_i</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># [seq_len, d_k]</span>
+        
+        <span class="c1"># 使用对应组的 K 和 V</span>
+        <span class="n">K_g</span> <span class="o">=</span> <span class="n">K_groups</span><span class="p">[</span><span class="n">group_id</span><span class="p">]</span>
+        <span class="n">V_g</span> <span class="o">=</span> <span class="n">V_groups</span><span class="p">[</span><span class="n">group_id</span><span class="p">]</span>
+        
+        <span class="c1"># 计算注意力分数</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">Q_i</span> <span class="o">@</span> <span class="n">K_g</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># [seq_len, seq_len]</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>
+        
+        <span class="c1"># 应用 softmax</span>
+        <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        
+        <span class="c1"># 加权求和</span>
+        <span class="n">head_i</span> <span class="o">=</span> <span class="n">attention_weights</span> <span class="o">@</span> <span class="n">V_g</span>
+        <span class="n">heads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head_i</span><span class="p">)</span>
+    
+    <span class="c1"># 拼接所有头的输出</span>
+    <span class="n">concat_heads</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span><span class="n">heads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [seq_len, d_model]</span>
+    
+    <span class="c1"># 最终线性变换</span>
+    <span class="n">W_o</span> <span class="o">=</span> <span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">concat_heads</span> <span class="o">@</span> <span class="n">W_o</span>
+    
+    <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="mla-multi-latent-attention">
+<h2>3. MLA (Multi-Latent Attention) 多潜在注意力<a class="headerlink" href="#mla-multi-latent-attention" title="Link to this heading">#</a></h2>
+<section id="id9">
+<h3>3.1 简介<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p><img alt="MHA vs MQA vs GQA vs MLA" src="../_images/MLA.png" /></p>
+<p>Multi-Latent Attention (MLA) 是一种创新的注意力机制，它通过引入潜在变量来建模复杂的注意力模式，能够更好地捕捉序列中的长距离依赖和复杂关系。</p>
+</section>
+<section id="id10">
+<h3>3.2 解决的问题<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>长距离依赖</strong>：更好地建模序列中的长距离关系</p></li>
+<li><p><strong>复杂模式捕捉</strong>：通过潜在变量捕捉复杂的注意力模式</p></li>
+<li><p><strong>计算效率</strong>：在保持表达能力的同时优化计算复杂度</p></li>
+<li><p><strong>可解释性</strong>：提供更好的注意力模式可解释性</p></li>
+</ul>
+</section>
+<section id="id11">
+<h3>3.3 数学表达<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<p>MLA 通过潜在变量 <span class="math notranslate nohighlight">\(Z\)</span> 来建模注意力分布：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align*}
+\text{MLA}(Q, K, V) &amp;= \text{Concat}(\text{head}_1, \ldots, \text{head}_h) W^O \\
+\text{其中}\quad \text{head}_i &amp;= \text{Attention}(Q_i, K_i, V_i, Z_i) \\
+\text{Attention}(Q, K, V, Z) &amp;= \text{softmax}\left(\frac{Q K^T + Z}{\sqrt{d_k}}\right) V \\
+Z &amp;= \text{LatentModule}(Q, K)
+\end{align*}
+\end{split}\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Z\)</span>：潜在变量矩阵，用于建模复杂的注意力模式</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{LatentModule}\)</span>：潜在变量生成模块</p></li>
+<li><p>其他符号含义与标准注意力机制相同</p></li>
+</ul>
+</section>
+<section id="id12">
+<h3>3.4 伪代码实现<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">multi_latent_attention</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multi-Latent Attention 实现</span>
+<span class="sd">    X: 输入序列 [seq_len, d_model]</span>
+<span class="sd">    num_heads: 注意力头数量</span>
+<span class="sd">    d_model: 模型维度</span>
+<span class="sd">    latent_dim: 潜在变量维度</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d_k</span> <span class="o">=</span> <span class="n">d_model</span> <span class="o">//</span> <span class="n">num_heads</span>
+    
+    <span class="c1"># 为每个头创建 Q, K, V 的权重矩阵</span>
+    <span class="n">W_q</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)]</span>
+    <span class="n">W_k</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)]</span>
+    <span class="n">W_v</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)]</span>
+    
+    <span class="c1"># 潜在变量生成模块的权重</span>
+    <span class="n">W_latent</span> <span class="o">=</span> <span class="p">[</span><span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)]</span>
+    
+    <span class="n">heads</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">):</span>
+        <span class="c1"># 计算 Q, K, V</span>
+        <span class="n">Q_i</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_q</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># [seq_len, d_k]</span>
+        <span class="n">K_i</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_k</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># [seq_len, d_k]</span>
+        <span class="n">V_i</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_v</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># [seq_len, d_k]</span>
+        
+        <span class="c1"># 生成潜在变量</span>
+        <span class="n">latent_features</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_latent</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>  <span class="c1"># [seq_len, latent_dim]</span>
+        <span class="n">Z_i</span> <span class="o">=</span> <span class="n">latent_features</span> <span class="o">@</span> <span class="n">latent_features</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># [seq_len, seq_len]</span>
+        
+        <span class="c1"># 计算注意力分数（加入潜在变量）</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">Q_i</span> <span class="o">@</span> <span class="n">K_i</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># [seq_len, seq_len]</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">+</span> <span class="n">Z_i</span>  <span class="c1"># 加入潜在变量</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">/</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>
+        
+        <span class="c1"># 应用 softmax</span>
+        <span class="n">attention_weights</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        
+        <span class="c1"># 加权求和</span>
+        <span class="n">head_i</span> <span class="o">=</span> <span class="n">attention_weights</span> <span class="o">@</span> <span class="n">V_i</span>
+        <span class="n">heads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">head_i</span><span class="p">)</span>
+    
+    <span class="c1"># 拼接所有头的输出</span>
+    <span class="n">concat_heads</span> <span class="o">=</span> <span class="n">concatenate</span><span class="p">(</span><span class="n">heads</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># [seq_len, d_model]</span>
+    
+    <span class="c1"># 最终线性变换</span>
+    <span class="n">W_o</span> <span class="o">=</span> <span class="n">random_matrix</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">concat_heads</span> <span class="o">@</span> <span class="n">W_o</span>
+    
+    <span class="k">return</span> <span class="n">output</span>
+
+<span class="k">def</span> <span class="nf">latent_module</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    潜在变量生成模块</span>
+<span class="sd">    X: 输入特征 [seq_len, d_model]</span>
+<span class="sd">    latent_dim: 潜在变量维度</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 简单的线性变换作为潜在变量生成</span>
+    <span class="n">W_latent</span> <span class="o">=</span> <span class="n">random_matrix</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">latent_dim</span><span class="p">)</span>
+    <span class="n">latent_features</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_latent</span>
+    
+    <span class="c1"># 可以添加更复杂的非线性变换</span>
+    <span class="c1"># latent_features = relu(latent_features)</span>
+    
+    <span class="k">return</span> <span class="n">latent_features</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id13">
+<h2>4. 三种注意力机制对比<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>特性</p></th>
+<th class="head"><p>MQA</p></th>
+<th class="head"><p>GQA</p></th>
+<th class="head"><p>MLA</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>KV 缓存占用</strong></p></td>
+<td><p>显存占用低(仅需 1 组 KV 缓存)</p></td>
+<td><p>显存占用低于 MHA, 但高于 MQA(分组共享 KV cache)</p></td>
+<td><p>显存占用显著降低(低秩压缩)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>计算复杂度</strong></p></td>
+<td><p>最低(共享 KV 计算)</p></td>
+<td><p>中等(分组共享 KV 计算)</p></td>
+<td><p>低于 MHA 和 GQA(低秩空间计算)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>模型效果</strong></p></td>
+<td><p>略低于 MHA(共享 KV 导致信息损失)</p></td>
+<td><p>接近 MHA(分组共享平衡性能效率)</p></td>
+<td><p>接近 MHA(低秩压缩保留关键特征)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>应用模型</strong></p></td>
+<td><p>Falcon 系列模型</p></td>
+<td><p>LLaMA-2/LLaMA-3、Qwen3</p></td>
+<td><p>DeepSeek-V3、Kimi-K2</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="id14">
+<h2>本节视频<a class="headerlink" href="#id14" title="Link to this heading">#</a></h2>
 <html>
 <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=114682388093947&bvid=BV1GzMUz8Eav&cid=30498491822&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>
@@ -927,7 +1285,29 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mqa-multi-query-attention">1. MQA (Multi-Query Attention) 多查询注意力</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1.1 简介</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.2 解决的问题</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">1.3 数学表达</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">1.4 伪代码实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gqa-grouped-query-attention">2. GQA (Grouped-Query Attention) 分组查询注意力</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.1 简介</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.2 解决的问题</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.3 数学表达</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">2.4 伪代码实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mla-multi-latent-attention">3. MLA (Multi-Latent Attention) 多潜在注意力</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.1 简介</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.2 解决的问题</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.3 数学表达</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.4 伪代码实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">4. 三种注意力机制对比</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">本节视频</a></li>
 </ul>
   </nav></div>
 
@@ -961,7 +1341,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 05, 2025.
+  Last updated on Sep 14, 2025.
   <br/>
 </p>
   </div>

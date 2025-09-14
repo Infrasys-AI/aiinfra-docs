@@ -6,7 +6,7 @@
 
 本文将通过具体实验，帮助读者理解数据并行的基本原理，并掌握 PyTorch 中分布式数据并行（DDP）的使用方法。
 
-![](./../images/04Train01ParallelBegin/Code01DDP01.png)
+![](../images/04Train01ParallelBegin/Code01DDP01.png)
 
 ## 1. DP 基本原理
 

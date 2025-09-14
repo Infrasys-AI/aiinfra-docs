@@ -74,6 +74,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData03NewArch/02Efficient_Transformer';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
@@ -84,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 05, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
 
 <link
   rel="alternate"
@@ -245,9 +247,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AIInfra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 未来发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
 </ul>
 </details></li>
 </ul>
@@ -356,7 +358,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
 </ul>
 </details></li>
 </ul>
@@ -385,7 +387,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -430,6 +432,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
 </ul>
 </details></li>
@@ -472,6 +475,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
@@ -496,13 +505,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/Practice07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -517,10 +526,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/Practice04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型创新架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
@@ -528,10 +537,13 @@
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
 <li class="toctree-l2"><a class="reference internal" href="09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Practice03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -539,12 +551,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
 
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -842,7 +856,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 理解标准 Transformer 的效率瓶颈</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.1. 自注意力机制：深入探究其运作方式</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#n">2.2. 随序列长度 (N) 增加的计算与内存开销</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#n">2.2. 随序列长度 (<span class="math notranslate nohighlight">\(N\)</span>) 增加的计算与内存开销</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-attention">3. Linear Attention：以线性复杂度重塑注意力机制</a><ul class="visible nav section-nav flex-column">
@@ -929,6 +943,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">8.2. 对其影响及高效 NLP 未来的总结性思考</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id48">9. 参考文献</a></li>
 </ul>
             </nav>
         </div>
@@ -972,20 +987,21 @@ document.write(`
 <section id="id4">
 <h3>2.1. 自注意力机制：深入探究其运作方式<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
 <p>要理解 Transformer 的效率瓶颈，首先需要深入了解其核心组件——自注意力机制。在标准 Transformer 中，最常用的是缩放点积注意力（Scaled Dot-Product Attention）。其计算公式如下：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Attention(Q,K,V) = softmax(QK^T/√d_k)V
-</pre></div>
-</div>
-<p>其中，Q（Query）、K（Key）和 V（Value）是输入序列经过不同线性变换后得到的矩阵，d_k 是键向量的维度，用于缩放点积结果以稳定梯度。Q、K、V 矩阵均派生自相同的输入序列，这使得模型能够并行计算，无需像 RNN 那样顺序处理。</p>
-<p>Transformer 通常还采用多头注意力（Multi-Head Attention）机制。该机制并非执行单一的注意力函数，而是将 Q、K、V 分别线性投影 h 次（h 为注意力头的数量），得到不同子空间的表示。然后，对每个投影版本的 Q、K、V 并行执行注意力计算。最后，将所有头的输出拼接起来并再次进行线性变换，得到最终的输出。</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+\]</div>
+<p>其中，<span class="math notranslate nohighlight">\(Q\)</span>（Query）、<span class="math notranslate nohighlight">\(K\)</span>（Key）和 <span class="math notranslate nohighlight">\(V\)</span>（Value）是输入序列经过不同线性变换后得到的矩阵，<span class="math notranslate nohighlight">\(d_k\)</span> 是键向量的维度，用于缩放点积结果以稳定梯度。<span class="math notranslate nohighlight">\(Q, K, V\)</span> 矩阵均派生自相同的输入序列，这使得模型能够并行计算，无需像 RNN 那样顺序处理。</p>
+<p>Transformer 通常还采用多头注意力（Multi-Head Attention）机制。该机制并非执行单一的注意力函数，而是将 <span class="math notranslate nohighlight">\(Q, K, V\)</span> 分别线性投影 <span class="math notranslate nohighlight">\(h\)</span> 次（<span class="math notranslate nohighlight">\(h\)</span> 为注意力头的数量），得到不同子空间的表示。然后，对每个投影版本的 <span class="math notranslate nohighlight">\(Q, K, V\)</span> 并行执行注意力计算。最后，将所有头的输出拼接起来并再次进行线性变换，得到最终的输出。</p>
 <p>多头注意力允许模型在不同位置共同关注来自不同表示子空间的信息，从而增强了模型的表达能力。然而，这也意味着注意力计算被复制了多次，进一步增加了计算负担。</p>
 </section>
 <section id="n">
-<h3>2.2. 随序列长度 (N) 增加的计算与内存开销<a class="headerlink" href="#n" title="Link to this heading">#</a></h3>
-<p>自注意力机制的计算瓶颈主要源于 QK^T 这一步。假设输入序列的长度为 N，每个词的表示维度为 d_k（对于 Q 和 K）或 d_v（对于 V）。那么，Q 和 K 的维度均为 N×d_k。计算 QK^T 会产生一个 N×N 大小的注意力分数矩阵，其中每个元素表示序列中一个词对另一个词的关注程度。这个矩阵的计算和存储都需要 O(N²) 的时间和空间复杂度。</p>
-<p>例如，当输入 2046 个词元时，注意力计算中使用的矩阵大小约为 2024×2024（考虑到可能的特殊标记），这意味着需要处理一个包含约 410 万个元素的矩阵。这种二次方的增长使得模型在处理长序列时变得异常缓慢且消耗大量内存。</p>
-<p>内存瓶颈不仅仅在于存储这个 N×N 的注意力矩阵本身，在反向传播过程中，为了计算梯度，这个大矩阵通常也需要被保留，进一步加剧了内存压力。这使得 Transformer 在处理超过典型长度（如 BERT 通常限制的 512 个词元）的序列时效率低下，甚至不可行。</p>
+<h3>2.2. 随序列长度 (<span class="math notranslate nohighlight">\(N\)</span>) 增加的计算与内存开销<a class="headerlink" href="#n" title="Link to this heading">#</a></h3>
+<p>自注意力机制的计算瓶颈主要源于 <span class="math notranslate nohighlight">\(QK^T\)</span> 这一步。假设输入序列的长度为 <span class="math notranslate nohighlight">\(N\)</span>，每个词的表示维度为 <span class="math notranslate nohighlight">\(d_k\)</span>（对于 <span class="math notranslate nohighlight">\(Q\)</span> 和 <span class="math notranslate nohighlight">\(K\)</span>）或 <span class="math notranslate nohighlight">\(d_v\)</span>（对于 <span class="math notranslate nohighlight">\(V\)</span>）。那么，<span class="math notranslate nohighlight">\(Q\)</span> 和 <span class="math notranslate nohighlight">\(K\)</span> 的维度均为 <span class="math notranslate nohighlight">\(N \times d_k\)</span>。计算 <span class="math notranslate nohighlight">\(QK^T\)</span> 会产生一个 <span class="math notranslate nohighlight">\(N \times N\)</span> 大小的注意力分数矩阵，其中每个元素表示序列中一个词对另一个词的关注程度。这个矩阵的计算和存储都需要 <span class="math notranslate nohighlight">\(O(N^2)\)</span> 的时间和空间复杂度。</p>
+<p>例如，当输入序列长度达到 2048 时，注意力矩阵的尺寸便为 <span class="math notranslate nohighlight">\(2048 \times 2048\)</span>，包含超过 400 万个元素。这种二次方的增长使得模型在处理长序列时变得异常缓慢且消耗大量内存。</p>
+<p>内存瓶颈不仅仅在于存储这个 <span class="math notranslate nohighlight">\(N \times N\)</span> 的注意力矩阵本身，在反向传播过程中，为了计算梯度，这个大矩阵通常也需要被保留，进一步加剧了内存压力。这使得 Transformer 在处理超过典型长度（如 BERT 通常限制的 512 个词元）的序列时效率低下，甚至不可行。</p>
 <p>这种计算和内存瓶颈不仅仅是理论上的，它在实际硬件（如 GPU）上表现得更为突出。GPU 的计算速度提升速度超过了内存带宽的提升速度，导致许多操作越来越受到高带宽内存（HBM）访问速度的限制。即使计算单元足够强大，频繁地从 HBM 读写巨大的注意力矩阵也会成为性能的瓶颈。</p>
-<p>因此，高效的解决方案不仅需要减少浮点运算次数（FLOPs），还需要优化内存访问模式。这为后续讨论的 Linear Attention（通过改变数学公式避免生成 N×N 矩阵）、AFT（完全抛弃注意力机制）和 Longformer（通过稀疏化减少计算）等不同方法的价值奠定了基础。</p>
+<p>因此，高效的解决方案不仅需要减少浮点运算次数（FLOPs），还需要优化内存访问模式。这为后续讨论的 Linear Attention（通过改变数学公式避免生成 <span class="math notranslate nohighlight">\(N \times N\)</span> 矩阵）、AFT（完全抛弃注意力机制）和 Longformer（通过稀疏化减少计算）等不同方法的价值奠定了基础。</p>
 </section>
 </section>
 <section id="linear-attention">
@@ -999,46 +1015,48 @@ document.write(`
 <section id="id6">
 <h4>3.2.1. 标准注意力的分解<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
 <p>标准的缩放点积注意力可以写成：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Attention(Q,K,V) = softmax(QK^T/√d_k)V = D^{-1}AV
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[
+\text{Attention}(Q, K, V) = D^{-1}AV
+\]</div>
 <p>其中：</p>
 <ul class="simple">
-<li><p>A = exp(QK^T/√d_k) 是未归一化的注意力权重矩阵</p></li>
-<li><p>D 是对角矩阵，D_{ii} = Σ_j A_{ij}，用于行归一化</p></li>
+<li><p><span class="math notranslate nohighlight">\(A = \exp\left(\frac{QK^T}{\sqrt{d_k}}\right)\)</span> 是未归一化的注意力权重矩阵</p></li>
+<li><p><span class="math notranslate nohighlight">\(D\)</span> 是对角矩阵，<span class="math notranslate nohighlight">\(D_{ii} = \sum_j A_{ij}\)</span>，用于行归一化</p></li>
 </ul>
 </section>
 <section id="id7">
 <h4>3.2.2. 核技巧与特征映射<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
 <p>Linear Attention 的关键创新是使用核函数来近似 softmax 操作。具体来说，他们将注意力权重表示为：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sim</span><span class="p">(</span><span class="n">q_i</span><span class="p">,</span> <span class="n">k_j</span><span class="p">)</span> <span class="o">=</span> <span class="n">φ</span><span class="p">(</span><span class="n">q_i</span><span class="p">)</span><span class="o">^</span><span class="n">T</span> <span class="n">φ</span><span class="p">(</span><span class="n">k_j</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>其中 φ 是一个特征映射函数。Katharopoulos 等人提出使用：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">φ</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">elu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-</pre></div>
-</div>
-<p>这里 elu 是指数线性单元激活函数。选择 elu+1 的原因是：</p>
+<div class="math notranslate nohighlight">
+\[
+\text{sim}(q_i, k_j) = \phi(q_i)^T \phi(k_j)
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\phi\)</span> 是一个特征映射函数。Katharopoulos 等人提出使用：</p>
+<div class="math notranslate nohighlight">
+\[
+\phi(x) = \text{elu}(x) + 1
+\]</div>
+<p>这里 <code class="docutils literal notranslate"><span class="pre">elu</span></code> 是指数线性单元激活函数。选择 <span class="math notranslate nohighlight">\(\text{elu}+1\)</span> 的原因是：</p>
 <ol class="arabic simple">
-<li><p>保证输出为正（模拟 exp 函数的效果）</p></li>
+<li><p>保证输出为正（模拟 <span class="math notranslate nohighlight">\(\exp\)</span> 函数的效果）</p></li>
 <li><p>计算简单高效</p></li>
 <li><p>在实践中表现良好</p></li>
 </ol>
 </section>
 <section id="id8">
 <h4>3.2.3. 利用结合律实现线性复杂度<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
-<p>一旦有了特征映射，注意力计算可以重写为：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">y_i</span> <span class="o">=</span> <span class="n">Σ_j</span> <span class="p">(</span><span class="n">φ</span><span class="p">(</span><span class="n">q_i</span><span class="p">)</span><span class="o">^</span><span class="n">T</span> <span class="n">φ</span><span class="p">(</span><span class="n">k_j</span><span class="p">)</span> <span class="o">/</span> <span class="n">Z_i</span><span class="p">)</span> <span class="n">v_j</span>
-    <span class="o">=</span> <span class="n">φ</span><span class="p">(</span><span class="n">q_i</span><span class="p">)</span><span class="o">^</span><span class="n">T</span> <span class="p">(</span><span class="n">Σ_j</span> <span class="n">φ</span><span class="p">(</span><span class="n">k_j</span><span class="p">)</span> <span class="n">v_j</span><span class="o">^</span><span class="n">T</span><span class="p">)</span> <span class="o">/</span> <span class="n">Z_i</span>
-    <span class="o">=</span> <span class="n">φ</span><span class="p">(</span><span class="n">q_i</span><span class="p">)</span><span class="o">^</span><span class="n">T</span> <span class="n">S</span> <span class="o">/</span> <span class="n">Z_i</span>
-</pre></div>
-</div>
-<p>其中：</p>
-<ul class="simple">
-<li><p>S = Σ_j φ(k_j) v_j^T 是累积的键值对</p></li>
-<li><p>Z_i = φ(q_i)^T Σ_j φ(k_j) 是归一化因子</p></li>
-</ul>
-<p>关键洞察是：S 和 Σ_j φ(k_j) 可以在所有查询之间共享，因此整个序列的计算复杂度降为 O(N)。</p>
+<p>一旦有了特征映射，第 <span class="math notranslate nohighlight">\(i\)</span> 个位置的输出 <span class="math notranslate nohighlight">\(y_i\)</span> 可以重写为：</p>
+<div class="math notranslate nohighlight">
+\[
+y_i = \frac{\sum_j \phi(q_i)^T \phi(k_j) v_j}{\sum_j \phi(q_i)^T \phi(k_j)} = \frac{\phi(q_i)^T \sum_j (\phi(k_j) v_j^T)}{\phi(q_i)^T \sum_j \phi(k_j)}
+\]</div>
+<p>利用矩阵乘法的结合律，我们可以先计算 <span class="math notranslate nohighlight">\(\sum_j \phi(k_j) v_j^T\)</span> 和 <span class="math notranslate nohighlight">\(\sum_j \phi(k_j)\)</span>：</p>
+<div class="math notranslate nohighlight">
+\[
+S = \sum_j \phi(k_j) v_j^T \quad \text{and} \quad Z = \sum_j \phi(k_j)
+\]</div>
+<p><span class="math notranslate nohighlight">\(S\)</span> 是一个累积的键值对矩阵，<span class="math notranslate nohighlight">\(Z\)</span> 是一个归一化向量。关键洞察是：<span class="math notranslate nohighlight">\(S\)</span> 和 <span class="math notranslate nohighlight">\(Z\)</span> 可以在所有查询之间共享，因此整个序列的计算复杂度降为 <span class="math notranslate nohighlight">\(O(N)\)</span>。</p>
 </section>
 </section>
 <section id="rnn">
@@ -1046,23 +1064,31 @@ document.write(`
 <section id="id9">
 <h4>3.3.1. 因果掩码下的线性注意力<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
 <p>对于自回归任务（如语言建模），需要因果注意力，即位置 i 只能关注位置 j ≤ i。在这种情况下，Linear Attention 可以表示为：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">y_i</span> <span class="o">=</span> <span class="n">φ</span><span class="p">(</span><span class="n">q_i</span><span class="p">)</span><span class="o">^</span><span class="n">T</span> <span class="n">S_i</span> <span class="o">/</span> <span class="n">Z_i</span>
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[
+y_i = \frac{\phi(q_i)^T S_i}{\phi(q_i)^T Z_i}
+\]</div>
 <p>其中：</p>
 <ul class="simple">
-<li><p>S_i = Σ_{j≤i} φ(k_j) v_j^T</p></li>
-<li><p>Z_i = φ(q_i)^T Σ_{j≤i} φ(k_j)</p></li>
+<li><p><span class="math notranslate nohighlight">\(S_i = \sum_{j \leq i} \phi(k_j) v_j^T\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(Z_i = \sum_{j \leq i} \phi(k_j)\)</span></p></li>
 </ul>
 </section>
 <section id="id10">
 <h4>3.3.2. RNN 递归形式<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
 <p>Katharopoulos 等人的重要发现是，因果 Linear Attention 可以完全等价地表示为 RNN：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">S_i</span> <span class="o">=</span> <span class="n">S_</span><span class="p">{</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="o">+</span> <span class="n">φ</span><span class="p">(</span><span class="n">k_i</span><span class="p">)</span> <span class="n">v_i</span><span class="o">^</span><span class="n">T</span>
-<span class="n">z_i</span> <span class="o">=</span> <span class="n">z_</span><span class="p">{</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="o">+</span> <span class="n">φ</span><span class="p">(</span><span class="n">k_i</span><span class="p">)</span>
-<span class="n">y_i</span> <span class="o">=</span> <span class="n">φ</span><span class="p">(</span><span class="n">q_i</span><span class="p">)</span><span class="o">^</span><span class="n">T</span> <span class="n">S_i</span> <span class="o">/</span> <span class="p">(</span><span class="n">φ</span><span class="p">(</span><span class="n">q_i</span><span class="p">)</span><span class="o">^</span><span class="n">T</span> <span class="n">z_i</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[
+S_i = S_{i-1} + \phi(k_i) v_i^T
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+Z_i = Z_{i-1} + \phi(k_i)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+y_i = \frac{\phi(q_i)^T S_i}{\phi(q_i)^T Z_i}
+\]</div>
 <p>这种 RNN 形式带来了巨大的优势：</p>
 <ul class="simple">
 <li><p><strong>训练时</strong>：可以像标准 Transformer 一样并行计算</p></li>
@@ -1077,7 +1103,7 @@ document.write(`
 <h4>3.4.1. 数值稳定性<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
 <p>Linear Attention 在实现时需要注意数值稳定性：</p>
 <ul class="simple">
-<li><p>使用 float32 或更高精度避免数值误差累积</p></li>
+<li><p>使用 <code class="docutils literal notranslate"><span class="pre">float32</span></code> 或更高精度避免数值误差累积</p></li>
 <li><p>在归一化时添加小的 epsilon 值避免除零</p></li>
 <li><p>对特征向量进行适当的缩放</p></li>
 </ul>
@@ -1085,18 +1111,71 @@ document.write(`
 <section id="id13">
 <h4>3.4.2. 多头线性注意力<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
 <p>Linear Attention 自然支持多头机制：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 伪代码</span>
-<span class="k">for</span> <span class="n">head</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">):</span>
-    <span class="n">Q_h</span><span class="p">,</span> <span class="n">K_h</span><span class="p">,</span> <span class="n">V_h</span> <span class="o">=</span> <span class="n">split_heads</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
-    <span class="n">φ_Q</span> <span class="o">=</span> <span class="n">elu</span><span class="p">(</span><span class="n">Q_h</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="n">φ_K</span> <span class="o">=</span> <span class="n">elu</span><span class="p">(</span><span class="n">K_h</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-    
-    <span class="c1"># 双向注意力</span>
-    <span class="n">S</span> <span class="o">=</span> <span class="n">φ_K</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">V_h</span>  <span class="c1"># (d&#39;, d_v)</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="n">φ_K</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># (d&#39;,)</span>
-    <span class="n">Y_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">φ_Q</span> <span class="o">@</span> <span class="n">S</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">φ_Q</span> <span class="o">@</span> <span class="n">Z</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
-    
-<span class="n">outputs</span> <span class="o">=</span> <span class="n">concat_heads</span><span class="p">(</span><span class="n">all_Y_h</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+
+<span class="k">class</span> <span class="nc">MultiHeadLinearAttention</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    一个完整的多头线性注意力模块实现。</span>
+<span class="sd">    它包含输入投影、多头拆分、线性注意力核心计算和输出投影。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">d_model</span> <span class="o">%</span> <span class="n">num_heads</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;d_model 必须能被 num_heads 整除&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span> <span class="o">=</span> <span class="n">d_model</span> <span class="o">//</span> <span class="n">num_heads</span>
+        
+        <span class="c1"># 1. 初始化输入/输出投影层</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w_o</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">elu_feature_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; 特征映射函数 φ(x) = elu(x) + 1 &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">elu</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># query, key, value 的输入维度: [Batch, SeqLen, d_model]</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># 2. 对 Q, K, V 进行线性投影</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_q</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_k</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_v</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># 3. 拆分成多个头：[B, SeqLen, d_model] -&gt; [B, num_heads, SeqLen, head_dim]</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">V</span> <span class="o">=</span> <span class="n">V</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1"># 4. 应用特征映射函数</span>
+        <span class="n">Q_mapped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elu_feature_map</span><span class="p">(</span><span class="n">Q</span><span class="p">)</span>
+        <span class="n">K_mapped</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">elu_feature_map</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+        
+        <span class="c1"># 5. 核心线性注意力计算（在每个头内部独立进行）</span>
+        <span class="c1"># K_mapped, V 的维度: [B, h, N, d_k], [B, h, N, d_v] (这里 d_k=d_v=head_dim)</span>
+        <span class="c1"># S 的维度: [B, h, d_k, d_v]</span>
+        <span class="c1"># Z 的维度: [B, h, d_k]</span>
+        <span class="c1"># &#39;bhjd,bhje-&gt;bhde&#39; 表示在 batch(b) 和 head(h) 维度上独立计算</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;bhjd,bhje-&gt;bhde&#39;</span><span class="p">,</span> <span class="n">K_mapped</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">K_mapped</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1"># 计算分子和分母</span>
+        <span class="n">numerator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;bhid,bhde-&gt;bhie&#39;</span><span class="p">,</span> <span class="n">Q_mapped</span><span class="p">,</span> <span class="n">S</span><span class="p">)</span>
+        <span class="n">denominator</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;bhid,bhd-&gt;bhi&#39;</span><span class="p">,</span> <span class="n">Q_mapped</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span>
+        
+        <span class="c1"># 计算最终输出 Y (在每个头内部)</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span> <span class="c1"># Y 的维度: [B, h, N, d_v]</span>
+
+        <span class="c1"># 6. 合并多个头的输出并进行最终的线性投影</span>
+        <span class="c1"># [B, h, N, d_v] -&gt; [B, N, h, d_v] -&gt; [B, N, d_model]</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">w_o</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1235,43 +1314,68 @@ document.write(`
 <section id="aft">
 <h4>4.2.1. AFT 的核心计算<a class="headerlink" href="#aft" title="Link to this heading">#</a></h4>
 <p>AFT 用一种极其简单的加权平均机制替代了复杂的注意力计算。其核心操作可以表示为：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>y_t = Σ_i w_{t,i} ⊙ x_i
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[
+y_t = \sum_i w_{t,i} \odot x_i
+\]</div>
 <p>其中：</p>
 <ul class="simple">
-<li><p>x_i 是位置 i 的输入特征</p></li>
-<li><p>w_{t,i} 是位置 t 对位置 i 的可学习权重</p></li>
-<li><p>⊙ 表示逐元素乘法</p></li>
-<li><p>y_t 是位置 t 的输出</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_i\)</span> 是位置 <span class="math notranslate nohighlight">\(i\)</span> 的输入特征</p></li>
+<li><p><span class="math notranslate nohighlight">\(w_{t,i}\)</span> 是位置 <span class="math notranslate nohighlight">\(t\)</span> 对位置 <span class="math notranslate nohighlight">\(i\)</span> 的可学习权重</p></li>
+<li><p><span class="math notranslate nohighlight">\(\odot\)</span> 表示逐元素乘法</p></li>
+<li><p><span class="math notranslate nohighlight">\(y_t\)</span> 是位置 <span class="math notranslate nohighlight">\(t\)</span> 的输出</p></li>
 </ul>
-<p>关键创新在于权重 w_{t,i}的设计，它由两部分组成：</p>
+<p>关键创新在于权重 <span class="math notranslate nohighlight">\(w_{t,i}\)</span> 的设计，它由两部分组成：</p>
 <ol class="arabic simple">
 <li><p><strong>全局可学习权重</strong>：为每对位置学习一个固定的权重</p></li>
 <li><p><strong>位置偏置</strong>：基于相对位置的预定义或可学习的偏置</p></li>
 </ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AFTFull</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">max_seq_len</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+        <span class="c1"># 可学习的全局位置偏置矩阵 B [MaxSeqLen, MaxSeqLen, 1]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">max_seq_len</span><span class="p">,</span> <span class="n">max_seq_len</span><span class="p">))</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">):</span>
+        <span class="c1"># Q, K, V: [Batch, SeqLen, Dim]</span>
+        <span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+
+        <span class="c1"># 计算 Q_t + K_i 并扩展维度以便广播加</span>
+        <span class="c1"># [B, L, D] -&gt; [B, L, 1, D] + [B, 1, L, D] = [B, L, L, D]</span>
+        <span class="n">qk</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">K</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># 加上截取的位置偏置 B[:seq_len, :seq_len].view(1, L, L, 1)</span>
+        <span class="c1"># 计算权重 w_{t,i} = σ(Q_t + K_i + B_{t-i})</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">qk</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">[:</span><span class="n">seq_len</span><span class="p">,</span> <span class="p">:</span><span class="n">seq_len</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># 计算加权和: y_t = Σ_i (w_{t,i} * v_i) / (Σ_i w_{t,i} + eps)</span>
+        <span class="c1"># [B, L, L, D] * [B, 1, L, D] -&gt; [B, L, L, D]</span>
+        <span class="n">weighted_v</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">*</span> <span class="n">V</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">weighted_v</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">output</span>
+</pre></div>
+</div>
 </section>
 <section id="id23">
 <h4>4.2.2. 位置感知的特征融合<a class="headerlink" href="#id23" title="Link to this heading">#</a></h4>
 <p>AFT 通过以下方式实现位置感知：</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>w_{t,i} = σ(q_t ⊙ k_i + b_{t-i})
-</pre></div>
-</div>
+<div class="math notranslate nohighlight">
+\[
+w_{t,i} = \sigma(q_t \odot k_i + b_{t-i})
+\]</div>
 <p>其中：</p>
 <ul class="simple">
-<li><p>q_t 和 k_i 类似于注意力机制中的查询和键，但使用方式更简单</p></li>
-<li><p>b_{t-i} 是基于相对位置(t-i)的偏置项</p></li>
-<li><p>σ 是 sigmoid 激活函数，确保权重在[0,1]范围内</p></li>
+<li><p><span class="math notranslate nohighlight">\(q_t\)</span> 和 <span class="math notranslate nohighlight">\(k_i\)</span> 类似于注意力机制中的查询和键，但使用方式更简单</p></li>
+<li><p><span class="math notranslate nohighlight">\(b_{t-i}\)</span> 是基于相对位置 <span class="math notranslate nohighlight">\((t-i)\)</span> 的偏置项</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma\)</span> 是 sigmoid 激活函数，确保权重在 <span class="math notranslate nohighlight">\([0, 1]\)</span> 范围内</p></li>
 </ul>
 </section>
 <section id="id24">
 <h4>4.2.3. 计算复杂度分析<a class="headerlink" href="#id24" title="Link to this heading">#</a></h4>
-<p>AFT 的设计确保了 O(N)的计算复杂度：</p>
-<ul class="simple">
-<li><p>对于每个位置 t，计算所有权重 w_{t,i}需要 O(N)操作</p></li>
-<li><p>整个序列的计算总复杂度为 O(N²)，但通过共享权重和优化实现，可以降至 O(N)</p></li>
-<li><p>内存占用也保持在 O(N)级别</p></li>
-</ul>
+<p>AFT 的核心思想是通过将查询（Query）和键（Key）的交互与值（Value）的加权分离开来，从而避免了 N x N 矩阵的计算。在其最简化的形式 AFT-Simple 中，输出 Y_t 是通过对所有 V_i 进行全局加权平均得到的，而这个加权平均的过程可以被重新组合，使得计算可以线性进行，类似于 Linear Attention 中利用结合律的方式。它首先计算一个上下文感知的全局“summary”，然后将这个“summary”与每个位置的查询进行交互，从而避免了逐对计算注意力分数。</p>
 </section>
 </section>
 <section id="id25">
@@ -1394,6 +1498,34 @@ document.write(`
 <h4>5.2.1. 滑动窗口（局部）注意力<a class="headerlink" href="#id33" title="Link to this heading">#</a></h4>
 <p>在滑动窗口注意力中，每个词元只关注其自身周围一个固定大小（例如 w）的窗口内的词元。具体来说，一个词元会关注其左右各 w/2 个词元。这种局部注意力模式的计算复杂度为 O(N×w)，其中 N 是序列长度。由于窗口大小 w 是一个固定的常数，因此这种模式实现了随序列长度 N 的线性扩展。</p>
 <p>通过堆叠多层这样的局部注意力，模型的感受野会逐渐扩大，高层网络能够整合来自更广泛上下文的信息。这种机制主要用于构建上下文表示。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">sliding_window_attention</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">window_size</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="c1"># Q, K, V: [Batch, Heads, SeqLen, Dim]</span>
+    <span class="n">batch</span><span class="p">,</span> <span class="n">heads</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="n">Q</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># 1. 计算原始注意力分数 [B, H, L, L]</span>
+    <span class="n">attn_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">dim</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
+
+    <span class="c1"># 2. 创建滑动窗口掩码 [L, L]</span>
+    <span class="c1"># 例如，对于序列中心位置，掩码是一个带宽为 window_size 的带状矩阵</span>
+    <span class="n">row_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">seq_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># [L, 1]</span>
+    <span class="n">col_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">seq_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># [1, L]</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">row_indices</span> <span class="o">-</span> <span class="n">col_indices</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">window_size</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">attn_scores</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># [1, 1, L, L]</span>
+
+    <span class="c1"># 3. 将窗口外的注意力分数置为负无穷</span>
+    <span class="n">attn_scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">attn_scores</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;-inf&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">attn_scores</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
+
+    <span class="c1"># 4. 可选：加上任务相关的全局注意力掩码（如[CLS] token 关注所有）</span>
+    <span class="c1"># if global_mask is not None:</span>
+    <span class="c1">#    attn_scores = attn_scores.masked_fill(global_mask, new_value)</span>
+
+    <span class="c1"># 5. 计算注意力权重和输出</span>
+    <span class="n">attn_weights</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">attn_scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1"># 可选：应用 dropout</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">attn_weights</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">attn_weights</span>
+</pre></div>
+</div>
+<p>注意：以上代码仅为 概念演示，旨在清晰地展示滑动窗口注意力的逻辑。一个高效的实现（如 Longformer 的官方实现）不会 生成完整的 N x N 注意力矩阵，而是会采用分块计算（chunking）或专门的 CUDA 核函数等技术，仅计算和存储窗口内的注意力分数，从而真正实现 O(N x w) 的线性和内存复杂度。</p>
 </section>
 <section id="id34">
 <h4>5.2.2. 空洞滑动窗口注意力<a class="headerlink" href="#id34" title="Link to this heading">#</a></h4>
@@ -1670,8 +1802,23 @@ document.write(`
 <p>Linear Attention、AFT 和 Longformer 的出现，极大地推动了自然语言处理及相关领域处理长序列的能力，使得以往因计算资源限制而难以处理的任务（如整本书籍的分析、长篇对话的理解、基因组序列的建模、资源受限设备上的实时推理）成为可能。它们不仅提升了模型的效率，也为更广泛、更实际的 AI 应用铺平了道路。</p>
 <p>展望未来，对效率的追求仍将是驱动模型架构创新和能力边界拓展的核心动力。高效 Transformer 的研究不会止步于现有的方法。正如本报告所探讨的，混合架构、可学习的稀疏/线性化策略、更深度的硬件-软件协同设计以及超越传统注意力机制的新范式，都预示着一个持续演进、充满活力的领域。</p>
 <p>虽然 Linear Attention、AFT 和 Longformer 提供了显著的进步，但它们是更大、快速发展的生态系统的一部分。最终的&quot;高效 Transformer&quot;可能并非单一的某种架构，而是一个包含多种技术和策略的工具箱，研究人员和工程师可以根据具体任务的需求、数据特性和硬件条件，灵活地选择和组合这些工具，以构建出在特定场景下最优的解决方案。</p>
-<p>这个不断演进的格局将持续推动人工智能在理解和生成复杂序列数据方面达到新的高度。</p>
+<p>未来趋势不再是“一种架构统治天下”，而是​​“专模专用”​​。就像计算机有 CPU、GPU、TPU 一样，未来也会有擅长长文本理解的 Longformer、擅长高效生成的 Linear Attention 模型、擅长边缘部署的 AFT 模型等。高效 Transformer 的研究正在为我们提供这个丰富的​​模型工具箱​​。例如，当我们需要处理法律文书或医学报告等长文档时，Longformer 是首选；当我们需要极高吞吐量的自回归生成任务时，Linear Attention 展现出巨大优势；而在资源受限的边缘设备上部署模型时，AFT 的设计哲学则提供了宝贵的参考。</p>
 </section>
+</section>
+<section id="id48">
+<h2>9. 参考文献<a class="headerlink" href="#id48" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... &amp; Polosukhin, I. (2017). Attention is all you need. Advances in neural information processing systems, 30. (提出了 Transformer 架构)</p></li>
+<li><p>Katharopoulos, A., Vyas, A., Pappas, N., &amp; Fleuret, F. (2020). Transformers are RNNs: Fast autoregressive transformers with linear attention. In International Conference on Machine Learning(pp. 5156-5165). PMLR.(将 Transformer 重新表述为循环神经网络 RNN，并提出了线性注意力机制)</p></li>
+<li><p>Beltagy, I., Peters, M. E., &amp; Cohan, A. (2020). Longformer: The long-document transformer. arXiv preprint arXiv:2004.05150. (提出了 Longformer 模型，通过结合局部滑动窗口注意力和任务驱动的全局注意力，以线性复杂度高效处理长文档)</p></li>
+<li><p>Zaheer, M., Guruganesh, G., Dubey, K. A., Ainslie, J., Alberti, C., Ontanon, S., ... &amp; Ahmed, A. (2020). Big bird: Transformers for longer sequences. Advances in Neural Information Processing Systems, 33, 17283-17297. (提出 BigBird 模型，通过使用稀疏注意力机制（包括全局、局部和随机注意力）来有效地处理更长的序列)</p></li>
+<li><p>Choromanski, K., Likhosherstov, V., Dohan, D., Song, X., Gane, A., Sarlos, T., ... &amp; Weller, A. (2020). Rethinking attention with performers. arXiv preprint arXiv:2009.14794.(提出了 Performer 模型，使用快速注意力 Via 正交随机特征（FAVOR+）方法，以线性复杂度近似标准注意力机制）)</p></li>
+<li><p>Kitaev, N., Kaiser, Ł., &amp; Levskaya, A. (2020). Reformer: The efficient transformer. arXiv preprint arXiv:2001.04451. (提出了 Reformer 模型，结合局部敏感哈希（LSH）注意力和可逆残差层，大幅降低了长序列处理的内存消耗)</p></li>
+<li><p>Child, R., Gray, S., Radford, A., &amp; Sutskever, I. (2019). Generating long sequences with sparse transformers. arXiv preprint arXiv:1904.10509.（提出了 Sparse Transformer 模型，通过因子化的稀疏注意力模式来生成更长的序列）</p></li>
+<li><p>Dao, T., Fu, D., Ermon, S., Rudra, A., &amp; Ré, C. (2022). FlashAttention: Fast and memory-efficient exact attention with IO-awareness. Advances in Neural Information Processing Systems, 35, 16344-16359.(提出了 FlashAttention，一种具有 IO 感知能力的快速且内存高效的精确实现注意力算法，通过优化 GPU 内存读写来加速计算)</p></li>
+<li><p>Gu, A., &amp; Dao, T. (2023). Mamba: Linear-time sequence modeling with selective state spaces. arXiv preprint arXiv:2312.00752. (提出了 Mamba 模型，基于状态空间模型 SSM 并引入了选择性机制，实现了高效的线性时间序列建模)</p></li>
+<li><p>Zhai, S., Talbott, W., Srivastava, N., Huang, C., Goh, H., Zhang, R., &amp; Susskind, J. (2021). An attention free transformer. arXiv preprint arXiv:2105.14103.（提出了无注意力 Transformer AFT，用一种高效的、基于加权平均的特征交互机制完全替代了自注意力机制）</p></li>
+</ol>
 </section>
 </section>
 
@@ -1751,7 +1898,7 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 理解标准 Transformer 的效率瓶颈</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.1. 自注意力机制：深入探究其运作方式</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#n">2.2. 随序列长度 (N) 增加的计算与内存开销</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#n">2.2. 随序列长度 (<span class="math notranslate nohighlight">\(N\)</span>) 增加的计算与内存开销</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-attention">3. Linear Attention：以线性复杂度重塑注意力机制</a><ul class="visible nav section-nav flex-column">
@@ -1838,6 +1985,7 @@ document.write(`
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nlp">8.2. 对其影响及高效 NLP 未来的总结性思考</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id48">9. 参考文献</a></li>
 </ul>
   </nav></div>
 
@@ -1871,7 +2019,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 05, 2025.
+  Last updated on Sep 14, 2025.
   <br/>
 </p>
   </div>

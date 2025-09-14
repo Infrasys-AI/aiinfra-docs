@@ -32,7 +32,7 @@ Author By: 李佳函
 
 MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三个任务的复合型模型。
 
-![](./../images/06AlgoData04ImageTextGenerat/02BLIP01.png)
+![](../images/06AlgoData04ImageTextGenerat/02BLIP01.png)
 
 如图所示，总共有四个模块，从左往右，分别为两个单模态编码器：图像编码器和文本编码器，两个多模态编码器：基于图像的文本编码器和解码器。
 
@@ -45,7 +45,7 @@ MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三�
 + 输出：生成图像的嵌入向量序列（包括[CLS]标记的特征），作为后续多模态模块的输入。
 > 软标签即为概率值，不是像硬标签那样的非 1 即 0。使用软标签可以让模型学习到更细粒度的语义信息，而不是简单地二值化判断。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP02.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP02.png)
 
 #### 文本编码器（Unimodal Text Encoder）
 
@@ -55,7 +55,7 @@ MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三�
   + 文本结构化：在文本开头插入[CLS]标记，用于聚合整个文本的全局信息。
   + 单模态对齐：通过图像-文本对比损失（ITC）与图像编码器的特征空间对齐。
 + 输出：生成文本的嵌入向量序列（包括[CLS]标记的特征），用于图像-文本匹配（ITM）或跨模态交互。
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP03.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP03.png)
 
 
 #### 基于图像的文本编码器（Image-Grounded Text Encoder）
@@ -70,7 +70,7 @@ MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三�
   + 图像-文本匹配（ITM）：通过二分类头部（ITM Head）判断图像-文本对是否匹配。
   + 多模态检索：生成跨模态嵌入向量，用于图像与文本的相似度计算。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP04.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP04.png)
 
 #### 基于图像的文本解码器（Image-Grounded Text Decoder）
 
@@ -84,7 +84,7 @@ MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三�
   + 图像条件语言建模（LM）：通过最大化给定图像下文本序列的似然，训练模型生成与图像内容一致的描述。
   + 多任务生成：支持图像描述生成、视觉问答（VQA）等需要生成能力的任务。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP05.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP05.png)
 
 ### 预训练目标
 
@@ -100,7 +100,7 @@ MED 全称为 Multimodal Mixture of Encoder-Decoder，是一个可以完成三�
 
 #### 图像编码器+单模态文本编码器：ITC 任务
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP06.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP06.png)
 
 + 核心目标：通过对比学习对齐视觉和文本特征空间，使正向图像-文本对的表征更相似，负向对的表征差异更大。
 + 图像端：采用 ViT（Vision Transformer）模型，将输入图像划分为固定大小的 patch（如 224×224 分辨率下分割为 196 个 patch），每个 patch 被线性嵌入为向量。输出包含一个全局图像标记[CLS]的嵌入向量。
@@ -117,7 +117,7 @@ $τ$：温度参数（通常设为 0.05），用于调整相似度分布的锐�
 
 #### 图像编码器+多模态文本编码器：ITM 任务
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP07.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP07.png)
 
 + 核心目标：学习图像与文本之间的细粒度对齐，判断图像-文本对是否匹配。通过二分类任务区分正样本（匹配）和负样本（不匹配）。
 + 图像端：同样采用 ViT 模型提取图像特征，但需与文本编码器联合计算交叉注意力。输出图像的嵌入向量序列，作为多模态交互的基础。
@@ -133,7 +133,7 @@ $N$：当前 batch 的样本数。
 
 #### 图像编码器+多模态文本解码器：LM 任务
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP08.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP08.png)
 
 + 核心目标：基于图像生成连贯的文本描述（如图像字幕）。通过自回归建模，最大化给定图像下文本序列的似然。
 + 图像端：采用 ViT 模型提取图像特征，作为文本生成的上下文条件。输出图像的嵌入向量序列，供解码器直接使用。
@@ -177,7 +177,7 @@ CapFilt（Captioning and Filtering）是 BLIP 提出的一种数据清洗与生�
 
 ### 工作流程
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP09.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP09.png)
 
 先来看一个简单的例子。
 如图，Captioner 生成的描述为："chocolate cake with cream frosting and chocolate sprinkles on top".
@@ -186,7 +186,7 @@ CapFilt（Captioning and Filtering）是 BLIP 提出的一种数据清洗与生�
 
 接下来具体讲解该流程。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP10.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP10.png)
 
 1. **初始化阶段**
 Captioner 和 Filter 均从预训练的 MED 模型中初始化，确保初始参数具备一定的多模态对齐能力。
@@ -224,7 +224,7 @@ BLIP 通过**架构创新**、**数据自举**和**任务统一**的设计，重
 
 ## BLIP-2
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP13.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP13.png)
 
 在 23 年，同作者推出了 BLIP-2。其通过冻结预训练模型（如 ViT 和 LLM），仅引入轻量级的 Q-Former（Querying Transformer）作为“桥梁”，降低训练成本。
 
@@ -244,7 +244,7 @@ BLIP2 的核心创新在于解耦式架构，主要通过以下几点实现高�
 ### 模型结构详解：Q-Former（Querying Transformer）
 
 Q-Former 的核心结构如图：
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP11.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP11.png)
 
 作为视觉和语言模态之间的桥梁，它共分为了两只 Transformer。
 
@@ -265,7 +265,7 @@ Learned Queries 是一组可学习的"查询向量"，在经过 Self Attention �
 
 ##### ITC 任务
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP12.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP12.png)
 
 **目标**：对齐图像和文本的全局特征，最大化匹配图文对的相似度，最小化不匹配对的相似度。
 
@@ -288,7 +288,7 @@ Learned Queries 是一组可学习的"查询向量"，在经过 Self Attention �
 
 ##### ITM 任务
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP14.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP14.png)
 
 **目标**：判断图像和文本是否匹配（二分类任务，正样本为匹配，负样本为不匹配）
 
@@ -309,7 +309,7 @@ Learned Queries：32 个 Queries，**与文本拼接后送入 Q-Former**。
 
 ##### ITG 任务
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP15.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP15.png)
 
 **目标**：基于图像生成文本（如图像描述），训练 Q-Former 提取图像特征并引导文本生成。
 
@@ -329,7 +329,7 @@ Learned Queries：32 个 Queries，**与文本拼接后送入 Q-Former**。
 
 #### 第二阶段：视觉到语言的生成学习
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP16.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP16.png)
 
 第二阶段的核心目标是：
 + **将 Q-Former 提取的图像特征转换为 LLM 可理解的输入格式**。
@@ -360,7 +360,7 @@ InstructBLIP 是 BLIP 作者团队在多模态领域的又一续作。InstructBL
 
 ### 模型结构
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP17.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP17.png)
 
 Instruct-BLIP 的结构如上图所示，基本和 BLIP2 保持一致。总共由三部分组成：
 + 冻结的图像编码器（如 CLIP 的视觉部分）：负责提取图像特征。
@@ -376,7 +376,7 @@ Instruct-BLIP 的结构如上图所示，基本和 BLIP2 保持一致。总共�
 + 13 个 held-out 数据集：用于零样本（zero-shot）评估，验证模型对未见任务的泛化能力。
 + 4 个完整任务类别：保留为任务级别的零样本评估（如完全未见过的任务类型）。
 
-![alt text](./../images/06AlgoData04ImageTextGenerat/02BLIP18.png)
+![alt text](../images/06AlgoData04ImageTextGenerat/02BLIP18.png)
 
 **训练的时候，分为了两个阶段**：
 + BLIP-2 预训练阶段（非指令微调）：

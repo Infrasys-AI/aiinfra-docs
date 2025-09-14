@@ -6,7 +6,7 @@
 
 ## 课程位置
 
-![AIInfra](./../images/02StorComm/arch01.png)
+![AI Infra](../images/02StorComm/arch01.png)
 
 ## 课程简介
 
@@ -19,11 +19,11 @@
 
 ## 课程脑图
 
-![脑图](./../images/02StorComm/architect.png)
+![脑图](../images/02StorComm/architect.png)
 
 ## 课程知识
 
-![AIInfra](./../images/02StorComm/arch02.png)
+![AI Infra](../images/02StorComm/arch02.png)
 
 ## 备注
 

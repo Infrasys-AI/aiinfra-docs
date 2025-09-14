@@ -32,8 +32,12 @@
 02Efficient_Transformer
 03RWKV_Intro
 04RWKV_Evolution
+05Mamba_SSM
+06Mamba_S6
+07Mamba_V2
+08ResNet_MultiCompute
 09Break_Transformer_BottleNeck
-Practice01RWKV
-Practice02Mamba
-Practice03RetNet
+CODE01RWKV
+CODE02Mamba
+CODE03RetNet
 ```

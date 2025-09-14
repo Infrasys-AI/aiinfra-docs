@@ -1,0 +1,1406 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="CODE03:MoE 从原理到分布式实现(DONE)" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData02MoE/CODE03IntrtaMOE.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author by: ZOMI 混合专家模型（Mixture of Experts, MoE）是一种高效的大模型架构，其核心思想是分治而治。 不同于传统神经网络中所有样本都通过相同的网络路径（导致计算量随参数线性增长），MoE 模型通过&quot;稀疏激活&quot;打破这一限制——它包含多个&quot;专家&quot;网络和一个&quot;路由器&quot;网络，前者负责处理特定类型的输入（如 NLP 任务中，部分专家擅长语法分析、部分擅长语义理解..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/None" />
+<meta property="og:image:alt" content="Author by: ZOMI 混合专家模型（Mixture of Experts, MoE）是一种高效的大模型架构，其核心思想是分治而治。 不同于传统神经网络中所有样本都通过相同的网络路径（导致计算量随参数线性增长），MoE 模型通过&quot;稀疏激活&quot;打破这一限制——它包含多个&quot;专家&quot;网络和一个&quot;路由器&quot;网络，前者负..." />
+<meta name="description" content="Author by: ZOMI 混合专家模型（Mixture of Experts, MoE）是一种高效的大模型架构，其核心思想是分治而治。 不同于传统神经网络中所有样本都通过相同的网络路径（导致计算量随参数线性增长），MoE 模型通过&quot;稀疏激活&quot;打破这一限制——它包含多个&quot;专家&quot;网络和一个&quot;路由器&quot;网络，前者负责处理特定类型的输入（如 NLP 任务中，部分专家擅长语法分析、部分擅长语义理解..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>CODE03:MoE 从原理到分布式实现(DONE) &#8212; AIInfra AI基础设施</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=17a93d66" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData02MoE/CODE03IntrtaMOE';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CODE04:MoE 分布式性能分析(DONE)" href="CODE04MOEAnalysize.html" />
+    <link rel="prev" title="CODE02:从零开始手撕 MoE(DONE)" href="CODE02SignalMOE.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">03.HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">02.L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">01.服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">02.AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">03.AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">04.液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">05.AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">06.AI 集群供配电系统</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">05.NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">06.NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">07.NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">08.XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">10.十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">04.集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">01.HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">01.AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/01Introduction.html">01.AI 集群网络基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/02HPCDeepDive.html">02.HPC 网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/03AIDeepDive.html">03.AI 集群网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/04AINetwork.html">04.AI 集群网络基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/05PlaneDivision.html">05.AI 集群网络平面划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/06Summary.html">06.万卡集群组网思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">K8S 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/07Gpipe.html">07.PP 并行：基本原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/07MLA.html">07.内存优化：MLA 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/08Checkpoint.html">08.内存优化：梯度检查点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/09HybridPrecision.html">09.混合精度：FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/10Domino.html">10.通算融合：DS Domino 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/11FLUX.html">11.通算融合：FLUX 计算通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code01FlashAtten.html">CODE 01: Flash Attention 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code04KTransformer.html">CODE 04: KTransformers 核心实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">01.Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">02.大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">MoE 混合专家</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01MOEIntroducion.html">01.MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">05.GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06MOESwitch.html">06.Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09MoECore.html">09.MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="10MOELLM.html">10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="12MOEFuture.html">12.单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2014.html">01.2012-2014 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2015.html">02.2015 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2016.html">03.2016 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2017.html">04.2017 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2018.html">05.2018 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2019.html">06.2019 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2020.html">07.2020 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2021.html">08.2021 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2022.html">09.2022 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2023.html">10.2023 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2024.html">11.2024 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/History.html">12.历史 AI 大事件</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/06AlgoData02MoE/CODE03IntrtaMOE.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F06AlgoData02MoE/CODE03IntrtaMOE.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData02MoE/CODE03IntrtaMOE.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>CODE03:MoE 从原理到分布式实现(DONE)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">1. MoE 数学表达</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2. 专家网络实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. MoE 模型架构</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.1 模型初始化与专家分配</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.2 路由机制与负载均衡</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.3 分布式专家计算</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.4 结果聚合</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4 分布式训练流程</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4.1 初始化分布式环境</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2 数据处理与性能分析</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 训练循环实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5 启动分布式训练</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">6 总结与思考</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="code03-moe-done">
+<h1>CODE03:MoE 从原理到分布式实现(DONE)<a class="headerlink" href="#code03-moe-done" title="Link to this heading">#</a></h1>
+<p>Author by: ZOMI</p>
+<p>混合专家模型（Mixture of Experts, MoE）是一种高效的大模型架构，其核心思想是分治而治。</p>
+<p>不同于传统神经网络中所有样本都通过相同的网络路径（导致计算量随参数线性增长），MoE 模型通过&quot;稀疏激活&quot;打破这一限制——它包含多个&quot;专家&quot;网络和一个&quot;路由器&quot;网络，前者负责处理特定类型的输入（如 NLP 任务中，部分专家擅长语法分析、部分擅长语义理解），后者则通过学习输入特征的分布规律，决定每个样本应该分配给哪些专家。</p>
+<p>这种设计的本质是<strong>用&quot;参数容量换取计算效率&quot;</strong>：模型总参数规模可达到千亿级（如 GPT-4 的 MoE 版本），但每个样本仅激活少量专家，计算量仅为同等参数稠密模型的 1/4~1/8。</p>
+<p><img alt="" src="../_images/Practice01SignalMOE02.png" /></p>
+<section id="moe">
+<h2>1. MoE 数学表达<a class="headerlink" href="#moe" title="Link to this heading">#</a></h2>
+<p>MoE 模型的输出通过&quot;加权求和&quot;整合专家结果，数学表达直接反映了其核心逻辑：</p>
+<div class="math notranslate nohighlight">
+\[
+y = \sum_{i=1}^{n} G(x)_i \cdot E_i(x)
+\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(E_i(x)\)</span> 是第 <span class="math notranslate nohighlight">\(i\)</span> 个专家网络的输出：每个 <span class="math notranslate nohighlight">\(E_i\)</span> 是独立的子网络，专注于输入空间的一个子集（如处理情感分析中的&quot;积极情绪&quot;或&quot;消极情绪&quot;样本）</p></li>
+<li><p><span class="math notranslate nohighlight">\(G(x)\)</span> 是路由门控函数，满足 <span class="math notranslate nohighlight">\(\sum_{i=1}^{n} G(x)_i = 1\)</span>：其本质是一个&quot;概率分配器&quot;，通过 softmax 将路由分数转换为概率分布，确保权重之和为 1，避免输出尺度失控</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> 是专家数量：通常与 GPU 数量匹配（如 8 卡训练用 8 专家），最大化分布式并行效率</p></li>
+</ul>
+<p>这种设计的关键是<strong>条件计算（Conditional Computation）</strong>：传统稠密模型中，所有样本都需经过完整网络（计算量 <span class="math notranslate nohighlight">\(O(batch \times dim_{in} \times dim_{out})\)</span>），而 MoE 中每个样本仅激活 top-k 个专家（计算量 <span class="math notranslate nohighlight">\(O(batch \times k \times dim_{in} \times dim_{out})\)</span>）。例如，当 <span class="math notranslate nohighlight">\(n=8\)</span>、<span class="math notranslate nohighlight">\(k=2\)</span> 时，计算量仅为稠密模型的 25%，但参数规模仍保持 8 倍（每个专家都是独立参数），实现&quot;大参数容量+低计算成本&quot;的平衡。</p>
+</section>
+<section id="id1">
+<h2>2. 专家网络实现<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>我们使用 PyTorch 框架和分布式数据并行（DDP）实现单机八卡训练：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">from</span> <span class="nn">torch.nn.parallel</span> <span class="kn">import</span> <span class="n">DistributedDataParallel</span> <span class="k">as</span> <span class="n">DDP</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
+<span class="kn">import</span> <span class="nn">torch.multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+
+<span class="c1"># 分布式环境变量设置（在命令行中执行）</span>
+<span class="c1"># export MASTER_ADDR=&quot;175.99.2.2&quot;  # 主节点 IP：所有 GPU 进程需通过主节点建立通信连接</span>
+<span class="c1"># export MASTER_PORT=&quot;29500&quot;       # 任意未被占用的端口：主节点用于监听子进程连接的端口</span>
+</pre></div>
+</div>
+<p>每个专家是一个简单的多层感知机（MLP），包含两个线性层和 GELU 激活函数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Expert</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="c1"># 定义专家网络结构</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">),</span>  <span class="c1"># 输入层到隐藏层：将输入映射到更高维特征空间</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">GELU</span><span class="p">(),</span>                         <span class="c1"># 高斯误差线性单元激活：比 ReLU 更平滑，缓解梯度消失</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>  <span class="c1"># 隐藏层到输出层：将高维特征映射回目标维度</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1"># 前向传播：输入经过线性变换+激活的组合，输出专家对样本的处理结果</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>专家网络的设计遵循了<strong>宽度优先</strong>原则，隐藏层维度通常大于输入/输出维度（如 1024 vs 512），这一设计的原理是：专家需要足够的&quot;特征表征能力&quot;来处理特定类型的输入——更高的隐藏层维度能容纳更细粒度的特征模式（如文本中的句法结构、图像中的局部纹理）。</p>
+<p>若隐藏层维度过小（如等于输入维度），专家可能无法学习到足够的区分性特征，导致 MoE 的整体性能下降。同时，选择 GELU 而非 ReLU 激活，是因为 GELU 在输入接近 0 时的梯度非零（ReLU 在 x&lt;0 时梯度为 0），能保留更多梯度信息，尤其适合 MoE 这类需要多专家协同优化的模型。</p>
+</section>
+<section id="id2">
+<h2>3. MoE 模型架构<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<section id="id3">
+<h3>3.1 模型初始化与专家分配<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>这里的关键设计是<strong>专家分布在不同设备</strong>，其背后的分布式计算原理如下：</p>
+<ol class="arabic simple">
+<li><p><strong>后端选择</strong>：后续初始化分布式环境时使用 NCCL 后端（<code class="docutils literal notranslate"><span class="pre">dist.init_process_group(&quot;nccl&quot;)</span></code>），该后端专为 GPU 间通信优化，比 Gloo 等 CPU 后端的通信速度快 3-5 倍，能高效支持 MoE 的跨设备数据传输；</p></li>
+<li><p><strong>负载隔离</strong>：每个专家绑定单独 GPU（如专家 0→GPU0、专家 1→GPU1），避免&quot;同一设备内资源竞争&quot;——若多个专家共享 GPU，会导致显存占用叠加（如 2 个专家占 20GB 显存）和计算排队（后一个专家需等待前一个完成），而分布式分配能让每个 GPU 的计算负载独立，例如 8 卡 8 专家场景下，每个 GPU 仅需处理 1 个专家的前向/反向传播，最大化 GPU 利用率；</p></li>
+<li><p><strong>显存可控</strong>：单个专家的参数规模仅为总模型的 1/num_experts（如 8 专家总参数 8B，单个专家仅 1B），避免单 GPU 显存溢出（若 8B 参数集中在 1 个 GPU，会占用 32GB 以上显存，远超单卡容量）。</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MoEEP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">,</span> <span class="n">num_experts</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+                 <span class="n">capacity_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_experts</span> <span class="o">=</span> <span class="n">num_experts</span>  <span class="c1"># 专家总数：需与 GPU 数量匹配以实现分布式并行</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span> <span class="o">=</span> <span class="n">top_k</span>              <span class="c1"># 每个样本激活的专家数：通常取 1 或 2（k=2 平衡性能与计算量）</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">capacity_factor</span> <span class="o">=</span> <span class="n">capacity_factor</span>  <span class="c1"># 容量系数：控制每个专家的最大样本处理量</span>
+        
+        <span class="c1"># 将不同专家分配到不同 GPU 设备</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experts</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span>
+            <span class="n">Expert</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">hidden_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_experts</span><span class="p">)</span>
+        <span class="p">])</span>
+        
+        <span class="c1"># 路由器：决定样本分配给哪些专家：本质是线性层，输出维度=专家数（每个维度对应一个专家的路由分数）</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">router</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="n">num_experts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">dropout</span><span class="p">)</span>  <span class="c1"># 防止路由器过拟合：随机抑制部分路由分数</span>
+</pre></div>
+</div>
+<p><img alt="" src="../_images/Practice01SignalMOE04.png" /></p>
+</section>
+<section id="id4">
+<h3>3.2 路由机制与负载均衡<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>路由门控的核心逻辑是&quot;按样本特征分配专家&quot;，但仅通过 top-k 选择会导致<strong>负载不均衡</strong>——这一问题的根源是：路由器的初始化偏差或样本分布偏斜，可能导致某些专家的路由分数持续偏高（如某专家的 logits 均值比其他高 2 倍），进而样本集中分配给这些专家，形成&quot;忙专家（处理 80%样本）+闲专家（处理 20%样本）&quot;的局面。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">orig_shape</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">orig_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># 展平输入：将高维输入（如[batch, seq_len, dim]）转为 2D（[batch*seq_len, dim]），便于路由计算</span>
+        
+        <span class="c1"># 1. 路由计算：核心是为每个样本生成专家分配概率</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">router</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># 路由分数：每个样本输出 num_experts 个分数，反映&quot;样本与专家的匹配度&quot;</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 概率转换：将分数归一化为 0-1 的概率分布，便于选择 top-k 专家</span>
+        <span class="n">expert_weights</span><span class="p">,</span> <span class="n">expert_indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 选 top-k：取概率最高的 k 个专家的权重和索引</span>
+</pre></div>
+</div>
+<p>这种不均衡会导致两个问题：</p>
+<ol class="arabic simple">
+<li><p>忙专家的 GPU 显存/计算负载过高，可能引发溢出或计算延迟；</p></li>
+<li><p>闲专家的参数更新频率低，模型无法充分利用所有专家的表征能力。</p></li>
+</ol>
+<p>为了解决这个问题，我们引入两个关键机制：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># 2. 分布式负载均衡：通过容量限制防止单专家过载</span>
+        <span class="n">world_size</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">get_world_size</span><span class="p">()</span>  <span class="c1"># 获取设备数量：即参与训练的 GPU 总数</span>
+        <span class="c1"># 计算每个专家的容量上限：基于 batch_size、top_k 和容量系数，确保专家负载可控</span>
+        <span class="c1"># 原理：总样本处理量=batch_size*top_k（每个样本激活 k 个专家），平均分配到 world_size 个专家，再乘以容量系数（预留缓冲）</span>
+        <span class="n">capacity</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">capacity_factor</span> <span class="o">*</span> <span class="n">batch_size</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_k</span> <span class="o">*</span> <span class="n">world_size</span><span class="p">))</span>
+        <span class="n">capacity</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">capacity</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># 确保容量至少为 1：避免极端情况下容量为 0 导致专家无样本可处理</span>
+        
+        <span class="c1"># 3. 专家使用统计：跨设备聚合各专家的实际样本分配数量</span>
+        <span class="n">expert_mask</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">expert_indices</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_experts</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 样本-专家匹配掩码：[batch, num_experts]，1 表示样本分配给该专家</span>
+        <span class="n">expert_counts</span> <span class="o">=</span> <span class="n">expert_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 各专家被选中的次数：[num_experts]，反映单设备上的专家负载</span>
+        <span class="n">dist</span><span class="o">.</span><span class="n">all_reduce</span><span class="p">(</span><span class="n">expert_counts</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">dist</span><span class="o">.</span><span class="n">ReduceOp</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>  <span class="c1"># 跨设备聚合：通过 SUM 操作得到所有 GPU 上的总负载（如 GPU0 的专家 0 计数+GPU1 的专家 0 计数）</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">capacity</span></code>计算的核心原理是&quot;预分配负载额度&quot;：例如，当 batch_size=1024、top_k=2、world_size=8、capacity_factor=1.0 时，capacity=1024/(2*8)=64，即每个专家最多处理 64 个样本。</p>
+<p>即使路由器分配了 80 个样本给某专家，也会通过后续的截断操作限制为 64 个，确保每个 GPU 的显存占用稳定在安全阈值内（如 64 个样本的特征+专家参数，显存占用约 2GB，远低于单卡 16GB 的上限）。</p>
+<p><code class="docutils literal notranslate"><span class="pre">expert_counts</span></code>的分布式统计是为了计算负载均衡损失，通过跨设备聚合，模型能获取全局的专家负载情况（而非单设备局部情况），避免&quot;局部均衡但全局不均衡&quot;的问题（如 GPU0 的专家 0 处理 64 个样本，GPU1 的专家 0 处理 0 个样本，局部看似均衡，全局则不均衡）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># 4. 负载均衡损失：约束专家使用频率的均衡性</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="n">probs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 专家的期望使用频率：[num_experts]，反映路由器&quot;希望&quot;每个专家被使用的概率（理想值=1/num_experts）</span>
+        <span class="n">usage</span> <span class="o">=</span> <span class="n">expert_counts</span> <span class="o">/</span> <span class="p">(</span><span class="n">batch_size</span> <span class="o">*</span> <span class="n">world_size</span><span class="p">)</span>  <span class="c1"># 专家的实际使用频率：[num_experts]，反映全局实际负载</span>
+        <span class="n">balance_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">density</span> <span class="o">*</span> <span class="n">usage</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_experts</span>  <span class="c1"># 均衡损失：通过密度与使用率的乘积求和，迫使两者接近（理想情况下 density=usage=1/num_experts，loss=1）</span>
+        
+        <span class="c1"># 5. 专家重要性损失：约束专家对输出的影响力均衡</span>
+        <span class="n">importance</span> <span class="o">=</span> <span class="n">probs</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 专家的总重要性：[num_experts]，反映专家在所有样本中的权重贡献总和</span>
+        <span class="n">dist</span><span class="o">.</span><span class="n">all_reduce</span><span class="p">(</span><span class="n">importance</span><span class="p">,</span> <span class="n">op</span><span class="o">=</span><span class="n">dist</span><span class="o">.</span><span class="n">ReduceOp</span><span class="o">.</span><span class="n">SUM</span><span class="p">)</span>  <span class="c1"># 跨设备聚合：获取全局总重要性</span>
+        <span class="n">importance_loss</span> <span class="o">=</span> <span class="p">(</span><span class="n">importance</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>  <span class="c1"># 重要性损失：使用平方均值放大不均衡（若某专家重要性是其他的 10 倍，平方后会放大 100 倍）</span>
+        
+        <span class="n">aux_loss</span> <span class="o">=</span> <span class="n">balance_loss</span> <span class="o">+</span> <span class="n">importance_loss</span>  <span class="c1"># 总辅助损失：将频率均衡和影响力均衡结合，共同约束负载</span>
+</pre></div>
+</div>
+<p>这两个损失函数从不同维度确保负载均衡：</p>
+<ol class="arabic simple">
+<li><p><strong>balance_loss</strong>：聚焦&quot;使用频率&quot;——若某专家的实际 usage 远高于 density（如 density=0.125，usage=0.5），则乘积项会增大，loss 升高，迫使模型调整路由器参数，降低该专家的路由分数；</p></li>
+<li><p><strong>importance_loss</strong>：聚焦&quot;影响力&quot;——若某专家的 importance 远高于其他（如某专家 importance=1000，其他=100），平方后会显著拉高 loss，促使模型让各专家的权重贡献更均衡，避免&quot;少数专家主导输出&quot;。</p></li>
+</ol>
+</section>
+<section id="id5">
+<h3>3.3 分布式专家计算<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>每个专家固定绑定到特定 GPU（expert_id%world_size），确保计算位置稳定——若专家在训练中频繁切换 GPU，会导致参数反复迁移，增加通信开销.</p>
+<p>稀疏数据传输中仅传输分配给当前专家的 selected 样本（如 batch=1024，selected=256），而非整个 batch，大幅减少设备间通信量（通信量与 selected 数量成正比）；同时，使用 NCCL 后端的 P2P（Peer-to-Peer）通信，直接在 GPU 间传输数据，避免经过 CPU 中转（CPU 中转会增加 50%以上的延迟）；</p>
+<p>专家输出需乘以对应的路由权重（expert_weights），因为不同专家对样本的贡献度不同——例如，样本 A 分配给专家 1（权重 0.8）和专家 2（权重 0.2），则专家 1 的输出占比 80%，专家 2 占比 20%，符合 MoE&quot;加权求和&quot;的数学逻辑。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># 6. 分布式专家计算：在专家所属 GPU 上执行前向传播，最小化跨设备通信</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">expert_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_experts</span><span class="p">):</span>
+            <span class="c1"># 确定专家所在设备：通过专家 ID 与 GPU 数量的取模运算，确保专家与 GPU 的固定绑定（如 expert_id%8=0→GPU0）</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;cuda:</span><span class="si">{</span><span class="n">expert_id</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span><span class="si">}</span><span class="s1">&#39;</span>
+            
+            <span class="c1"># 选择分配给当前专家的样本：筛选出所有将该专家列为 top-k 之一的样本</span>
+            <span class="n">idx_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">expert_indices</span> <span class="o">==</span> <span class="n">expert_id</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 样本是否分配给当前专家：[batch]，True 表示是</span>
+            <span class="k">if</span> <span class="n">idx_mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># 无样本则跳过：避免无意义的设备通信和计算</span>
+                <span class="k">continue</span>
+                
+            <span class="n">selected</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">idx_mask</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>  <span class="c1"># 获取选中样本的索引：[num_selected]</span>
+            <span class="n">selected</span> <span class="o">=</span> <span class="n">selected</span><span class="p">[:</span><span class="n">capacity</span><span class="p">]</span>  <span class="c1"># 容量截断：确保样本数不超过专家的容量上限，防止显存溢出</span>
+            
+            <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># 截断后为空则跳过</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># 跨设备计算：将样本传输到专家所在 GPU，执行前向传播</span>
+            <span class="n">expert_input</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">selected</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># 数据传输：仅传输选中样本（而非整个 batch），减少 75%+的通信量</span>
+            <span class="n">expert_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experts</span><span class="p">[</span><span class="n">expert_id</span><span class="p">](</span><span class="n">expert_input</span><span class="p">)</span>  <span class="c1"># 专家前向：在专属 GPU 上执行计算，避免设备内竞争</span>
+            
+            <span class="c1"># 加权并传回原设备：将专家输出与路由权重相乘，再传回输入所在 GPU（便于后续聚合）</span>
+            <span class="c1"># 原理：专家输出需乘以对应的路由权重（反映专家对该样本的贡献度），再汇总所有专家的加权结果</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">expert_weights</span><span class="p">[</span><span class="n">selected</span><span class="p">,</span> <span class="p">(</span><span class="n">expert_indices</span><span class="p">[</span><span class="n">selected</span><span class="p">]</span> <span class="o">==</span> <span class="n">expert_id</span><span class="p">)</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()[:,</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">weighted_output</span> <span class="o">=</span> <span class="p">(</span><span class="n">expert_output</span> <span class="o">*</span> <span class="n">weights</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">selected</span><span class="p">,</span> <span class="n">weighted_output</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>3.4 结果聚合<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>结果聚合的核心是&quot;按样本索引累加&quot;，确保每个样本的输出仅包含其选中专家的贡献，而非所有专家——这是 MoE 稀疏激活的最终体现。</p>
+<p>例如，样本 A 的索引为 0，选中专家 1 和 2，最终输出是专家 1 的加权输出（0.8<em>E1(A)）与专家 2 的加权输出（0.2</em>E2(A)）之和。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>        <span class="c1"># 7. 合并所有专家的输出：将各专家的加权结果累加，恢复原始输入形状</span>
+        <span class="n">final_output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># 初始化输出张量：与输入 x 形状相同，确保维度匹配</span>
+        <span class="k">for</span> <span class="n">selected</span><span class="p">,</span> <span class="n">out</span> <span class="ow">in</span> <span class="n">outputs</span><span class="p">:</span>
+            <span class="n">final_output</span><span class="p">[</span><span class="n">selected</span><span class="p">]</span> <span class="o">+=</span> <span class="n">out</span>  <span class="c1"># 累加专家输出：每个样本的最终输出是其选中的 k 个专家的加权和</span>
+            <span class="c1"># 原理：符合 MoE 的数学表达 y=sum(G(x)_i*E_i(x))，每个样本的 selected 索引对应其 k 个专家，累加后得到最终输出</span>
+            
+        <span class="k">return</span> <span class="n">final_output</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">orig_shape</span><span class="p">),</span> <span class="n">aux_loss</span>  <span class="c1"># 恢复原始形状：将展平的输出转回输入的原始维度（如[batch, seq_len, dim]）</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id7">
+<h2>4 分布式训练流程<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<section id="id8">
+<h3>4.1 初始化分布式环境<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p>分布式环境初始化的核心是<code class="docutils literal notranslate"><span class="pre">dist.init_process_group</span></code>，其原理是：</p>
+<ol class="arabic simple">
+<li><p>主进程（rank=0）在指定端口监听，子进程（rank&gt;0）通过 MASTER_ADDR 和 MASTER_PORT 连接主进程；</p></li>
+<li><p>所有进程建立通信组后，可通过<code class="docutils literal notranslate"><span class="pre">dist.all_reduce</span></code>、<code class="docutils literal notranslate"><span class="pre">dist.broadcast</span></code>等 API 实现数据同步；</p></li>
+<li><p>绑定 GPU（<code class="docutils literal notranslate"><span class="pre">torch.cuda.set_device(rank)</span></code>）是为了避免&quot;进程抢占 GPU&quot;——若不绑定，多个进程可能同时使用同一 GPU，导致显存冲突。</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 初始化分布式环境：为每个 GPU 进程建立通信连接，配置设备绑定</span>
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">):</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MASTER_ADDR&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span>  <span class="c1"># 主节点地址：单机训练时使用 localhost，多机训练时需指定主节点 IP</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;MASTER_PORT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;12355&#39;</span>      <span class="c1"># 主节点端口：需选择未被占用的端口（如 29500、12355）</span>
+    
+    <span class="c1"># 初始化进程组：分布式训练的核心，负责进程间通信和同步</span>
+    <span class="c1"># 关键参数解析：</span>
+    <span class="c1"># - &quot;nccl&quot;：通信后端，专为 GPU 优化，支持 P2P 通信和集合操作（如 all_reduce），速度远快于 Gloo</span>
+    <span class="c1"># - rank：进程 ID（对应 GPU ID），0 为主进程，负责日志输出等协调工作</span>
+    <span class="c1"># - world_size：进程总数（对应 GPU 总数），决定数据分片和负载分配</span>
+    <span class="n">dist</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="s2">&quot;nccl&quot;</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="o">=</span><span class="n">world_size</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span> <span class="c1"># 绑定当前进程到指定 GPU：确保进程仅使用分配的 GPU，避免资源竞争</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 清理分布式环境：训练结束后释放进程组资源，避免内存泄漏</span>
+<span class="k">def</span> <span class="nf">cleanup</span><span class="p">():</span>
+    <span class="n">dist</span><span class="o">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id9">
+<h3>4.2 数据处理与性能分析<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p>模拟数据集的设计原理是&quot;简化验证流程&quot;——通过随机生成符合正态分布的数据，避免真实数据集的预处理复杂度（如文本分词、图像归一化），专注于验证 MoE 的分布式训练逻辑（如专家分配、负载均衡、跨设备通信）。</p>
+<p>实际应用中，需将<code class="docutils literal notranslate"><span class="pre">SimulationDataset</span></code>替换为真实数据集（如<code class="docutils literal notranslate"><span class="pre">torchtext</span></code>的文本数据集、<code class="docutils literal notranslate"><span class="pre">torchvision</span></code>的图像数据集），并保持输入/输出维度与 MoE 模型的<code class="docutils literal notranslate"><span class="pre">input_dim</span></code>/<code class="docutils literal notranslate"><span class="pre">output_dim</span></code>匹配。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 生成模拟数据集：用于验证 MoE 模型的分布式训练流程，实际应用中需替换为真实数据集（如文本、图像）</span>
+<span class="k">class</span> <span class="nc">SimulationDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>  <span class="c1"># 数据集总样本数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span> <span class="o">=</span> <span class="n">input_dim</span>  <span class="c1"># 输入特征维度（如 NLP 中的词嵌入维度 512）</span>
+        
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># 数据集长度：用于 DataLoader 计算迭代次数</span>
+        
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span>  <span class="c1"># 模拟输入：服从正态分布的随机特征（模拟真实数据的分布）</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span>  <span class="c1"># 模拟标签：简单起见，标签维度与输入相同（如自监督任务）</span>
+        <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">label</span>
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>4.3 训练循环实现<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">DDP</span></code>包装器是分布式训练的核心工具，其核心原理是<strong>自动实现梯度同步和参数广播</strong>：</p>
+<ul class="simple">
+<li><p>前向传播时，每个进程独立计算本地损失；</p></li>
+<li><p>反向传播时，DDP 通过<code class="docutils literal notranslate"><span class="pre">all_reduce</span></code>操作将所有进程的梯度求和并平均，确保每个进程的梯度一致；</p></li>
+<li><p>参数更新时，所有进程使用相同的梯度更新本地参数，保持参数同步。</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">find_unused_parameters=True</span></code>是 MoE 训练的关键设置，其原理是：MoE 的稀疏激活导致每个 batch 中仅有 top-k 个专家被使用，其他专家的参数未参与计算（反向传播时梯度为 None）。</p>
+<p>若<code class="docutils literal notranslate"><span class="pre">find_unused_parameters=False</span></code>，DDP 会报错&quot;部分参数无梯度&quot;；设置为 True 后，DDP 会自动忽略未使用参数的梯度同步，仅同步被激活专家的参数梯度，减少 75%以上的无效通信（如 8 专家 top-k=2，仅同步 2 个专家的梯度）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 训练函数：每个进程（GPU）独立执行的训练逻辑</span>
+<span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+    <span class="n">setup</span><span class="p">(</span><span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">)</span>  <span class="c1"># 初始化分布式环境</span>
+    
+    <span class="c1"># 模型参数配置：根据输入参数创建 MoE 模型，并绑定到当前进程的 GPU</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">MoEEP</span><span class="p">(</span>
+        <span class="n">input_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">input_dim</span><span class="p">,</span>    <span class="c1"># 输入特征维度（如 512）</span>
+        <span class="n">output_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output_dim</span><span class="p">,</span>  <span class="c1"># 输出特征维度（如 512，与输入一致用于自监督任务）</span>
+        <span class="n">num_experts</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">num_experts</span><span class="p">,</span><span class="c1"># 专家数量（如 8，与 GPU 数量匹配）</span>
+        <span class="n">hidden_dim</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">hidden_dim</span><span class="p">,</span>  <span class="c1"># 专家隐藏层维度（如 1024，遵循宽度优先原则）</span>
+        <span class="n">top_k</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">top_k</span><span class="p">,</span>            <span class="c1"># 每个样本激活的专家数（如 2）</span>
+        <span class="n">capacity_factor</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">capacity_factor</span>  <span class="c1"># 容量系数（如 1.0，控制专家负载）</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>  <span class="c1"># 将模型主干（路由器等）绑定到当前 GPU</span>
+    
+    <span class="c1"># 将专家移动到指定设备：确保每个专家绑定到其专属 GPU（如 expert 0→GPU 0）</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">expert</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">experts</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">experts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">expert</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cuda:</span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">world_size</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># 分布式数据并行包装：实现梯度同步和参数同步，find_unused_parameters=True 适配 MoE 的稀疏激活</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">DDP</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">device_ids</span><span class="o">=</span><span class="p">[</span><span class="n">rank</span><span class="p">],</span> <span class="n">find_unused_parameters</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># 数据准备：使用 DistributedSampler 实现数据分片，避免重复加载</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">SimulationDataset</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">dataset_size</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">input_dim</span><span class="p">)</span>  <span class="c1"># 加载模拟数据集</span>
+    <span class="c1"># DistributedSampler：将数据集分成 world_size 份，每个进程仅加载自己的分片（如 8 卡分 8 份，每卡加载 1/8 数据）</span>
+    <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">num_replicas</span><span class="o">=</span><span class="n">world_size</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">)</span>
+    <span class="c1"># DataLoader：按 batch 加载数据，sampler 确保各进程数据不重复</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
+    
+    <span class="c1"># 优化器：使用 AdamW 优化器（大模型常用，支持权重衰减），学习率需根据 batch_size 调整（如 batch=1024 时 lr=1e-4）</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">AdamW</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">lr</span><span class="p">)</span>
+    
+    <span class="c1"># 训练循环：多 epoch 迭代，每个 epoch 包含多个 batch 的前向/反向/更新</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="n">sampler</span><span class="o">.</span><span class="n">set_epoch</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>  <span class="c1"># 关键设置：每个 epoch 打乱数据分片顺序，避免过拟合</span>
+        <span class="c1"># 原理：若不设置，每个 epoch 的分片顺序固定，模型可能记住特定分片的样本模式，影响泛化能力；设置后，各进程的分片顺序随 epoch 变化</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>  <span class="c1"># 开启训练模式：启用 dropout 等训练特有的层</span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># 累计总损失：用于计算每个 epoch 的平均损失</span>
+        
+        <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">loader</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">rank</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>  <span class="c1"># 将数据和标签绑定到当前 GPU</span>
+            
+            <span class="c1"># 前向传播：计算模型输出和辅助损失</span>
+            <span class="n">outputs</span><span class="p">,</span> <span class="n">aux_loss</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">main_loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">mse_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># 主损失：均方误差（适用于回归任务，如特征重建）</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">main_loss</span> <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">aux_loss</span>  <span class="c1"># 组合损失：主损失主导任务性能，辅助损失约束负载均衡（0.01 为权重系数）</span>
+            
+            <span class="c1"># 反向传播：计算梯度并更新参数</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>  <span class="c1"># 清空梯度：避免前一 batch 的梯度累积</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>        <span class="c1"># 反向传播：计算所有可训练参数的梯度</span>
+            <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>       <span class="c1"># 参数更新：使用 AdamW 优化器更新参数</span>
+            
+            <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>  <span class="c1"># 累计损失：将当前 batch 的损失加入总损失</span>
+            
+            <span class="c1"># 定期打印进度：仅主进程（rank=0）输出日志，避免多进程重复打印</span>
+            <span class="k">if</span> <span class="n">batch_idx</span> <span class="o">%</span> <span class="n">args</span><span class="o">.</span><span class="n">log_interval</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Rank </span><span class="si">{</span><span class="n">rank</span><span class="si">}</span><span class="s1">, Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">, Batch </span><span class="si">{</span><span class="n">batch_idx</span><span class="si">}</span><span class="s1">, Loss: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s1">.6f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># 每个 epoch 结束时打印平均损失：主进程汇总当前 epoch 的训练情况</span>
+        <span class="n">avg_loss</span> <span class="o">=</span> <span class="n">total_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Rank </span><span class="si">{</span><span class="n">rank</span><span class="si">}</span><span class="s1">, Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1"> Average Loss: </span><span class="si">{</span><span class="n">avg_loss</span><span class="si">:</span><span class="s1">.6f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Epoch time: </span><span class="si">{</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">start_time</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1"> seconds</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>  <span class="c1"># 重置计时：用于计算下一个 epoch 的时间</span>
+    
+    <span class="n">cleanup</span><span class="p">()</span>  <span class="c1"># 训练结束后清理分布式环境</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id11">
+<h2>5 启动分布式训练<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">torch.multiprocessing.spawn</span></code>是启动多 GPU 进程的核心 API，其原理是<strong>为每个 GPU 创建独立进程</strong>：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nprocs=world_size</span></code>：创建 world_size 个进程（如 8 个进程对应 8 个 GPU）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">args=(world_size,)</span></code>：将参数传递给每个进程的<code class="docutils literal notranslate"><span class="pre">train</span></code>函数；</p></li>
+<li><p>每个进程的<code class="docutils literal notranslate"><span class="pre">rank</span></code>从 0 到 world_size-1，对应 GPU0 到 GPUworld_size-1。</p></li>
+</ul>
+<p>这种多进程架构的优势是<strong>绕开 Python GIL（全局解释器锁）限制</strong>：Python 的 GIL 会导致多线程无法真正并行执行 CPU 计算，而多进程拥有独立的 GIL，能让每个 GPU 的计算调度完全独立，最大化 CPU-GPU 协同效率。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># 定义训练参数（实际应用中可通过 argparse 模块接收命令行参数）</span>
+    <span class="k">class</span> <span class="nc">Args</span><span class="p">:</span>
+        <span class="n">input_dim</span> <span class="o">=</span> <span class="mi">512</span>          <span class="c1"># 输入特征维度</span>
+        <span class="n">output_dim</span> <span class="o">=</span> <span class="mi">512</span>         <span class="c1"># 输出特征维度</span>
+        <span class="n">num_experts</span> <span class="o">=</span> <span class="mi">8</span>          <span class="c1"># 专家数量（与 GPU 数量匹配）</span>
+        <span class="n">hidden_dim</span> <span class="o">=</span> <span class="mi">1024</span>        <span class="c1"># 专家隐藏层维度</span>
+        <span class="n">top_k</span> <span class="o">=</span> <span class="mi">2</span>                <span class="c1"># 每个样本激活的专家数</span>
+        <span class="n">capacity_factor</span> <span class="o">=</span> <span class="mf">1.0</span>    <span class="c1"># 容量系数</span>
+        <span class="n">dataset_size</span> <span class="o">=</span> <span class="mi">10000</span>     <span class="c1"># 数据集总样本数</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1024</span>        <span class="c1"># 每个进程的 batch_size（总 batch_size=1024*8=8192）</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="mf">1e-4</span>                <span class="c1"># 学习率</span>
+        <span class="n">epochs</span> <span class="o">=</span> <span class="mi">10</span>              <span class="c1"># 训练 epoch 数</span>
+        <span class="n">log_interval</span> <span class="o">=</span> <span class="mi">10</span>        <span class="c1"># 日志打印间隔（每 10 个 batch 打印一次）</span>
+    
+    <span class="n">args</span> <span class="o">=</span> <span class="n">Args</span><span class="p">()</span>
+    <span class="n">world_size</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># 使用 8 个 GPU（需与 num_experts 匹配）</span>
+    <span class="c1"># 启动多进程训练：为每个 GPU 创建一个进程，执行 train 函数</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">spawn</span><span class="p">(</span><span class="n">train</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">world_size</span><span class="p">,</span> <span class="n">args</span><span class="p">),</span> <span class="n">nprocs</span><span class="o">=</span><span class="n">world_size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>执行后，主进程（rank 0）会输出训练日志：日志仅由 rank 0 打印，避免多进程重复输出，便于观察训练进度。从日志中可看到：</p>
+<ul class="simple">
+<li><p>每个 batch 的 loss 逐渐下降，说明模型在学习；</p></li>
+<li><p>每个 epoch 的时间稳定（如 45 秒左右），说明负载均衡机制有效，无明显设备过载。</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Rank</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Epoch</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Batch</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">1.023456</span>
+<span class="n">Rank</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Epoch</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Batch</span> <span class="mi">10</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">0.987654</span>
+<span class="n">Rank</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Epoch</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Batch</span> <span class="mi">20</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">0.876543</span>
+
+<span class="n">Rank</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Epoch</span> <span class="mi">1</span> <span class="n">Average</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">0.921345</span>
+<span class="n">Epoch</span> <span class="n">time</span><span class="p">:</span> <span class="mf">45.67</span> <span class="n">seconds</span>
+
+<span class="n">Rank</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Epoch</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Batch</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">0.765432</span>
+<span class="n">Rank</span> <span class="mi">0</span><span class="p">,</span> <span class="n">Epoch</span> <span class="mi">2</span><span class="p">,</span> <span class="n">Batch</span> <span class="mi">10</span><span class="p">,</span> <span class="n">Loss</span><span class="p">:</span> <span class="mf">0.654321</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h2>6 总结与思考<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<p>为了解决 MOE 模型中的负载不均问题，可以通过设置 capacity_factor 限制每个专家处理的 token 数量，并结合辅助的负载均衡损失函数，使所有专家被均衡使用，从而实现计算资源的合理分配。</p>
+<p>在设备间通信方面，通过仅传输被选中专家所需的输入和输出数据，大幅减少通信量；采用异步的 dist.all_reduce 非阻塞操作，并实现计算与通信的重叠，在计算当前专家的同时预取或准备下一个专家的数据，进一步提升效率。</p>
+<p>稀疏激活是 MOE 的核心优势：当 top_k=2 且专家数量为 8 时，每次仅激活 2 个专家，理论计算量和激活参数量都降至全连接层的 25%，而通信开销仅增加约 30%，远低于计算效率带来的收益，整体显著提升模型扩展性与推理速度。</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData02MoE"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="CODE02SignalMOE.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">CODE02:从零开始手撕 MoE(DONE)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="CODE04MOEAnalysize.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">CODE04:MoE 分布式性能分析(DONE)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#moe">1. MoE 数学表达</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2. 专家网络实现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">3. MoE 模型架构</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">3.1 模型初始化与专家分配</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.2 路由机制与负载均衡</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.3 分布式专家计算</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.4 结果聚合</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">4 分布式训练流程</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4.1 初始化分布式环境</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2 数据处理与性能分析</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 训练循环实现</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5 启动分布式训练</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">6 总结与思考</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ZOMI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Sep 14, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -4,7 +4,7 @@
 
 近年来，大型语言模型（LLMs）的发展令人瞩目，而它们中的绝大多数，例如著名的 GPT 系列，都构建于一种优雅而强大的架构之上——Transformer-Decoder。
 
-![](./../images/01AICluster04Performance/CODE01Modeling01.png)
+![](../images/01AICluster04Performance/CODE01Modeling01.png)
 
 许多初学者在使用这些模型时，往往将其视为一个黑箱。我们调用 `model.forward()`，然后奇迹就发生了。但是，模型内部究竟发生了什么？一个拥有数百亿参数的模型，其大小是如何计算的？当我们输入一段文本时，计算机会执行多少次浮点运算？为什么在生成长文本时，我们会遇到所谓的“显存瓶颈”？
 
@@ -51,7 +51,7 @@ print(args)
 
 参数量是衡量模型规模最直观的指标。一个模型的参数，本质上就是它在训练过程中学习到的所有权重（weights）和偏置（biases）的总和。
 
-![](./../images/01AICluster04Performance/CODE01Modeling02.png)
+![](../images/01AICluster04Performance/CODE01Modeling02.png)
 
 ### 2.1 Embedding 层
 
@@ -187,7 +187,7 @@ print(f"模型总参数量 (估算): {total_params:,} ({total_params/1e6:.2f}M)"
 
 参数量描述了模型的静态大小，而计算量 FLOPs（浮点运算次数来衡量）则描述了模型在前向传播的动态消耗。
 
-![](./../images/01AICluster04Performance/CODE01Modeling03.png)
+![](../images/01AICluster04Performance/CODE01Modeling03.png)
 
 我们主要关注计算量最大的部分：矩阵乘法。一个维度为 $(m \times n)$ 的矩阵与一个维度为 $(n \times p)$ 的矩阵相乘，其计算量约为 $2 \times m \times n \times p$ FLOPs。
 

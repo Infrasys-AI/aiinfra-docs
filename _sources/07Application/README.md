@@ -8,7 +8,7 @@
 
 ## 课程位置
 
-![AIInfra](./../images/07Application/arch01.png)
+![AI Infra](../images/07Application/arch01.png)
 
 ## 课程简介
 
@@ -28,7 +28,7 @@
 
 ## 课程知识
 
-![AIInfra](./../images/07Application/arch02.png)
+![AI Infra](../images/07Application/arch02.png)
 
 ## 备注
 

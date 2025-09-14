@@ -139,7 +139,7 @@ ZeRO-1 分片后，每个 GPU 只存储：
 
 其中 N 是 GPU 数量。
 
-![](./../images/04Train02ParallelAdv/Code01ZeRO01.png)
+![](../images/04Train02ParallelAdv/Code01ZeRO01.png)
 
 ZeRO-1 优化器状态分片
 
@@ -214,7 +214,7 @@ ZeRO-1 优化器创建后: 已分配: 0.13GB, 变化: +0.00GB
 
 ZeRO-2 在 ZeRO-1 的基础上进一步优化，不仅分片优化器状态，还分片梯度。这进一步减少了显存占用，因为梯度通常与参数大小相同。
 
-![](./../images/04Train02ParallelAdv/Code01ZeRO02.png)
+![](../images/04Train02ParallelAdv/Code01ZeRO02.png)
 
 在反向传播过程中，每个 GPU 计算其分配到的参数的梯度，然后通过 Reduce-Scatter 操作聚合梯度。这样每个 GPU 只保存一部分梯度，而不是全部梯度。梯度分片的数学表达：
 
@@ -284,7 +284,7 @@ ZeRO-2 优化器创建后: 已分配: 0.13GB, 变化: +0.00GB
 
 ZeRO-3 是 ZeRO 系列的最终形态，它不仅分片优化器状态和梯度，还分片模型参数本身。这意味着每个 GPU 只存储模型的一小部分参数，大大降低了单个 GPU 的显存需求。
 
-![](./../images/04Train02ParallelAdv/Code01ZeRO03.png)
+![](../images/04Train02ParallelAdv/Code01ZeRO03.png)
 
 ZeRO-3 的工作原理：
 
@@ -368,7 +368,7 @@ ZeRO-3 模型创建后: 已分配: 0.03GB, 变化: +0.03GB
 
 Zero Offload 技术将优化器状态、梯度和参数卸载到 CPU 内存或 NVMe 存储，进一步扩展了可训练的模型规模。这种技术特别适合在有限 GPU 内存环境下训练超大模型。
 
-![](./../images/04Train02ParallelAdv/Code01ZeRO04.png)
+![](../images/04Train02ParallelAdv/Code01ZeRO04.png)
 
 Offload 的核心思想是利用 CPU 内存和 NVMe 存储作为 GPU 显存的扩展，通过异步数据传输和计算重叠来最小化性能影响。
 

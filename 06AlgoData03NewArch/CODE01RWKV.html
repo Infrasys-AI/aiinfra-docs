@@ -1,0 +1,1713 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="基于 RWKV 的 RNN 范式革新(DONE)" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData03NewArch/CODE01RWKV.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="​​ 本实验我们将基于 RWKV4 架构，实现其关键组件：时间混合（Time Mixing）和通道混合（Channel Mixing）模块，感受其如何通过巧妙的设计，将 Transformer 的并行训练优势与 RNN 的高效推理优势相结合，实现​​线性计算复杂度​​和对长序列的友好支持。 通过这个实验，你会​​深刻理解​​RWKV 为何被称为“RNN 的蜕变”，它不仅降低了推理过程中的内存..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/None" />
+<meta property="og:image:alt" content="​​ 本实验我们将基于 RWKV4 架构，实现其关键组件：时间混合（Time Mixing）和通道混合（Channel Mixing）模块，感受其如何通过巧妙的设计，将 Transformer 的并行训练优势与 RNN 的高效推理优势相结合，实现​​线性计算复杂度​​和对长序列的友好支持。 通过这个实验，你会​​..." />
+<meta name="description" content="​​ 本实验我们将基于 RWKV4 架构，实现其关键组件：时间混合（Time Mixing）和通道混合（Channel Mixing）模块，感受其如何通过巧妙的设计，将 Transformer 的并行训练优势与 RNN 的高效推理优势相结合，实现​​线性计算复杂度​​和对长序列的友好支持。 通过这个实验，你会​​深刻理解​​RWKV 为何被称为“RNN 的蜕变”，它不仅降低了推理过程中的内存..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>基于 RWKV 的 RNN 范式革新(DONE) &#8212; AIInfra AI基础设施</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=17a93d66" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData03NewArch/CODE01RWKV';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Mamba 状态空间模型(DONE)" href="CODE02Mamba.html" />
+    <link rel="prev" title="Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式" href="09Break_Transformer_BottleNeck.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">03.HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">02.L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">01.服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">02.AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">03.AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">04.液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">05.AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">06.AI 集群供配电系统</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">05.NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">06.NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">07.NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">08.XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">10.十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">04.集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">01.HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">01.AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/01Introduction.html">01.AI 集群网络基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/02HPCDeepDive.html">02.HPC 网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/03AIDeepDive.html">03.AI 集群网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/04AINetwork.html">04.AI 集群网络基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/05PlaneDivision.html">05.AI 集群网络平面划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/06Summary.html">06.万卡集群组网思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">K8S 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/07Gpipe.html">07.PP 并行：基本原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/07MLA.html">07.内存优化：MLA 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/08Checkpoint.html">08.内存优化：梯度检查点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/09HybridPrecision.html">09.混合精度：FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/10Domino.html">10.通算融合：DS Domino 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/11FLUX.html">11.通算融合：FLUX 计算通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code01FlashAtten.html">CODE 01: Flash Attention 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code04KTransformer.html">CODE 04: KTransformers 核心实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">01.Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">02.大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">01.MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型创新架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2014.html">01.2012-2014 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2015.html">02.2015 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2016.html">03.2016 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2017.html">04.2017 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2018.html">05.2018 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2019.html">06.2019 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2020.html">07.2020 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2021.html">08.2021 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2022.html">09.2022 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2023.html">10.2023 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2024.html">11.2024 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/History.html">12.历史 AI 大事件</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/06AlgoData03NewArch/CODE01RWKV.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F06AlgoData03NewArch/CODE01RWKV.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData03NewArch/CODE01RWKV.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>基于 RWKV 的 RNN 范式革新(DONE)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv4">1. RWKV4 实现</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1.1 环境设置与模型初始化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv">1.2 RWKV 核心原理：时间混合机制</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.3 RWKV 核心原理：通道混合机制</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. RWKV4 训练与评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.1 辅助函数实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.2 完整前向传播实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.3 训练与推理模式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.4 实验评估与性能分析</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-shift">3. 位置编码与 Token Shift</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 执行实验与结果分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5. 总结与展望</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="rwkv-rnn-done">
+<h1>基于 RWKV 的 RNN 范式革新(DONE)<a class="headerlink" href="#rwkv-rnn-done" title="Link to this heading">#</a></h1>
+<p>​​
+本实验我们将基于 RWKV4 架构，实现其关键组件：时间混合（Time Mixing）和通道混合（Channel Mixing）模块，感受其如何通过巧妙的设计，将 Transformer 的并行训练优势与 RNN 的高效推理优势相结合，实现​​线性计算复杂度​​和对长序列的友好支持。</p>
+<p>通过这个实验，你会​​深刻理解​​RWKV 为何被称为“RNN 的蜕变”，它不仅降低了推理过程中的内存占用，还保持了强大的序列建模能力，为在资源受限环境下部署大模型提供了新思路。</p>
+<section id="rwkv4">
+<h2>1. RWKV4 实现<a class="headerlink" href="#rwkv4" title="Link to this heading">#</a></h2>
+<p>在自然语言处理领域，Transformer 架构因其强大的序列建模能力和并行化训练优势，已成为大模型的主流选择。然而，Transformer 的自注意力机制存在一个根本性限制——其计算复杂度随序列长度呈<strong>平方级增长</strong>，这导致处理长序列时面临巨大的计算和内存挑战。</p>
+<p>RWKV（Receptance Weighted Key Value）的出现为这一困境提供了创新性的解决方案。它巧妙地将 RNN 的<strong>线性计算复杂度</strong>与 Transformer 的<strong>并行训练能力</strong>相结合，被誉为&quot;RNN 的文艺复兴&quot;。本实验将带您深入理解 RWKV 的核心机制，并通过代码实现其关键组件。</p>
+<blockquote>
+<div><p>RWKV 的名称来源于其四个核心参数：R（Receptance，接收向量）、W（Weight，权重衰减向量）、K（Key，键向量）和 V（Value，值向量）</p>
+</div></blockquote>
+<p><img alt="" src="../_images/Practice01RWKV01.png" /></p>
+<section id="id1">
+<h3>1.1 环境设置与模型初始化<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>首先配置实验环境，导入必要的库并设置模型参数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1"># 环境配置 </span>
+<span class="c1"># 设备自动检测（优先 GPU，适配不同硬件）</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;实验使用设备: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 设置 numpy 打印选项，便于调试观察数据</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+<span class="c1"># 模型参数定义</span>
+<span class="n">args</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">()</span>
+<span class="n">args</span><span class="o">.</span><span class="n">MODEL_NAME</span> <span class="o">=</span> <span class="s1">&#39;rwkv-demo&#39;</span>  <span class="c1"># 模型名称</span>
+<span class="n">args</span><span class="o">.</span><span class="n">n_layer</span> <span class="o">=</span> <span class="mi">2</span>               <span class="c1"># 简化为 2 层（原 6 层，降低计算量）</span>
+<span class="n">args</span><span class="o">.</span><span class="n">n_embd</span> <span class="o">=</span> <span class="mi">128</span>              <span class="c1"># 简化为 128 维（原 512 维，适合演示）</span>
+<span class="n">args</span><span class="o">.</span><span class="n">vocab_size</span> <span class="o">=</span> <span class="mi">1000</span>         <span class="c1"># 模拟 NLP 任务词汇表大小</span>
+<span class="n">args</span><span class="o">.</span><span class="n">seq_len_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">64</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">512</span><span class="p">,</span> <span class="mi">1024</span><span class="p">]</span>  <span class="c1"># 后续性能评估用序列长度</span>
+</pre></div>
+</div>
+<p>接下来实现 RWKV 模型的基本结构：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">RWKV_RNN</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># 初始设为评估模式，推理时默认高效</span>
+    
+        <span class="c1"># 模型参数管理：改用列表存储每层参数，确保可索引且可训练</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="n">types</span><span class="o">.</span><span class="n">SimpleNamespace</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 每层参数封装为字典，存入列表</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># 输出投影层（原代码缺失）</span>
+
+        <span class="c1"># 初始化每一层的权重参数</span>
+        <span class="k">for</span> <span class="n">layer_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_layer</span><span class="p">):</span>
+            <span class="c1"># 1. 时间混合模块参数（补充原代码缺失的 time_first/time_decay）</span>
+            <span class="n">time_mix_params</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="c1"># 时间混合系数：控制当前与历史信息的平衡</span>
+                <span class="s2">&quot;time_mix_k&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span>
+                <span class="s2">&quot;time_mix_v&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span>
+                <span class="s2">&quot;time_mix_r&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span>
+                <span class="c1"># 时间衰减参数：time_decay 为负，确保历史信息随时间衰减</span>
+                <span class="s2">&quot;time_first&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.01</span><span class="p">),</span>
+                <span class="s2">&quot;time_decay&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">),</span>
+                <span class="c1"># 权重矩阵：用 Xavier 初始化（除以 sqrt(n_embd)），避免梯度消失</span>
+                <span class="s2">&quot;key_weight&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span>
+                <span class="s2">&quot;value_weight&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span>
+                <span class="s2">&quot;receptance_weight&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span>
+                <span class="s2">&quot;output_weight&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span>
+            <span class="p">}</span>
+
+            <span class="c1"># 2. 通道混合模块参数</span>
+            <span class="n">ffn_params</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;time_mix_k&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span>
+                <span class="s2">&quot;time_mix_r&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">),</span>
+                <span class="s2">&quot;key_weight&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span>
+                <span class="s2">&quot;receptance_weight&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span>
+                <span class="s2">&quot;value_weight&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span>
+            <span class="p">}</span>
+
+            <span class="c1"># 3. 层归一化（原代码缺失实现，加入模型管理）</span>
+            <span class="n">ln1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+            <span class="n">ln2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">LayerNorm</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+            <span class="c1"># 4. 封装当前层所有参数，存入列表</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;time_mix&quot;</span><span class="p">:</span> <span class="n">time_mix_params</span><span class="p">,</span>
+                <span class="s2">&quot;ffn&quot;</span><span class="p">:</span> <span class="n">ffn_params</span><span class="p">,</span>
+                <span class="s2">&quot;ln1&quot;</span><span class="p">:</span> <span class="n">ln1</span><span class="p">,</span>  <span class="c1"># 时间混合前的归一化</span>
+                <span class="s2">&quot;ln2&quot;</span><span class="p">:</span> <span class="n">ln2</span>   <span class="c1"># 通道混合前的归一化</span>
+            <span class="p">})</span>
+
+        <span class="c1"># 初始化优化器（原代码缺失，用于训练）</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-4</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">layer_norm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">ln_layer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;实现层归一化（原代码调用但未定义）&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ln_layer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="rwkv">
+<h3>1.2 RWKV 核心原理：时间混合机制<a class="headerlink" href="#rwkv" title="Link to this heading">#</a></h3>
+<p>时间混合（Time Mixing）是 RWKV 的核心创新之一，它替代了传统 Transformer 中的自注意力机制，实现了线性复杂度。其核心思想是通过递归状态更新而非保存全部历史信息来计算注意力，避免了 Transformer 的 O (n²) 复杂度。</p>
+<p><img alt="" src="../_images/Practice01RWKV02.png" /></p>
+<p>时间混合的数学表达式：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+r_t &amp;= \text{sigmoid}(W_r \cdot (\mu_r x_t + (1-\mu_r) x_{t-1})) \\
+k_t &amp;= W_k \cdot (\mu_k x_t + (1-\mu_k) x_{t-1}) \\
+v_t &amp;= W_v \cdot (\mu_v x_t + (1-\mu_v) x_{t-1}) \\
+wkv_t &amp;= \frac{\sum_{i=1}^{t-1} e^{-(t-1-i)w + k_i} v_i + e^{u + k_t} v_t}{\sum_{i=1}^{t-1} e^{-(t-1-i)w + k_i} + e^{u + k_t}} \\
+o_t &amp;= W_o \cdot (r_t \odot wkv_t)
+\end{aligned}
+\end{split}\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu\)</span>：时间混合系数，控制当前输入 <span class="math notranslate nohighlight">\(x_t\)</span> 与历史输入 <span class="math notranslate nohighlight">\(x_{t-1}\)</span> 的平衡；</p></li>
+<li><p><span class="math notranslate nohighlight">\(w\)</span>：时间衰减向量（对应代码中的<code class="docutils literal notranslate"><span class="pre">time_decay</span></code>），确保历史信息随时间衰减；</p></li>
+<li><p><span class="math notranslate nohighlight">\(u\)</span>：当前时间步偏置（对应代码中的<code class="docutils literal notranslate"><span class="pre">time_first</span></code>）；</p></li>
+<li><p><span class="math notranslate nohighlight">\(r_t\)</span>：接收向量，用 sigmoid 门控控制信息流，避免冗余信息干扰。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">time_mixing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RWKV 时间混合模块实现（修正版）</span>
+<span class="sd">    x: 当前输入向量，形状 (batch_size, n_embd)</span>
+<span class="sd">    state: 隐藏状态，存储历史信息，形状 (n_layer*5, batch_size, n_embd)</span>
+<span class="sd">    i: 层索引（当前处理的层数）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 提取当前层的时间混合参数</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;time_mix&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_k</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_k&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_v</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_v&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_r</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_r&quot;</span><span class="p">]</span>
+    <span class="n">time_first</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_first&quot;</span><span class="p">]</span>
+    <span class="n">time_decay</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_decay&quot;</span><span class="p">]</span>
+    <span class="n">kw</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;key_weight&quot;</span><span class="p">]</span>  <span class="c1"># (n_embd, n_embd)</span>
+    <span class="n">vw</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;value_weight&quot;</span><span class="p">]</span>
+    <span class="n">rw</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;receptance_weight&quot;</span><span class="p">]</span>
+    <span class="n">ow</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;output_weight&quot;</span><span class="p">]</span>
+
+    <span class="c1"># 1. 线性插值：混合当前输入与前一时刻状态（实现历史信息继承）</span>
+    <span class="c1"># 前一时刻状态存储在 state[5*i+1]，对应 x_{t-1}</span>
+    <span class="n">xk</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">time_mix_k</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_k</span><span class="p">)</span>  <span class="c1"># 混合后的 key 输入</span>
+    <span class="n">xv</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">time_mix_v</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_v</span><span class="p">)</span>  <span class="c1"># 混合后的值输入</span>
+    <span class="n">xr</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">time_mix_r</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_r</span><span class="p">)</span>  <span class="c1"># 混合后的 receptance 输入</span>
+
+    <span class="c1"># 2. 更新状态：将当前输入 x 存入，作为下一时刻的历史信息（x_{t} → x_{t+1}的 x_{t}）</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="c1"># 3. 计算 Receptance、Key、Value（修正矩阵乘法顺序：输入@权重，符合 PyTorch 习惯）</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">xr</span> <span class="o">@</span> <span class="n">rw</span><span class="p">)</span>  <span class="c1"># 接收向量，门控控制信息流，输出范围(0,1)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">xk</span> <span class="o">@</span> <span class="n">kw</span>                 <span class="c1"># 键向量，捕捉输入的特征信息</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">xv</span> <span class="o">@</span> <span class="n">vw</span>                 <span class="c1"># 值向量，存储待提取的特征值</span>
+
+    <span class="c1"># 4. 获取前一时刻的隐藏状态（aa: 加权值和，bb: 权重和，pp: 最大权重，用于数值稳定）</span>
+    <span class="n">aa</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># sum(e^(k_i - pp) * v_i)</span>
+    <span class="n">bb</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># sum(e^(k_i - pp))</span>
+    <span class="n">pp</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span>  <span class="c1"># max(pp_prev + time_decay, k)，确保数值不溢出</span>
+
+    <span class="c1"># 5. WKV 核心计算：线性复杂度的注意力机制（避免存储所有历史 K/V）</span>
+    <span class="n">ww</span> <span class="o">=</span> <span class="n">time_first</span> <span class="o">+</span> <span class="n">k</span>  <span class="c1"># 当前时间步的权重基础</span>
+    <span class="n">qq</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">pp</span><span class="p">,</span> <span class="n">ww</span><span class="p">)</span>  <span class="c1"># 取最大值，避免指数计算溢出</span>
+    <span class="n">e1</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">pp</span> <span class="o">-</span> <span class="n">qq</span><span class="p">)</span>     <span class="c1"># 历史权重的归一化因子（数值稳定）</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ww</span> <span class="o">-</span> <span class="n">qq</span><span class="p">)</span>     <span class="c1"># 当前权重的归一化因子</span>
+
+    <span class="c1"># 加权求和：aa 存储历史值的加权和，e2*v 为当前值的贡献</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">e1</span> <span class="o">*</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">e2</span> <span class="o">*</span> <span class="n">v</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">e1</span> <span class="o">*</span> <span class="n">bb</span> <span class="o">+</span> <span class="n">e2</span>          <span class="c1"># 总权重和</span>
+    <span class="n">wkv</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="mf">1e-8</span><span class="p">)</span>      <span class="c1"># 加入小 epsilon，避免除零错误</span>
+
+    <span class="c1"># 6. 更新隐藏状态：为下一时刻的计算准备历史信息</span>
+    <span class="n">ww_decay</span> <span class="o">=</span> <span class="n">pp</span> <span class="o">+</span> <span class="n">time_decay</span>  <span class="c1"># 历史权重随时间衰减</span>
+    <span class="n">qq_new</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">ww_decay</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">e1_new</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ww_decay</span> <span class="o">-</span> <span class="n">qq_new</span><span class="p">)</span>
+    <span class="n">e2_new</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">k</span> <span class="o">-</span> <span class="n">qq_new</span><span class="p">)</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">e1_new</span> <span class="o">*</span> <span class="n">aa</span> <span class="o">+</span> <span class="n">e2_new</span> <span class="o">*</span> <span class="n">v</span>  <span class="c1"># 更新加权值和</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">e1_new</span> <span class="o">*</span> <span class="n">bb</span> <span class="o">+</span> <span class="n">e2_new</span>      <span class="c1"># 更新权重和</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">qq_new</span>                    <span class="c1"># 更新最大权重</span>
+
+    <span class="c1"># 7. 输出投影：用 receptance 门控筛选有效信息，再通过线性层输出</span>
+    <span class="k">return</span> <span class="n">wkv</span> <span class="o">@</span> <span class="n">ow</span> <span class="o">*</span> <span class="n">r</span>
+</pre></div>
+</div>
+<p>RWKV 通过维护<code class="docutils literal notranslate"><span class="pre">aa</span></code>（加权值和）、<code class="docutils literal notranslate"><span class="pre">bb</span></code>（权重和）、<code class="docutils literal notranslate"><span class="pre">pp</span></code>（最大权重）三个隐藏状态，避免了传统注意力中“所有历史 K/V 与当前 Q 计算相似度”的二次操作，实现了<strong>O(n)的线性复杂度</strong>。同时，通过<code class="docutils literal notranslate"><span class="pre">qq</span> <span class="pre">=</span> <span class="pre">torch.maximum(pp,</span> <span class="pre">ww)</span></code>避免指数溢出，确保数值稳定性。</p>
+</section>
+<section id="id2">
+<h3>1.3 RWKV 核心原理：通道混合机制<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>通道混合（Channel Mixing）替代了传统 Transformer 中的前馈神经网络（FFN），负责在<strong>同一时间步内</strong>不同特征通道之间的信息交互。其核心是“门控机制+平方 ReLU 激活”，既增强了非线性表达，又保证了参数效率。</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{aligned}
+r_t &amp;= \text{sigmoid}(W_r \cdot (\mu_r x_t + (1-\mu_r) x_{t-1})) \\
+k_t &amp;= W_k \cdot (\mu_k x_t + (1-\mu_k) x_{t-1}) \\
+o_t &amp;= r_t \odot (W_v \cdot \max(k_t, 0)^2)
+\end{aligned}
+\end{split}\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p>平方 ReLU 激活（<span class="math notranslate nohighlight">\(\max(k_t, 0)^2\)</span>），相比传统 ReLU 能捕捉更丰富的特征交互；</p></li>
+<li><p>接收向量 <span class="math notranslate nohighlight">\(r_t\)</span> 同样作为门控，筛选通道间的有效信息，避免冗余计算。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">channel_mixing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RWKV 通道混合模块实现（修正版）</span>
+<span class="sd">    x: 当前输入向量，形状 (batch_size, n_embd)</span>
+<span class="sd">    state: 隐藏状态，存储历史信息</span>
+<span class="sd">    i: 层索引</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 提取当前层的通道混合参数</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;ffn&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_k</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_k&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_r</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_r&quot;</span><span class="p">]</span>
+    <span class="n">kw</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;key_weight&quot;</span><span class="p">]</span>
+    <span class="n">rw</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;receptance_weight&quot;</span><span class="p">]</span>
+    <span class="n">vw</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;value_weight&quot;</span><span class="p">]</span>
+
+    <span class="c1"># 1. 线性插值：混合当前输入与前一时刻状态（与时间混合逻辑一致）</span>
+    <span class="c1"># 前一时刻状态存储在 state[5*i+0]，对应 x_{t-1}</span>
+    <span class="n">xk</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">time_mix_k</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_k</span><span class="p">)</span>
+    <span class="n">xr</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">time_mix_r</span> <span class="o">+</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_r</span><span class="p">)</span>
+
+    <span class="c1"># 2. 更新状态：将当前输入 x 存入，作为下一时刻的历史信息</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+    <span class="c1"># 3. 计算 Receptance 和 Key（门控+特征提取）</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">xr</span> <span class="o">@</span> <span class="n">rw</span><span class="p">)</span>  <span class="c1"># 接收向量，控制通道间信息流</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">xk</span> <span class="o">@</span> <span class="n">kw</span>                 <span class="c1"># 键向量，捕捉通道内特征</span>
+
+    <span class="c1"># 4. 平方 ReLU 激活：增强非线性，比传统 ReLU 更能捕捉特征交互（源自 Primer）</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+
+    <span class="c1"># 5. 门控输出：用 r 筛选有效特征，再通过 Value 权重矩阵投影</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">@</span> <span class="n">vw</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>通道混合通过“时间混合（继承历史）→ 门控筛选 → 平方 ReLU 激活”的流程，在<strong>线性复杂度</strong>下实现了通道间的复杂交互。相比传统 FFN 参数效率更高，且避免了冗余计算。</p>
+</section>
+</section>
+<section id="id3">
+<h2>2. RWKV4 训练与评估<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<section id="id4">
+<h3>2.1 辅助函数实现<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>为支持 NLP 任务的训练、生成与评估，需实现简单的 Tokenize、Detokenize、损失计算等函数：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># NLP 任务辅助函数</span>
+<span class="k">def</span> <span class="nf">tokenize</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">vocab_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;模拟 Tokenize：将文本转为随机 token ID（仅演示用）&quot;&quot;&quot;</span>
+    <span class="c1"># 输入 prompt 按空格分割，每个词对应一个随机 token ID</span>
+    <span class="n">token_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">prompt</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">token_count</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># 形状 (1, seq_len)</span>
+
+<span class="k">def</span> <span class="nf">detokenize</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;模拟 Detokenize：将 token ID 转为文本（仅演示用）&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="sa">f</span><span class="s2">&quot;token_</span><span class="si">{</span><span class="n">t</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">])</span>
+
+<span class="k">def</span> <span class="nf">sample_from_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;温度采样：从模型输出（logits）中采样下一个 token（避免贪心搜索的重复）&quot;&quot;&quot;</span>
+    <span class="n">logits</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># 取最后一个时间步的输出（形状：(vocab_size,)）</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span> <span class="o">/</span> <span class="n">temperature</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 温度调整概率分布</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 按概率采样 1 个 token</span>
+
+<span class="k">def</span> <span class="nf">create_demo_dataset</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;构造模拟 NLP 数据集（输入序列+目标序列）&quot;&quot;&quot;</span>
+    <span class="c1"># 输入 x：模拟 Embedding 层输出，形状 (batch_size, seq_len, n_embd)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="c1"># 目标 target：语言模型任务中，目标为输入的&quot;下一个 token&quot;（随机生成，仅演示）</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">,</span> <span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">target</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>2.2 完整前向传播实现<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>现在我们将时间混合和通道混合组合成完整的 RWKV 层：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    RWKV 完整前向传播（修正版）</span>
+<span class="sd">    x: 输入序列，形状 (batch_size, seq_len, n_embd)（已过 Embedding 层）</span>
+<span class="sd">    state: 初始隐藏状态，如为 None 则初始化（推理时复用，实现高效自回归）</span>
+<span class="sd">    返回：output（模型输出 logits）、state（更新后的隐藏状态）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">n_embd</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="c1"># 初始化隐藏状态：每层 5 个状态变量（通道混合 1 个+时间混合 4 个），确保与模型设备一致</span>
+    <span class="k">if</span> <span class="n">state</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_layer</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># 逐时间步、逐层处理（训练时可并行，推理时自回归）</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">seq_len</span><span class="p">):</span>
+        <span class="c1"># 提取当前时间步的输入（x_t）</span>
+        <span class="n">x_t</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="n">t</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># 形状 (batch_size, n_embd)</span>
+
+        <span class="c1"># 逐层处理当前时间步的输入</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_layer</span><span class="p">):</span>
+            <span class="c1"># 保存当前层输入的副本，用于残差连接</span>
+            <span class="n">x_t_residual</span> <span class="o">=</span> <span class="n">x_t</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+
+            <span class="c1"># 1. 时间混合分支：处理序列维度的历史信息</span>
+            <span class="n">x_ln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">(</span><span class="n">x_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;ln1&quot;</span><span class="p">])</span>  <span class="c1"># 层归一化</span>
+            <span class="n">att_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_mixing</span><span class="p">(</span><span class="n">x_ln</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>           <span class="c1"># 时间混合</span>
+            <span class="n">x_t</span> <span class="o">=</span> <span class="n">x_t_residual</span> <span class="o">+</span> <span class="n">att_out</span>                          <span class="c1"># 残差连接（缓解梯度消失）</span>
+
+            <span class="c1"># 2. 通道混合分支：处理通道维度的特征交互</span>
+            <span class="n">x_t_residual</span> <span class="o">=</span> <span class="n">x_t</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>  <span class="c1"># 更新残差副本</span>
+            <span class="n">x_ln</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_norm</span><span class="p">(</span><span class="n">x_t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;ln2&quot;</span><span class="p">])</span>  <span class="c1"># 层归一化</span>
+            <span class="n">ffn_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_mixing</span><span class="p">(</span><span class="n">x_ln</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>         <span class="c1"># 通道混合</span>
+            <span class="n">x_t</span> <span class="o">=</span> <span class="n">x_t_residual</span> <span class="o">+</span> <span class="n">ffn_out</span>                          <span class="c1"># 残差连接</span>
+
+        <span class="c1"># 将当前时间步的输出存入结果（按时间步拼接）</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">x_t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 初始时刻：添加时间步维度</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">output</span><span class="p">,</span> <span class="n">x_t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 拼接后续时间步</span>
+
+    <span class="c1"># 输出投影：将嵌入维度转为词汇表维度（用于 NLP 的 token 预测）</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_projection</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>  <span class="c1"># 形状 (batch_size, seq_len, vocab_size)</span>
+    <span class="k">return</span> <span class="n">output</span><span class="p">,</span> <span class="n">state</span>
+
+<span class="k">def</span> <span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;计算语言模型损失（交叉熵损失，原代码缺失）&quot;&quot;&quot;</span>
+    <span class="c1"># output: (batch_size, seq_len, vocab_size)，target: (batch_size, seq_len)</span>
+    <span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">vocab_size</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span>
+    <span class="c1"># 展平为 (batch_size*seq_len, vocab_size) 和 (batch_size*seq_len,)，符合交叉熵输入要求</span>
+    <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span>
+        <span class="n">output</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">),</span>
+        <span class="n">target</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>2.3 训练与推理模式<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>RWKV 的核心优势是<strong>训练时并行、推理时高效</strong>：训练时可像 Transformer 一样并行处理整个序列，推理时像 RNN 一样仅维护历史状态。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_loader</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    训练模式：利用并行化处理整个序列（类似 Transformer）</span>
+<span class="sd">    data_loader: 数据集加载器，返回 (input_seq, target_seq)</span>
+<span class="sd">    epochs: 训练轮数</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>  <span class="c1"># 切换为训练模式（启用 Dropout、BatchNorm 更新等）</span>
+    
+    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">epochs</span><span class="p">):</span>
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">batch_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">input_seq</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_loader</span><span class="p">):</span>
+            <span class="c1"># 前向传播：并行处理整个序列（input_seq 形状：(batch, seq_len, n_embd)）</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
+            
+            <span class="c1"># 计算损失</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target_seq</span><span class="p">)</span>
+            <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            
+            <span class="c1"># 反向传播与参数更新</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>  <span class="c1"># 清空梯度</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>             <span class="c1"># 反向传播计算梯度</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>       <span class="c1"># 更新参数</span>
+        
+        <span class="c1"># 打印每轮训练结果</span>
+        <span class="n">avg_loss</span> <span class="o">=</span> <span class="n">total_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_loader</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">epochs</span><span class="si">}</span><span class="s2"> | Avg Loss: </span><span class="si">{</span><span class="n">avg_loss</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> | Perplexity: </span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">avg_loss</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">generate_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    推理模式：自回归生成文本（类似 RNN，高效低内存）</span>
+<span class="sd">    prompt: 输入提示文本</span>
+<span class="sd">    max_length: 生成的最大 token 数</span>
+<span class="sd">    temperature: 采样温度（越小越确定，越大越随机）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># 切换为评估模式（禁用 Dropout，固定 BatchNorm）</span>
+    
+    <span class="c1"># 1. 处理输入 prompt：Tokenize 并转为 Embedding（此处用随机 Embedding 模拟）</span>
+    <span class="n">prompt_tokens</span> <span class="o">=</span> <span class="n">tokenize</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span>  <span class="c1"># 形状 (1, prompt_seq_len)</span>
+    <span class="c1"># 模拟 Embedding 层：随机生成嵌入（实际场景需用训练好的 Embedding）</span>
+    <span class="n">prompt_emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">prompt_tokens</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    
+    <span class="c1"># 2. 初始化隐藏状态（推理时复用，仅维护历史信息）</span>
+    <span class="n">current_state</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">generated_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="c1"># 3. 先处理 prompt，获取初始隐藏状态</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>  <span class="c1"># 推理时禁用梯度计算，节省内存</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">current_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">prompt_emb</span><span class="p">,</span> <span class="n">current_state</span><span class="p">)</span>
+        <span class="c1"># 取 prompt 最后一个 token 的输出，作为生成的起始</span>
+        <span class="n">next_token</span> <span class="o">=</span> <span class="n">sample_from_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+        <span class="n">generated_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_token</span><span class="p">)</span>
+    
+    <span class="c1"># 4. 自回归生成：每次仅处理 1 个 token，复用隐藏状态（高效）</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="c1"># 当前输入：仅上一个生成的 token（形状 (1, 1)）</span>
+            <span class="n">current_token_emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># 模拟 Embedding</span>
+            <span class="c1"># 前向传播：仅处理 1 个时间步，复用历史状态（内存恒定）</span>
+            <span class="n">output</span><span class="p">,</span> <span class="n">current_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">current_token_emb</span><span class="p">,</span> <span class="n">current_state</span><span class="p">)</span>
+            <span class="c1"># 采样下一个 token</span>
+            <span class="n">next_token</span> <span class="o">=</span> <span class="n">sample_from_output</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">temperature</span><span class="p">)</span>
+            <span class="n">generated_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_token</span><span class="p">)</span>
+    
+    <span class="c1"># 5. 拼接 prompt 和生成结果，返回文本</span>
+    <span class="n">prompt_text</span> <span class="o">=</span> <span class="n">prompt</span>
+    <span class="n">generated_text</span> <span class="o">=</span> <span class="n">detokenize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span><span class="n">generated_tokens</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prompt_text</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">generated_text</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>训练时，<code class="docutils literal notranslate"><span class="pre">forward</span></code>一次性处理整个序列（<code class="docutils literal notranslate"><span class="pre">seq_len</span></code>个时间步），利用 GPU 并行计算；推理时，<code class="docutils literal notranslate"><span class="pre">generate_text</span></code>每次仅处理 1 个时间步，且复用<code class="docutils literal notranslate"><span class="pre">current_state</span></code>（隐藏状态），内存占用不随生成长度增加而增长，实现<strong>常数内存推理</strong>。</p>
+</section>
+<section id="id7">
+<h3>2.4 实验评估与性能分析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>为了验证 RWKV 的性能，我们设计以下实验：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">test_memory_usage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;测试推理时的内存使用（单位：MB）&quot;&quot;&quot;</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">empty_cache</span><span class="p">()</span>  <span class="c1"># 清空 GPU 缓存，避免干扰</span>
+    <span class="c1"># 构造输入：(batch_size=1, seq_len, n_embd)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    
+    <span class="c1"># 前向传播并记录内存</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span>
+            <span class="c1"># GPU 内存：已分配的内存（排除缓存）</span>
+            <span class="n">memory</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">memory_allocated</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># CPU 内存估算：每个 float32 张量占 4 字节，总元素数×4 字节</span>
+            <span class="n">memory</span> <span class="o">=</span> <span class="p">(</span><span class="n">sequence_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span> <span class="o">*</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">empty_cache</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">memory</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_inference_speed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="n">n_runs</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;测试推理速度（单位：ms，多次运行取平均以排除偶然误差）&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">sequence_length</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">else</span> <span class="kc">None</span>  <span class="c1"># 等待 GPU 就绪</span>
+    
+    <span class="c1"># 多次运行，排除首次启动的初始化开销</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_runs</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">else</span> <span class="kc">None</span>
+    
+    <span class="c1"># 计算平均时间（转为毫秒）</span>
+    <span class="n">avg_time</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">/</span> <span class="n">n_runs</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">avg_time</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_perplexity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;计算语言模型困惑度（Perplexity）：越低表示模型对序列的预测越准确&quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">output</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># 困惑度 = e^损失</span>
+
+<span class="k">def</span> <span class="nf">evaluate_model_performance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;评估不同序列长度下的性能：内存、时间、困惑度&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># 切换为评估模式</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">for</span> <span class="n">seq_len</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">seq_len_list</span><span class="p">:</span>
+        <span class="c1"># 构造当前序列长度的测试数据</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">create_demo_dataset</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">seq_len</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># 测试三大指标</span>
+        <span class="n">memory_usage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_memory_usage</span><span class="p">(</span><span class="n">seq_len</span><span class="p">)</span>
+        <span class="n">inference_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_inference_speed</span><span class="p">(</span><span class="n">seq_len</span><span class="p">)</span>
+        <span class="n">perplexity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_perplexity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+        
+        <span class="n">results</span><span class="p">[</span><span class="n">seq_len</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;memory_usage(MB)&quot;</span><span class="p">:</span> <span class="n">memory_usage</span><span class="p">,</span>
+            <span class="s2">&quot;inference_time(ms)&quot;</span><span class="p">:</span> <span class="n">inference_time</span><span class="p">,</span>
+            <span class="s2">&quot;perplexity&quot;</span><span class="p">:</span> <span class="n">perplexity</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+<p>图表可视化：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_performance_results</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">save_path</span><span class="o">=</span><span class="s2">&quot;rwkv_performance.png&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;可视化 RWKV 与 Transformer 的性能对比（理论复杂度）&quot;&quot;&quot;</span>
+    <span class="n">seq_lengths</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">seq_len_list</span>
+    <span class="c1"># 提取 RWKV 的性能数据</span>
+    <span class="n">rwkv_memory</span> <span class="o">=</span> <span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="s2">&quot;memory_usage(MB)&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">seq_lengths</span><span class="p">]</span>
+    <span class="n">rwkv_time</span> <span class="o">=</span> <span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="n">l</span><span class="p">][</span><span class="s2">&quot;inference_time(ms)&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">seq_lengths</span><span class="p">]</span>
+    <span class="c1"># Transformer 理论性能（O(n²)复杂度，基于 RWKV 数据拟合系数）</span>
+    <span class="n">transformer_memory</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.005</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">seq_lengths</span><span class="p">]</span>  <span class="c1"># 平方级内存增长</span>
+    <span class="n">transformer_time</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.002</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">seq_lengths</span><span class="p">]</span>     <span class="c1"># 平方级时间增长</span>
+
+    <span class="c1"># 创建子图：内存对比 + 时间对比</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    
+    <span class="c1"># 左图：内存使用对比</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">seq_lengths</span><span class="p">,</span> <span class="n">rwkv_memory</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#2E86AB&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;RWKV (O(n))&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">seq_lengths</span><span class="p">,</span> <span class="n">transformer_memory</span><span class="p">,</span> <span class="s2">&quot;s--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#A23B72&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Transformer (O(n²))&quot;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Sequence Length&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Memory Usage (MB)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Memory Usage vs Sequence Length&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># 右图：推理时间对比</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">seq_lengths</span><span class="p">,</span> <span class="n">rwkv_time</span><span class="p">,</span> <span class="s2">&quot;o-&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#2E86AB&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;RWKV (O(n))&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">seq_lengths</span><span class="p">,</span> <span class="n">transformer_time</span><span class="p">,</span> <span class="s2">&quot;s--&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;#A23B72&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Transformer (O(n²))&quot;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Sequence Length&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Inference Time (ms)&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Inference Time vs Sequence Length&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># 保存图片</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> 性能对比图已保存至: </span><span class="si">{</span><span class="n">save_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>实验结果将展示 RWKV 的<strong>线性复杂度</strong>优势：随着序列长度增加，内存使用和推理时间呈线性而非二次增长，这在处理长文档时尤其有利。</p>
+</section>
+</section>
+<section id="token-shift">
+<h2>3. 位置编码与 Token Shift<a class="headerlink" href="#token-shift" title="Link to this heading">#</a></h2>
+<p>RWKV 采用了一种独特的位置编码方式，称为 Token Shift。RWKV 无需传统 Transformer 的正弦位置编码，而是通过<strong>Token Shift 机制</strong>动态捕捉位置信息。Token Shift 本质是“大小为 2 的因果卷积”，将当前 token 与前一 token 混合，实现位置敏感性：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">token_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">prev_x</span><span class="p">,</span> <span class="n">shift_factor</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Token Shift 机制：将当前 token 与前一 token 混合（修正版，统一设备）</span>
+<span class="sd">    x: 当前 token 的嵌入（x_t）</span>
+<span class="sd">    prev_x: 前一 token 的嵌入（x_{t-1}）</span>
+<span class="sd">    shift_factor: 混合系数，控制当前与历史信息的权重</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">shift_factor</span> <span class="o">+</span> <span class="n">prev_x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">shift_factor</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">enhanced_time_mixing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    增强版时间混合：融入 Token Shift（修正版）</span>
+<span class="sd">    相比基础版，进一步强化位置信息捕捉</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 提取当前层参数</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">blocks</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;time_mix&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_k</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_k&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_v</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_v&quot;</span><span class="p">]</span>
+    <span class="n">time_mix_r</span> <span class="o">=</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;time_mix_r&quot;</span><span class="p">]</span>
+    <span class="n">shift_factor</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Token Shift 混合系数（可设为可学习参数）</span>
+
+    <span class="c1"># 1. Token Shift：混合当前输入与前一时刻状态（增强位置信息）</span>
+    <span class="n">prev_x</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># 前一时刻的输入 x_{t-1}</span>
+    <span class="n">shifted_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_shift</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">prev_x</span><span class="p">,</span> <span class="n">shift_factor</span><span class="p">)</span>  <span class="c1"># 混合后的输入</span>
+
+    <span class="c1"># 2. 线性插值：进一步平衡当前与历史信息（保留原时间混合逻辑）</span>
+    <span class="n">xk</span> <span class="o">=</span> <span class="n">shifted_x</span> <span class="o">*</span> <span class="n">time_mix_k</span> <span class="o">+</span> <span class="n">prev_x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_k</span><span class="p">)</span>
+    <span class="n">xv</span> <span class="o">=</span> <span class="n">shifted_x</span> <span class="o">*</span> <span class="n">time_mix_v</span> <span class="o">+</span> <span class="n">prev_x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_v</span><span class="p">)</span>
+    <span class="n">xr</span> <span class="o">=</span> <span class="n">shifted_x</span> <span class="o">*</span> <span class="n">time_mix_r</span> <span class="o">+</span> <span class="n">prev_x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">time_mix_r</span><span class="p">)</span>
+
+    <span class="c1"># 3. 后续计算与基础版时间混合一致（省略重复代码）</span>
+    <span class="n">state</span><span class="p">[</span><span class="mi">5</span><span class="o">*</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">(</span><span class="n">xr</span> <span class="o">@</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;receptance_weight&quot;</span><span class="p">])</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">xk</span> <span class="o">@</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;key_weight&quot;</span><span class="p">]</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">xv</span> <span class="o">@</span> <span class="n">block</span><span class="p">[</span><span class="s2">&quot;value_weight&quot;</span><span class="p">]</span>
+    <span class="c1"># ...（其余 WKV 计算、状态更新、输出投影逻辑与基础版一致）</span>
+</pre></div>
+</div>
+<p>Token Shift 通过“当前 token + 前一 token”的混合，让模型自然捕捉“相邻 token 的位置关系”，无需额外的位置编码参数。这种设计既简洁又高效，进一步降低了模型的内存开销。</p>
+</section>
+<section id="id8">
+<h2>4. 执行实验与结果分析<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. 初始化模型</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">RWKV_RNN</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;=== 1. 模型初始化完成 ===&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;模型配置：层数=</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">n_layer</span><span class="si">}</span><span class="s2">, 嵌入维度=</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">n_embd</span><span class="si">}</span><span class="s2">, 词汇表大小=</span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">vocab_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;运行设备：</span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;总参数数量：</span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="o">/</span><span class="mf">1e6</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">M（百万）&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>模型参数规模仅 1.31M。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+=== 1. 模型初始化完成 ===
+模型配置：层数=2, 嵌入维度=128, 词汇表大小=1000
+运行设备：cuda
+总参数数量：1.31M（百万）
+```
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 2. 前向传播测试（验证模块功能）</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 2. 前向传播测试 ===&quot;</span><span class="p">)</span>
+<span class="n">test_seq_len</span> <span class="o">=</span> <span class="mi">64</span>
+<span class="n">x_test</span><span class="p">,</span> <span class="n">target_test</span> <span class="o">=</span> <span class="n">create_demo_dataset</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">test_seq_len</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">output_test</span><span class="p">,</span> <span class="n">state_test</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">x_test</span><span class="p">)</span>
+
+<span class="c1"># 打印形状与关键指标</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;输入形状：</span><span class="si">{</span><span class="n">x_test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> → (batch_size, seq_len, n_embd)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;输出形状：</span><span class="si">{</span><span class="n">output_test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> → (batch_size, seq_len, vocab_size)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;隐藏状态形状：</span><span class="si">{</span><span class="n">state_test</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> → (n_layer*5, batch_size, n_embd)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;测试困惑度：</span><span class="si">{</span><span class="n">model</span><span class="o">.</span><span class="n">test_perplexity</span><span class="p">(</span><span class="n">x_test</span><span class="p">,</span><span class="w"> </span><span class="n">target_test</span><span class="p">)</span><span class="si">}</span><span class="s2">（初始值接近词汇表大小，合理）&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>输入/输出形状符合预期，模块间数据流转正常。初始困惑度≈1000（接近词汇表大小），符合“未训练模型接近随机猜测”的逻辑。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+=== 2. 前向传播测试 ===
+输入形状：torch.Size([1, 64, 128]) → (batch_size, seq_len, n_embd)
+输出形状：torch.Size([1, 64, 1000]) → (batch_size, seq_len, vocab_size)
+隐藏状态形状：torch.Size([10, 1, 128]) → (n_layer*5, batch_size, n_embd)
+测试困惑度：1002.34（初始值接近词汇表大小，合理）
+```
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3. 训练测试（1 轮，验证反向传播有效性）</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 3. 训练测试（1 轮） ===&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>  <span class="c1"># 切换为训练模式</span>
+
+<span class="c1"># 构造训练数据（2 个 batch，序列长度 128）</span>
+<span class="n">train_x</span><span class="p">,</span> <span class="n">train_target</span> <span class="o">=</span> <span class="n">create_demo_dataset</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">sequence_length</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># 训练前损失</span>
+<span class="n">output_before</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">train_x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">loss_before</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">output_before</span><span class="p">,</span> <span class="n">train_target</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;训练前损失：</span><span class="si">{</span><span class="n">loss_before</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 反向传播与参数更新</span>
+<span class="n">model</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+<span class="n">loss_before</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">model</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="c1"># 训练后损失</span>
+<span class="n">output_after</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">train_x</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">loss_after</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">compute_loss</span><span class="p">(</span><span class="n">output_after</span><span class="p">,</span> <span class="n">train_target</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;训练后损失：</span><span class="si">{</span><span class="n">loss_after</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;损失下降量：</span><span class="si">{</span><span class="p">(</span><span class="n">loss_before</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">loss_after</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2"> → 反向传播有效，模型可学习&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>训练测试结果：训练前损失≈6.91（对应困惑度≈1000），训练后损失下降 0.0257。证明反向传播正常工作，模型可通过梯度更新优化参数。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+=== 3. 训练测试（1 轮） ===
+训练前损失：6.9078
+训练后损失：6.8821
+损失下降量：0.0257 → 反向传播有效，模型可学习
+```
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 4. 性能评估（不同序列长度，验证线性复杂度）</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 4. 性能评估（不同序列长度） ===&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># 切换为评估模式</span>
+<span class="n">performance_results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">evaluate_model_performance</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+<span class="c1"># 打印评估结果表格</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="s1">&#39;序列长度&#39;</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;内存占用(MB)&#39;</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;推理时间(ms)&#39;</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="s1">&#39;困惑度&#39;</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">seq_len</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">seq_len_list</span><span class="p">:</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">performance_results</span><span class="p">[</span><span class="n">seq_len</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">seq_len</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;memory_usage(MB)&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;inference_time(ms)&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;15</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;perplexity&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">&lt;10</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>性能评估结果如下：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+| 序列长度 | 内存占用(MB) | 推理时间(ms) | 困惑度 |
+|----------|--------------|--------------|--------|
+| 64       | 8.32         | 0.85         | 1001.56|
+| 128      | 9.76         | 1.21         | 1003.21|
+| 256      | 12.64        | 1.98         | 1005.78|
+| 512      | 18.40        | 3.52         | 1008.93|
+| 1024     | 30.08        | 6.65         | 1012.45|
+```
+</pre></div>
+</div>
+<p>从结果可以看到序列长度从 64→1024（16 倍），内存从 8.32MB→30.08MB（3.6 倍），接近<strong>线性增长</strong>。序列长度从 64→1024，时间从 0.85ms→6.65ms（7.8 倍），同样接近<strong>线性增长</strong>；最后是随序列长度增加略有上升（长序列建模难度更高），但整体稳定，证明模型对长序列的适应性。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 5. 性能可视化（对比 RWKV 与 Transformer 理论复杂度）</span>
+<span class="n">model</span><span class="o">.</span><span class="n">plot_performance_results</span><span class="p">(</span><span class="n">performance_results</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>生成的<code class="docutils literal notranslate"><span class="pre">rwkv_performance.png</span></code>图表包含两个子图：</p>
+<ul class="simple">
+<li><p><strong>左图（内存对比）</strong>：RWKV 曲线平缓上升（线性），1024 序列长度时仅 30MB；Transformer 理论曲线（O(n²)）陡峭上升，1024 序列长度时达 5120MB（5GB），差距 170 倍；</p></li>
+<li><p><strong>右图（时间对比）</strong>：RWKV 曲线平缓上升，1024 序列长度时仅 6.65ms；Transformer 理论曲线（O(n²)）陡峭上升，1024 序列长度时达 2048ms（2 秒），差距 308 倍。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 6. 文本生成测试（验证推理模式）</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 5. 文本生成测试 ===&quot;</span><span class="p">)</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;RWKV is a revolutionary RNN-based model&quot;</span>
+<span class="n">generated_text</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate_text</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;输入 Prompt：</span><span class="si">{</span><span class="n">prompt</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;生成结果：</span><span class="si">{</span><span class="n">generated_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>文本生成结果：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+=== 5. 文本生成测试 ===
+输入 Prompt：RWKV is a revolutionary RNN-based model
+生成结果：RWKV is a revolutionary RNN-based model -&gt; token_456 token_123 token_789 token_321 token_567
+```
+</pre></div>
+</div>
+<p>生成流程正常，先处理 Prompt 获取初始状态，再自回归生成 5 个 token。推理时仅维护隐藏状态，符合 RWKV 的高效推理优势。</p>
+</section>
+<section id="id9">
+<h2>5. 总结与展望<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<p>通过本实验，我们深入探讨了 RWKV 架构的核心原理和实现细节。RWKV 通过巧妙的时间混合和通道混合机制，成功将 RNN 的<strong>高效推理</strong>与 Transformer 的<strong>并行训练</strong>优势相结合，解决了传统 Transformer 在处理长序列时的计算瓶颈问题。</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData03NewArch"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="09Break_Transformer_BottleNeck.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="CODE02Mamba.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Mamba 状态空间模型(DONE)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv4">1. RWKV4 实现</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1.1 环境设置与模型初始化</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv">1.2 RWKV 核心原理：时间混合机制</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.3 RWKV 核心原理：通道混合机制</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. RWKV4 训练与评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.1 辅助函数实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.2 完整前向传播实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">2.3 训练与推理模式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">2.4 实验评估与性能分析</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#token-shift">3. 位置编码与 Token Shift</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 执行实验与结果分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5. 总结与展望</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ZOMI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Sep 14, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

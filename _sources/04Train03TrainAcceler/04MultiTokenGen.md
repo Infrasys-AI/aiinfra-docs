@@ -21,7 +21,7 @@ LLM （LLM）的标准范式是基于自回归的、逐 Token 的生成方式。
 
 MTP 基础架构在 [《Better & Faster Large Language Models via Multi-token Prediction》](https://arxiv.org/abs/2404.19737) 一文中被提出，其核心思想是让模型在训练时一次性预测未来的多个 Token，共享主干与并行头。下图展示了文章设计的架构。
 
-![图 1：并行 MTP 架构](./../images/04Train03TrainAcceler/04.MultiTokenGen.01.png)
+![图 1：并行 MTP 架构](../images/04Train03TrainAcceler/04.MultiTokenGen.01.png)
 
 > 注：图中 Shared 部分代表 embedding 和多层 Transformer，Head 部分代表用于推理的单层 Transformer。
 
@@ -39,7 +39,7 @@ MTP 基础架构在 [《Better & Faster Large Language Models via Multi-token Pr
 
 DeepSeek-V3 模型在 [《DeepSeek-V3 Technical Report》](https://arxiv.org/abs/2412.19437) 中通过引入一种序列式 MTP 架构解决了这一问题。模型结构如下图所示。
 
-![图 2：DeepSeek-V3 的序列式 MTP 架构](./../images/04Train03TrainAcceler/04.MultiTokenGen.02.png)
+![图 2：DeepSeek-V3 的序列式 MTP 架构](../images/04Train03TrainAcceler/04.MultiTokenGen.02.png)
 
 图中的 Main Model 为传统多层 Transformer，其输出结果为 `t5`；后续的 MTP Module [x] 是单层 Transformer，用于串行预测后续 Token，它们的参数也是单独训练的。
 
@@ -64,7 +64,7 @@ DeepSeek-V3 模型在 [《DeepSeek-V3 Technical Report》](https://arxiv.org/abs
 
 论文 [Your LLM Knows the Future: Uncovering Its Multi-Token Prediction Potential](https://arxiv.org/abs/2507.11851v1) 基于一个关键洞察：**利用自回归模型中已有的“未来信息”，通过 mask 预测和一个轻量采样模块，把这种潜力转化为更明确、更连贯的未来 token 生成能力。** 我们可以通过下图的例子进行说明：
 
-![图 3：掩码输入式 MTP 示意图](./../images/04Train03TrainAcceler/04.MultiTokenGen.03.png)
+![图 3：掩码输入式 MTP 示意图](../images/04Train03TrainAcceler/04.MultiTokenGen.03.png)
 
 - **左图**：在 prompt 后插入占位符 `<->`，发现模型对这些位置的预测中，未来正确词经常出现在较高排名的位置（如 top-200）
 - **中图**：既然模型已经“知道”一些未来信息，作者尝试**显式地利用这种潜力**：在 prompt 后加入 **mask token**，让模型直接预测这些 mask 对应的未来词。经过微调（Fine-Tuning）后，模型在这些 mask 的预测上更准确，正确答案能排到 **top-10 logits**。
@@ -72,7 +72,7 @@ DeepSeek-V3 模型在 [《DeepSeek-V3 Technical Report》](https://arxiv.org/abs
 
 从描述中可以看到，本方案不需要从头训练一个全新的模型，而是只需要对一个已有的模型进行 Fine-Tuning 即可。这一部分被作者称为 **Gated LoRA**，即只在 **Mask** 对应的部分启用 LoRA 参数计算，而在自回归推理时保持关闭，因此不会影响原有模型的功能和精度，这是一个巧妙的设计。下图展示了本设计对应的模块图：
 
-![图 4：Gated LoRA 模块设计](./../images/04Train03TrainAcceler/04.MultiTokenGen.04.png)
+![图 4：Gated LoRA 模块设计](../images/04Train03TrainAcceler/04.MultiTokenGen.04.png)
 
 本图充分展示了几个设计重点：
 
@@ -116,7 +116,7 @@ EAGLE-1 是该系列的开创性工作，首次将推测式解码引入特征层
 
 具体来说，草稿模型的目标不是直接预测下一个 Token，而是预测目标模型倒数第二层的隐藏状态（即特征向量）。然后，这个预测出的特征向量被输入到目标模型的最后一个 LM 头中，以生成草稿 Token。这种方法旨在利用特征空间中更丰富的语义信息，从而生成比直接预测 Token 更准确的草稿。
 
-![图 5：EAGLE-1 架构示意图](./../images/04Train03TrainAcceler/04.MultiTokenGen.05.png)
+![图 5：EAGLE-1 架构示意图](../images/04Train03TrainAcceler/04.MultiTokenGen.05.png)
 
 **EAGLE-1** 的核心工作流程：
 
@@ -129,8 +129,8 @@ EAGLE-2 在 EAGLE-1 的基础上引入了动态草稿树机制，根据上下文
 
 [EAGLE-2: Faster Inference of Language Models with Dynamic Draft Trees](https://arxiv.org/abs/2406.16858) 在 EAGLE-1 基础上进行了改进，引入了基于草稿模型置信度得分的动态可调整草稿树结构。这使得模型能够根据上下文的可预测性，动态地生成更多或更少的候选 Token，从而提高验证的效率。
 
-![图 6：EAGLE-2 草稿树构建](./../images/04Train03TrainAcceler/04.MultiTokenGen.06.png)  
-![图 7：EAGLE-2 草稿筛选与验证](./../images/04Train03TrainAcceler/04.MultiTokenGen.07.png)
+![图 6：EAGLE-2 草稿树构建](../images/04Train03TrainAcceler/04.MultiTokenGen.06.png)  
+![图 7：EAGLE-2 草稿筛选与验证](../images/04Train03TrainAcceler/04.MultiTokenGen.07.png)
 
 如上图所示，EAGLE-2 的机制为：
 
@@ -157,12 +157,12 @@ EAGLE-3 代表了推测式解码技术的最新进展，它摒弃了前代版本
       1. 左半部分展示了训练和测试条件的不一致，会导致模型在实际应用中表现不佳，因为在训练时它从未学习过如何处理自己可能产生的错误。中间的 `EAGLE + lfea removal` 图示更是强调了这一点：如果简单地移除特征匹配(`lfea`)，模型生成的`â`质量会很差，导致测试时出现严重错误（`t̂ ≠ t`）。
       2. 右半部分展示了模型会 **同时** 将它在路径一中自己生成的预测特征 `â`，再次输入到 LM Head 中，进行第二次词元预测。这个过程完全 **模拟了测试时的真实情况**——即依赖自己的预测进行下一步生成。
 
-![图 8：训练与测试不一致问题](./../images/04Train03TrainAcceler/04.MultiTokenGen.08.png)  
-![图 9：训练时测试机制](./../images/04Train03TrainAcceler/04.MultiTokenGen.09.png)
+![图 8：训练与测试不一致问题](../images/04Train03TrainAcceler/04.MultiTokenGen.08.png)  
+![图 9：训练时测试机制](../images/04Train03TrainAcceler/04.MultiTokenGen.09.png)
 
 2. **多层特征融合**：为了给草稿模型提供更丰富的上下文信息，EAGLE-3 不再仅仅依赖于目标模型的顶层特征。取而代之的是，它将目标模型在最后一次前向传播中产生的低、中、高层特征进行融合，并将这个融合后的特征向量作为草稿模型的输入。这为生成高质量的草稿提供了远比单一顶层特征更全面的信号。
 
-![图 10：EAGLE-3 多层特征融合](./../images/04Train03TrainAcceler/04.MultiTokenGen.10.png)
+![图 10：EAGLE-3 多层特征融合](../images/04Train03TrainAcceler/04.MultiTokenGen.10.png)
 
 #### EAGLE 框架对比
 

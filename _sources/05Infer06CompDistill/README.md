@@ -27,6 +27,9 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+02GKD&MiniLLM
+05Quantization01
+05Quantization02
 Code01Precision
 Code02Quant
 Code03Distiallation

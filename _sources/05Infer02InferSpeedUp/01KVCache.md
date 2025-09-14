@@ -14,7 +14,7 @@ Author by: 张艺蓉
 
 我们先简要回顾一下大模型推理的过程。模型依据所有已知的历史 Token 序列 $[t_1, t_2,...,t_n]$，来预测下一个最可能的 Token $t_{n+1}$，输出的 token 会与输入 tokens 拼接在一起，然后作为下一次推理的输入 $[t_1, t_2,...,t_n,t_{n+1}]$，这样不断重复直到遇到终止符。
 
-![大模型两阶段示意图](./../images/05Infer02InferSpeedUp/01KVCache04.jpg)
+![大模型两阶段示意图](../images/05Infer02InferSpeedUp/01KVCache04.jpg)
 为实现高效推理，这个过程在实践中被划分为两个阶段：
 
 1. Prefill 阶段（Prompt phase）：Prefill 阶段的目标是一次性地、并行地处理用户输入的全部 Prompt，计算出用于预测第一个新 Token 的初始状态。
@@ -55,7 +55,7 @@ $$
 
 第一步输入"h"的时候，attention 计算如下（图中 $\theta$ 代表 softmax 计算后的结果）：
 
-![without cache 计算示意图 1](./../images/05Infer02InferSpeedUp/01KVCache05.jpg)
+![without cache 计算示意图 1](../images/05Infer02InferSpeedUp/01KVCache05.jpg)
 
 如上图所示，计算公式如下：
 $$
@@ -64,7 +64,7 @@ $$
 
 最终计算出了 token "e"，然后下一步我们输入"e",这个时候的 attention 计算变成了：
 
-![without cache 计算示意图 2](./../images/05Infer02InferSpeedUp/01KVCache06.jpg)
+![without cache 计算示意图 2](../images/05Infer02InferSpeedUp/01KVCache06.jpg)
 
 其计算公式为：
 $$
@@ -73,7 +73,7 @@ $$
 
 然后我们计算出了 token"l",我们下一步输入"l",这个时候 attention 计算为:
 
-![without cache 计算示意图 3](./../images/05Infer02InferSpeedUp/01KVCache01.jpg)
+![without cache 计算示意图 3](../images/05Infer02InferSpeedUp/01KVCache01.jpg)
 
 其计算公式如下：
 $$
@@ -92,19 +92,19 @@ $$
 
 我们以第 3 个 token 为例，当我们缓存了之前的 K 与 V 之后，$\text{Att}_t$ 计算只与当前的 $Q_t$ 有关，因此，只需要将当前的 token 输入，那么 attention 矩阵计算变成了如下的流程：
 
-![with cache 计算示意图](./../images/05Infer02InferSpeedUp/01KVCache02.jpg)
+![with cache 计算示意图](../images/05Infer02InferSpeedUp/01KVCache02.jpg)
 
 我们可以清楚的看到与没有 KV Cache 相比,我们只需要输入当前的 token,然后利用缓存的 KV 就可以完成 KV 的计算。
 
 下图直观的展示了是否使用 KV Cache 的计算对比。当我们不使用 KV Cache 的时候，在每一步生成 token 的过程中，都需要将之前所有的 token 作为模型输入，才能计算出之前所有 token 的 K/V 值；当我们使用 KV Cache 时，因为已经将之前所有 token 的 K/V 进行缓存，所以只需要将当前的 token 传入模型计算即可，大大降低了推理时的计算量。
 
-![with cache 与 withoutcache 计算对比图](./../images/05Infer02InferSpeedUp/01KVCache07.jpg)
+![with cache 与 withoutcache 计算对比图](../images/05Infer02InferSpeedUp/01KVCache07.jpg)
 
 而从上述图解和公式中，也可以清晰的看到为什么没有 Q Cache。因为之前 token 的 Q 在之后 token 的 attention 计算中根本不会用到。
 
 最后做一下总结，KV Cache 的目的就是缓存之前 token 的 K 和 V 向量，避免重复计算，以降低推理开销，其在大模型推理过程中的总流程如下：
 
-![KV Cache 流程](./../images/05Infer02InferSpeedUp/01KVCache03.jpg)
+![KV Cache 流程](../images/05Infer02InferSpeedUp/01KVCache03.jpg)
 
 在 prefill 阶段开始保存初始的 KV Cache，之后在 decode 阶段每一次计算都将最新的使用保存的 KV Cache 与当前 token 最新的计算出的 KV 进行拼接，进行 self-attention 的计算。
 

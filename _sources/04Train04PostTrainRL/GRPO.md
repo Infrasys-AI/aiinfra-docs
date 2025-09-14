@@ -3,8 +3,8 @@ GRPO 是一种在线学习算法（online learning algorithm），这意味着�
 
 它的目标函数为：
 
-![alt text](./../images/04Train04PostTrainRL/image.png)
-![alt text](./../images/04Train04PostTrainRL/image-1.png)
+![alt text](../images/04Train04PostTrainRL/image.png)
+![alt text](../images/04Train04PostTrainRL/image-1.png)
 
 #### 收集数据
 在每一个训练步骤中，我们从提示（prompts）中采样一个批次（batch），并为每个提示生成一组 G 个结果（completions）（记为 $O_i$ ）。
@@ -18,7 +18,7 @@ $$
 
 这种方法赋予了该方法其名称：群体相对策略优化（Group Relative Policy Optimization, GRPO）
 
-![alt text](./../images/04Train04PostTrainRL/GRPO.png)
+![alt text](../images/04Train04PostTrainRL/GRPO.png)
 
 #### 估计 KL 散度
 在实际算法实现中，直接计算 KL 散度可能会面临一些挑战：

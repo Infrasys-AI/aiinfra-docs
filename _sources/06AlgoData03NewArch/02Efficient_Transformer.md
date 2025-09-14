@@ -34,27 +34,29 @@ Transformer 模型作为一种先进的人工智能模型，通过分析大量�
 
 要理解 Transformer 的效率瓶颈，首先需要深入了解其核心组件——自注意力机制。在标准 Transformer 中，最常用的是缩放点积注意力（Scaled Dot-Product Attention）。其计算公式如下：
 
-```
-Attention(Q,K,V) = softmax(QK^T/√d_k)V
-```
+$$
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
+$$
 
-其中，Q（Query）、K（Key）和 V（Value）是输入序列经过不同线性变换后得到的矩阵，d_k 是键向量的维度，用于缩放点积结果以稳定梯度。Q、K、V 矩阵均派生自相同的输入序列，这使得模型能够并行计算，无需像 RNN 那样顺序处理。
+其中，$Q$（Query）、$K$（Key）和 $V$（Value）是输入序列经过不同线性变换后得到的矩阵，$d_k$ 是键向量的维度，用于缩放点积结果以稳定梯度。$Q, K, V$ 矩阵均派生自相同的输入序列，这使得模型能够并行计算，无需像 RNN 那样顺序处理。
 
-Transformer 通常还采用多头注意力（Multi-Head Attention）机制。该机制并非执行单一的注意力函数，而是将 Q、K、V 分别线性投影 h 次（h 为注意力头的数量），得到不同子空间的表示。然后，对每个投影版本的 Q、K、V 并行执行注意力计算。最后，将所有头的输出拼接起来并再次进行线性变换，得到最终的输出。
+Transformer 通常还采用多头注意力（Multi-Head Attention）机制。该机制并非执行单一的注意力函数，而是将 $Q, K, V$ 分别线性投影 $h$ 次（$h$ 为注意力头的数量），得到不同子空间的表示。然后，对每个投影版本的 $Q, K, V$ 并行执行注意力计算。最后，将所有头的输出拼接起来并再次进行线性变换，得到最终的输出。
 
 多头注意力允许模型在不同位置共同关注来自不同表示子空间的信息，从而增强了模型的表达能力。然而，这也意味着注意力计算被复制了多次，进一步增加了计算负担。
 
-### 2.2. 随序列长度 (N) 增加的计算与内存开销
 
-自注意力机制的计算瓶颈主要源于 QK^T 这一步。假设输入序列的长度为 N，每个词的表示维度为 d_k（对于 Q 和 K）或 d_v（对于 V）。那么，Q 和 K 的维度均为 N×d_k。计算 QK^T 会产生一个 N×N 大小的注意力分数矩阵，其中每个元素表示序列中一个词对另一个词的关注程度。这个矩阵的计算和存储都需要 O(N²) 的时间和空间复杂度。
+### 2.2. 随序列长度 ($N$) 增加的计算与内存开销
 
-例如，当输入 2046 个词元时，注意力计算中使用的矩阵大小约为 2024×2024（考虑到可能的特殊标记），这意味着需要处理一个包含约 410 万个元素的矩阵。这种二次方的增长使得模型在处理长序列时变得异常缓慢且消耗大量内存。
+自注意力机制的计算瓶颈主要源于 $QK^T$ 这一步。假设输入序列的长度为 $N$，每个词的表示维度为 $d_k$（对于 $Q$ 和 $K$）或 $d_v$（对于 $V$）。那么，$Q$ 和 $K$ 的维度均为 $N \times d_k$。计算 $QK^T$ 会产生一个 $N \times N$ 大小的注意力分数矩阵，其中每个元素表示序列中一个词对另一个词的关注程度。这个矩阵的计算和存储都需要 $O(N^2)$ 的时间和空间复杂度。
 
-内存瓶颈不仅仅在于存储这个 N×N 的注意力矩阵本身，在反向传播过程中，为了计算梯度，这个大矩阵通常也需要被保留，进一步加剧了内存压力。这使得 Transformer 在处理超过典型长度（如 BERT 通常限制的 512 个词元）的序列时效率低下，甚至不可行。
+例如，当输入序列长度达到 2048 时，注意力矩阵的尺寸便为 $2048 \times 2048$，包含超过 400 万个元素。这种二次方的增长使得模型在处理长序列时变得异常缓慢且消耗大量内存。
+
+内存瓶颈不仅仅在于存储这个 $N \times N$ 的注意力矩阵本身，在反向传播过程中，为了计算梯度，这个大矩阵通常也需要被保留，进一步加剧了内存压力。这使得 Transformer 在处理超过典型长度（如 BERT 通常限制的 512 个词元）的序列时效率低下，甚至不可行。
 
 这种计算和内存瓶颈不仅仅是理论上的，它在实际硬件（如 GPU）上表现得更为突出。GPU 的计算速度提升速度超过了内存带宽的提升速度，导致许多操作越来越受到高带宽内存（HBM）访问速度的限制。即使计算单元足够强大，频繁地从 HBM 读写巨大的注意力矩阵也会成为性能的瓶颈。
 
-因此，高效的解决方案不仅需要减少浮点运算次数（FLOPs），还需要优化内存访问模式。这为后续讨论的 Linear Attention（通过改变数学公式避免生成 N×N 矩阵）、AFT（完全抛弃注意力机制）和 Longformer（通过稀疏化减少计算）等不同方法的价值奠定了基础。
+因此，高效的解决方案不仅需要减少浮点运算次数（FLOPs），还需要优化内存访问模式。这为后续讨论的 Linear Attention（通过改变数学公式避免生成 $N \times N$ 矩阵）、AFT（完全抛弃注意力机制）和 Longformer（通过稀疏化减少计算）等不同方法的价值奠定了基础。
+
 
 ## 3. Linear Attention：以线性复杂度重塑注意力机制
 
@@ -68,48 +70,49 @@ Katharopoulos 等人在 2020 年的论文《Transformers are RNNs: Fast Autoregr
 
 标准的缩放点积注意力可以写成：
 
-```
-Attention(Q,K,V) = softmax(QK^T/√d_k)V = D^{-1}AV
-```
+$$
+\text{Attention}(Q, K, V) = D^{-1}AV
+$$
 
 其中：
-- A = exp(QK^T/√d_k) 是未归一化的注意力权重矩阵
-- D 是对角矩阵，D_{ii} = Σ_j A_{ij}，用于行归一化
+- $A = \exp\left(\frac{QK^T}{\sqrt{d_k}}\right)$ 是未归一化的注意力权重矩阵
+- $D$ 是对角矩阵，$D_{ii} = \sum_j A_{ij}$，用于行归一化
 
 #### 3.2.2. 核技巧与特征映射
 
 Linear Attention 的关键创新是使用核函数来近似 softmax 操作。具体来说，他们将注意力权重表示为：
 
-```
-sim(q_i, k_j) = φ(q_i)^T φ(k_j)
-```
+$$
+\text{sim}(q_i, k_j) = \phi(q_i)^T \phi(k_j)
+$$
 
-其中 φ 是一个特征映射函数。Katharopoulos 等人提出使用：
+其中 $\phi$ 是一个特征映射函数。Katharopoulos 等人提出使用：
 
-```
-φ(x) = elu(x) + 1
-```
+$$
+\phi(x) = \text{elu}(x) + 1
+$$
 
-这里 elu 是指数线性单元激活函数。选择 elu+1 的原因是：
-1. 保证输出为正（模拟 exp 函数的效果）
+这里 `elu` 是指数线性单元激活函数。选择 $\text{elu}+1$ 的原因是：
+1. 保证输出为正（模拟 $\exp$ 函数的效果）
 2. 计算简单高效
 3. 在实践中表现良好
 
 #### 3.2.3. 利用结合律实现线性复杂度
 
-一旦有了特征映射，注意力计算可以重写为：
+一旦有了特征映射，第 $i$ 个位置的输出 $y_i$ 可以重写为：
 
-```
-y_i = Σ_j (φ(q_i)^T φ(k_j) / Z_i) v_j
-    = φ(q_i)^T (Σ_j φ(k_j) v_j^T) / Z_i
-    = φ(q_i)^T S / Z_i
-```
+$$
+y_i = \frac{\sum_j \phi(q_i)^T \phi(k_j) v_j}{\sum_j \phi(q_i)^T \phi(k_j)} = \frac{\phi(q_i)^T \sum_j (\phi(k_j) v_j^T)}{\phi(q_i)^T \sum_j \phi(k_j)}
+$$
 
-其中：
-- S = Σ_j φ(k_j) v_j^T 是累积的键值对
-- Z_i = φ(q_i)^T Σ_j φ(k_j) 是归一化因子
+利用矩阵乘法的结合律，我们可以先计算 $\sum_j \phi(k_j) v_j^T$ 和 $\sum_j \phi(k_j)$：
 
-关键洞察是：S 和 Σ_j φ(k_j) 可以在所有查询之间共享，因此整个序列的计算复杂度降为 O(N)。
+$$
+S = \sum_j \phi(k_j) v_j^T \quad \text{and} \quad Z = \sum_j \phi(k_j)
+$$
+
+$S$ 是一个累积的键值对矩阵，$Z$ 是一个归一化向量。关键洞察是：$S$ 和 $Z$ 可以在所有查询之间共享，因此整个序列的计算复杂度降为 $O(N)$。
+
 
 ### 3.3. 因果注意力与 RNN 形式
 
@@ -117,23 +120,27 @@ y_i = Σ_j (φ(q_i)^T φ(k_j) / Z_i) v_j
 
 对于自回归任务（如语言建模），需要因果注意力，即位置 i 只能关注位置 j ≤ i。在这种情况下，Linear Attention 可以表示为：
 
-```
-y_i = φ(q_i)^T S_i / Z_i
-```
+$$
+y_i = \frac{\phi(q_i)^T S_i}{\phi(q_i)^T Z_i}
+$$
 
 其中：
-- S_i = Σ_{j≤i} φ(k_j) v_j^T
-- Z_i = φ(q_i)^T Σ_{j≤i} φ(k_j)
+- $S_i = \sum_{j \leq i} \phi(k_j) v_j^T$
+- $Z_i = \sum_{j \leq i} \phi(k_j)$
 
 #### 3.3.2. RNN 递归形式
 
 Katharopoulos 等人的重要发现是，因果 Linear Attention 可以完全等价地表示为 RNN：
 
-```
-S_i = S_{i-1} + φ(k_i) v_i^T
-z_i = z_{i-1} + φ(k_i)
-y_i = φ(q_i)^T S_i / (φ(q_i)^T z_i)
-```
+$$
+S_i = S_{i-1} + \phi(k_i) v_i^T
+$$
+$$
+Z_i = Z_{i-1} + \phi(k_i)
+$$
+$$
+y_i = \frac{\phi(q_i)^T S_i}{\phi(q_i)^T Z_i}
+$$
 
 这种 RNN 形式带来了巨大的优势：
 - **训练时**：可以像标准 Transformer 一样并行计算
@@ -145,26 +152,80 @@ y_i = φ(q_i)^T S_i / (φ(q_i)^T z_i)
 #### 3.4.1. 数值稳定性
 
 Linear Attention 在实现时需要注意数值稳定性：
-- 使用 float32 或更高精度避免数值误差累积
+- 使用 `float32` 或更高精度避免数值误差累积
 - 在归一化时添加小的 epsilon 值避免除零
 - 对特征向量进行适当的缩放
 
 #### 3.4.2. 多头线性注意力
 
 Linear Attention 自然支持多头机制：
+
 ```python
-# 伪代码
-for head in range(num_heads):
-    Q_h, K_h, V_h = split_heads(Q, K, V)
-    φ_Q = elu(Q_h) + 1
-    φ_K = elu(K_h) + 1
-    
-    # 双向注意力
-    S = φ_K.T @ V_h  # (d', d_v)
-    Z = φ_K.sum(dim=0)  # (d',)
-    Y_h = (φ_Q @ S) / (φ_Q @ Z + eps)
-    
-outputs = concat_heads(all_Y_h)
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class MultiHeadLinearAttention(nn.Module):
+    """
+    一个完整的多头线性注意力模块实现。
+    它包含输入投影、多头拆分、线性注意力核心计算和输出投影。
+    """
+    def __init__(self, d_model, num_heads):
+        super().__init__()
+        assert d_model % num_heads == 0, "d_model 必须能被 num_heads 整除"
+        
+        self.d_model = d_model
+        self.num_heads = num_heads
+        self.head_dim = d_model // num_heads
+        
+        # 1. 初始化输入/输出投影层
+        self.w_q = nn.Linear(d_model, d_model, bias=False)
+        self.w_k = nn.Linear(d_model, d_model, bias=False)
+        self.w_v = nn.Linear(d_model, d_model, bias=False)
+        self.w_o = nn.Linear(d_model, d_model, bias=False)
+
+    def elu_feature_map(self, x):
+        """ 特征映射函数 φ(x) = elu(x) + 1 """
+        return F.elu(x) + 1.0
+
+    def forward(self, query, key, value, mask=None):
+        # query, key, value 的输入维度: [Batch, SeqLen, d_model]
+        batch_size = query.size(0)
+
+        # 2. 对 Q, K, V 进行线性投影
+        Q = self.w_q(query)
+        K = self.w_k(key)
+        V = self.w_v(value)
+
+        # 3. 拆分成多个头：[B, SeqLen, d_model] -> [B, num_heads, SeqLen, head_dim]
+        Q = Q.view(batch_size, -1, self.num_heads, self.head_dim).transpose(1, 2)
+        K = K.view(batch_size, -1, self.num_heads, self.head_dim).transpose(1, 2)
+        V = V.view(batch_size, -1, self.num_heads, self.head_dim).transpose(1, 2)
+        
+        # 4. 应用特征映射函数
+        Q_mapped = self.elu_feature_map(Q)
+        K_mapped = self.elu_feature_map(K)
+        
+        # 5. 核心线性注意力计算（在每个头内部独立进行）
+        # K_mapped, V 的维度: [B, h, N, d_k], [B, h, N, d_v] (这里 d_k=d_v=head_dim)
+        # S 的维度: [B, h, d_k, d_v]
+        # Z 的维度: [B, h, d_k]
+        # 'bhjd,bhje->bhde' 表示在 batch(b) 和 head(h) 维度上独立计算
+        S = torch.einsum('bhjd,bhje->bhde', K_mapped, V)
+        Z = K_mapped.sum(dim=2)
+        
+        # 计算分子和分母
+        numerator = torch.einsum('bhid,bhde->bhie', Q_mapped, S)
+        denominator = torch.einsum('bhid,bhd->bhi', Q_mapped, Z).unsqueeze(-1) + 1e-8
+        
+        # 计算最终输出 Y (在每个头内部)
+        Y = numerator / denominator # Y 的维度: [B, h, N, d_v]
+
+        # 6. 合并多个头的输出并进行最终的线性投影
+        # [B, h, N, d_v] -> [B, N, h, d_v] -> [B, N, d_model]
+        Y = Y.transpose(1, 2).contiguous().view(batch_size, -1, self.d_model)
+        
+        return self.w_o(Y)
 ```
 
 ### 3.5. 性能评估
@@ -239,39 +300,66 @@ Attention Free Transformer (AFT) 代表了高效 Transformer 研究中的一个�
 
 AFT 用一种极其简单的加权平均机制替代了复杂的注意力计算。其核心操作可以表示为：
 
-```
-y_t = Σ_i w_{t,i} ⊙ x_i
-```
+$$
+y_t = \sum_i w_{t,i} \odot x_i
+$$
 
 其中：
-- x_i 是位置 i 的输入特征
-- w_{t,i} 是位置 t 对位置 i 的可学习权重
-- ⊙ 表示逐元素乘法
-- y_t 是位置 t 的输出
+- $x_i$ 是位置 $i$ 的输入特征
+- $w_{t,i}$ 是位置 $t$ 对位置 $i$ 的可学习权重
+- $\odot$ 表示逐元素乘法
+- $y_t$ 是位置 $t$ 的输出
 
-关键创新在于权重 w_{t,i}的设计，它由两部分组成：
+关键创新在于权重 $w_{t,i}$ 的设计，它由两部分组成：
 1. **全局可学习权重**：为每对位置学习一个固定的权重
 2. **位置偏置**：基于相对位置的预定义或可学习的偏置
+
+```python
+class AFTFull(nn.Module):
+    def __init__(self, d_model, max_seq_len):
+        super().__init__()
+        self.d_model = d_model
+        # 可学习的全局位置偏置矩阵 B [MaxSeqLen, MaxSeqLen, 1]
+        self.bias = nn.Parameter(torch.Tensor(max_seq_len, max_seq_len))
+        nn.init.xavier_uniform_(self.bias)
+
+    def forward(self, Q, K, V):
+        # Q, K, V: [Batch, SeqLen, Dim]
+        batch_size, seq_len, dim = Q.size()
+
+        # 计算 Q_t + K_i 并扩展维度以便广播加
+        # [B, L, D] -> [B, L, 1, D] + [B, 1, L, D] = [B, L, L, D]
+        qk = Q.unsqueeze(2) + K.unsqueeze(1)
+
+        # 加上截取的位置偏置 B[:seq_len, :seq_len].view(1, L, L, 1)
+        # 计算权重 w_{t,i} = σ(Q_t + K_i + B_{t-i})
+        weights = torch.sigmoid(qk + self.bias[:seq_len, :seq_len].view(1, seq_len, seq_len, 1))
+
+        # 计算加权和: y_t = Σ_i (w_{t,i} * v_i) / (Σ_i w_{t,i} + eps)
+        # [B, L, L, D] * [B, 1, L, D] -> [B, L, L, D]
+        weighted_v = weights * V.unsqueeze(1)
+        output = weighted_v.sum(dim=2) / (weights.sum(dim=2) + 1e-8)
+
+        return output
+```
 
 #### 4.2.2. 位置感知的特征融合
 
 AFT 通过以下方式实现位置感知：
 
-```
-w_{t,i} = σ(q_t ⊙ k_i + b_{t-i})
-```
+$$
+w_{t,i} = \sigma(q_t \odot k_i + b_{t-i})
+$$
 
 其中：
-- q_t 和 k_i 类似于注意力机制中的查询和键，但使用方式更简单
-- b_{t-i} 是基于相对位置(t-i)的偏置项
-- σ 是 sigmoid 激活函数，确保权重在[0,1]范围内
+- $q_t$ 和 $k_i$ 类似于注意力机制中的查询和键，但使用方式更简单
+- $b_{t-i}$ 是基于相对位置 $(t-i)$ 的偏置项
+- $\sigma$ 是 sigmoid 激活函数，确保权重在 $[0, 1]$ 范围内
 
 #### 4.2.3. 计算复杂度分析
 
-AFT 的设计确保了 O(N)的计算复杂度：
-- 对于每个位置 t，计算所有权重 w_{t,i}需要 O(N)操作
-- 整个序列的计算总复杂度为 O(N²)，但通过共享权重和优化实现，可以降至 O(N)
-- 内存占用也保持在 O(N)级别
+AFT 的核心思想是通过将查询（Query）和键（Key）的交互与值（Value）的加权分离开来，从而避免了 N x N 矩阵的计算。在其最简化的形式 AFT-Simple 中，输出 Y_t 是通过对所有 V_i 进行全局加权平均得到的，而这个加权平均的过程可以被重新组合，使得计算可以线性进行，类似于 Linear Attention 中利用结合律的方式。它首先计算一个上下文感知的全局“summary”，然后将这个“summary”与每个位置的查询进行交互，从而避免了逐对计算注意力分数。
+
 
 ### 4.3. AFT 的变体与优化
 
@@ -350,6 +438,36 @@ Longformer 的核心创新在于其稀疏注意力机制，它可以作为标准
 在滑动窗口注意力中，每个词元只关注其自身周围一个固定大小（例如 w）的窗口内的词元。具体来说，一个词元会关注其左右各 w/2 个词元。这种局部注意力模式的计算复杂度为 O(N×w)，其中 N 是序列长度。由于窗口大小 w 是一个固定的常数，因此这种模式实现了随序列长度 N 的线性扩展。
 
 通过堆叠多层这样的局部注意力，模型的感受野会逐渐扩大，高层网络能够整合来自更广泛上下文的信息。这种机制主要用于构建上下文表示。
+
+```python
+def sliding_window_attention(Q, K, V, window_size, attention_mask=None):
+    # Q, K, V: [Batch, Heads, SeqLen, Dim]
+    batch, heads, seq_len, dim = Q.shape
+    # 1. 计算原始注意力分数 [B, H, L, L]
+    attn_scores = torch.matmul(Q, K.transpose(-2, -1)) / (dim ** 0.5)
+
+    # 2. 创建滑动窗口掩码 [L, L]
+    # 例如，对于序列中心位置，掩码是一个带宽为 window_size 的带状矩阵
+    row_indices = torch.arange(seq_len).unsqueeze(1) # [L, 1]
+    col_indices = torch.arange(seq_len).unsqueeze(0) # [1, L]
+    mask = (torch.abs(row_indices - col_indices) <= window_size // 2)
+    mask = mask.to(attn_scores.device).unsqueeze(0).unsqueeze(0) # [1, 1, L, L]
+
+    # 3. 将窗口外的注意力分数置为负无穷
+    attn_scores = torch.where(mask, attn_scores, torch.tensor(float('-inf')).to(attn_scores.device))
+
+    # 4. 可选：加上任务相关的全局注意力掩码（如[CLS] token 关注所有）
+    # if global_mask is not None:
+    #    attn_scores = attn_scores.masked_fill(global_mask, new_value)
+
+    # 5. 计算注意力权重和输出
+    attn_weights = F.softmax(attn_scores, dim=-1)
+    # 可选：应用 dropout
+    output = torch.matmul(attn_weights, V)
+    return output, attn_weights
+```
+
+注意：以上代码仅为 概念演示，旨在清晰地展示滑动窗口注意力的逻辑。一个高效的实现（如 Longformer 的官方实现）不会 生成完整的 N x N 注意力矩阵，而是会采用分块计算（chunking）或专门的 CUDA 核函数等技术，仅计算和存储窗口内的注意力分数，从而真正实现 O(N x w) 的线性和内存复杂度。
 
 #### 5.2.2. 空洞滑动窗口注意力
 
@@ -535,4 +653,26 @@ Linear Attention、AFT 和 Longformer 的出现，极大地推动了自然语言
 
 虽然 Linear Attention、AFT 和 Longformer 提供了显著的进步，但它们是更大、快速发展的生态系统的一部分。最终的"高效 Transformer"可能并非单一的某种架构，而是一个包含多种技术和策略的工具箱，研究人员和工程师可以根据具体任务的需求、数据特性和硬件条件，灵活地选择和组合这些工具，以构建出在特定场景下最优的解决方案。
 
-这个不断演进的格局将持续推动人工智能在理解和生成复杂序列数据方面达到新的高度。
+未来趋势不再是“一种架构统治天下”，而是​​“专模专用”​​。就像计算机有 CPU、GPU、TPU 一样，未来也会有擅长长文本理解的 Longformer、擅长高效生成的 Linear Attention 模型、擅长边缘部署的 AFT 模型等。高效 Transformer 的研究正在为我们提供这个丰富的​​模型工具箱​​。例如，当我们需要处理法律文书或医学报告等长文档时，Longformer 是首选；当我们需要极高吞吐量的自回归生成任务时，Linear Attention 展现出巨大优势；而在资源受限的边缘设备上部署模型时，AFT 的设计哲学则提供了宝贵的参考。
+
+## 9. 参考文献
+
+1. Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., ... & Polosukhin, I. (2017). Attention is all you need. Advances in neural information processing systems, 30. (提出了 Transformer 架构)
+
+2. Katharopoulos, A., Vyas, A., Pappas, N., & Fleuret, F. (2020). Transformers are RNNs: Fast autoregressive transformers with linear attention. In International Conference on Machine Learning(pp. 5156-5165). PMLR.(将 Transformer 重新表述为循环神经网络 RNN，并提出了线性注意力机制)
+
+3. Beltagy, I., Peters, M. E., & Cohan, A. (2020). Longformer: The long-document transformer. arXiv preprint arXiv:2004.05150. (提出了 Longformer 模型，通过结合局部滑动窗口注意力和任务驱动的全局注意力，以线性复杂度高效处理长文档)
+
+4. Zaheer, M., Guruganesh, G., Dubey, K. A., Ainslie, J., Alberti, C., Ontanon, S., ... & Ahmed, A. (2020). Big bird: Transformers for longer sequences. Advances in Neural Information Processing Systems, 33, 17283-17297. (提出 BigBird 模型，通过使用稀疏注意力机制（包括全局、局部和随机注意力）来有效地处理更长的序列)
+
+5. Choromanski, K., Likhosherstov, V., Dohan, D., Song, X., Gane, A., Sarlos, T., ... & Weller, A. (2020). Rethinking attention with performers. arXiv preprint arXiv:2009.14794.(提出了 Performer 模型，使用快速注意力 Via 正交随机特征（FAVOR+）方法，以线性复杂度近似标准注意力机制）)
+
+6. Kitaev, N., Kaiser, Ł., & Levskaya, A. (2020). Reformer: The efficient transformer. arXiv preprint arXiv:2001.04451. (提出了 Reformer 模型，结合局部敏感哈希（LSH）注意力和可逆残差层，大幅降低了长序列处理的内存消耗)
+
+7. Child, R., Gray, S., Radford, A., & Sutskever, I. (2019). Generating long sequences with sparse transformers. arXiv preprint arXiv:1904.10509.（提出了 Sparse Transformer 模型，通过因子化的稀疏注意力模式来生成更长的序列）
+
+8. Dao, T., Fu, D., Ermon, S., Rudra, A., & Ré, C. (2022). FlashAttention: Fast and memory-efficient exact attention with IO-awareness. Advances in Neural Information Processing Systems, 35, 16344-16359.(提出了 FlashAttention，一种具有 IO 感知能力的快速且内存高效的精确实现注意力算法，通过优化 GPU 内存读写来加速计算)
+
+9. Gu, A., & Dao, T. (2023). Mamba: Linear-time sequence modeling with selective state spaces. arXiv preprint arXiv:2312.00752. (提出了 Mamba 模型，基于状态空间模型 SSM 并引入了选择性机制，实现了高效的线性时间序列建模)
+
+10. Zhai, S., Talbott, W., Srivastava, N., Huang, C., Goh, H., Zhang, R., & Susskind, J. (2021). An attention free transformer. arXiv preprint arXiv:2105.14103.（提出了无注意力 Transformer AFT，用一种高效的、基于加权平均的特征交互机制完全替代了自注意力机制）

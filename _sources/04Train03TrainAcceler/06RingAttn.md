@@ -34,7 +34,7 @@ Context Parallel (CP) 的核心思想是在序列维度上进行数据切分，�
 
 下面以一个包含 4 个 GPU 的系统为例，展示 Ring Attention 中多个计算节点之间的连接关系。需要注意的是，为了便于理解，此处暂时忽略 Causal Mask 的影响。
 
-![](./../images/04Train03TrainAcceler/06.RingAttn.01.png)
+![](../images/04Train03TrainAcceler/06.RingAttn.01.png)
 
 完整的计算流程表述如下：
 
@@ -49,7 +49,7 @@ Context Parallel (CP) 的核心思想是在序列维度上进行数据切分，�
 
 在 Attention 计算中，我们需要注意前序的 Token 不能从后序 Token 获取信息，否则会引入因果性错误。因此需要将这部分的 QK^T 计算结果置零，即这部分计算是不必要的。如下图左侧矩阵所示，其中黑色部分代表不需要计算的区域，即被 Causal Mask 遮盖的部分。
 
-![](./../images/04Train03TrainAcceler/06.RingAttn.02.png)
+![](../images/04Train03TrainAcceler/06.RingAttn.02.png)
 
 我们很容易发现，由于 Query Block 是按行直接均匀切分后放置在不同计算节点中的，第一个计算节点上需要实际完成的计算只有 Block A，其他计算都是无效的。这样的切分方式无法将所有计算任务均匀分配到各个节点，因此后续有更多研究探索如何尽可能均衡地进行任务分配。
 
@@ -71,11 +71,11 @@ Striped Attention 的作者将 Naive 方案中按序列直接分块切割的方�
 
 可以参考对应论文中的图片：
 
-![](./../images/04Train03TrainAcceler/06.RingAttn.03.png)
+![](../images/04Train03TrainAcceler/06.RingAttn.03.png)
 
 此时，对应的数据流如下所示：
 
-![](./../images/04Train03TrainAcceler/06.RingAttn.04.png)
+![](../images/04Train03TrainAcceler/06.RingAttn.04.png)
 
 此时，每个 Round 中每个计算节点的负载相对均衡，但在实际计算过程中仍然存在一定的差异。
 
@@ -83,7 +83,7 @@ Striped Attention 的作者将 Naive 方案中按序列直接分块切割的方�
 
 Zig Zag Attention 的方案在 Striped Attention 的基础上进行了进一步的优化，它选择将 Context 对称位置的数据合并组成一个 Block，如下图所示：
 
-![](./../images/04Train03TrainAcceler/06.RingAttn.05.png)
+![](../images/04Train03TrainAcceler/06.RingAttn.05.png)
 
 与上述对应的例子为：
 
@@ -94,7 +94,7 @@ Zig Zag Attention 的方案在 Striped Attention 的基础上进行了进一步�
 
 相应地，在每个计算节点上需要计算的数据分布如下所示：
 
-![](./../images/04Train03TrainAcceler/06.RingAttn.06.png)
+![](../images/04Train03TrainAcceler/06.RingAttn.06.png)
 
 可以看到，每一步在每个计算节点上的计算量完全一致，实现了很好的负载均衡。
 

@@ -1,0 +1,1832 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="CODE03:Transformer 机器翻译(DONE)" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData01Basic/CODE03MachineTrans.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="author by: ZOMI 本次将把之前实现的 Transformer 模型应用于真实的机器翻译任务，使用 IWSLT 2016 英德数据集 。该数据集包含英德双语平行语料，句子长度适中（多为日常对话或短文本），适合验证 Transformer 在中低资源翻译任务中的效果。 我们将引入一些训练过程的最佳实践，包括学习率调度、标签平滑、梯度裁剪等优化技巧——这些技术是解决 Transfor..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/None" />
+<meta property="og:image:alt" content="author by: ZOMI 本次将把之前实现的 Transformer 模型应用于真实的机器翻译任务，使用 IWSLT 2016 英德数据集 。该数据集包含英德双语平行语料，句子长度适中（多为日常对话或短文本），适合验证 Transformer 在中低资源翻译任务中的效果。 我们将引入一些训练过程的最佳实践，..." />
+<meta name="description" content="author by: ZOMI 本次将把之前实现的 Transformer 模型应用于真实的机器翻译任务，使用 IWSLT 2016 英德数据集 。该数据集包含英德双语平行语料，句子长度适中（多为日常对话或短文本），适合验证 Transformer 在中低资源翻译任务中的效果。 我们将引入一些训练过程的最佳实践，包括学习率调度、标签平滑、梯度裁剪等优化技巧——这些技术是解决 Transfor..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>CODE03:Transformer 机器翻译(DONE) &#8212; AIInfra AI基础设施</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=17a93d66" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData01Basic/CODE03MachineTrans';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="CODE04:实现 Sinusoidal 编码(DONE)" href="CODE04Sinusoidal.html" />
+    <link rel="prev" title="CODE02:从零实现 Transformer(DONE)" href="CODE02TransformerTrain.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">03.HPC 软件与应用趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">02.L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">01.服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">02.AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">03.AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">04.液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">05.AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">06.AI 集群供配电系统</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">05.NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">06.NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">07.NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">08.XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">10.十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">04.集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">01.HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">01.AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/01Introduction.html">01.AI 集群网络基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/02HPCDeepDive.html">02.HPC 网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/03AIDeepDive.html">03.AI 集群网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/04AINetwork.html">04.AI 集群网络基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/05PlaneDivision.html">05.AI 集群网络平面划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/06Summary.html">06.万卡集群组网思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">K8S 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/07Gpipe.html">07.PP 并行：基本原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/07MLA.html">07.内存优化：MLA 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/08Checkpoint.html">08.内存优化：梯度检查点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/09HybridPrecision.html">09.混合精度：FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/10Domino.html">10.通算融合：DS Domino 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/11FLUX.html">11.通算融合：FLUX 计算通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code01FlashAtten.html">CODE 01: Flash Attention 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code04KTransformer.html">CODE 04: KTransformers 核心实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">Transformer 架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01Transformer.html">01.Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02Tokenizer.html">02.大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03Embeding.html">03.大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04Attention.html">04.Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05GQAMLA.html">05.Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06LongSeq.html">06.Transformer 长序列架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07Parameter.html">07.大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE01MiniTranformer.html">CODE01:迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE02TransformerTrain.html">CODE02:从零实现 Transformer(DONE)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">01.MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GSard 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">CODE01:Huggingface 实现 MOE 推理任务(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">CODE02:从零开始手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2014.html">01.2012-2014 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2015.html">02.2015 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2016.html">03.2016 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2017.html">04.2017 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2018.html">05.2018 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2019.html">06.2019 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2020.html">07.2020 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2021.html">08.2021 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2022.html">09.2022 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2023.html">10.2023 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2024.html">11.2024 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/History.html">12.历史 AI 大事件</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/06AlgoData01Basic/CODE03MachineTrans.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F06AlgoData01Basic/CODE03MachineTrans.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData01Basic/CODE03MachineTrans.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>CODE03:Transformer 机器翻译(DONE)</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 环境准备与数据加载</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 加载和预处理数据</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 模型构建与优化技术</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">2.1 构建 Transformer 模型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#label-smoothing">2.2 标签平滑 (Label Smoothing)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-scheduling">2.3 学习率调度 (Learning Rate Scheduling)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-clipping">2.4 梯度裁剪 (Gradient Clipping)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. 训练与验证</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 训练循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 验证循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.3 训练模型</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 推理解码算法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">4.1 贪婪搜索 (Greedy Search)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">4.2 束搜索 (Beam Search)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5. 模型评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.1 翻译函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">5.2 BLEU 分数评估</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.3 推理翻译</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">6. 总结</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="code03-transformer-done">
+<h1>CODE03:Transformer 机器翻译(DONE)<a class="headerlink" href="#code03-transformer-done" title="Link to this heading">#</a></h1>
+<p>author by: ZOMI</p>
+<p>本次将把之前实现的 Transformer 模型应用于真实的机器翻译任务，使用 <a class="reference external" href="https://www.kaggle.com/datasets/tttzof351/iwslt-2016-de-en">IWSLT 2016 英德数据集</a>。该数据集包含英德双语平行语料，句子长度适中（多为日常对话或短文本），适合验证 Transformer 在中低资源翻译任务中的效果。</p>
+<p>我们将引入一些训练过程的最佳实践，包括学习率调度、标签平滑、梯度裁剪等优化技巧——这些技术是解决 Transformer 训练不稳定性（如梯度爆炸、过拟合）和提升泛化能力的核心手段，并实现贪婪搜索和束搜索算法进行推理解码（两种算法分别平衡推理速度与翻译质量），最后使用 BLEU 分数评估翻译质量（机器翻译领域的标准自动评估指标）。</p>
+<section id="id1">
+<h2>1. 环境准备与数据加载<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>首先，我们导入必要的库并设置环境。这里需要重点说明：PyTorch 的随机种子设置（<code class="docutils literal notranslate"><span class="pre">torch.manual_seed</span></code>等）是为了确保实验可重现——Transformer 模型参数规模大，随机初始化的微小差异可能导致训练结果波动，固定种子后可排除随机因素对实验结论的干扰。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
+<span class="kn">from</span> <span class="nn">torchtext.data</span> <span class="kn">import</span> <span class="n">Field</span><span class="p">,</span> <span class="n">BucketIterator</span><span class="p">,</span> <span class="n">TabularDataset</span>
+<span class="kn">import</span> <span class="nn">spacy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">torchtext.datasets</span> <span class="kn">import</span> <span class="n">IWSLT2016</span>
+<span class="kn">from</span> <span class="nn">nltk.translate.bleu_score</span> <span class="kn">import</span> <span class="n">corpus_bleu</span><span class="p">,</span> <span class="n">sentence_bleu</span><span class="p">,</span> <span class="n">SmoothingFunction</span>
+
+<span class="c1"># 设置随机种子以确保结果可重现</span>
+<span class="n">SEED</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">SEED</span><span class="p">)</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">deterministic</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># 禁用 CuDNN 的非确定性算法，进一步保证可重现性</span>
+
+<span class="c1"># 检查是否有可用的 GPU</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;使用设备: </span><span class="si">{</span><span class="n">device</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+使用设备: cuda
+```
+</pre></div>
+</div>
+<section id="id2">
+<h3>1.1 加载和预处理数据<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>我们将使用 torchtext 库加载 IWSLT 2016 英德翻译数据集，并进行预处理。数据预处理是机器翻译的关键步骤，核心目标是将原始文本转换为模型可处理的数值序列，同时保留语言的语义和结构信息。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 加载英语和德语的 spacy 模型用于分词</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">spacy_en</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
+    <span class="n">spacy_de</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;de_core_news_sm&#39;</span><span class="p">)</span>
+<span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+    <span class="c1"># 如果还没有下载模型，先下载</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;正在下载 spacy 模型...&quot;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;python -m spacy download en_core_web_sm&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;python -m spacy download de_core_news_sm&quot;</span><span class="p">)</span>
+    <span class="n">spacy_en</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;en_core_web_sm&#39;</span><span class="p">)</span>
+    <span class="n">spacy_de</span> <span class="o">=</span> <span class="n">spacy</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;de_core_news_sm&#39;</span><span class="p">)</span>
+
+<span class="c1"># 定义分词函数</span>
+<span class="k">def</span> <span class="nf">tokenize_en</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    英语分词函数</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">spacy_en</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">)]</span>
+
+<span class="k">def</span> <span class="nf">tokenize_de</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    德语分词函数</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">token</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">spacy_de</span><span class="o">.</span><span class="n">tokenizer</span><span class="p">(</span><span class="n">text</span><span class="p">)]</span>
+
+<span class="c1"># 定义 Field 对象处理文本</span>
+<span class="c1"># Field 负责文本的预处理逻辑：分词、添加边界符号、小写化、数值化等</span>
+<span class="n">SRC</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">tokenize</span><span class="o">=</span><span class="n">tokenize_de</span><span class="p">,</span> 
+            <span class="n">init_token</span><span class="o">=</span><span class="s1">&#39;&lt;sos&gt;&#39;</span><span class="p">,</span>  <span class="c1"># 序列起始符号，让模型识别翻译的开始</span>
+            <span class="n">eos_token</span><span class="o">=</span><span class="s1">&#39;&lt;eos&gt;&#39;</span><span class="p">,</span>  <span class="c1"># 序列结束符号，让模型识别翻译的结束</span>
+            <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># 小写化统一大小写，减少词汇表规模（如&quot;The&quot;和&quot;the&quot;视为同一词）</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 输出张量格式为[batch_size, seq_len]，符合 PyTorch 常用习惯</span>
+
+<span class="n">TRG</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">tokenize</span><span class="o">=</span><span class="n">tokenize_en</span><span class="p">,</span> 
+            <span class="n">init_token</span><span class="o">=</span><span class="s1">&#39;&lt;sos&gt;&#39;</span><span class="p">,</span> 
+            <span class="n">eos_token</span><span class="o">=</span><span class="s1">&#39;&lt;eos&gt;&#39;</span><span class="p">,</span> 
+            <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 加载 IWSLT2016 数据集</span>
+<span class="c1"># splits 函数按语言后缀(.de 为德语源语言，.en 为英语目标语言)划分数据，并关联 Field 处理逻辑</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;加载 IWSLT2016 数据集...&quot;</span><span class="p">)</span>
+<span class="n">train_data</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">test_data</span> <span class="o">=</span> <span class="n">IWSLT2016</span><span class="o">.</span><span class="n">splits</span><span class="p">(</span><span class="n">exts</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;.de&#39;</span><span class="p">,</span> <span class="s1">&#39;.en&#39;</span><span class="p">),</span> 
+                                                     <span class="n">fields</span><span class="o">=</span><span class="p">(</span><span class="n">SRC</span><span class="p">,</span> <span class="n">TRG</span><span class="p">))</span>
+
+<span class="c1"># 构建词汇表</span>
+<span class="c1"># 基于训练集统计词频，min_freq=2 表示只保留出现次数≥2 的词，过滤低频噪声词</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;构建词汇表...&quot;</span><span class="p">)</span>
+<span class="n">SRC</span><span class="o">.</span><span class="n">build_vocab</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">TRG</span><span class="o">.</span><span class="n">build_vocab</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">min_freq</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;源语言词汇表大小: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">SRC</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;目标语言词汇表大小: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># 创建数据迭代器</span>
+<span class="c1"># BucketIterator 按序列长度分组（同批次句子长度相近），减少 padding 数量，提升计算效率</span>
+<span class="n">BATCH_SIZE</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">train_iterator</span><span class="p">,</span> <span class="n">valid_iterator</span><span class="p">,</span> <span class="n">test_iterator</span> <span class="o">=</span> <span class="n">BucketIterator</span><span class="o">.</span><span class="n">splits</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">valid_data</span><span class="p">,</span> <span class="n">test_data</span><span class="p">),</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">BATCH_SIZE</span><span class="p">,</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;数据加载完成!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>对应输出：</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+加载 IWSLT2016 数据集...
+构建词汇表...
+源语言词汇表大小: 18832
+目标语言词汇表大小: 35432
+数据加载完成!
+```
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id3">
+<h2>2. 模型构建与优化技术<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<section id="transformer">
+<h3>2.1 构建 Transformer 模型<a class="headerlink" href="#transformer" title="Link to this heading">#</a></h3>
+<p>我们将使用之前实现的 Transformer 模型，但进行一些调整以适应机器翻译任务。尽管我们使用了较小的模型（D_MODEL=256，N_LAYERS=3），Transformer 仍然能够学习英德翻译的基本模式，生成语法基本正确的翻译结果——这得益于 Transformer 的自注意力机制，能有效捕捉语言的长距离依赖（如德语的后置定语与英语的前置定语对应关系）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 导入之前实现的 Transformer 组件</span>
+<span class="kn">from</span> <span class="nn">transformer_components</span> <span class="kn">import</span> <span class="n">Embedding</span><span class="p">,</span> <span class="n">PositionalEncoding</span><span class="p">,</span> <span class="n">MultiHeadAttention</span>
+<span class="kn">from</span> <span class="nn">transformer_components</span> <span class="kn">import</span> <span class="n">FeedForward</span><span class="p">,</span> <span class="n">SublayerConnection</span><span class="p">,</span> <span class="n">EncoderLayer</span>
+<span class="kn">from</span> <span class="nn">transformer_components</span> <span class="kn">import</span> <span class="n">DecoderLayer</span><span class="p">,</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">Decoder</span><span class="p">,</span> <span class="n">Transformer</span><span class="p">,</span> <span class="n">Generator</span>
+
+<span class="k">def</span> <span class="nf">make_model</span><span class="p">(</span><span class="n">src_vocab_size</span><span class="p">,</span> <span class="n">trg_vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">d_ff</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    构建完整的 Transformer 模型</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        src_vocab_size: 源语言词汇表大小</span>
+<span class="sd">        trg_vocab_size: 目标语言词汇表大小</span>
+<span class="sd">        d_model: 模型核心维度（所有子层输入输出维度统一为 d_model，确保特征传递一致性）</span>
+<span class="sd">        N: 编码器/解码器层数（多层叠加可捕捉更复杂的语言结构，如短语级、句子级依赖）</span>
+<span class="sd">        d_ff: 前馈网络内部维度（通常为 d_model 的 4 倍，通过维度扩张增强特征表达能力）</span>
+<span class="sd">        h: 注意力头数（多头注意力将 d_model 拆分 h 份，并行捕捉不同类型的依赖，如语义、语法）</span>
+<span class="sd">        dropout: Dropout 率（防止过拟合，在注意力层和前馈层随机丢弃部分特征）</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        完整的 Transformer 模型</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 创建注意力机制和前馈网络</span>
+    <span class="n">attn</span> <span class="o">=</span> <span class="n">MultiHeadAttention</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">dropout</span><span class="p">)</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">FeedForward</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_ff</span><span class="p">,</span> <span class="n">dropout</span><span class="p">)</span>
+    
+    <span class="c1"># 创建位置编码</span>
+    <span class="c1"># Transformer 无循环结构，需通过位置编码注入序列的时序信息（如&quot;我吃饭&quot;和&quot;饭吃我&quot;的语序差异）</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">PositionalEncoding</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dropout</span><span class="p">)</span>
+    
+    <span class="c1"># 创建模型</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Transformer</span><span class="p">(</span>
+        <span class="n">Encoder</span><span class="p">(</span><span class="n">EncoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">attn</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">dropout</span><span class="p">),</span> <span class="n">N</span><span class="p">),</span>  <span class="c1"># 编码器：多层 EncoderLayer 堆叠，处理源语言序列</span>
+        <span class="n">Decoder</span><span class="p">(</span><span class="n">DecoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">attn</span><span class="p">,</span> <span class="n">attn</span><span class="p">,</span> <span class="n">ff</span><span class="p">,</span> <span class="n">dropout</span><span class="p">),</span> <span class="n">N</span><span class="p">),</span>  <span class="c1"># 解码器：多层 DecoderLayer 堆叠，生成目标语言序列</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="n">src_vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">position</span><span class="p">)),</span>  <span class="c1"># 源语言嵌入+位置编码</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">Embedding</span><span class="p">(</span><span class="n">trg_vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="p">),</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">position</span><span class="p">)),</span>  <span class="c1"># 目标语言嵌入+位置编码</span>
+        <span class="n">Generator</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">trg_vocab_size</span><span class="p">)</span>  <span class="c1"># 生成器：将 d_model 维度特征映射到目标词汇表概率分布</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># 初始化参数</span>
+    <span class="c1"># Xavier 均匀初始化适用于线性层，确保前向传播特征方差与反向传播梯度方差一致，避免梯度消失/爆炸</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">model</span>
+
+<span class="c1"># 创建模型</span>
+<span class="n">INPUT_DIM</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">SRC</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span>
+<span class="n">OUTPUT_DIM</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="p">)</span>
+<span class="n">D_MODEL</span> <span class="o">=</span> <span class="mi">256</span>  <span class="c1"># 为了训练速度，使用较小的模型（标准 Transformer 为 512）</span>
+<span class="n">N_LAYERS</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># 层数减少（标准为 6），平衡模型能力与训练成本</span>
+<span class="n">HID_DIM</span> <span class="o">=</span> <span class="mi">512</span>  <span class="c1"># 前馈网络内部维度（通常为 d_model 的 2 倍，此处适配小模型）</span>
+<span class="n">N_HEADS</span> <span class="o">=</span> <span class="mi">8</span>  <span class="c1"># 保持 8 头注意力，确保多类型依赖捕捉能力</span>
+<span class="n">DROPOUT</span> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># 适度 Dropout，缓解小模型过拟合</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">make_model</span><span class="p">(</span><span class="n">INPUT_DIM</span><span class="p">,</span> <span class="n">OUTPUT_DIM</span><span class="p">,</span> <span class="n">D_MODEL</span><span class="p">,</span> <span class="n">N_LAYERS</span><span class="p">,</span> <span class="n">HID_DIM</span><span class="p">,</span> <span class="n">N_HEADS</span><span class="p">,</span> <span class="n">DROPOUT</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;模型参数量: </span><span class="si">{</span><span class="nb">sum</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span><span class="si">:</span><span class="s2">,</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+模型参数量: 25,634,336
+```
+</pre></div>
+</div>
+</section>
+<section id="label-smoothing">
+<h3>2.2 标签平滑 (Label Smoothing)<a class="headerlink" href="#label-smoothing" title="Link to this heading">#</a></h3>
+<p>标签平滑是一种正则化技术，通过软化硬标签来防止模型过度自信，提高泛化能力。在机器翻译中，硬标签（one-hot 编码）会让模型对&quot;正确词&quot;的预测概率趋近于 1，对其他词趋近于 0，导致模型对微小输入变化敏感（如源语言中一个词的歧义），泛化到测试集时容易出错。</p>
+<p><strong>原理公式</strong>：</p>
+<div class="math notranslate nohighlight">
+\[
+y_{\text{smooth}} = (1 - \epsilon) \cdot y + \frac{\epsilon}{K}
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(y\)</span> 是原始 one-hot 标签（正确词位置为 1，其余为 0），<span class="math notranslate nohighlight">\(\epsilon\)</span> 是平滑因子（通常取 0.1，控制软化程度），<span class="math notranslate nohighlight">\(K\)</span> 是目标词汇表大小（类别数）。公式含义是：给正确词保留 <span class="math notranslate nohighlight">\((1-\epsilon)\)</span> 的概率，剩余 <span class="math notranslate nohighlight">\(\epsilon\)</span> 均匀分配给其他所有词，迫使模型学习更鲁棒的特征（不仅能区分正确词，还能理解其他词的合理性）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LabelSmoothing</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    标签平滑实现</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        smoothing: 平滑因子（ε）</span>
+<span class="sd">        pad_idx: 填充索引（不应用平滑，因填充 token 无实际语义，不应参与损失计算）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">smoothing</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">pad_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">LabelSmoothing</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pad_idx</span> <span class="o">=</span> <span class="n">pad_idx</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confidence</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">smoothing</span>  <span class="c1"># 正确词的保留概率</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">KLDivLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;sum&#39;</span><span class="p">)</span>  <span class="c1"># KL 散度损失：衡量预测分布与平滑后目标分布的差异</span>
+        
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            x: 模型输出（log 概率，shape: [batch_size*seq_len, trg_vocab_size]）</span>
+<span class="sd">            target: 目标标签（原始 token 索引，shape: [batch_size*seq_len]）</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            平滑后的损失（按批次大小归一化，确保不同批次损失可比）</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch_size</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>  <span class="c1"># 展平为[总 token 数, 词汇表大小]</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">contiguous</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 展平为[总 token 数]</span>
+        
+        <span class="c1"># 创建平滑后的目标分布</span>
+        <span class="n">true_dist</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+        <span class="c1"># 给所有非 pad 词分配ε/(K-2)（减去 pad 和正确词两类）</span>
+        <span class="n">true_dist</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
+        
+        <span class="c1"># 将正确词的位置概率设为(1-ε)</span>
+        <span class="n">true_dist</span><span class="o">.</span><span class="n">scatter_</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">confidence</span><span class="p">)</span>
+        
+        <span class="c1"># 将 pad 位置的概率设为 0（不参与损失）</span>
+        <span class="n">true_dist</span><span class="p">[:,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">target</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pad_idx</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">true_dist</span><span class="o">.</span><span class="n">index_fill_</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">mask</span><span class="o">.</span><span class="n">nonzero</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(),</span> <span class="mf">0.0</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">true_dist</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span> <span class="o">/</span> <span class="n">batch_size</span>  <span class="c1"># 按批次大小归一化</span>
+
+<span class="c1"># 创建标签平滑损失函数</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">LabelSmoothing</span><span class="p">(</span><span class="n">smoothing</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">pad_idx</span><span class="o">=</span><span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="learning-rate-scheduling">
+<h3>2.3 学习率调度 (Learning Rate Scheduling)<a class="headerlink" href="#learning-rate-scheduling" title="Link to this heading">#</a></h3>
+<p>Transformer 使用带 warmup 的学习率调度策略，先线性增加学习率，然后按步数的平方根反比衰减。这一策略是为了解决 Transformer 训练的两个核心问题：1）训练初期参数随机，小学习率避免参数震荡；2）训练后期参数接近最优，小学习率微调避免过拟合。</p>
+<p><strong>原理公式</strong>：</p>
+<div class="math notranslate nohighlight">
+\[
+\text{lrate} = d_{\text{model}}^{-0.5} \cdot \min(\text{step_num}^{-0.5}, \text{step_num} \cdot \text{warmup_steps}^{-1.5})
+\]</div>
+<p>公式解读：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(d_{\text{model}}^{-0.5}\)</span>：模型维度越大，初始学习率越小——因大模型参数更多，需更谨慎的更新幅度；</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{step_num} \cdot \text{warmup_steps}^{-1.5}\)</span>（warmup 阶段）：学习率随步数线性增加，直到 warmup_steps 时达到峰值；</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{step_num}^{-0.5}\)</span>（warmup 后）：学习率随步数平方根反比衰减，确保后期更新幅度逐渐减小。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TransformerOptimizer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transformer 专用的优化器，包含学习率调度</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        optimizer: 基础优化器（此处用 Adam，适合大参数模型的自适应优化）</span>
+<span class="sd">        d_model: 模型维度（用于计算初始学习率缩放因子）</span>
+<span class="sd">        warmup_steps: warmup 步数（通常取 4000，平衡训练初期稳定性与收敛速度）</span>
+<span class="sd">        factor: 学习率整体缩放因子（微调学习率范围）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span> <span class="o">=</span> <span class="n">warmup_steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">=</span> <span class="n">factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_num</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 记录训练步数</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># 记录当前学习率</span>
+        
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        更新参数和学习率：先计算当前学习率，再更新优化器参数</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_num</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr</span><span class="p">()</span>
+        <span class="c1"># 给所有参数组设置当前学习率</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+            <span class="n">p</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        清空梯度：PyTorch 默认梯度累积，需手动清空</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        
+    <span class="k">def</span> <span class="nf">_get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        计算当前学习率（按公式实现）</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">factor</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> \
+             <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">step_num</span> <span class="o">**</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_num</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span> <span class="o">**</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lr</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="k">return</span> <span class="n">lr</span>
+
+<span class="c1"># 创建优化器和学习率调度器</span>
+<span class="c1"># Adam 优化器的 betas=(0.9, 0.98)：一阶矩（动量）用 0.9 加速收敛，二阶矩用 0.98 关注近期梯度变化</span>
+<span class="c1"># eps=1e-9：避免分母为 0，适合 Transformer 的大参数规模</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">TransformerOptimizer</span><span class="p">(</span>
+    <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">),</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-9</span><span class="p">),</span>
+    <span class="n">d_model</span><span class="o">=</span><span class="n">D_MODEL</span><span class="p">,</span>
+    <span class="n">warmup_steps</span><span class="o">=</span><span class="mi">4000</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="gradient-clipping">
+<h3>2.4 梯度裁剪 (Gradient Clipping)<a class="headerlink" href="#gradient-clipping" title="Link to this heading">#</a></h3>
+<p>梯度裁剪可以防止训练过程中梯度爆炸问题，提高训练稳定性。Transformer 的残差连接虽能缓解梯度消失，但多层叠加（即使是 3 层）仍可能导致部分参数的梯度 norms 过大，进而导致参数更新幅度过大，模型震荡甚至发散。</p>
+<p>梯度裁剪的核心逻辑：计算所有可训练参数梯度的 L2 范数（整体梯度规模），若超过预设的 max_norm，则按比例（max_norm / 实际范数）缩放所有梯度，确保梯度在合理范围内。例如 max_norm=1.0 是常见阈值，既允许足够的更新幅度，又避免梯度爆炸。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">clip_gradients</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">max_norm</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    梯度裁剪</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model: 模型（需裁剪所有可训练参数的梯度）</span>
+<span class="sd">        max_norm: 最大梯度范数（阈值，通常取 1.0 或 5.0）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 计算所有参数的梯度 L2 范数（平方和开根号）</span>
+    <span class="n">total_norm</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># 仅处理有梯度的参数（如冻结层无梯度）</span>
+            <span class="n">param_norm</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># 单个参数的梯度 L2 范数</span>
+            <span class="n">total_norm</span> <span class="o">+=</span> <span class="n">param_norm</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">total_norm</span> <span class="o">=</span> <span class="n">total_norm</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+    
+    <span class="c1"># 裁剪梯度：若总范数超过 max_norm，按比例缩放</span>
+    <span class="n">clip_coef</span> <span class="o">=</span> <span class="n">max_norm</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_norm</span> <span class="o">+</span> <span class="mf">1e-6</span><span class="p">)</span>  <span class="c1"># +1e-6 避免分母为 0</span>
+    <span class="k">if</span> <span class="n">clip_coef</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># 仅当总范数超过阈值时裁剪</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="n">clip_coef</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h2>3. 训练与验证<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="id5">
+<h3>3.1 训练循环<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>训练循环的核心是实现 Transformer 的前向传播、损失计算、反向传播和参数更新，其中<strong>掩码机制</strong>是确保 Transformer 正确工作的关键——需分别处理源序列的 pad 掩码和目标序列的自回归掩码。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">train_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">iterator</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">clip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    训练一个 epoch（遍历一次训练集）</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model: 模型</span>
+<span class="sd">        iterator: 数据迭代器（训练集）</span>
+<span class="sd">        optimizer: 优化器（含学习率调度）</span>
+<span class="sd">        criterion: 损失函数（标签平滑）</span>
+<span class="sd">        clip: 梯度裁剪阈值</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        平均损失（按迭代器长度归一化，反映该 epoch 的训练效果）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>  <span class="c1"># 设为训练模式：启用 Dropout、BatchNorm 更新等</span>
+    <span class="n">epoch_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">src</span>  <span class="c1"># 源语言序列，shape: [batch_size, src_seq_len]</span>
+        <span class="n">trg</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">trg</span>  <span class="c1"># 目标语言序列，shape: [batch_size, trg_seq_len]</span>
+        
+        <span class="c1"># 创建掩码：解决 pad token 和自回归问题</span>
+        <span class="c1"># 1. 源序列掩码（src_mask）：忽略 pad token 的注意力计算</span>
+        <span class="c1"># 形状从[batch_size, src_seq_len]扩展为[batch_size, 1, 1, src_seq_len]，适配多头注意力的维度</span>
+        <span class="n">src_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">src</span> <span class="o">!=</span> <span class="n">SRC</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        
+        <span class="c1"># 2. 目标序列掩码（trg_mask）：包含 pad 掩码和上三角掩码（自回归）</span>
+        <span class="n">trg_pad_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">trg</span> <span class="o">!=</span> <span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># 上三角掩码（nopeak_mask）：防止解码器看到未来的词（如生成第 i 个词时，看不到 i+1 及以后的词）</span>
+        <span class="n">nopeak_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">trg_pad_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">trg_pad_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">trg_pad_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> 
+                                <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">trg_mask</span> <span class="o">=</span> <span class="n">trg_pad_mask</span> <span class="o">&amp;</span> <span class="n">nopeak_mask</span>  <span class="c1"># 合并两种掩码</span>
+        
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>  <span class="c1"># 清空梯度（避免累积）</span>
+        
+        <span class="c1"># 前向传播：解码器输入为 trg[:, :-1]（去掉最后一个词），输出预测 trg[:, 1:]（去掉第一个词）</span>
+        <span class="c1"># 原因：自回归生成中，用前 i 个词预测第 i+1 个词，需对齐输入输出</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">trg</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">trg_mask</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        
+        <span class="c1"># 计算损失：输出 shape [batch_size, trg_seq_len-1, trg_vocab_size]，目标 shape [batch_size, trg_seq_len-1]</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">trg</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:])</span>
+        
+        <span class="c1"># 反向传播：计算梯度</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+        
+        <span class="c1"># 梯度裁剪：防止梯度爆炸</span>
+        <span class="n">clip_gradients</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">clip</span><span class="p">)</span>
+        
+        <span class="c1"># 更新参数：含学习率调度</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        
+        <span class="n">epoch_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>  <span class="c1"># 累积损失</span>
+        
+        <span class="c1"># 每 100 批次打印一次中间结果，监控训练进度</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;批次 </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">, 损失: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">, 学习率: </span><span class="si">{</span><span class="n">optimizer</span><span class="o">.</span><span class="n">lr</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">epoch_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>  <span class="c1"># 返回平均损失</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>3.2 验证循环<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>验证循环与训练循环逻辑相似，但需关闭梯度计算（节省显存、加速推理），且不更新参数、不启用 Dropout，确保验证结果反映模型的泛化能力。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">iterator</span><span class="p">,</span> <span class="n">criterion</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    验证模型（遍历一次验证集或测试集）</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model: 模型</span>
+<span class="sd">        iterator: 数据迭代器（验证集/测试集）</span>
+<span class="sd">        criterion: 损失函数（标签平滑）</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        平均损失（反映模型的泛化能力）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>  <span class="c1"># 设为评估模式：禁用 Dropout、固定 BatchNorm 等</span>
+    <span class="n">epoch_loss</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>  <span class="c1"># 关闭梯度计算，节省显存和计算资源</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">iterator</span><span class="p">):</span>
+            <span class="n">src</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">src</span>
+            <span class="n">trg</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">trg</span>
+            
+            <span class="c1"># 创建掩码（逻辑与训练一致）</span>
+            <span class="n">src_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">src</span> <span class="o">!=</span> <span class="n">SRC</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">trg_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">trg</span> <span class="o">!=</span> <span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">nopeak_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> 
+                                    <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">trg_mask</span> <span class="o">=</span> <span class="n">trg_mask</span> <span class="o">&amp;</span> <span class="n">nopeak_mask</span>
+            
+            <span class="c1"># 前向传播（逻辑与训练一致）</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">trg</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">trg_mask</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            
+            <span class="c1"># 计算损失</span>
+            <span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">trg</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:])</span>      
+            <span class="n">epoch_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            
+    <span class="k">return</span> <span class="n">epoch_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">iterator</span><span class="p">)</span>  <span class="c1"># 返回平均损失</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>3.3 训练模型<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>训练过程中需监控训练损失和验证损失：若验证损失下降，说明模型泛化能力提升；若验证损失上升，可能出现过拟合，需提前停止训练（此处通过保存&quot;最佳模型&quot;实现，即仅保存验证损失最低的模型参数）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 训练参数</span>
+<span class="n">N_EPOCHS</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># 小模型训练 10 个 epoch 足够收敛，大模型需更多 epoch</span>
+<span class="n">CLIP</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c1"># 梯度裁剪阈值</span>
+<span class="n">best_valid_loss</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>  <span class="c1"># 初始化最佳验证损失为无穷大</span>
+
+<span class="c1"># 训练模型</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;开始训练模型...&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_EPOCHS</span><span class="p">):</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    
+    <span class="n">train_loss</span> <span class="o">=</span> <span class="n">train_epoch</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_iterator</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">CLIP</span><span class="p">)</span>
+    <span class="n">valid_loss</span> <span class="o">=</span> <span class="n">evaluate</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">valid_iterator</span><span class="p">,</span> <span class="n">criterion</span><span class="p">)</span>
+    
+    <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">epoch_mins</span><span class="p">,</span> <span class="n">epoch_secs</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>  <span class="c1"># 计算 epoch 耗时</span>
+    
+    <span class="c1"># 保存最佳模型：仅当当前验证损失低于历史最佳时保存，避免保存过拟合模型</span>
+    <span class="k">if</span> <span class="n">valid_loss</span> <span class="o">&lt;</span> <span class="n">best_valid_loss</span><span class="p">:</span>
+        <span class="n">best_valid_loss</span> <span class="o">=</span> <span class="n">valid_loss</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">state_dict</span><span class="p">(),</span> <span class="s1">&#39;best-model.pt&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># 打印 epoch 结果：训练损失下降说明模型在学习，验证损失下降说明泛化能力提升</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">:</span><span class="s1">02</span><span class="si">}</span><span class="s1"> | Time: </span><span class="si">{</span><span class="n">epoch_mins</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">m </span><span class="si">{</span><span class="n">epoch_secs</span><span class="si">:</span><span class="s1">.0f</span><span class="si">}</span><span class="s1">s&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Train Loss: </span><span class="si">{</span><span class="n">train_loss</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">Val Loss: </span><span class="si">{</span><span class="n">valid_loss</span><span class="si">:</span><span class="s1">.4f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;训练完成!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在训练过程中，你将看到类似以下的输出。随着训练的进行，训练损失和验证损失应该逐渐下降，表明模型在学习翻译任务。若训练损失持续下降但验证损失上升，说明模型过拟合，需调整 Dropout 率或减小模型规模。</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>```
+开始训练模型...
+批次 0, 损失: 10.4253, 学习率: 0.000002
+批次 100, 损失: 6.8321, 学习率: 0.000052
+...
+Epoch: 01 | Time: 3m 45s
+    Train Loss: 6.2345
+    Val Loss: 5.8901
+...
+Epoch: 10 | Time: 3m 42s
+    Train Loss: 3.1245
+    Val Loss: 4.2310
+训练完成!
+```
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h2>4. 推理解码算法<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<p>训练完成后，需通过<strong>解码算法</strong>将模型的输出（词汇表概率分布）转换为可读的目标语言序列。常用的解码算法有贪婪搜索和束搜索，二者在速度和翻译质量上存在权衡。</p>
+<section id="greedy-search">
+<h3>4.1 贪婪搜索 (Greedy Search)<a class="headerlink" href="#greedy-search" title="Link to this heading">#</a></h3>
+<p>贪婪搜索在每一步选择概率最高的词作为当前输出，优点是速度快（每步仅需一次 argmax 操作），缺点是容易陷入<strong>局部最优</strong>——例如某一步选择概率最高的词，但后续无法组成语义通顺的句子（如德语&quot;Können Sie&quot;翻译时，第一步选&quot;Can&quot;是最优，但第二步若选&quot;you&quot;而非&quot;you please&quot;，可能导致后续翻译不完整）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">greedy_decode</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">start_symbol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    贪婪搜索解码</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model: 模型</span>
+<span class="sd">        src: 源序列（单句，shape: [1, src_seq_len]）</span>
+<span class="sd">        src_mask: 源序列掩码</span>
+<span class="sd">        max_len: 最大生成长度（防止无限生成，通常设为源序列长度的 1.5~2 倍）</span>
+<span class="sd">        start_symbol: 开始符号索引（&lt;sos&gt;的数值化表示）</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        解码后的序列（shape: [1, trg_seq_len]，包含&lt;sos&gt;和&lt;eos&gt;）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    
+    <span class="c1"># 编码源序列：得到源语言的特征表示 memory（shape: [1, src_seq_len, d_model]）</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">)</span>
+    
+    <span class="c1"># 初始化目标序列：从&lt;sos&gt;开始，shape: [1, 1]</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">start_symbol</span><span class="p">)</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_len</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># 减去初始的&lt;sos&gt;，避免超过 max_len</span>
+        <span class="c1"># 创建目标序列掩码：包含 pad 掩码和上三角掩码（自回归）</span>
+        <span class="n">trg_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">ys</span> <span class="o">!=</span> <span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">nopeak_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> 
+                                <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">trg_mask</span> <span class="o">=</span> <span class="n">trg_mask</span> <span class="o">&amp;</span> <span class="n">nopeak_mask</span>
+        
+        <span class="c1"># 解码：用当前目标序列 ys 和源特征 memory 预测下一个词</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">memory</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">trg_mask</span><span class="p">)</span>  <span class="c1"># out shape: [1, len(ys), d_model]</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generator</span><span class="p">(</span><span class="n">out</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># 取最后一个词的特征，映射为词汇表概率（shape: [1, trg_vocab_size]）</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">next_word</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 贪婪选择概率最高的词（argmax）</span>
+        <span class="n">next_word</span> <span class="o">=</span> <span class="n">next_word</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+        
+        <span class="c1"># 将下一个词添加到目标序列</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">ys</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="n">next_word</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        
+        <span class="c1"># 如果遇到&lt;eos&gt;，停止生成（序列已完整）</span>
+        <span class="k">if</span> <span class="n">next_word</span> <span class="o">==</span> <span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;eos&gt;&#39;</span><span class="p">]:</span>
+            <span class="k">break</span>
+            
+    <span class="k">return</span> <span class="n">ys</span>
+</pre></div>
+</div>
+</section>
+<section id="beam-search">
+<h3>4.2 束搜索 (Beam Search)<a class="headerlink" href="#beam-search" title="Link to this heading">#</a></h3>
+<p><strong>解码策略比较</strong>：束搜索（beam search）通常比贪婪搜索（greedy search）能产生质量更高的翻译结果，因为它考虑了更多可能的翻译路径——贪婪搜索每步仅保留 1 个候选序列，束搜索每步保留<code class="docutils literal notranslate"><span class="pre">beam_size</span></code>个候选序列（如 beam_size=5），通过多路径探索避免局部最优；但束搜索速度较慢（候选数越多，计算量越大），需在速度和质量间权衡。</p>
+<p>束搜索的核心逻辑：1）初始化<code class="docutils literal notranslate"><span class="pre">beam_size</span></code>个候选序列（均从<sos>开始）；2）每步对每个候选序列扩展所有可能的下一个词，计算序列的累积概率；3）保留概率最高的<code class="docutils literal notranslate"><span class="pre">beam_size</span></code>个候选序列；4）重复步骤 2-3，直到所有序列生成<eos>或达到 max_len；5）应用<strong>长度惩罚</strong>（避免生成过短序列），选择最优序列。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">beam_search_decode</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">start_symbol</span><span class="p">,</span> <span class="n">beam_size</span><span class="p">,</span> <span class="n">length_penalty</span><span class="o">=</span><span class="mf">0.6</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    束搜索解码</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model: 模型</span>
+<span class="sd">        src: 源序列（单句，shape: [1, src_seq_len]）</span>
+<span class="sd">        src_mask: 源序列掩码</span>
+<span class="sd">        max_len: 最大生成长度</span>
+<span class="sd">        start_symbol: 开始符号索引</span>
+<span class="sd">        beam_size: 束宽（候选序列数，通常取 5~10，越大质量越高但速度越慢）</span>
+<span class="sd">        length_penalty: 长度惩罚因子（通常取 0.6~1.0，惩罚过短序列，避免语义不完整）</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        解码后的最优序列（shape: [1, trg_seq_len]）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>  <span class="c1"># 导入 F 用于 log_softmax</span>
+    
+    <span class="c1"># 编码源序列：得到源特征 memory（仅需编码一次，所有候选序列共享）</span>
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">)</span>
+    
+    <span class="c1"># 初始化束：列表存储（序列 token 索引列表，累积 log 概率），初始为[(&lt;sos&gt;, 0.0)]</span>
+    <span class="n">beams</span> <span class="o">=</span> <span class="p">[([</span><span class="n">start_symbol</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)]</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_len</span><span class="p">):</span>
+        <span class="n">all_candidates</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 存储所有扩展后的候选序列</span>
+        
+        <span class="c1"># 对每个现有候选序列进行扩展</span>
+        <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+            <span class="c1"># 如果序列已以&lt;eos&gt;结束，不再扩展（避免生成冗余 token）</span>
+            <span class="k">if</span> <span class="n">seq</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;eos&gt;&#39;</span><span class="p">]:</span>
+                <span class="n">all_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seq</span><span class="p">,</span> <span class="n">score</span><span class="p">))</span>
+                <span class="k">continue</span>
+                
+            <span class="c1"># 准备当前序列的张量输入（shape: [1, len(seq)]）</span>
+            <span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+            
+            <span class="c1"># 创建目标序列掩码（逻辑与贪婪搜索一致）</span>
+            <span class="n">trg_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">ys</span> <span class="o">!=</span> <span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">nopeak_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">trg_mask</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span> 
+                                    <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="n">trg_mask</span> <span class="o">=</span> <span class="n">trg_mask</span> <span class="o">&amp;</span> <span class="n">nopeak_mask</span>
+            
+            <span class="c1"># 解码：计算下一个词的概率分布</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">memory</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">trg_mask</span><span class="p">)</span>  <span class="c1"># out shape: [1, len(seq), d_model]</span>
+                <span class="n">prob</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generator</span><span class="p">(</span><span class="n">out</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># shape: [1, trg_vocab_size]</span>
+                <span class="n">log_prob</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 转换为 log 概率，避免数值下溢</span>
+                
+            <span class="c1"># 获取当前步概率最高的 beam_size 个词（减少计算量，无需扩展所有词）</span>
+            <span class="n">topk_prob</span><span class="p">,</span> <span class="n">topk_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">log_prob</span><span class="p">,</span> <span class="n">beam_size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="c1"># 生成新的候选序列：原序列 + 新词，累积概率 = 原分数 + 新词 log 概率</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">beam_size</span><span class="p">):</span>
+                <span class="n">candidate_seq</span> <span class="o">=</span> <span class="n">seq</span> <span class="o">+</span> <span class="p">[</span><span class="n">topk_idx</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()]</span>
+                <span class="n">candidate_score</span> <span class="o">=</span> <span class="n">score</span> <span class="o">+</span> <span class="n">topk_prob</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="n">all_candidates</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">candidate_seq</span><span class="p">,</span> <span class="n">candidate_score</span><span class="p">))</span>
+                
+        <span class="c1"># 按累积概率降序排序，保留前 beam_size 个候选序列</span>
+        <span class="n">ordered</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_candidates</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">beams</span> <span class="o">=</span> <span class="n">ordered</span><span class="p">[:</span><span class="n">beam_size</span><span class="p">]</span>
+        
+        <span class="c1"># 提前停止条件：所有候选序列都已生成&lt;eos&gt;（无需继续扩展）</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">seq</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">TRG</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;eos&gt;&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">):</span>
+            <span class="k">break</span>
+            
+    <span class="c1"># 应用长度惩罚：纠正&quot;短序列概率高&quot;的偏差（如&quot;我吃饭&quot;比&quot;我正在吃饭&quot;短，概率可能更高但语义不完整）</span>
+    <span class="c1"># 惩罚公式：score = 累积 log 概率 / (序列长度 ^ length_penalty)，长度越长惩罚越小</span>
+    <span class="n">best_seq</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">best_score</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">seq</span><span class="p">,</span> <span class="n">score</span> <span class="ow">in</span> <span class="n">beams</span><span class="p">:</span>
+        <span class="c1"># 序列长度需排除&lt;sos&gt;和&lt;eos&gt;吗？此处用原始长度（含边界符号），因生成时已包含完整逻辑</span>
+        <span class="n">length_penalized_score</span> <span class="o">=</span> <span class="n">score</span> <span class="o">/</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">seq</span><span class="p">)</span> <span class="o">**</span> <span class="n">length_penalty</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">length_penalized_score</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+            <span class="n">best_score</span> <span class="o">=</span> <span class="n">length_penalized_score</span>
+            <span class="n">best_seq</span> <span class="o">=</span> <span class="n">seq</span>
+            
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">best_seq</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 转换为张量返回</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id9">
+<h2>5. 模型评估<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<section id="id10">
+<h3>5.1 翻译函数<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>翻译函数是解码算法的上层封装，负责将原始文本（如德语句子）转换为模型可处理的数值序列，调用束搜索解码后，再将数值序列转换为可读的目标语言文本（如英语句子）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">translate_sentence</span><span class="p">(</span><span class="n">sentence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">src_field</span><span class="p">,</span> <span class="n">trg_field</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">beam_size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    翻译单个句子</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        sentence: 源语言句子（原始文本，如&quot;Ich liebe dich.&quot;）</span>
+<span class="sd">        model: 模型</span>
+<span class="sd">        src_field: 源语言 Field（含分词、词汇表等预处理逻辑）</span>
+<span class="sd">        trg_field: 目标语言 Field</span>
+<span class="sd">        max_len: 最大生成长度</span>
+<span class="sd">        beam_size: 束宽</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        翻译结果（目标语言文本，如&quot;I love you.&quot;）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    
+    <span class="c1"># 1. 文本预处理：分词 → 添加边界符号 → 数值化</span>
+    <span class="n">tokenized</span> <span class="o">=</span> <span class="n">src_field</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>  <span class="c1"># 分词（如&quot;Ich liebe dich.&quot; → [&quot;ich&quot;, &quot;liebe&quot;, &quot;dich&quot;, &quot;.&quot;]）</span>
+    <span class="n">tokenized</span> <span class="o">=</span> <span class="p">[</span><span class="n">src_field</span><span class="o">.</span><span class="n">init_token</span><span class="p">]</span> <span class="o">+</span> <span class="n">tokenized</span> <span class="o">+</span> <span class="p">[</span><span class="n">src_field</span><span class="o">.</span><span class="n">eos_token</span><span class="p">]</span>  <span class="c1"># 添加&lt;sos&gt;和&lt;eos&gt;</span>
+    <span class="n">numericalized</span> <span class="o">=</span> <span class="p">[</span><span class="n">src_field</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="n">token</span><span class="p">]</span> <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokenized</span><span class="p">]</span>  <span class="c1"># 数值化（词→索引）</span>
+    
+    <span class="c1"># 2. 转换为张量并创建掩码</span>
+    <span class="n">src_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">numericalized</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># shape: [1, src_seq_len]</span>
+    <span class="n">src_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">src_tensor</span> <span class="o">!=</span> <span class="n">src_field</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="s1">&#39;&lt;pad&gt;&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># 源掩码</span>
+    
+    <span class="c1"># 3. 束搜索解码</span>
+    <span class="n">trg_indexes</span> <span class="o">=</span> <span class="n">beam_search_decode</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">src_tensor</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> 
+                                    <span class="n">trg_field</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">stoi</span><span class="p">[</span><span class="n">trg_field</span><span class="o">.</span><span class="n">init_token</span><span class="p">],</span>  <span class="c1"># &lt;sos&gt;的索引</span>
+                                    <span class="n">beam_size</span><span class="p">)</span>
+    
+    <span class="c1"># 4. 数值序列→文本：索引→词 → 移除&lt;sos&gt;和&lt;eos&gt; → 拼接为句子</span>
+    <span class="n">trg_tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">trg_field</span><span class="o">.</span><span class="n">vocab</span><span class="o">.</span><span class="n">itos</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trg_indexes</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>  <span class="c1"># 索引→词（itos: index to string）</span>
+    <span class="n">trg_tokens</span> <span class="o">=</span> <span class="n">trg_tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># 移除&lt;sos&gt;（第一个词）和&lt;eos&gt;（最后一个词）</span>
+    
+    <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">trg_tokens</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="bleu">
+<h3>5.2 BLEU 分数评估<a class="headerlink" href="#bleu" title="Link to this heading">#</a></h3>
+<p>BLEU (Bilingual Evaluation Understudy) 是机器翻译中最常用的自动评估指标，通过比较机器翻译输出（hypothesis）与参考翻译（reference）的<strong>n-gram 重叠度</strong>来评估质量。n-gram 是指连续的 n 个词，如 1-gram（单个词）、2-gram（词组）、3-gram（短语）等，重叠度越高，BLEU 分数越高（满分 100）。</p>
+<p>BLEU 的核心逻辑：</p>
+<ol class="arabic simple">
+<li><p>计算各阶 n-gram 的精确率（precision）：预测中出现的 n-gram 在参考中出现的比例；</p></li>
+<li><p>应用** brevity penalty（简短惩罚）**：若预测序列比参考序列短太多，降低分数（避免&quot;短而准&quot;的无意义翻译）；</p></li>
+<li><p>对各阶精确率取几何平均，得到最终 BLEU 分数。</p></li>
+</ol>
+<p>此处使用 NLTK 库的<code class="docutils literal notranslate"><span class="pre">corpus_bleu</span></code>函数，并通过<code class="docutils literal notranslate"><span class="pre">SmoothingFunction().method4</span></code>处理短序列或零重叠的情况（避免 BLEU 分数为 0，确保评估稳定性）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">calculate_bleu</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">src_field</span><span class="p">,</span> <span class="n">trg_field</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">beam_size</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    计算整个数据集的 BLEU 分数</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        data: 测试数据集（含源序列和参考目标序列）</span>
+<span class="sd">        model: 模型</span>
+<span class="sd">        src_field: 源语言 Field</span>
+<span class="sd">        trg_field: 目标语言 Field</span>
+<span class="sd">        max_len: 最大生成长度</span>
+<span class="sd">        beam_size: 束宽</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        BLEU 分数（0~1，乘以 100 后为百分比）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">trgs</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 存储所有参考序列（列表的列表，每个参考序列是词的列表）</span>
+    <span class="n">pred_trgs</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 存储所有预测序列（每个预测序列是词的列表）</span>
+    
+    <span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="c1"># 获取源序列（原始词列表）和参考目标序列</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">example</span><span class="p">)[</span><span class="s1">&#39;src&#39;</span><span class="p">]</span>  <span class="c1"># 源序列（如[&quot;ich&quot;, &quot;liebe&quot;, &quot;dich&quot;, &quot;.&quot;]）</span>
+        <span class="n">trg</span> <span class="o">=</span> <span class="nb">vars</span><span class="p">(</span><span class="n">example</span><span class="p">)[</span><span class="s1">&#39;trg&#39;</span><span class="p">]</span>  <span class="c1"># 参考目标序列（如[&quot;i&quot;, &quot;love&quot;, &quot;you&quot;, &quot;.&quot;]）</span>
+        
+        <span class="c1"># 处理参考序列：添加&lt;sos&gt;和&lt;eos&gt;，符合模型训练时的目标序列格式</span>
+        <span class="n">trg</span> <span class="o">=</span> <span class="p">[</span><span class="n">trg_field</span><span class="o">.</span><span class="n">init_token</span><span class="p">]</span> <span class="o">+</span> <span class="n">trg</span> <span class="o">+</span> <span class="p">[</span><span class="n">trg_field</span><span class="o">.</span><span class="n">eos_token</span><span class="p">]</span>
+        <span class="n">trgs</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">trg</span><span class="p">])</span>  <span class="c1"># corpus_bleu 要求参考序列为&quot;列表的列表&quot;（支持多参考）</span>
+        
+        <span class="c1"># 处理预测序列：调用 translate_sentence 得到预测文本，再分词为词列表</span>
+        <span class="n">pred_trg</span> <span class="o">=</span> <span class="n">translate_sentence</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">src</span><span class="p">),</span> <span class="n">model</span><span class="p">,</span> <span class="n">src_field</span><span class="p">,</span> <span class="n">trg_field</span><span class="p">,</span> <span class="n">max_len</span><span class="p">,</span> <span class="n">beam_size</span><span class="p">)</span>
+        <span class="n">pred_trgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pred_trg</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>  <span class="c1"># 分裂为词列表（如&quot;I love you.&quot; → [&quot;i&quot;, &quot;love&quot;, &quot;you&quot;, &quot;.&quot;]）</span>
+    
+    <span class="c1"># 计算 BLEU 分数：使用 method4 平滑，避免零分数</span>
+    <span class="n">smooth</span> <span class="o">=</span> <span class="n">SmoothingFunction</span><span class="p">()</span><span class="o">.</span><span class="n">method4</span>
+    <span class="n">bleu_score</span> <span class="o">=</span> <span class="n">corpus_bleu</span><span class="p">(</span><span class="n">trgs</span><span class="p">,</span> <span class="n">pred_trgs</span><span class="p">,</span> <span class="n">smoothing_function</span><span class="o">=</span><span class="n">smooth</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">bleu_score</span>
+
+<span class="c1"># 加载最佳模型：使用训练过程中保存的&quot;验证损失最低&quot;的模型参数，确保评估泛化能力</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;best-model.pt&#39;</span><span class="p">))</span>
+
+<span class="c1"># 计算测试集 BLEU 分数</span>
+<span class="n">bleu_score</span> <span class="o">=</span> <span class="n">calculate_bleu</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">SRC</span><span class="p">,</span> <span class="n">TRG</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;BLEU 分数: </span><span class="si">{</span><span class="n">bleu_score</span><span class="o">*</span><span class="mi">100</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>5.3 推理翻译<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<p>通过实际示例验证模型的翻译效果，选择常见的德语句子，观察模型是否能生成语义正确、语法通顺的英语翻译。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 测试一些示例翻译</span>
+<span class="n">examples</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Ich liebe dich.&quot;</span><span class="p">,</span>  <span class="c1"># 德语：我爱你。</span>
+    <span class="s2">&quot;Das Wetter ist heute schön.&quot;</span><span class="p">,</span>  <span class="c1"># 德语：今天天气很好。</span>
+    <span class="s2">&quot;Wie geht es dir?&quot;</span><span class="p">,</span>  <span class="c1"># 德语：你好吗？</span>
+    <span class="s2">&quot;Könnten Sie mir bitte helfen?&quot;</span>  <span class="c1"># 德语：您能帮我一下吗？</span>
+<span class="p">]</span>
+
+<span class="k">for</span> <span class="n">example</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+    <span class="n">translation</span> <span class="o">=</span> <span class="n">translate_sentence</span><span class="p">(</span><span class="n">example</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">SRC</span><span class="p">,</span> <span class="n">TRG</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;德语: </span><span class="si">{</span><span class="n">example</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;英语: </span><span class="si">{</span><span class="n">translation</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在 10 个 epoch 的训练后，预期的 BLEU 分数大约在 15-25 之间（满分为 100）。这个分数对于小型模型（d_model=256，3 层）和有限的训练时间来说是合理的——若增大模型规模（d_model=512，6 层）、增加训练 epoch（如 30 个）或使用更大的数据集（如 WMT 数据集），BLEU 分数可提升至 30 以上，甚至接近人类翻译水平。</p>
+<p>示例输出（模型训练充分后）：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>德语: Ich liebe dich.
+英语: i love you.
+
+德语: Das Wetter ist heute schön.
+英语: the weather is nice today.
+
+德语: Wie geht es dir?
+英语: how are you?
+
+德语: Könnten Sie mir bitte helfen?
+英语: could you please help me?
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id12">
+<h2>6. 总结<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<p>在本实验中，我们完成使用 torchtext 加载 IWSLT 2016 英德数据集，并进行分词和词汇表构建。实现推理解码，最后使用 BEU 进行评分。</p>
+<p>总体而言，本实验成功地将 Transformer 模型应用于英德翻译任务，并验证了多种优化技术的有效性。通过调整模型架构和训练参数，可以进一步提高翻译质量。不仅将 Transformer 模型应用于真实的机器翻译任务，还学习了工业界常用的优化技术和评估方法。这些技术对于训练高质量的大模型至关重要，也是深度学习实践中不可或缺的部分。</p>
+<p>你可以尝试调整超参数（如模型大小、学习率调度参数、束搜索宽度等），观察它们对翻译质量的影响，进一步加深对机器翻译任务的理解。</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData01Basic"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="CODE02TransformerTrain.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">CODE02:从零实现 Transformer(DONE)</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="CODE04Sinusoidal.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">CODE04:实现 Sinusoidal 编码(DONE)</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 环境准备与数据加载</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1.1 加载和预处理数据</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 模型构建与优化技术</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transformer">2.1 构建 Transformer 模型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#label-smoothing">2.2 标签平滑 (Label Smoothing)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#learning-rate-scheduling">2.3 学习率调度 (Learning Rate Scheduling)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient-clipping">2.4 梯度裁剪 (Gradient Clipping)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. 训练与验证</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 训练循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 验证循环</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.3 训练模型</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 推理解码算法</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#greedy-search">4.1 贪婪搜索 (Greedy Search)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-search">4.2 束搜索 (Beam Search)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">5. 模型评估</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">5.1 翻译函数</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bleu">5.2 BLEU 分数评估</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5.3 推理翻译</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">6. 总结</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ZOMI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Sep 14, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
