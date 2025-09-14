@@ -8,7 +8,9 @@
 
 ## 1. 推理与 AI Infra 关系
 
-### 1.1 推理 AI 走向生产门槛
+![AIInfra](../images/00Summary/05InferStack01.png)
+
+### 1.1 推理 AI 走向生产
 
 当大模型走向产业界的生产场景，一个普遍的困境逐渐凸显：许多企业耗费数月、数千万资金训练出的大模型，在实际部署时却屡屡碰壁 —— 要么因推理延迟过高被用户放弃，要么因单日推理成本超百万难以承受，最终沦为只能看、不能用 的技术摆设。这一困境背后，隐藏着一个被忽视的核心事实：训练只是大模型落地的 第一步，而推理才是决定大模型能否真正走进生产的生死门槛。
 
@@ -54,6 +56,8 @@
 
 端测 NPU 多采用共享内存设计，如苹果 A18 Pro Neural Engine 共享手机 LPDDR5 内存，通过 INT4 量化将 7B 模型体积压缩至 3.5GB，实现本地实时响应。
 
+![AIInfra](../images/00Summary/05InferStack02.png)
+
 当然那，显存并非越大越好，推理场景更需容量与模型规模、序列长度的适配，80GB HBM 跑 7B 模型，会造成 90%显存浪费；16GB HBM 跑千亿模型，则会因显存不足频繁中断。
 
 **带宽**则是连接算力与显存的桥梁，直接影响数据搬运效率：GPU 的 HBM 带宽堪称顶级，H100 的 HBM3 带宽达 3.35 TB/s，能支撑 Transformer 层每秒数千次的 QKV 数据读写；TPU v5e 的 HBM2e 带宽为 1.6 TB/s，虽低于 GPU，但满足中小模型的吞吐需求；NPU 的内存带宽以够用为目标，骁龙 8 Gen3 NPU 的内存带宽达 80 GB/s，配合 INT4 量化减少数据量，可实现 7B 模型亚秒级响应。推理中带宽瓶颈比训练更突出，训练可批量预处理数据，而推理需实时加载 KV Cache 与输入数据，若带宽不足，即便算力再强，也会出现算力空转。
@@ -68,11 +72,15 @@ NVLink 核心优势是高带宽低延迟，专为 8 卡内近距离协同设计�
 
 在 DP 中，NVLink 可实现多卡显存池化，8 张 H100 的 80GB 显存整合为 640GB，支持 batch size 从 32 提升至 256，吞吐提升 6 倍。但其局限性明显：仅支持 NVIDIA GPU，且最大互联规模为 8 卡，无法满足超大规模集群需求。
 
+![](../images/00Summary/05InferStack03.png)
+
 2. PCIe
 
 PCIe 是最普及的通用互连，优势是低成本高兼容性，支持 GPU、CPU、NPU 跨厂商适配：PCIe 5.0 单链路带宽 32 GB/s（x16 通道），延迟约 50μs，带宽为 NVLink 的 1/3、延迟为 5 倍，但成本仅为 NVLink 的 1/10。
 
 在中小规模并行场景，PCIe 5.0 完全够用，如 4 张 AMD MI300 通过 PCIe 5.0 做 DP，处理 70B 大模型推理，吞吐达单卡的 3.5 倍（接近理想值 4 倍），延迟仅增加 15%。但并行规模超 8 卡时，PCIe 带宽瓶颈凸显：16 卡 PCIe 集群总带宽仅 512 GB/s，远低于 8 卡 NVLink 的 900 GB/s，推理延迟会飙升至 200μs 以上。
+
+![](../images/00Summary/05InferStack04.png)
 
 3. InfiniBand/RDMA
 
@@ -103,6 +111,8 @@ HBM 是存储顶层，定位高速度低容量，服务实时计算数据：HBM 
 CPU 中的 DRAM 是存储中层，定位中速度中容量，提供扩展存储：DRAM 速度达 GB/s 级（DDR5 带宽 100 GB/s），容量可达百 GB 级，成本约每 GB 0.5 美元。
 
 推理中，DRAM 存储次高频数据：一是模型扩展权重，如 70B 模型的词表权重，无需实时计算但需频繁访问；二是中间计算结果，如 Transformer 层的 FFN 输出，需暂存供后续层使用；三是预处理后的输入数据，如批量文本的 Tokenize 结果。
+
+![](../images/00Summary/05InferStack05.png)
 
 3. NVMe
 NVMe 是存储下层，定位低速度大容量，缓存冷数据与模型：NVMe 速度达 GB/s 级，容量可达 TB 级，成本约每 GB 0.1 美元。推理中，NVMe 核心作用是突破显存限制：
@@ -136,6 +146,8 @@ SmartNIC 通过硬件 Offload 突破瓶颈，实现传输-预处理-协议一体
 cuBLAS 是英伟达官方推出的通用矩阵算子加速库，优势在于稳定性与兼容性，它针对英伟达 GPU 的 Tensor Core 做了深度优化。但 cuBLAS 的局限性也明显：针对大模型特有的注意力计算等操作，需上层框架二次封装，无法直接发挥最优性能。
 
 cutlass 是英伟达开源的可定制算子加速库，定位灵活优化，允许开发者根据模型架构定制内核。与 cuBLAS 的黑盒调用不同，cutlass 支持手动调整线程块大小、数据布局、精度类型。针对端侧 NPU 的 INT4 量化运算，cutlass 可定制低精度数据对齐逻辑，减少数据搬运开销，使推理延迟降低 15%。
+
+![](../images/00Summary/05InferStack06.png)
 
 Flash Attention 则是注意力计算专用库，专为解决 Transformer 架构的访存瓶颈而生。传统注意力计算需频繁读写全局显存，Flash Attention 通过分块计算+寄存器复用，将数据优先存于 GPU 寄存器与共享内存，大幅减少显存访问。
 
@@ -267,6 +279,8 @@ MoE 路由的核心是高效匹配请求与专家，主流策略分为 Top-K 路
 
 **Sharded Serving**专为千亿级大模型设计：将超大规模模型拆分为多个分片，每个分片部署在独立实例上，推理时通过网络协同计算。其核心价值是突破单实例显存限制。此外，Sharded Serving 还支持跨节点扩展，比如将分片部署在不同机柜的 GPU 上，通过 RoCEv2 以太网低延迟通信，实现万卡级集群的大模型服务。但部署复杂度高，需解决分片间的通信同步，适合通用大模型+高并发场景，如云端的公共 API 服务。
 
+![](../images/00Summary/05InferStack10.png)
+
 ### 5.2. 调度策略
 
 调度策略是平衡资源与体验的关键，通过提前储备资源、动态调整容量、优先保障核心请求，解决推理服务的冷启动延迟、峰谷资源错配、核心请求被挤兑三大痛点。
@@ -284,6 +298,8 @@ MoE 路由的核心是高效匹配请求与专家，主流策略分为 Top-K 路
 **KServe**是云原生优先的框架，基于 Kubernetes 构建，适合大规模、多团队协同的推理服务。其核心优势是标准化与可扩展性——通过 CRD（自定义资源）定义推理服务，支持模型版本管理（灰度发布、回滚）、多模型部署、自动伸缩等云原生能力；同时兼容多种推理引擎（TensorRT、vLLM、ONNX Runtime），可通过 Transformer 组件实现输入预处理（如文本 Tokenize）与输出后处理（如结果格式化），无需额外开发服务。
 
 **Triton Inference Server**是性能优先的框架，英伟达官方优化，适合 GPU 推理的高性能场景。其核心优势是多硬件/多引擎兼容+低延迟调度——支持 GPU、CPU、NPU 等硬件，可调用 TensorRT、vLLM、SGLang 等引擎；内置动态 Batching、模型并行、优先级调度等功能，在 H100 上运行 70B 模型时，吞吐比 KServe 高 30%，P99 延迟低 20%。此外，Triton 的模型仓库功能支持从 S3、GCS 等对象存储加载模型，无需本地存储，适配云端分布式部署。但 Triton 的云原生能力较弱，更适合聚焦性能、以 GPU 为主的推理场景。
+
+![](../images/00Summary/05InferStack08.png)
 
 **Ray**是分布式计算+推理编排的框架，适合复杂推理场景。其核心优势是灵活的任务编排——可将推理拆分为多个步骤，通过 Ray 的任务调度器分配到不同节点，支持跨节点的 Activation Offload、分布式 KV Cache。但 Ray 的模型管理能力较弱，更适合需要复杂流程编排的推理服务。
 
@@ -314,6 +330,8 @@ MoE 路由的核心是高效匹配请求与专家，主流策略分为 Top-K 路
 Prefill/Decode 分离的核心是**资源隔离与任务并行**：实践中常将两类任务分配至不同 GPU，避免相互抢占资源。例如 20% GPU 实例专门处理 Prefill，80%实例处理 Decode，通过分布式调度器动态分配任务：用户输入长文本时，优先转发至 Prefill，计算完成后将 KV Cache 同步至 Decode，立即启动逐 token 生成，实现 Prefill 结束即 Decode 开始的流水线衔接。
 
 端侧场景则通过轻量化分离适配资源约束：例如手机端推理 7B 模型时，将 Prefill 阶段的 QKV 计算拆解为 CPU 预处理+NPU 计算，CPU 先完成 tokenize 与数据对齐，NPU 专注矩阵运算；Decode 阶段则关闭 NPU 部分计算单元，优先保障 KV Cache 访存速度，满足实时对话需求。
+
+![](../images/00Summary/05InferStack09.png)
 
 ### 6.3. 动态 Batch 与 Token 并行
 
@@ -364,3 +382,40 @@ Token Parallel 则针对**长序列推理瓶颈**：传统单卡处理长序列�
 大模型推理的竞争，本质是推理全流程与 AI Infra 分层架构协同优化能力。从端侧 NPU 的 INT4 量化到云端 GPU 的 PD 分离，从 Trition 的动态 Batching 到 KV Cache 的分页管理，每一个优化环节都需 AI Infra 深度支撑—，脱离 AI Infra 的单点技术，无法真正解决大模型推理落地的成本与延迟问题。
 
 过去，CUDA 生态构建了 NVIDIA 的壁垒；未来，异构兼容、端云智能协同等推理将成为 AI Infra 的核心方向。对于开发者而言，理解推理全流程的每个环节需要 AI Infra 哪一层支撑，是把握 AI 趋势的关键。大模型的价值最终要通过推理落地实现，而 AI Infra 正是让这一价值的重要引擎。
+
+## 引用于参考
+
+- [1] OpenAI. *AI and Compute*. 2018. https://openai.com/research/ai-and-compute
+- [2] Narayanan, D., et al. *Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM*. SC 2021. https://arxiv.org/abs/2104.04473
+- [3] Google Cloud. *AI Infrastructure for Generative AI*. 2023. https://cloud.google.com/ai-infrastructure
+- [4] Pope, R., et al. *Efficiently Scaling Transformer Inference*. arXiv 2022. https://arxiv.org/abs/2211.05102
+- [5] NVIDIA. *Training vs. Inference: What’s the Difference?* 2021. https://blogs.nvidia.com/blog/2021/08/25/training-vs-inference-whats-the-difference
+- [6] Kwon, W., et al. *vLLM: Easy, Fast, and Cheap LLM Serving with PagedAttention*. SOSP 2023. https://arxiv.org/abs/2309.06180
+- [7] SGLang Team. *SGLang: A Fast Serving Framework for Large Language Models*. GitHub 2024. https://github.com/sgl-project/sglang
+- [8] NVIDIA. *H100 Tensor Core GPU Architecture Whitepaper*. 2022. https://resources.nvidia.com/en-us-tensor-core
+- [9] Qualcomm. *Snapdragon 8 Gen 3: AI Performance Overview*. 2023. https://www.qualcomm.com/snapdragon-8-gen-3
+- [10] Google. *TPU v5e: Efficient AI Training and Inference*. 2023. https://cloud.google.com/tpu
+- [11] NVIDIA. *NVLink and NVSwitch: Scaling GPU Performance*. 2022. https://www.nvidia.com/en-us/data-center/nvlink
+- [12] InfiniBand Trade Association. *InfiniBand Architecture Specification Vol. 1*. 2023. https://www.infinibandta.org
+- [13] Alibaba Cloud. *HPN7.0: High-Performance Ethernet for AI Clusters*. 2024. https://www.alibabacloud.com/blog
+- [14] Kwon, W., et al. *PagedAttention: Memory-Efficient Serving of LLMs*. SOSP 2023. https://arxiv.org/abs/2309.06180
+- [15] Intel. *NVMe SSD for AI Inference Caching*. 2023. https://www.intel.com/content/www/us/en/products/details/ssds
+- [16] Microsoft. *ONNX Runtime for Large Model Inference*. 2023. https://onnxruntime.ai
+- [17] NVIDIA. *FasterTransformer: Distributed Inference Library*. GitHub 2023. https://github.com/NVIDIA/FasterTransformer
+- [18] AnyScale. *Ray Serve: Scalable Model Serving*. 2023. https://docs.ray.io/en/latest/serve/index.html
+- [19] Frantar, E., et al. *GPTQ: Accurate Post-Training Quantization for LLMs*. ICLR 2023. https://arxiv.org/abs/2210.17323
+- [20] Hinton, G., et al. *Distilling the Knowledge in a Neural Network*. NIPS 2015. https://arxiv.org/abs/1503.02531
+- [21] Fedus, W., et al. *Switch Transformer: Scaling to Trillion Parameter Models*. JMLR 2022. https://arxiv.org/abs/2101.03961
+- [22] ByteDance. *Adaptive Routing for MoE Inference*. 2024. https://www.bytedance.com/en/tech/blog
+- [23] Kubernetes. *KServe: Kubernetes Custom Resource for Model Serving*. 2023. https://kserve.github.io/website
+- [24] NVIDIA. *Triton Inference Server: Architecture and Best Practices*. 2023. https://developer.nvidia.com/triton-inference-server
+- [25] Google SRE. *Monitoring Distributed Systems: The Four Golden Signals*. 2023. https://sre.google/sre-book/monitoring-distributed-systems
+- [26] OWASP. *AI Security and Privacy Guide*. 2024. https://owasp.org/www-project-ai-security
+- [27] Apple. *A18 Pro Neural Engine: On-Device AI Performance*. 2024. https://www.apple.com/ios/ios-18
+- [28] OpenAI. *Streaming and Sampling Strategies for GPT Models*. 2023. https://platform.openai.com/docs/guides/text-generation
+- [C-1] 人工智能数据工程中心.《李飞飞团队年度报告揭底大模型成本：Gemini Ultra是GPT-4的2.5倍》. 2024-04-17. https://aidc.shisu.edu.cn/c2/c1/c13626a180929/page.htm  
+- [C-2] 知乎专栏.《大模型的成本和效率》. 2025-03-18. https://zhuanlan.zhihu.com/p/31033488927  
+- [C-3] AIbase.《AI成本结构极端分化：训练烧钱与推理低价的商业困局》. 2025-08-23. https://www.aibase.com/zh/news/18660  
+- [C-4] 搜狐科技.《打破效率与成本的权衡：数据中心中AI推理的未来》. 2025-02-13. https://www.sohu.com/a/858654161_121902920  
+- [C-5] CSDN博客.《AI大模型训练成本到底有多大？》. 2024-06-06. https://blog.csdn.net/giszz/article/details/139506830  
+- [C-6] AI工具箱.《AI成本结构极端分化：训练烧钱与推理低价的商业困局》. 2025-06-06. https://ai-kit.cn/14668.html

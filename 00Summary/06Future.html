@@ -517,8 +517,8 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GSard 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
@@ -930,7 +930,7 @@ document.write(`
 <section id="id6">
 <h3>2.2 成长期（2016-2020）<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <p>2016 年 AlphaGo 的胜利成为转折点，深度学习进入工业化爆发期。模型参数从千万级跃升至百亿级，训练数据突破 PB 级，小规模集群彻底失效。这一阶段的核心矛盾是“模型规模激增与集群能力不足”，推动 AISystem 向着 AI Infra，从零散工具升级为体系化解决方案。</p>
-<p>2017 年谷歌提出的 Ring AllReduce 架构，通过环形拓扑将千卡集群的通信延迟降低 60%，替代 Parameter Server 成为主流方案。同年英伟达 NCCL 2.0 引入 GPU 直连技术，使 8 张 V100 的训练速度达到单卡的 7.5 倍，接近理想线性加速比。2020 年微软 DeepSpeed 的 ZeRO 技术将模型显存占用降低 8 倍，首次实现单节点训练 175B 参数模型的可能，为 GPT-3 训练提供了技术支撑。</p>
+<p>2016 年百度提出的 Ring AllReduce 架构，通过环形拓扑将千卡集群的通信延迟降低 60%，替代 Parameter Server 成为主流方案。同年英伟达 NCCL 2.0 引入 GPU 直连技术，使 8 张 V100 的训练速度达到单卡的 7.5 倍，接近理想线性加速比。2020 年微软 DeepSpeed 的 ZeRO 技术将模型显存占用降低 8 倍，首次实现单节点训练 175B 参数模型的可能，为 GPT-3 训练提供了技术支撑。</p>
 <p>推理引擎开始专业化分工。英伟达 TensorRT 3.0（2017 年）通过 INT8 量化实现 8 倍吞吐提升，Triton Inference Server（2019 年）的动态批处理方案将 GPU 利用率从 30%提升至 80%。硬件层面，英伟达 Volta 架构（2017 年）集成 Tensor Core，FP16 算力达 120 TFLOPS；谷歌 TPU v2（2016 年）在图像任务上的能效比是 GPU 的 3 倍，验证了专用 AI 芯片的价值。</p>
 <p>2020 年 GPT-3 的训练成为技术试金石，175B 参数模型在 1024 张 V100 集群上完成训练，既验证了成长期技术的价值，也暴露了千卡级集群的调度效率瓶颈，为下一阶段发展指明方向。</p>
 <p><img alt="AI Infra" src="../_images/06Future04.png" /></p>
@@ -987,7 +987,6 @@ document.write(`
 <li><p><strong>核心算法团队（大模型创新人才）</strong>：聚焦“训练范式创新”。摆脱硬件适配与数据优化的束缚，专注探索前沿方向——如快推理与慢推理的协同、强化学习（Reinforcement Learning）与多智能体（Multi-Agent）的范式演进，真正突破算法的未来边界。</p></li>
 </ul>
 <p>这种分工在小公司中易落地：团队规模小、沟通成本低，AI Infra、算法、数据团队可快速对齐目标；但在大厂中，因组织架构惯性（AI Infra多被归为“技术支持部门”，缺乏模型设计话语权），难以打破分工壁垒，最终拖累研发效率与成本控制。这也是DeepSeek能异军突起的关键——其早期便确立“算法转AI Infra团队主导结构设计”的逻辑，让模型与算力适配度远超同行，快速在大模型竞争中占据优势。</p>
-<p><img alt="AI Infra" src="../_images/06Future07.png" /></p>
 <p>可见，AI Infra在大模型时代的价值已远超“基础设施”的传统定义：它不仅是硬件与模型的“适配者”，更是效果与成本的“掌控者”。企业对AI Infra分工权责的认知深度，直接决定了其在大模型竞争中的起跑线位置。</p>
 </section>
 </section>
@@ -1000,6 +999,7 @@ document.write(`
 <p>从垂直整合方向看，有两类可行路径：一是“与硬件深度绑定”，类似游戏主机领域“PS5 靠独占游戏吸引用户”的逻辑，第三方 Infra 公司可与硬件厂商达成合作，以“独家技术支持”换取低价算力资源，再将硬件特性融入 Infra 优化方案。帮助硬件厂商打开市场，也让自身方案具备“硬件+软件”的复合壁垒，避免与其他通用工具同质化竞争。</p>
 <p>二是“与模型协同设计”，主动参与下游模型的结构设计，推动模型向适配自身 Infra 方案的方向迭代，例如 DeepSeek 早期因 Infra 团队对 GPU 并行能力的深刻理解，提前布局 MoE 架构，在相同算力下实现更大参数量训练，这种“模型结构+Infra 优化”的协同，让 DeepSeek 的模型与 Infra 方案形成绑定，其他 Infra 工具难以替代。</p>
 <p>但三方 Infra 的商业模式存在天然局限：训练端 Infra 服务因直接关系企业大模型的核心竞争力，头部模型厂商更倾向于自建团队；相对而言，推理端需求更标准化，且不涉及模型核心技术，成为第三方公司的主要发力方向。像国内典型案例如无问芯穹，自成立起便聚焦推理端 Infra 优化，提供从模型压缩到部署的全流程工具；潞晨科技早期尝试训练端服务，但受到大厂自建需求挤压。</p>
+<p><img alt="AI Infra" src="../_images/06Future07.png" /></p>
 </section>
 <section id="id14">
 <h3>4.2 国内外差距<a class="headerlink" href="#id14" title="Link to this heading">#</a></h3>

@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="06.Switch Trans 解读" />
+<meta property="og:title" content="06.Switch Transformer 解读" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData02MoE/06MOESwitch.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: XXXX XXX 本节视频:" />
+<meta property="og:description" content="Author by: 张晓天 2022年4月，距离ChatGPT发布还有半年，Google再次发布里程碑式工作《Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity》。该研究基于T5（Encoder-Decoder）架构，成功训练出参数量高达 1.6万亿（1.6..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: XXXX XXX 本节视频:" />
-<meta name="description" content="Author by: XXXX XXX 本节视频:" />
+<meta property="og:image:alt" content="Author by: 张晓天 2022年4月，距离ChatGPT发布还有半年，Google再次发布里程碑式工作《Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity》。该研究基于T5..." />
+<meta name="description" content="Author by: 张晓天 2022年4月，距离ChatGPT发布还有半年，Google再次发布里程碑式工作《Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity》。该研究基于T5（Encoder-Decoder）架构，成功训练出参数量高达 1.6万亿（1.6..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>06.Switch Trans 解读 &#8212; AIInfra AI基础设施</title>
+    <title>06.Switch Transformer 解读 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -74,13 +74,15 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData02MoE/06MOESwitch';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="07.GLaM &amp; ST-MOE 解读" href="07GLaM_STMOE.html" />
-    <link rel="prev" title="05.GSard 解读" href="05MOEGshard.html" />
+    <link rel="prev" title="05.GShard MOE 解读" href="05MOEGshard.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
@@ -517,8 +519,8 @@
 <li class="toctree-l2"><a class="reference internal" href="02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">05.GSard 解读</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">06.Switch Trans 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">05.GShard MOE 解读</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">06.Switch Transformer 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="09MoECore.html">09.MOE 模型可视化</a></li>
@@ -836,7 +838,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>06.Switch Trans 解读</h1>
+    <h1>06.Switch Transformer 解读</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -846,7 +848,19 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">模型参数量作为独立的缩放轴</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">模型设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">专家容量与负载均衡</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">系统与工程创新</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">模型蒸馏</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><strong>训练稳定性</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">多维并行训练</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">本节视频</a></li>
 </ul>
             </nav>
         </div>
@@ -859,12 +873,106 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="switch-trans">
-<h1>06.Switch Trans 解读<a class="headerlink" href="#switch-trans" title="Link to this heading">#</a></h1>
-<p>Author by:  XXXX
-XXX</p>
+<section class="tex2jax_ignore mathjax_ignore" id="switch-transformer">
+<h1>06.Switch Transformer 解读<a class="headerlink" href="#switch-transformer" title="Link to this heading">#</a></h1>
+<p>Author by: 张晓天</p>
+<p>2022年4月，距离ChatGPT发布还有半年，Google再次发布里程碑式工作《Switch Transformers: Scaling to Trillion Parameter Models with Simple and Efficient Sparsity》。该研究基于T5（Encoder-Decoder）架构，成功训练出参数量高达<strong>1.6万亿（1.6T）</strong>、包含<strong>2048个专家</strong>的稀疏模型。Switch Transformer的核心论点是：<strong>模型参数量应被视为一个独立于计算量的全新缩放维度</strong>。</p>
+<p>Switch Transformer所做的工作还是比较多的，包括：</p>
+<ol class="arabic simple">
+<li><p>模型结构简化：简化了Transformer上的MoE架构，提出Switch Transformer架构。</p></li>
+<li><p>MoE to dense：把训出来的效果较好的MoE模型蒸馏到dense模型，在压缩MoE模型99%的参数的情况下，效果还是比直接训练dense模型好。</p></li>
+<li><p>训练和微调技术：首次使用bf16成功训练MoE模型；更适合MoE结构的模型初始化；增加的专家正则化，改善了稀疏模型的微调和多任务训练。</p></li>
+<li><p>训练框架：结合数据、模型和专家并行性，训练了超过1T参数的MoE模型。</p></li>
+<li><p>多语言：在多语言数据集上训练，发现101种语言效果普遍有提升。</p></li>
+<li><p>训练效率：在同样的FLOPS/token的计算量下，Switch Transformer模型收敛速度有数倍的提升。</p></li>
+</ol>
+<p>本节将详细介绍其核心创新与技术细节，并总结其对未来的深远影响。</p>
 <section id="id1">
-<h2>本节视频<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>模型参数量作为独立的缩放轴<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>传统模型缩放面临一个根本性约束：模型性能的提升往往依赖于参数量的增加，而这又会直接导致训练和推理的计算成本（FLOPS）线性增长。</p>
+<p>Switch Transformer提出了一个突破性的观点：<strong>通过稀疏MoE模型，可以将模型参数量（Model Size）从一个与计算量（FLOPS）强耦合的变量，转变为一个独立的、可单独扩展的维度</strong>。</p>
+<p>这意味着，我们可以在<strong>保持每令牌计算量（FLOPS/token）几乎不变</strong>的前提下，<strong>极大地增加模型的总参数量</strong>，从而获得更好的模型性能。如下图所示，其目标是在相同的计算预算（横轴）下，通过增加参数量（从蓝色曲线切换到红色曲线），达到更优的性能（纵轴）。</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Performance │
+            │   --- Switch Transformer (Large Params, Fixed FLOPs)
+            │  /
+            │ /
+            │/_____
+            ├─────────────────────&gt; FLOPs/token
+           Dense Model (Coupled Params &amp; FLOPs)
+</pre></div>
+</div>
+<p>这一思想为大模型的发展提供了新的方向：不再仅仅追求更大的算力，而是通过算法和架构创新，更智能地利用算力，将计算资源用于扩大模型的“知识容量”而非“瞬时计算强度”。</p>
+</section>
+<section id="id2">
+<h2>模型设计<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>与GShard等先前采用Top-2路由的策略不同，Switch Transformer做出了一个大胆而关键的决定：<strong>将路由专家数量简化至Top-1</strong>。即，每个输入令牌（Token）只被路由到<strong>唯一一个</strong>最合适的专家（Expert）进行处理。</p>
+<p><img alt="Moe Switch" src="06AlgoData02MoE/images/06MOESwitch_01.png" /></p>
+<p>这种简化带来了多重优势：</p>
+<ul class="simple">
+<li><p><strong>计算效率</strong>：门控网络（Router）的计算量减半，只需计算一个最大值的索引。</p></li>
+<li><p><strong>通信效率</strong>：在分布式训练中，All-to-All的通信量降低为原来的1/k（k为专家数），极大地减少了设备间的通信瓶颈，这是实现超大规模扩展的关键。</p></li>
+<li><p><strong>实现简单</strong>：模型逻辑更加清晰，易于实现和调试。</p></li>
+</ul>
+<section id="id3">
+<h3>专家容量与负载均衡<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>与GShard一脉相承，Switch Layer引入了<strong>专家容量（Expert Capacity）</strong> 的概念。每个专家在一次前向传播中能处理的令牌数有一个上限，由<strong>容量因子（Capacity Factor）</strong> <code class="docutils literal notranslate"><span class="pre">C</span></code> 控制。</p>
+<ul class="simple">
+<li><p>专家容量 = <code class="docutils literal notranslate"><span class="pre">(批次中的令牌数</span> <span class="pre">*</span> <span class="pre">C)</span> <span class="pre">/</span> <span class="pre">专家数量</span></code></p></li>
+<li><p>如果<code class="docutils literal notranslate"><span class="pre">C=1.0</span></code>，则容量等于完美均衡时的平均值。</p></li>
+<li><p>实践中会设置一个略大于1的<code class="docutils literal notranslate"><span class="pre">C</span></code>（如1.1-1.25），以提供一个小的缓冲空间，减少令牌溢出的概率。</p></li>
+</ul>
+<p>当一个令牌被路由至一个已经达到其容量上限的专家时，即发生<strong>溢出（Overflow）</strong>。这些溢出的令牌将<strong>不会被任何专家处理</strong>，而是直接通过<strong>残差连接</strong>原封不动地传递至下一层。论文强调，<strong>低的溢出率是模型成功缩放的关键</strong>，因为高的溢出率意味着大量信息丢失，会严重损害模型性能。</p>
+<p>Top-1路由虽然高效，但也更容易引发负载不均衡问题（少数专家处理所有任务，多数专家被闲置）。为此，Switch Transformer设计了一种高效的<strong>辅助损失函数（Auxiliary Loss）</strong>——<strong>负载均衡损失</strong>。</p>
+<p>其设计目标是鼓励所有专家在一批数据中获得大致相等的重要度（即门控权重之和）。损失函数如下：
+<span class="math notranslate nohighlight">\(L_balance = α * E * sum_i (f_i * P_i)\)</span>
+其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(E\)</span>是专家总数。</p></li>
+<li><p><span class="math notranslate nohighlight">\(f_i\)</span>是第i个专家在一批数据中获得的门控权重总和（即“重要性”）。</p></li>
+<li><p><span class="math notranslate nohighlight">\(P_i\)</span>是第i个专家在一批数据中实际接收到的令牌数量的比例（即“负载”）。</p></li>
+<li><p><span class="math notranslate nohighlight">\(α\)</span>是一个超参数，用于控制均衡损失的强度。</p></li>
+</ul>
+<p>该损失函数的核心思想是**最小化专家重要性<span class="math notranslate nohighlight">\(f_i\)</span>与专家负载<span class="math notranslate nohighlight">\(P_i\)</span>之间的协方差。当所有专家既重要又承担均衡的负载时，损失最小。通过将此损失与主任务损失加权求和，共同参与梯度下降，模型能够自发地学习到一种均衡的路由策略，这是Switch Transformer能在极简路由下稳定训练的核心保障。</p>
+</section>
+</section>
+<section id="id4">
+<h2>系统与工程创新<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="id5">
+<h3>模型蒸馏<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>虽然MoE模型在训练和推理时计算效率高（FLOPS/token低），但其<strong>内存占用</strong>依然与总参数量成正比。一个拥有万亿参数的模型，即使每次只激活几十亿参数，也需要将所有参数加载到内存中。蒸馏的目的就是将巨型稀疏模型中学到的“知识”，压缩到一个更小、更易部署的稠密模型中。</p>
+<p>将预训练好的巨型Switch Transformer（教师模型）的知识，蒸馏到一个参数少得多的普通Dense Transformer（学生模型）中。学生模型的训练目标是同时最小化与真实标签的交叉熵（硬损失）和与教师模型输出的KL散度（软损失）。</p>
+<p>论文发现，蒸馏得到的稠密模型（例如，从1.6T参数蒸馏到11B参数）的性能，<strong>显著优于直接使用相同数据训练的同规模（11B）稠密模型</strong>。这证明了MoE模型的核心价值：它不仅是一个高效的推理架构，更是一个<strong>更强大的“知识容器”</strong>。大规模稀疏预训练的过程，其本质是让模型在极其庞大的参数空间中学到了更丰富、更鲁棒的表征和规律。</p>
+</section>
+<section id="id6">
+<h3><strong>训练稳定性</strong><a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>传统FP16精度范围小，在训练深度模型时容易因梯度 underflow/overflow 而失败。<strong>bfloat16</strong>提供了与FP32相同的指数范围，但保持了16位的存储大小。成功使用bfloat16是稳定训练的关键，它避免了数值溢出，同时减少了内存占用和通信开销。</p>
+<p>如果初始化门控网络不当，在训练初期某些专家可能获得极大的权重，导致“赢家通吃”，破坏负载均衡。论文中采用了更小的初始化标准差（例如，截断正态分布 with <code class="docutils literal notranslate"><span class="pre">stddev=1.0</span></code>），并尝试将Router的权重初始化为零，以确保训练初期路由尽可能均匀。</p>
+<p>超大MoE模型，在微调阶段容易过拟合特定下游任务，导致性能下降。论文引入了<strong>更大的dropout比率</strong>。在MoE层中，不仅在稠密部分使用dropout，在<strong>Router的输出（专家权重）上也应用了dropout</strong>。这强制模型不能过度依赖少数几个专家，必须保持一种冗余和鲁棒性。这项技术显著改善了模型在多任务学习和下游任务微调时的泛化能力。</p>
+</section>
+<section id="id7">
+<h3>多维并行训练<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>训练万亿模型无法依靠单一并行策略，必须进行多维融合。Switch Transformer的结合策略如下：</p>
+<ol class="arabic simple">
+<li><p>数据并行（Data Parallelism）：将大批次数据分割到多个核心（如TPU/GPU）上，每个核心拥有完整的模型副本，独立计算梯度，最后同步聚合。</p></li>
+<li><p><strong>模型并行（Model Parallelism）</strong>：当单个层的参数量太大，无法存于一个设备时（如巨大的FFN层），将<strong>单个专家</strong>的参数拆分到多个设备上。</p></li>
+<li><p><strong>专家并行（Expert Parallelism）</strong>：这是MoE的核心并行策略。将<strong>不同的专家</strong>放置在不同的设备上。当一个MoE层的前向传播开始时，所有令牌通过All-to-All通信被发送到其对应专家所在的设备上进行计算，计算完成后再通过另一个All-to-All通信将结果送回。</p></li>
+</ol>
+<p>Switch Transformer的创新在于<strong>无缝融合了这三种并行范式</strong>。</p>
+</section>
+</section>
+<section id="id8">
+<h2>小结<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<p>Switch Transformer是MoE发展史上的一个决定性瞬间。它在T5（encoder-decoder）基础上，简化 routing 策略，实现 1.6T 参数量，并论证了“参数量作为独立缩放轴”的革命性思想。</p>
+<p>其特点源于多个层面的协同创新：</p>
+<ul class="simple">
+<li><p><strong>算法层面</strong>：大胆的Switch（Top-1）路由和精心设计的负载均衡损失。</p></li>
+<li><p><strong>系统层面</strong>：对专家容量、通信、并行策略的深度优化。</p></li>
+<li><p><strong>工程层面</strong>：在训练稳定性、精度、蒸馏等方面的一系列实践技巧。</p></li>
+</ul>
+<p>Switch Transformer直接启发了后续一系列重要工作，为GPT-3.5、GPT-4等超大模型的技术路径埋下了伏笔。</p>
+</section>
+<section id="id9">
+<h2>本节视频<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
 <html>
 <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=114042236575649&bvid=BV1UsPceJEEQ&cid=28508818999&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>
@@ -911,7 +1019,7 @@ XXX</p>
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">05.GSard 解读</p>
+        <p class="prev-next-title">05.GShard MOE 解读</p>
       </div>
     </a>
     <a class="right-next"
@@ -939,7 +1047,19 @@ XXX</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">模型参数量作为独立的缩放轴</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">模型设计</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">专家容量与负载均衡</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">系统与工程创新</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">模型蒸馏</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6"><strong>训练稳定性</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">多维并行训练</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">本节视频</a></li>
 </ul>
   </nav></div>
 
