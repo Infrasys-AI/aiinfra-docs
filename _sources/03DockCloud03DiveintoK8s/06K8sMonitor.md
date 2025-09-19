@@ -1,3 +1,4 @@
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 # Kubernetes 容器监控与日志
 
 ## 为什么需要监控组件？
@@ -142,9 +143,51 @@ groups:
       summary: "High request latency on {{ $labels.instance }}"
 ```
 ## 容器日志
+日志通常是我们排查问题的一大杀器，在云原生中，容器应用和传统应用的日志管理存在很大区别。本节将介绍Kubernetes中的日志管理方案。
+
+### Kubernetes日志种类
+K8S中主要存在两种类型的日志：
+- 集群组件日志：1）运行在容器中的scheduler、kube-proxy、kube-apiserver等。2）未运行在容器中的kubelet和runtime等。
+- Pod日志
+
+### 应用POD日志
+Pod的日志管理是基于Docker引擎，日志的存储都是基于Docker的日志管理策略。
+![prometheus](../images/03DockCloud03DiveintoK8s/06podlog.png)
+
+如果Docker日志驱动为json-file，那么在k8s每个节点上，kubelet会为每个容器创建一个/var/log/containers/的软链接，并会将其链接到/var/log/pods/目录下相应pod目录的容器日志。被链接的日志文件也是软链接，最终链接到 Docker 容器引擎的日志存储目录：/docker数据盘目录/containers下相应容器的日志。
+![prometheus](../images/03DockCloud03DiveintoK8s/06podlog.png)
+
+可以看出这个地方进行了两次软链接，为什么要做两次软链接呢？
+
+主要是为了方便日志采集。/var/log/containers/目录下软链接了当前节点所有Pod下所有容器的所有日志文件，这样采集工具只需要采集/var/log/containers/目录就能采集到当前节点下的所有容器日志文件
+
+### k8s日志收集方案
+k8s官方给出三种日志收集方案：
+- 使用运行在每个节点上的节点级日志代理
+- 在应用Pod中增加记录日志的sidecar容器
+- 应用直接将日志输出到自定义位置中，如日志平台
+
+#### 节点级日志代理方案
+每个节点运行一个日志代理，以DaemonSet方式运行在每个节点中，由这个agent将日志转发出去。日志代理工具有fluentd、filebeat和logstash等。
+
+在Node上部署logging agent主要的优点是一个节点只需要部署一个agent，不会对应用Pod产生侵入性。缺点就是要求应用输出的日志，要直接输出到容器的stdout和stderr中。
+![prometheus](../images/03DockCloud03DiveintoK8s/06podlogproxy.png)
+
+#### sidecar容器方案
+针对日志代理方案的缺点，可以通过一个sidecar容器把这些文件重新输出到sidecar的stdout和stderr上。比如应用Pod中有一个容器，它把日志输出到容器的/var/log/a.log和b.log中，此时使用kubectl logs是看不到应用日志的。这种情况下就可以为这个Pod添加两个sidecar容器，分别将这两个日志文件以stdout和stderr的方式输出来。
+
+这种方案的缺点是宿主机上会存在两份相同的日志文件：一份是自己写的，一份是sidecar的stdout、stderr对应的json文件，会造成磁盘的浪费。
+![prometheus](../images/03DockCloud03DiveintoK8s/06logsidecar.png)
+
+使用sidecar还有另一种方式，就是不需要节点级日志代理。和应用容器在一起的sidecar直接运行在Pod中，由sidecar直接把日志传输到日志平台。这种方式在Pod数量很多的时候，资源消耗会很高。另一种缺点是由于日志没有打到stdout和stderr，所以无法使用kubectl logs查看日志。
+
+#### 应用直接输出
+由应用直接将日志输出到日志平台，比如Java应用中的appender。这种方案要求公司具有比较健壮的日志系统。
+
 
 ## 参考文档
 https://www.cnblogs.com/chenqionghe/p/11718365.html
 https://www.cnblogs.com/cheyunhua/p/17126430.html
 https://www.cnblogs.com/evescn/p/18256900
 https://www.cnblogs.com/vinsent/p/15830271.html
+https://www.cnblogs.com/zhangmingcheng/p/16452365.html

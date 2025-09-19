@@ -4,12 +4,6 @@
 
 Author by: 张柯帆
 
-!!!!!!!!!
-聚焦展开下面三个内容，下面的内容都有点浅显，不是很深入，图和技术点也相对较少
-​​Namespaces​​：实现隔离（进程、网络、文件系统挂载等）。
-​​Cgroups​​：实现资源限制（CPU、内存、磁盘 IO 等）。
-​​Union File Systems​​：实现镜像的分层与叠加（AUFS， overlay2）。
-
 ## 容器的出现
 
 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到**隔离性**在操作系统里的技术细节。
@@ -45,11 +39,11 @@ docker run "我的镜像"
 
 不过，若是只考虑隔离性，虚拟机也能做到，为什么非得用容器呢？
 
-![虚拟机和容器的架构对比](../images/03DockCloud02DockerK8s/02Container01.png)
+![虚拟机和容器的架构对比](images/01Container01.png)
 
 看这张架构图可以发现：容器是建设在**操作系统之上的**，会利用原本操作系统的能力来部署应用；而虚拟机的方案则是虚拟出任意多个操作系统，再在虚拟操作系统上部署应用。那既然容器是在操作系统之上的应用，那虚拟的操作系统能否继续安装 Docker 呢？答案是肯定的，例如下图的右半部分：
 
-![容器各种方式的应用](../images/03DockCloud02DockerK8s/02Container02.png)
+![容器各种方式的应用](images/01Container02.png)
 
 所以虚拟机跟容器并不是非此即彼的关系，而是可以协同工作，解决不同的问题。
 
@@ -144,13 +138,26 @@ int pid = clone(fn, stack, SIGCHLD | CLONE_NEWPID, NULL);
 
 只要设置 `CLONE_NEWPID` 这个 flag，子进程就会被创建到一个新的 PID Namespace 里。在这个新的 Namespace 中，这个子进程就是第一个进程，因此它的 PID 为 1。但是父进程拿到的 `pid` 还是其在物理机上的真实 PID。
 
+![namespace](images/01Container03.png)
+
 子进程创建子子进程和子子子进程时可以继续设置 `CLONE_NEWPID` ，每个子进程在自己的视角里都会认为自己是 1 号进程，在父进程里则会看到递增的 PID：2、3...。而从“上帝视角”（即父进程所在的 Namespace）看，拿到的 `pid` 变量依然是它在宿主机上的真实 PID。
 
 那么资源限制呢？ 这就要靠 Cgroups 了。虽然我们无法用一个简单的命令直观展示，但其原理就是将进程放入一个特定的“控制组”里。我们可以对这个组设置资源的上限。例如，我们可以规定某个容器内的所有进程，CPU 使用量不能超过 50%，内存最多只能使用 512MB。一旦超出，内核就会进行干预（如限制 CPU 时间、或杀死进程）。
 
 Docker 正是巧妙地将 Namespace 的视图隔离和 Cgroups 的资源限制结合在一起，才为我们提供了轻量而强大的容器环境。
 
-不过 [PID Namespace](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html) 只能隔离 PID 的视图。为了隔离其他内核资源，Linux 还提供了 [Cgroup](https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html)、[IPC](https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html)、[Network](https://man7.org/linux/man-pages/man7/network_namespaces.7.html)、[Mount](https://man7.org/linux/man-pages/man7/mount_namespaces.7.html)、[Time](https://www.man7.org/linux/man-pages/man7/time_namespaces.7.html)、[User](https://man7.org/linux/man-pages/man7/user_namespaces.7.html)、[UTS](https://man7.org/linux/man-pages/man7/uts_namespaces.7.html) 等 Namespace。
+不过 PID Namespace 只能隔离 PID 的视图。为了隔离其他内核资源，Linux 还提供了其他不同的 Namespace。
+
+截止最新的 Linux 内核中，已有 8 个不同的 namespace：
+
+- [PID Namespace](https://man7.org/linux/man-pages/man7/pid_namespaces.7.html)：隔离系统进程树；
+- [Network](https://man7.org/linux/man-pages/man7/network_namespaces.7.html)：主机网络堆栈的隔离；
+- [Mount](https://man7.org/linux/man-pages/man7/mount_namespaces.7.html)：隔离主机文件系统挂载点；
+- [UTS](https://man7.org/linux/man-pages/man7/uts_namespaces.7.html)：主机名的隔离；
+- [IPC](https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html)：隔离进程间通信实用程序（共享段、信号灯）；
+- [User](https://man7.org/linux/man-pages/man7/user_namespaces.7.html)：隔离系统用户ID；
+- [Cgroup](https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html)：主机的虚拟cgroup文件系统的隔离；
+- [Time](https://www.man7.org/linux/man-pages/man7/time_namespaces.7.html)：主机的全局时间和启动时间的隔离
 
 这些 API 可以通过 `clone()`, `setns()`, `unshare()` 等系统调用来使用。从版本号为 3.8 的内核开始，`/proc/(pid)/ns` 目录下会包含进程所属的 namespace 信息，可以直接使用如下命令查看当前进程所属的 namespace 信息：
 
@@ -177,5 +184,7 @@ lrwxrwxrwx 1 root root 0 Aug  1 12:00 uts -> uts:[4026531838]
 
 ## 参考与引用
 
-!!!!!!!!!!!!!!!!
-补充参考的资料
+- https://www.bmc.com/blogs/containers-vs-virtual-machines/
+- https://dockerlabs.collabnix.com/beginners/difference-vm-containers.html
+- https://man7.org/linux/man-pages/man7/namespaces.7.html
+- https://blog.quarkslab.com/digging-into-linux-namespaces-part-1.html

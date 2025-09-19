@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="03.计算优化：DS GEMM 原理" />
+<meta property="og:title" content="03.从混合精度训练到 DeepGEMM" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train03TrainAcceler/03DSGEMM.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 总结与思考:!!!!!!!!!!!!!! 参考与引用:" />
+<meta property="og:description" content="Author by: 管弘毅. 在人工智能领域，模型规模的持续扩张与计算资源的有限性之间形成了日益尖锐的矛盾。训练和部署拥有数千亿甚至万亿参数的大型语言模型（LLM）需要巨大的算力投入，这不仅带来了高昂的经济成本，也对能源消耗和硬件基础设施构成了严峻挑战。在这一背景下，领先的人工智能实验室正将研究重心从单纯追求模型规模转向探索更高效的算法和系统设计。 DeepSeek 公司是这一趋势的杰出代..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 总结与思考:!!!!!!!!!!!!!! 参考与引用:" />
-<meta name="description" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 总结与思考:!!!!!!!!!!!!!! 参考与引用:" />
+<meta property="og:image" content="/_images/social_previews/summary_04Train03TrainAcceler_03DSGEMM_a0ce5be4.png" />
+<meta property="og:image:alt" content="Author by: 管弘毅. 在人工智能领域，模型规模的持续扩张与计算资源的有限性之间形成了日益尖锐的矛盾。训练和部署拥有数千亿甚至万亿参数的大型语言模型（LLM）需要巨大的算力投入，这不仅带来了高昂的经济成本，也对能源消耗和硬件基础设施构成了严峻挑战。在这一背景下，领先的人工智能实验室正将研究重心从单纯追求模..." />
+<meta name="description" content="Author by: 管弘毅. 在人工智能领域，模型规模的持续扩张与计算资源的有限性之间形成了日益尖锐的矛盾。训练和部署拥有数千亿甚至万亿参数的大型语言模型（LLM）需要巨大的算力投入，这不仅带来了高昂的经济成本，也对能源消耗和硬件基础设施构成了严峻挑战。在这一背景下，领先的人工智能实验室正将研究重心从单纯追求模型规模转向探索更高效的算法和系统设计。 DeepSeek 公司是这一趋势的杰出代..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>03.计算优化：DS GEMM 原理 &#8212; AIInfra AI基础设施</title>
+    <title>03.从混合精度训练到 DeepGEMM &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -74,6 +74,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '04Train03TrainAcceler/03DSGEMM';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
@@ -84,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -315,6 +317,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -348,6 +351,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -386,7 +390,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型训练加速</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -423,9 +427,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -836,7 +840,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>03.计算优化：DS GEMM 原理</h1>
+    <h1>03.从混合精度训练到 DeepGEMM</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -846,8 +850,39 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">混合精度训练</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">低精度深度学习的范式演进</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">保守的混合精度：从 32 位到 16 位</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fp8">FP8 的前景与挑战</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">缩放策略</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#just-in-time-scaling">即时缩放（Just-in-Time Scaling）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#delayed-scaling">延迟缩放（Delayed Scaling）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fine-grained-scaling">细粒度缩放（Fine-Grained Scaling）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">DeepGEMM</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm">分组 GEMM</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm-normal-gemm">常规稠密 GEMM (Normal GEMM)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm-contiguous-layout">分组 GEMM (连续布局 - Contiguous Layout)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm-masked-layout">分组 GEMM (掩码布局 - Masked Layout)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">GEMM 种类对比</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warp-specialization">Warp Specialization 与异步流水线</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Warp Specialization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">异步流水线</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">细粒度资源管理</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">FP8 混合精度计算</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">参考资料</a></li>
 </ul>
             </nav>
         </div>
@@ -860,17 +895,369 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="ds-gemm">
-<h1>03.计算优化：DS GEMM 原理<a class="headerlink" href="#ds-gemm" title="Link to this heading">#</a></h1>
-<blockquote>
-<div><p>这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！</p>
-</div></blockquote>
+<section class="tex2jax_ignore mathjax_ignore" id="deepgemm">
+<h1>03.从混合精度训练到 DeepGEMM<a class="headerlink" href="#deepgemm" title="Link to this heading">#</a></h1>
+<ul class="simple">
+<li><p>Author by: 管弘毅</p></li>
+</ul>
+<p>在人工智能领域，模型规模的持续扩张与计算资源的有限性之间形成了日益尖锐的矛盾。训练和部署拥有数千亿甚至万亿参数的大型语言模型（LLM）需要巨大的算力投入，这不仅带来了高昂的经济成本，也对能源消耗和硬件基础设施构成了严峻挑战。在这一背景下，领先的人工智能实验室正将研究重心从单纯追求模型规模转向探索更高效的算法和系统设计。</p>
+<p>DeepSeek 公司是这一趋势的杰出代表。其核心理念在于，通过“更智能的算法”而非依赖于庞大的 GPU 集群来实现顶尖性能。这一理念在其模型 DeepSeek-V3 的训练过程中得到了充分体现。作为一个拥有 6710 亿总参数的混合专家（MoE）模型，其完整的训练过程仅消耗了 278.8 万 H800 GPU 小时，这一数字对于同等规模的模型而言是极其高效的。这种效率的背后，是一系列精心设计的架构创新和硬件感知的算法优化，旨在从根本上重塑 AI 的经济学。</p>
+<p>性能优化的核心不仅仅是追求每秒浮点运算次数（FLOPs），而是转向一个更加多维的视角，涵盖了数据在内存和计算单元之间的移动效率、内存占用，以及<strong>算法与底层硬件架构的协同设计</strong>。正是在这种对极致效率的追求下，以 8 位浮点数（FP8）为代表的低精度计算技术，从一个前沿的学术探索，演变为构建下一代高性能 AI 系统的关键基石。</p>
 <section id="id1">
-<h2>总结与思考<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!!!!!!!</p>
-</section>
+<h2>混合精度训练<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <section id="id2">
-<h2>参考与引用<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<h3>低精度深度学习的范式演进<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<section id="id3">
+<h4>保守的混合精度：从 32 位到 16 位<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>在深入探讨 FP8 之前，有必要理解为其铺平道路的混合精度训练（Mixed-Precision Training）技术。默认情况下，大多数深度学习框架使用 32 位浮点数（FP32）进行所有计算。FP32 提供了宽广的动态范围和高精度，确保了训练过程的数值稳定性。然而，研究发现，模型中的许多计算，特别是矩阵乘法和卷积等计算密集型操作，并不需要如此高的精度。</p>
+<p>混合精度训练的核心思想是在同一个训练流程中战略性地结合使用多种数值精度格式。具体而言，它将大部分计算和数据存储（如模型权重、激活值和梯度）转换为 16 位浮点格式（如 FP16 或 BF16），同时保留网络中对精度敏感的关键部分（如损失计算、优化器状态和主权重副本）为 FP32 格式 。</p>
+<p>这种策略带来了显著的优势：</p>
+<ul class="simple">
+<li><p><strong>提升计算速度</strong>：现代 NVIDIA GPU（自 Volta 架构起）配备了 Tensor Core，其专门用于加速低精度矩阵运算的硬件单元。使用 FP16 或 BF16 可以充分利用 Tensor Cores，实现数倍于 FP32 的理论吞吐量。</p></li>
+<li><p><strong>减少内存占用</strong>：将数据精度从 32 位减半至 16 位，可以直接将模型的参数、梯度和激活值所占用的内存减少近一半。这使得在单个 GPU 上能够训练更大规模的模型，或使用更大的批量大小（batch size）以提升硬件利用率。</p></li>
+</ul>
+<p>然而，转向低精度也带来了挑战，最主要的是数值下溢（underflow）问题。FP16 的动态范围远小于 FP32，在反向传播过程中，一些数值极小的梯度可能会被截断为零，导致模型参数无法得到有效更新。为了解决这个问题，混合精度训练引入了两个关键技术：</p>
+<ul class="simple">
+<li><p><strong>损失缩放（Loss Scaling）</strong>：在反向传播开始前，将损失值乘以一个较大的缩放因子，从而按比例放大所有梯度值，使其进入 FP16 的可表示范围内。在优化器更新权重之前，再将梯度除以相同的缩放因子，恢复其原始大小。</p></li>
+<li><p><strong>FP32 主权重（Master Weights）</strong>：在优化器内部维护一份 FP32 精度的权重副本。每次参数更新都作用于这份高精度的副本上，然后再将更新后的权重转换为 FP16 用于下一次前向传播。这可以避免因连续的、微小的 FP16 更新量累积而导致的精度损失。</p></li>
+</ul>
+<p>在 PyTorch 等主流框架中，这些复杂的操作被封装在 <code class="docutils literal notranslate"><span class="pre">torch.cuda.amp</span></code> 模块中，通过 <code class="docutils literal notranslate"><span class="pre">autocast</span></code> 上下文管理器和 <code class="docutils literal notranslate"><span class="pre">GradScaler</span></code> 类，开发者可以轻松地将混合精度训练集成到现有代码中。混合精度训练已成为训练大型模型的标准实践。</p>
+</section>
+<section id="fp8">
+<h4>FP8 的前景与挑战<a class="headerlink" href="#fp8" title="Link to this heading">#</a></h4>
+<p>随着 FP16 和 BF16 的成功应用，大家又将进一步提升的希望寄托在了更少位宽的 FP8 上。Nvidia 在其 Hopper 和 Blackwell 架构上加入了对于 FP8 的硬件支持，使其在理论上可以获得更好的计算吞吐量。</p>
+<p>但是从 16 位转向 8 位并没有那么简单，因为即使是将数据从 FP32 转换为 FP16 和 BF16，其动态范围也足以应付大部分的数据计算，一个单一、全局的缩放因子通常足以应对整个网络的数值下溢问题。而 FP8 的动态范围过小，以至于网络中不同层、不同张量的数值分布差异巨大，一个统一的缩放因子变得不可行。这就意味着，如果我们希望使用 FP8，就需要为每个 FP8 的张量计算一个独立的局部缩放因子，这是一种<strong>从全局到局部的数值管理范式转变</strong>。</p>
+<p>这正是像 NVIDIA Transformer Engine 和 DeepSeek DeepGEMM 这样的专业库诞生的根本原因。它们的目标，就是在享受 FP8 极致效率的同时，驯服其内在的数值不稳定性，从而在性能和精度之间找到新的平衡点。</p>
+</section>
+</section>
+<section id="id4">
+<h3>缩放策略<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>一个简单的将高精度张量转化为 FP8 的操作如下：</p>
+<ol class="arabic simple">
+<li><p><strong>计算 <code class="docutils literal notranslate"><span class="pre">amax</span></code></strong>：对于给定的高精度张量，首先计算其所有元素的绝对值的最大值，即 <code class="docutils literal notranslate"><span class="pre">amax</span></code>。这个值代表了该张量的数值范围。</p></li>
+<li><p><strong>确定缩放因子</strong>：根据 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 和目标 FP8 格式的最大可表示值，计算出一个缩放因子。例如，一个简单的缩放因子可以是 <code class="docutils literal notranslate"><span class="pre">scale</span> <span class="pre">=</span> <span class="pre">amax</span> <span class="pre">/</span> <span class="pre">FP8_MAX_VALUE</span></code>。</p></li>
+<li><p><strong>量化（Quantization）</strong>：将原始高精度张量中的每个元素除以该缩放因子，然后将结果转换为 FP8 格式。</p></li>
+<li><p><strong>反量化（Dequantization）</strong>：在完成计算后需要将 FP8 张量转换回高精度格式。这时，只需将 FP8 张量中的每个元素乘以之前使用的缩放因子即可。</p></li>
+</ol>
+<section id="just-in-time-scaling">
+<h4>即时缩放（Just-in-Time Scaling）<a class="headerlink" href="#just-in-time-scaling" title="Link to this heading">#</a></h4>
+<p>这种策略在操作执行时动态计算缩放因子。例如，一个算子首先以高精度格式计算并写出其输出，然后扫描整个输出张量以找到 <code class="docutils literal notranslate"><span class="pre">amax</span></code>，计算缩放因子，最后再将高精度输出缩放并转换为 FP8 格式。这种方法虽然精确，但需要对数据进行多次传递，带来了巨大的性能开销，严重削弱了使用 FP8 带来的速度优势，因此在实践中几乎是不可行的。</p>
+</section>
+<section id="delayed-scaling">
+<h4>延迟缩放（Delayed Scaling）<a class="headerlink" href="#delayed-scaling" title="Link to this heading">#</a></h4>
+<p>这是目前最实用和最主流的策略。它避免了即时缩放的性能瓶颈，其核心思想是：当前迭代步骤中某个张量的 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 值，可以由其在过去几次迭代中的 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 值来近似。具体做法是，为每个需要转换为 FP8 的张量维护一个 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 历史记录缓冲区。在当前迭代中，系统会根据这个历史记录（例如，取历史中的最大值）来计算缩放因子。同时，在本次计算完成后，会得到当前张量的真实 <code class="docutils literal notranslate"><span class="pre">amax</span></code>，并用它来更新历史记录缓冲区，以供下一次迭代使用。这种方法使得 FP8 计算可以全速进行，代价是需要额外存储 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 历史记录 。</p>
+</section>
+<section id="fine-grained-scaling">
+<h4>细粒度缩放（Fine-Grained Scaling）<a class="headerlink" href="#fine-grained-scaling" title="Link to this heading">#</a></h4>
+<p>尽管延迟缩放解决了性能问题，但无论是即时缩放还是延迟缩放，如果以整个张量（per-tensor）为单位进行缩放，都会面临**异常值（outlier）**敏感性问题。在深度学习模型中，权重或激活矩阵中可能存在少数数值极大的异常值。如果基于包含这些异常值的全局 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 来计算缩放因子，这个因子会变得非常大，导致矩阵中绝大多数正常数值在缩放后变得极其接近于零，从而在量化到 FP8 时丢失所有精度信息。</p>
+<p>为了解决这一致命问题，DeepSeek 团队提出了一种更先进的细粒度缩放策略。其核心思想是将一个大矩阵划分为多个小块（blocks），并为每个小块计算独立的缩放因子。具体实现为：</p>
+<ul class="simple">
+<li><p><strong>块级缩放（Blockwise Scaling）</strong>：对于权重矩阵，将其划分为多个 128x128 大小的子矩阵，并为每个子矩阵独立计算和应用缩放因子。</p></li>
+<li><p><strong>片级缩放（Tilewise/Groupwise Scaling）</strong>：对于激活矩阵，以 1x128 大小的子向量为单位进行独立的缩放和量化。</p></li>
+</ul>
+<p>在实际应用中，细粒度缩放是与<strong>延迟缩放</strong>相结合的。也就是说，它为每个小块（block/tile）维护一个 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 历史记录，并使用上一轮的 <code class="docutils literal notranslate"><span class="pre">amax</span></code> 来确定当前轮的缩放因子。此外，计算的异常值的影响被局限在它所在的那一个小块内。其他不包含异常值的小块可以使用更合适的、更小的缩放因子，从而完美地保留了这些区域的数值精度。这对于模型的整体性能至关重要。</p>
+</section>
+</section>
+</section>
+<section id="id5">
+<h2>DeepGEMM<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>本部分内容介绍了 DeepSeek 开发的 DeepGEMM 矩阵乘法库，相对于 Cutlass 这种官方提供的通用实现而言，DeepGEMM 更多是为 FP8 MoE 模型这一前沿且关键的应用场景，提供了一个比通用库更高效、更易用的专业解决方案。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>特性</p></th>
+<th class="head"><p>DeepGEMM</p></th>
+<th class="head"><p>CUTLASS (CUDA Template Library)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>设计哲学</p></td>
+<td><p>专为 FP8 和 MoE 场景优化的轻量级、高性能解决方案</p></td>
+<td><p>通用、可组合、可扩展的 GEMM 构建模块库，覆盖广泛的 GEMM 实现空间</p></td>
+</tr>
+<tr class="row-odd"><td><p>编译方式</p></td>
+<td><p>运行时即时编译（JIT），无需预编译</p></td>
+<td><p>编译时模板元编程，生成高度特化的核函数</p></td>
+</tr>
+<tr class="row-even"><td><p>FP8 支持</p></td>
+<td><p>核心特性，支持先进的细粒度缩放和双层累加</p></td>
+<td><p>支持 FP8，但需要用户通过模板参数自行构建和配置复杂的实现</p></td>
+</tr>
+<tr class="row-odd"><td><p>MoE 专用优化</p></td>
+<td><p>提供为 MoE 预充填和解码阶段定制的 <code class="docutils literal notranslate"><span class="pre">contiguous</span></code> 和 <code class="docutils literal notranslate"><span class="pre">masked</span></code> Grouped GEMM</p></td>
+<td><p>提供通用的 Grouped GEMM，但未针对 MoE 的特定工作流进行深度优化</p></td>
+</tr>
+<tr class="row-even"><td><p>易用性</p></td>
+<td><p>API 简洁明了，专注于特定用例，易于上手</p></td>
+<td><p>学习曲线陡峭，需要深入理解 CUDA 和模板编程才能有效使用</p></td>
+</tr>
+<tr class="row-odd"><td><p>目标硬件</p></td>
+<td><p>专为 NVIDIA Hopper (SM90) 和 Blackwell (SM100) 架构优化</p></td>
+<td><p>支持从 Pascal 到 Blackwell 的多代 NVIDIA GPU 架构</p></td>
+</tr>
+<tr class="row-even"><td><p>依赖与体量</p></td>
+<td><p>依赖极少，核心代码库非常小巧</p></td>
+<td><p>庞大的头文件库，依赖于复杂的 C++ 模板元编程技术</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="gemm">
+<h3>分组 GEMM<a class="headerlink" href="#gemm" title="Link to this heading">#</a></h3>
+<p>由于 MoE 中每个专家都有自己的权重矩阵，我们不能像普通模型那样用一个大的矩阵乘法一次性处理所有 tokens，而是需要为每个专家分别执行一次矩阵乘法，这就产生了对分组 GEMM (Grouped GEMM) 的需求。在此基础上，由于模型在预填充（Prefill）和解码（Decode）两个阶段的计算特征不同，为了对它们分别进行高效计算，DeepGEMM 提供了两种不同的分组 GEMM 内核：连续布局 (Contiguous Layout) 和掩码布局 (Masked Layout)。</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="c1">// deep_gemm/include/deep_gemm/scheduler.cuh</span>
+<span class="k">enum</span><span class="w"> </span><span class="n">class</span><span class="w"> </span><span class="n">GemmType</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Normal</span><span class="p">,</span>
+<span class="w">    </span><span class="n">GroupedContiguous</span><span class="p">,</span>
+<span class="w">    </span><span class="n">GroupedMasked</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<section id="gemm-normal-gemm">
+<h4>常规稠密 GEMM (Normal GEMM)<a class="headerlink" href="#gemm-normal-gemm" title="Link to this heading">#</a></h4>
+<p>这是最基础、最常见的矩阵乘法形式，即计算 <code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">*</span> <span class="pre">B</span></code>。</p>
+<ul class="simple">
+<li><p>一次性计算两个完整的、稠密的矩阵。</p></li>
+<li><p>在处理一个普通的 FFN 层时，所有 tokens 会被送入同一个 FFN。这时，可以将这些 tokens 的数据堆叠成一个矩阵 A，然后与 FFN 层的权重矩阵 B 进行一次大规模的常规稠密 GEMM。</p></li>
+<li><p><strong>适用场景</strong>：适用于非 MoE 模型的计算，或者 MoE 模型中非专家部分的计算。DeepGEMM 库也为此类通用计算提供了高效的内核。</p></li>
+</ul>
+</section>
+<section id="gemm-contiguous-layout">
+<h4>分组 GEMM (连续布局 - Contiguous Layout)<a class="headerlink" href="#gemm-contiguous-layout" title="Link to this heading">#</a></h4>
+<p>这种 GEMM 专门为处理多个独立的、但可以被组织在一起的小型计算任务而设计。</p>
+<ul class="simple">
+<li><p>将多个小矩阵乘法的输入数据（A 矩阵）在内存中<strong>拼接成一个大的、连续的张量</strong>，然后调用一个特殊内核来一次性处理这些“分组”的计算。</p></li>
+<li><p><strong>Prefill 阶段</strong>：</p>
+<ol class="arabic simple">
+<li><p><strong>数据准备</strong>：当模型处理用户输入的完整长文本（即 <strong>预填充 Prefill 阶段</strong>）时，我们可以收集所有被路由到同一专家的 tokens。例如，将 Tokens 1, 5, 8 的数据在内存中紧密地排列在一起，形成一个 <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">x</span> <span class="pre">hidden_dim</span></code> 的小矩阵；将 Tokens 2, 9 的数据排列成 <code class="docutils literal notranslate"><span class="pre">2</span> <span class="pre">x</span> <span class="pre">hidden_dim</span></code> 的矩阵。</p></li>
+<li><p><strong>拼接</strong>：然后，我们将这些为不同专家准备的小矩阵<strong>拼接 (Concatenate)</strong> 成一个更大的、连续的矩阵 <code class="docutils literal notranslate"><span class="pre">A</span></code>。这个大矩阵 <code class="docutils literal notranslate"><span class="pre">A</span></code> 的前 3 行是给专家 A 的，接下来 2 行是给专家 B 的，以此类推。</p></li>
+<li><p><strong>计算</strong>：<code class="docutils literal notranslate"><span class="pre">Grouped</span> <span class="pre">GEMMs</span> <span class="pre">(contiguous</span> <span class="pre">layout)</span></code> 内核接收这个拼接后的大矩阵 <code class="docutils literal notranslate"><span class="pre">A</span></code> 和所有专家的权重矩阵，然后高效地完成所有分组的矩阵乘法。</p></li>
+</ol>
+</li>
+<li><p><strong>适用场景</strong>：这种方式非常适合<strong>预填充 (Prefill) 阶段</strong>。因为预填充阶段的计算量大，输入序列长，将计算任务打包成连续的形式可以最大化计算吞吐量。它能很好地处理动态变化的输入形状，因为每次请求中被路由到每个专家的 token 数量都可能不同。</p></li>
+</ul>
+</section>
+<section id="gemm-masked-layout">
+<h4>分组 GEMM (掩码布局 - Masked Layout)<a class="headerlink" href="#gemm-masked-layout" title="Link to this heading">#</a></h4>
+<p>这是一种更为灵活的分组 GEMM，它不要求输入数据是连续的，而是通过一个“掩码”来指定哪些数据是有效的。</p>
+<ul class="simple">
+<li><p>在一个预先分配好的、形状固定的内存区域中进行计算，并使用一个额外的<strong>掩码张量 (Mask Tensor)</strong> 来告诉计算单元只处理那些被标记为“有效”的数据。</p></li>
+<li><p><strong>Decode 阶段</strong>：</p>
+<ol class="arabic simple">
+<li><p><strong>数据准备</strong>：当模型逐个生成 token（即 <strong>解码 Decode 阶段</strong>）时，延迟是关键。在这一阶段，每个请求每次只处理一个 token。假设我们预先为每个专家分配了一个能容纳 4 个 tokens 的固定大小的内存槽位。</p></li>
+<li><p><strong>填充与掩码</strong>：在某一个解码步骤中，Token X 被路由到专家 A，Token Y 被路由到专家 B。我们会将 Token X 的数据放入专家 A 的第一个槽位，将 Token Y 的数据放入专家 B 的第一个槽位。其他槽位都是空的。</p></li>
+<li><p><strong>计算</strong>：我们会创建一个掩码张量，标记出专家 A 的第一个槽位和专家 B 的第一个槽位是有效的。<code class="docutils literal notranslate"><span class="pre">Grouped</span> <span class="pre">GEMMs</span> <span class="pre">(masked</span> <span class="pre">layout)</span></code> 内核会读取这个预分配的大张量和掩码，<strong>跳过所有无效槽位</strong>，只对有效数据执行矩阵乘法。</p></li>
+</ol>
+</li>
+<li><p><strong>适用场景</strong>：这种方式非常适合对延迟要求极高的<strong>解码 (Decode) 阶段</strong>。因为它使用了固定的内存布局，所以可以与 <strong>CUDA Graph</strong> 完美兼容。CUDA Graph 能显著减少内核启动的开销，这对于解码阶段这种需要反复执行大量小计算的场景至关重要。</p></li>
+</ul>
+</section>
+<section id="id6">
+<h4>GEMM 种类对比<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>特性</p></th>
+<th class="head"><p>常规稠密 GEMM</p></th>
+<th class="head"><p>分组 GEMM (连续布局)</p></th>
+<th class="head"><p>分组 GEMM (掩码布局)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>核心思想</strong></p></td>
+<td><p>计算单个大矩阵乘法</p></td>
+<td><p>将多个小任务的输入拼接成一个连续的大张量进行批处理</p></td>
+<td><p>在固定大小的内存上，使用掩码来计算有效部分</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>主要应用阶段</strong></p></td>
+<td><p>通用计算、非 MoE 层</p></td>
+<td><p>预填充 (Prefill) 阶段</p></td>
+<td><p>解码 (Decode) 阶段</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>输入数据布局</strong></p></td>
+<td><p>单一、稠密的矩阵</p></td>
+<td><p>动态大小、在内存中连续排列的多个数据块</p></td>
+<td><p>固定大小的内存块，通过掩码指定有效数据</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>关键优势</strong></p></td>
+<td><p>简单直接</p></td>
+<td><p>计算吞吐量高，适合处理长序列和动态形状</p></td>
+<td><p>延迟极低，与 CUDA Graph 兼容以减少启动开销</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>与DeepEP的配合</strong></p></td>
+<td><p>不适用</p></td>
+<td><p>与 &quot;Normal Dispatch&quot; 模式配合</p></td>
+<td><p>与 &quot;Low-Latency Dispatch&quot; 模式配合</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="warp-specialization">
+<h3>Warp Specialization 与异步流水线<a class="headerlink" href="#warp-specialization" title="Link to this heading">#</a></h3>
+<p>DeepGEMM 获取高性能的关键在于其充分利用了 NVIDIA Hopper 架构的新特性，其核心思想是 Warp Specialization (WS，线程束专门化) 和异步计算访存流水线。</p>
+<section id="id7">
+<h4>Warp Specialization<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<p>Warp Specialization 指的是在一个 CUDA Block 中，将线程（Warps）划分为两组，分别承担流水线的不同阶段：</p>
+<ol class="arabic simple">
+<li><p><strong>生产者线程</strong>：通常是 128 个线程 (4 个 Warp)，负责加载数据，使用 Hopper 架构的 <strong>TMA (Tensor Memory Accelerator)</strong> 硬件单元以异步的方式将矩阵 A 和 B 从 GMEM 直接搬运到 SMEM 中。</p></li>
+<li><p><strong>消费者线程</strong>：通常是 128 或 256 个线程，负责执行计算，等待生产者准备好数据后调用 <code class="docutils literal notranslate"><span class="pre">wgmma</span></code> 指令执行矩阵计算。</p></li>
+</ol>
+<p>通过这种方式，计算与数据访存可以实现重叠执行：当消费者线程束在计算当前数据分块时，生产者线程束已经在为下一个分块准备数据了。这被称为<strong>软件流水线 (Software Pipelining)</strong>，能够最大化利用 GPU 的计算单元，避免其因等待数据而空闲。</p>
+</section>
+<section id="id8">
+<h4>异步流水线<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<p>流水线的设计如下：</p>
+<ol class="arabic simple">
+<li><p><strong>生产者启动数据加载</strong>：在流水线的每个阶段开始时，生产者线程向 <strong>TMA</strong> 硬件单元发出指令，将数据从全局显存异步复制到共享内存。由于操作是异步的，生产者线程提交任务后无需等待即可继续执行。</p></li>
+<li><p><strong>消费者执行计算</strong>：消费者线程等待数据完全加载到共享内存的信号。数据就绪后，它们会立即使用 <strong>wgmma (Warpgroup Matrix-Multiply-Accumulate)</strong> PTX 指令，在 <strong>Tensor Core</strong> 上执行核心的矩阵乘法运算。</p></li>
+<li><p><strong>流水线重叠执行</strong>：当消费者线程正在处理阶段 <code class="docutils literal notranslate"><span class="pre">s</span></code> 的数据时，生产者线程已经开始获取下一阶段 <code class="docutils literal notranslate"><span class="pre">s+1</span></code> 的数据。这种计算与数据获取的并行重叠，可以有效隐藏内存访问延迟，确保 GPU 计算单元持续处于工作状态。流水线的深度由代码中的 <code class="docutils literal notranslate"><span class="pre">kNumStages</span></code> 模板参数定义。</p></li>
+</ol>
+</section>
+<section id="id9">
+<h4>细粒度资源管理<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<p>Hopper 架构不仅引入了以 TMA 为代表的异步操作单元，还添加了以 <code class="docutils literal notranslate"><span class="pre">setmaxnreg.aligned</span></code> 为代表的细粒度资源分配指令，DeepGEMM 充分利用了这一点实现了更高的性能。</p>
+<p>生产者线程束只需要发送指令，让 TMA 将数据搬运到 SMEM，此过程并不需要经过寄存器作为中转，所以整体需要的寄存器数量很少，而消费者线程束需要消耗大量寄存器用于计算。为了让一个 SM 可以容纳更多的线程以提升占用率，DeepGEMM 使用 <code class="docutils literal notranslate"><span class="pre">setmaxnreg.aligned</span></code> 指令进行了寄存器的细粒度管理：</p>
+<div class="highlight-C notranslate"><div class="highlight"><pre><span></span><span class="c1">// deep_gemm/include/deep_gemm/fp8_gemm.cuh</span>
+<span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">kNumTMARegisters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">40</span><span class="p">;</span>
+<span class="n">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">kNumMathRegisters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">232</span><span class="p">;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">kNumMathThreads</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// TMA warp-group for loading data</span>
+<span class="w">  </span><span class="n">cutlass</span><span class="o">::</span><span class="n">arch</span><span class="o">::</span><span class="n">warpgroup_reg_dealloc</span><span class="o">&lt;</span><span class="n">kNumTMARegisters</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">  </span><span class="p">...</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="c1">// Math warp-groups for WGMMA</span>
+<span class="w">  </span><span class="n">cutlass</span><span class="o">::</span><span class="n">arch</span><span class="o">::</span><span class="n">warpgroup_reg_alloc</span><span class="o">&lt;</span><span class="n">kNumMathRegisters</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w"> </span><span class="p">...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Notes</strong>:</p>
+<ul>
+<li><p>使用变量 <code class="docutils literal notranslate"><span class="pre">kNumMathThreads</span></code> 将线程块内的所有线程分为两组</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">warpgroup_reg_dealloc</span></code> 这个函数的实际作用是向 NVCC 编译器提供一个提示（Hint）。它告诉编译器：“对于这个 <code class="docutils literal notranslate"><span class="pre">if</span></code> 代码块内的代码，编译时确保每个线程使用的寄存器数量不超过 <code class="docutils literal notranslate"><span class="pre">kNumTMARegisters</span></code> 个”；编译器会因此生成更“节俭”的机器码，避免不必要的寄存器使用。这有助于提高 SM 上的 Occupancy（占用率），即允许更多的线程块同时驻留在同一个SM上，从而更好地隐藏指令延迟。</p></li>
+<li><p>相应地，<code class="docutils literal notranslate"><span class="pre">warpgroup_reg_alloc</span></code> 告诉编译器：“对于这个 <code class="docutils literal notranslate"><span class="pre">else</span></code> 代码块内的代码，可以使用最多 <code class="docutils literal notranslate"><span class="pre">kNumMathRegisters</span></code> 个寄存器”。这给了编译器极大的自由度去进行优化，比如：</p>
+<ul>
+<li><p><strong>循环展开（Loop Unrolling）</strong>: 将循环体内的指令复制多份，减少循环判断开销。</p></li>
+<li><p><strong>指令调度</strong>: 重排指令以隐藏延迟。</p></li>
+<li><p><strong>缓存中间值</strong>: 将频繁使用的数据保存在寄存器中，避免重复访问共享内存。</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>结合前文提到的 Warp Specialization，我们可以更直观地理解这种资源分配的意义：</p>
+<ul class="simple">
+<li><p>由于生产者和消费者分别使用了 <code class="docutils literal notranslate"><span class="pre">WS</span></code> + <code class="docutils literal notranslate"><span class="pre">TMA</span></code> / <code class="docutils literal notranslate"><span class="pre">wgmma</span></code>，他们的线程数量都需要是 128 的倍数</p></li>
+<li><p>单个 SM 内包含 65536 个寄存器。当生产者使用 128 个线程，消费者使用 256 个线程时，一共需要使用 <span class="math notranslate nohighlight">\(256 \times 232 + 128 \times 40 = 64512\)</span> 个寄存器；此外，系统为每个线程块进行 <strong>Bookkeeping</strong> 和<strong>元数据</strong>管理需要保留 1000 个寄存器，相加之后几乎用满了所有硬件。而如果没有使用 <code class="docutils literal notranslate"><span class="pre">setmaxnreg.aligned</span></code>，则最多可以使用 128 个消费者线程，限制了计算性能。</p></li>
+</ul>
+</section>
+</section>
+<section id="id10">
+<h3>FP8 混合精度计算<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>DeepGEMM 使用 FP8 作为其数据的主要精度，Hopper 架构的硬件支持能让其在保持一定计算精度的同时大幅提升计算效率。但是单纯地大量使用 FP8 会导致在累加时出现随机误差，且正如 DeepSeek 在 <a class="reference external" href="https://arxiv.org/abs/2505.09343v1">ISCA‘25 上的论文</a>所说，Nvidia 的 Tensor Core 中只保留了约 14 位的累加位宽，以 K=4096 的两个随机矩阵的 GEMM 运算为例，Tensor Core 中的有限累加精度可导致最大相对误差接近 2%。</p>
+<p>为了减小累加误差导致的训练偏差，DeepGEMM 进行了以下优化：</p>
+<ul class="simple">
+<li><p><strong>细粒度量化</strong>：将激活值以 <code class="docutils literal notranslate"><span class="pre">1x128</span></code> 作为一个 Group / 权重以 <code class="docutils literal notranslate"><span class="pre">128x128</span></code> 作为一个 Group 进行分块并缩放，每个分块对应一个 <strong>Scaling Factor (FP32)</strong> 作为缩放因子。</p></li>
+<li><p><strong>两级累加</strong>：对于计算中切分出的每个 Tile，首先在 Tensor Core 中使用 <code class="docutils literal notranslate"><span class="pre">wgmma</span></code> 指令对 FP8 格式的数据（激活 &amp; 权重）进行乘累加，并将中间结果提升到 FP32 保存；然后在 CUDA Core 中，使用对应的 <code class="docutils literal notranslate"><span class="pre">Scaling</span> <span class="pre">Factor</span></code> 对该 Tile 的计算结果进行反量化（缩放恢复），并将其累加到最终的 FP32 累加器上。这一过程的数据流如下图所示：</p></li>
+</ul>
+<p><img alt="" src="../_images/03.DeepGEMM.01.png" /></p>
+<ul class="simple">
+<li><p><strong>结果转换</strong>：在单个矩阵计算完成后，会将 FP32 的累加结果转换回 BF16 并输出。其数据流如下：</p></li>
+</ul>
+<p><img alt="" src="../_images/03.DeepGEMM.02.png" /></p>
+<ul class="simple">
+<li><p><strong>效率优化</strong>：这种设计虽然提升了精度，但也引入了 Tensor Core 和 CUDA Core 的顺序依赖关系。为了避免硬件空闲，DeepGEMM 设计了两个消费者线程束（Warp Group）进行“乒乓操作”：当 Warp Group 0 在使用 CUDA Core 进行 FP32 累加时，Warp Group 1 已经在 Tensor Core 上计算下一个 Tile。**这解释了为何 DeepGEMM 需要通过细粒度的资源管理，在一个 SM 内调度 256 个消费者线程（即 2 个 128 线程的 Warp Group），从而实现硬件资源的极致利用。**此部分对应的时序图及简化的源码框架如下：</p></li>
+</ul>
+<p><img alt="" src="../_images/03.DeepGEMM.03.png" /></p>
+<div class="highlight-C++ notranslate"><div class="highlight"><pre><span></span><span class="c1">// deep_gemm/include/deep_gemm/fp8_gemm.cuh</span>
+
+<span class="c1">// Persistently schedule over blocks</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">scheduler</span><span class="p">.</span><span class="n">get_next_block</span><span class="p">(</span><span class="n">m_block_idx</span><span class="p">,</span><span class="w"> </span><span class="n">n_block_idx</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Decide the number of scales B to load</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="c1">// Load B scales with math warp-groups</span>
+<span class="w">    </span><span class="c1">// NOTES: except the first warp, we want to overlap loading B scales with TMA stores between tasks</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="c1">// Accumulation for WGMMA or CUDA promotion</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">accum</span><span class="p">[</span><span class="n">WGMMA</span><span class="o">::</span><span class="n">kNumAccum</span><span class="p">],</span><span class="w"> </span><span class="n">final_accum</span><span class="p">[</span><span class="n">WGMMA</span><span class="o">::</span><span class="n">kNumAccum</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="w">    </span><span class="c1">// Empty barrier arrival</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="c1">// Launch MMAs</span>
+<span class="w">    </span><span class="n">launch_k_iterations</span><span class="p">([</span><span class="o">&amp;</span><span class="p">](</span><span class="kt">int</span><span class="w"> </span><span class="n">k_iter</span><span class="p">,</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">kNumInnerStages</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// Read B scales</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">scale_b_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ld_shared</span><span class="p">(</span><span class="n">smem_scales_b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k_iter</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">kNumStages</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">s</span><span class="p">),</span><span class="w"> </span><span class="n">scale_b_1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">...</span>
+<span class="w">            </span><span class="c1">// Wait TMA arrivals</span>
+<span class="w">            </span><span class="n">full_barriers</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">wait</span><span class="p">((</span><span class="n">scheduler</span><span class="p">.</span><span class="n">current_iter</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">kNumIterations</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k_iter</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// Read A scales</span>
+<span class="w">            </span><span class="c1">// NOTES: all shared memory read must be prior to `warpgroup_arrive` to avoid next scheduled block polluting the results</span>
+<span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">scale_a_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ld_shared</span><span class="p">(</span><span class="n">smem_scales_a</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r_0</span><span class="p">),</span><span class="w"> </span><span class="n">scale_a_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ld_shared</span><span class="p">(</span><span class="n">smem_scales_a</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r_1</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// Commit WGMMA instructions</span>
+<span class="w">            </span><span class="p">...</span>
+<span class="w">            </span><span class="n">warpgroup_arrive</span><span class="p">();</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">BLOCK_K</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">WGMMA</span><span class="o">::</span><span class="n">K</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">k</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="n">desc_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_smem_desc</span><span class="p">(</span><span class="n">smem_a</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">math_wg_idx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">WGMMA</span><span class="o">::</span><span class="n">M</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">BLOCK_K</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">WGMMA</span><span class="o">::</span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">                </span><span class="k">auto</span><span class="w"> </span><span class="n">desc_b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">make_smem_desc</span><span class="p">(</span><span class="n">smem_b</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">k</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">WGMMA</span><span class="o">::</span><span class="n">K</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">                </span><span class="n">WGMMA</span><span class="o">::</span><span class="n">wgmma</span><span class="p">(</span><span class="n">desc_a</span><span class="p">,</span><span class="w"> </span><span class="n">desc_b</span><span class="p">,</span><span class="w"> </span><span class="n">accum</span><span class="p">,</span><span class="w"> </span><span class="n">k</span><span class="p">);</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="n">warpgroup_commit_batch</span><span class="p">();</span>
+<span class="w">            </span><span class="p">...</span>
+<span class="w">            </span><span class="n">warpgroup_wait</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">            </span><span class="c1">// Notify barrier arrival</span>
+<span class="w">            </span><span class="n">empty_barrier_arrive</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="w">            </span><span class="c1">// Promote with scales</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">scale_0_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scale_a_0</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">scale_b_0</span><span class="p">,</span><span class="w"> </span><span class="n">scale_1_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scale_a_1</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">scale_b_0</span><span class="p">;</span>
+<span class="w">            </span><span class="kt">float</span><span class="w"> </span><span class="n">scale_0_1</span><span class="p">,</span><span class="w"> </span><span class="n">scale_1_1</span><span class="p">;</span>
+<span class="w">            </span><span class="p">...</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">WGMMA</span><span class="o">::</span><span class="n">kNumAccum</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="kt">bool</span><span class="w"> </span><span class="n">predicate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">kMustUseUniformedScaleB</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">num_former_iters</span><span class="p">;</span>
+<span class="w">                </span><span class="n">final_accum</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">(</span><span class="n">predicate</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">scale_0_0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">scale_0_1</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">accum</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">0</span><span class="p">];</span>
+<span class="w">                </span><span class="p">...</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="w">    </span><span class="c1">// Write back to shared memory using STSM</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="n">cute</span><span class="o">::</span><span class="n">tma_store_fence</span><span class="p">();</span>
+<span class="w">    </span><span class="n">cutlass</span><span class="o">::</span><span class="n">arch</span><span class="o">::</span><span class="n">NamedBarrier</span><span class="p">(</span><span class="n">kNumMathThreads</span><span class="p">).</span><span class="n">sync</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// Use TMA store to write back to global memory</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">threadIdx</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cute</span><span class="o">::</span><span class="n">SM90_TMA_STORE_2D</span><span class="o">::</span><span class="n">copy</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tensor_map_d</span><span class="p">,</span><span class="w"> </span><span class="n">smem_d</span><span class="p">,</span><span class="w"> </span><span class="n">n_block_idx</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">BLOCK_N</span><span class="p">,</span>
+<span class="w">                                      </span><span class="n">scheduler</span><span class="p">.</span><span class="n">get_global_idx</span><span class="p">(</span><span class="n">shape_m</span><span class="p">,</span><span class="w"> </span><span class="n">BLOCK_M</span><span class="p">,</span><span class="w"> </span><span class="n">m_block_idx</span><span class="p">));</span>
+<span class="w">        </span><span class="n">cute</span><span class="o">::</span><span class="n">tma_store_arrive</span><span class="p">();</span>
+<span class="w">        </span><span class="n">cute</span><span class="o">::</span><span class="n">tma_store_wait</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">__syncwarp</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="id11">
+<h3>总结<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<p>DeepGEMM 虽然不是一个通用库，但它是学习 Hopper 及后续架构上 GEMM 开发的绝佳材料。其代码中为了极致优化效率，考虑了大量硬件细节。由于本文旨在为读者提供一个清晰的框架，未涉及完整的源码解读，推荐有兴趣的读者继续阅读参考资料和仓库源码，这对深入理解 GPU 优化有极大帮助。</p>
+</section>
+</section>
+<section id="id12">
+<h2>参考资料<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/deepseek-ai/DeepGEMM">DeepGEMM</a></p></li>
+<li><p><a class="reference external" href="https://research.colfax-intl.com/deepseek-r1-and-fp8-mixed-precision-training/">DeepSeek-R1 and FP8 Mixed-Precision Training</a></p></li>
+<li><p><a class="reference external" href="https://research.colfax-intl.com/cutlass-tutorial-wgmma-hopper/">CUTLASS Tutorial: Fast Matrix-Multiplication with WGMMA on NVIDIA® Hopper™ GPUs</a></p></li>
+<li><p><a class="reference external" href="https://research.colfax-intl.com/category/papers/tutorials/">COLFAX Tutorials</a></p></li>
+<li><p><a class="reference external" href="https://lmsys.org/blog/2025-05-05-large-scale-ep/">Deploying DeepSeek with PD Disaggregation and Large-Scale Expert Parallelism on 96 H100 GPUs</a></p></li>
+<li><p><a class="reference external" href="https://www.youtube.com/watch?v=SZy1psY0fSM">VLOG I'm Learning Fastest Matrix Multiplication Algorithm On H100 (DeepGEMM By DeepSeek)</a></p></li>
+<li><p><a class="reference external" href="https://wu-kan.cn/2025/03/03/%E6%B5%85%E8%AF%BB-DeepGEMM/">浅读 DeepGEMM</a></p></li>
+<li><p><a class="reference external" href="https://medium.com/&#64;noelakkidas/understanding-fp8-and-mixed-precision-training-0a76c7f2c3ac">Understanding FP8 and Mixed Precision Training</a></p></li>
+<li><p><a class="reference external" href="https://zhuanlan.zhihu.com/p/26916462532">Deep Gemm 代码浅析</a></p></li>
+<li><p><a class="reference external" href="https://zhuanlan.zhihu.com/p/26836916421">DeepSeek GEMM 初探</a></p></li>
+</ul>
 </section>
 </section>
 
@@ -942,8 +1329,39 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">混合精度训练</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">低精度深度学习的范式演进</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">保守的混合精度：从 32 位到 16 位</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fp8">FP8 的前景与挑战</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">缩放策略</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#just-in-time-scaling">即时缩放（Just-in-Time Scaling）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#delayed-scaling">延迟缩放（Delayed Scaling）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#fine-grained-scaling">细粒度缩放（Fine-Grained Scaling）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">DeepGEMM</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm">分组 GEMM</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm-normal-gemm">常规稠密 GEMM (Normal GEMM)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm-contiguous-layout">分组 GEMM (连续布局 - Contiguous Layout)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#gemm-masked-layout">分组 GEMM (掩码布局 - Masked Layout)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">GEMM 种类对比</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#warp-specialization">Warp Specialization 与异步流水线</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Warp Specialization</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">异步流水线</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">细粒度资源管理</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">FP8 混合精度计算</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">参考资料</a></li>
 </ul>
   </nav></div>
 
@@ -977,7 +1395,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

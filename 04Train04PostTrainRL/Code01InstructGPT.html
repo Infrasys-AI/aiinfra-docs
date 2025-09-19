@@ -86,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -317,6 +317,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -350,6 +351,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -388,7 +390,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -425,9 +427,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -988,32 +990,41 @@ document.write(`
 <h3>2.2 模型定义<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
 <p>定义一个简化的 Transformer 模型，包含必要的位置编码：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">SimpleTransformer</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">vocab_size</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pos_enc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simple_pos_enc</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">max_len</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>  <span class="c1"># 简化位置编码</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d_model</span> <span class="o">=</span> <span class="n">d_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_len</span> <span class="o">=</span> <span class="n">max_len</span>
+        <span class="c1"># 位置编码</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">register_buffer</span><span class="p">(</span><span class="s1">&#39;pos_enc&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_pos_encoding</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">max_len</span><span class="p">))</span>
         <span class="n">encoder_layer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="o">=</span><span class="n">d_model</span><span class="p">,</span> <span class="n">nhead</span><span class="o">=</span><span class="n">nhead</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TransformerEncoder</span><span class="p">(</span><span class="n">encoder_layer</span><span class="p">,</span> <span class="n">num_layers</span><span class="o">=</span><span class="n">num_layers</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fc_out</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">vocab_size</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">_simple_pos_enc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">max_len</span><span class="p">):</span>
-        <span class="c1"># 简化版位置编码：使用正弦函数</span>
-        <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">enc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">pos</span> <span class="o">/</span> <span class="p">(</span><span class="mi">10000</span> <span class="o">**</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">d_model</span><span class="p">)</span><span class="o">/</span><span class="n">d_model</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="n">enc</span>  <span class="c1"># [max_len, d_model]</span>
+    <span class="k">def</span> <span class="nf">_create_pos_encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">max_len</span><span class="p">):</span>
+        <span class="c1"># 正弦/余弦位置编码</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_len</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>  <span class="c1"># [max_len, 1]</span>
+        <span class="c1"># 简化频率计算</span>
+        <span class="n">div_term</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">**</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">/</span> <span class="n">d_model</span><span class="p">))</span>
+        <span class="n">enc</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">max_len</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+        <span class="n">enc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">pos</span> <span class="o">*</span> <span class="n">div_term</span><span class="p">)</span>  <span class="c1"># 偶数位置</span>
+        <span class="n">enc</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">pos</span> <span class="o">*</span> <span class="n">div_term</span><span class="p">)</span>  <span class="c1"># 奇数位置</span>
+        <span class="k">return</span> <span class="n">enc</span>
     
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="c1"># x: [batch_size, seq_len]</span>
         <span class="n">batch_size</span><span class="p">,</span> <span class="n">seq_len</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">x_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># [batch_size, seq_len, d_model]</span>
-        <span class="n">x_emb</span> <span class="o">=</span> <span class="n">x_emb</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_enc</span><span class="p">[:</span><span class="n">seq_len</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># 添加位置编码</span>
+        <span class="c1"># 添加位置编码（截断到实际序列长度）</span>
+        <span class="n">pos_enc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_enc</span><span class="p">[:</span><span class="n">seq_len</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># [seq_len, d_model]</span>
+        <span class="n">x_emb</span> <span class="o">=</span> <span class="n">x_emb</span> <span class="o">+</span> <span class="n">pos_enc</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 添加位置编码</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transformer</span><span class="p">(</span><span class="n">x_emb</span><span class="p">)</span>  <span class="c1"># [batch_size, seq_len, d_model]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc_out</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>  <span class="c1"># [batch_size, seq_len, vocab_size]</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">SimpleTransformer</span><span class="p">(</span><span class="n">vocab_size</span><span class="o">=</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">vocab_size</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>简化 Transformer 模型包含嵌入层、位置编码和 Transformer 编码器。位置编码是关键补充，它让模型能够理解文本中的顺序信息，这是原代码缺失的重要组件。</p>
+<p>简化 Transformer 模型包含嵌入层、位置编码和 Transformer 编码器。我们使用了正弦/余弦位置编码，位置编码让模型能够理解文本中的顺序信息，是 Transformer 架构的关键组件。</p>
 </section>
 <section id="sft">
 <h3>2.3 SFT 训练<a class="headerlink" href="#sft" title="Link to this heading">#</a></h3>
@@ -1139,7 +1150,9 @@ document.write(`
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="c1"># x: [batch_size, seq_len]</span>
         <span class="n">x_emb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span><span class="o">.</span><span class="n">embedding</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># [batch_size, seq_len, d_model]</span>
-        <span class="n">x_emb</span> <span class="o">=</span> <span class="n">x_emb</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span><span class="o">.</span><span class="n">pos_enc</span><span class="p">[:</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># 添加位置编码</span>
+        <span class="c1"># 添加位置编码（截断到实际序列长度）</span>
+        <span class="n">pos_enc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span><span class="o">.</span><span class="n">pos_enc</span><span class="p">[:</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">:]</span>  <span class="c1"># [seq_len, d_model]</span>
+        <span class="n">x_emb</span> <span class="o">=</span> <span class="n">x_emb</span> <span class="o">+</span> <span class="n">pos_enc</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># 添加位置编码</span>
         
         <span class="c1"># 获取基础模型的特征输出</span>
         <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_model</span><span class="o">.</span><span class="n">transformer</span><span class="p">(</span><span class="n">x_emb</span><span class="p">)</span>  <span class="c1"># [batch_size, seq_len, d_model]</span>
@@ -1230,46 +1243,59 @@ document.write(`
         <span class="k">for</span> <span class="n">instruction</span> <span class="ow">in</span> <span class="n">progress_bar</span><span class="p">:</span>
             <span class="c1"># 准备输入：指令 + &quot;回答：&quot;前缀</span>
             <span class="n">input_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;指令：</span><span class="si">{</span><span class="n">instruction</span><span class="si">}</span><span class="s2"> 回答：&quot;</span>
-            <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">input_text</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># [1, seq_len]</span>
+            <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">input_text</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>  <span class="c1"># [1, seq_len]</span>
             
-            <span class="c1"># 模型生成回答</span>
-            <span class="n">generated_ids</span> <span class="o">=</span> <span class="n">input_ids</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>  <span class="c1"># 生成 10 个 token</span>
-                <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">generated_ids</span><span class="p">)[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># 获取最后一个 token 的 logits</span>
-                <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># 贪心选择</span>
-                <span class="n">generated_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">generated_ids</span><span class="p">,</span> <span class="n">next_token</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># 存储生成过程中的动作和对数概率</span>
+            <span class="n">generated_tokens</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">log_probs</span> <span class="o">=</span> <span class="p">[]</span>
             
-            <span class="c1"># 计算当前生成的奖励</span>
+            <span class="c1"># 生成回答并记录每个token的选择概率</span>
+            <span class="n">current_ids</span> <span class="o">=</span> <span class="n">input_ids</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span>  <span class="c1"># 生成 8 个 token</span>
+                <span class="n">logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">current_ids</span><span class="p">)[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># 获取最后一个 token 的 logits</span>
+                <span class="n">probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                
+                <span class="c1"># 使用采样而不是贪心选择，以保持探索性</span>
+                <span class="n">next_token</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">multinomial</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># [1, 1]</span>
+                <span class="n">log_prob</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">probs</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">next_token</span><span class="p">))</span>  <span class="c1"># [1, 1]</span>
+                
+                <span class="n">generated_tokens</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_token</span><span class="p">)</span>
+                <span class="n">log_probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_prob</span><span class="p">)</span>
+                <span class="n">current_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">current_ids</span><span class="p">,</span> <span class="n">next_token</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            
+            <span class="c1"># 计算当前生成序列的奖励</span>
             <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                <span class="n">reward</span> <span class="o">=</span> <span class="n">reward_model</span><span class="p">(</span><span class="n">generated_ids</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-            <span class="n">total_reward</span> <span class="o">+=</span> <span class="n">reward</span>
+                <span class="n">reward_value</span> <span class="o">=</span> <span class="n">reward_model</span><span class="p">(</span><span class="n">current_ids</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">total_reward</span> <span class="o">+=</span> <span class="n">reward_value</span>
             
-            <span class="c1"># 简化 PPO 损失计算</span>
-            <span class="c1"># 1. 计算旧策略的概率</span>
-            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                <span class="n">old_logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span>
-                <span class="n">old_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">old_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># 将奖励转换为tensor以便参与梯度计算</span>
+            <span class="n">reward_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">reward_value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
             
-            <span class="c1"># 2. 计算新策略的概率</span>
-            <span class="n">new_logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span>
-            <span class="n">new_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">new_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># PPO 损失计算 - 对每个生成的token进行优化</span>
+            <span class="n">policy_loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">old_log_prob</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">generated_tokens</span><span class="p">,</span> <span class="n">log_probs</span><span class="p">)):</span>
+                <span class="c1"># 重新计算当前策略下该token的概率</span>
+                <span class="n">context_ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">input_ids</span><span class="p">]</span> <span class="o">+</span> <span class="n">generated_tokens</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">new_logits</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">context_ids</span><span class="p">)[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">new_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">new_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">new_log_prob</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">new_probs</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">token</span><span class="p">))</span>
+                
+                <span class="c1"># 计算策略比率</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">new_log_prob</span> <span class="o">-</span> <span class="n">old_log_prob</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+                
+                <span class="c1"># 计算PPO裁剪损失</span>
+                <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">reward_tensor</span>
+                <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">clip_epsilon</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">clip_epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">reward_tensor</span>
+                <span class="n">policy_loss</span> <span class="o">=</span> <span class="n">policy_loss</span> <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">)</span>  <span class="c1"># 负号因为我们要最大化</span>
             
-            <span class="c1"># 3. 计算策略比率 r(θ) = new_probs / old_probs</span>
-            <span class="n">ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_probs</span> <span class="o">/</span> <span class="p">(</span><span class="n">old_probs</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># 简化：取平均值</span>
-            
-            <span class="c1"># 4. 计算裁剪和未裁剪的优势</span>
-            <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">reward</span>
-            <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">clip_epsilon</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">clip_epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">reward</span>
-            
-            <span class="c1"># 5. PPO 损失：取两者的最小值并取负（因为我们要最大化奖励）</span>
-            <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+            <span class="n">policy_loss</span> <span class="o">=</span> <span class="n">policy_loss</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">generated_tokens</span><span class="p">)</span>  <span class="c1"># 平均损失</span>
             
             <span class="c1"># 优化步骤</span>
             <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
             <span class="n">policy_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
             <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
             
-            <span class="n">progress_bar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">({</span><span class="s2">&quot;奖励&quot;</span><span class="p">:</span> <span class="n">reward</span><span class="p">})</span>
+            <span class="n">progress_bar</span><span class="o">.</span><span class="n">set_postfix</span><span class="p">({</span><span class="s2">&quot;奖励&quot;</span><span class="p">:</span> <span class="n">reward_value</span><span class="p">})</span>
         
         <span class="n">avg_reward</span> <span class="o">=</span> <span class="n">total_reward</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">instructions</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PPO Epoch </span><span class="si">{</span><span class="n">epoch</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> 完成。平均奖励: </span><span class="si">{</span><span class="n">avg_reward</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -1279,7 +1305,7 @@ document.write(`
 <span class="n">ppo_train</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">reward_model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">,</span> <span class="n">epochs</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。我们首先冻结奖励模型参数，确保奖励信号稳定。然后，对于每个指令，模型生成回答并获得奖励。PPO 的关键是使用裁剪机制限制策略更新的幅度，防止更新过大导致训练不稳定。随着训练进行，模型生成的回答应该能获得越来越高的奖励。</p>
+<p>PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。我们首先冻结奖励模型参数，确保奖励信号稳定。在生成过程中，我们使用采样而不是贪心选择来保持探索性，并记录每个token的选择概率。PPO 的关键是计算策略比率（新策略概率/旧策略概率）并使用裁剪机制限制更新幅度，防止策略偏离过大导致训练不稳定。对于每个生成的token，我们都计算其对应的 PPO 损失并进行优化。随着训练进行，模型生成的回答应该能获得越来越高的奖励。</p>
 </section>
 </section>
 <section id="id7">
@@ -1484,7 +1510,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

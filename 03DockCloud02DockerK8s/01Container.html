@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="03DockCloud02DockerK8s/01Container.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 张柯帆!!!!!!!!! 聚焦展开下面三个内容，下面的内容都有点浅显，不是很深入，图和技术点也相对较少 ​​Namespaces​​：实现隔离（进程、网络、文件系统挂载等）。 ​​Cgroups​​：实现资源限制（CPU、内存、磁盘 IO 等）。 ​​Union File Systems​​：实现镜像的分层与叠加（AUFS， overlay2）。 容器的出现: 本节会先..." />
+<meta property="og:description" content="Author by: 张柯帆 容器的出现: 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到 隔离性 在操作系统里的技术细节。 容器技术其实来源于 PaaS 的发展。PaaS 所提供的正是“托管”能力，但初期还比较原始。尽管当时虚拟化已经是比较常见的技术了，用户可以向 AWS 这样的云厂商购买虚拟机实例，但用户的使用习惯仍然是本地环境那一套——登录机器，然后执行脚本或者命令行部署..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: 张柯帆!!!!!!!!! 聚焦展开下面三个内容，下面的内容都有点浅显，不是很深入，图和技术点也相对较少 ​​Namespaces​​：实现隔离（进程、网络、文件系统挂载等）。 ​​Cgroups​​：实现资源限制（CPU、内存、磁盘 IO 等）。 ​​Union File Systems​​..." />
-<meta name="description" content="Author by: 张柯帆!!!!!!!!! 聚焦展开下面三个内容，下面的内容都有点浅显，不是很深入，图和技术点也相对较少 ​​Namespaces​​：实现隔离（进程、网络、文件系统挂载等）。 ​​Cgroups​​：实现资源限制（CPU、内存、磁盘 IO 等）。 ​​Union File Systems​​：实现镜像的分层与叠加（AUFS， overlay2）。 容器的出现: 本节会先..." />
+<meta property="og:image:alt" content="Author by: 张柯帆 容器的出现: 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到 隔离性 在操作系统里的技术细节。 容器技术其实来源于 PaaS 的发展。PaaS 所提供的正是“托管”能力，但初期还比较原始。尽管当时虚拟化已经是比较常见的技术了，用户可以向 AWS 这样的云厂商购买虚拟机实..." />
+<meta name="description" content="Author by: 张柯帆 容器的出现: 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到 隔离性 在操作系统里的技术细节。 容器技术其实来源于 PaaS 的发展。PaaS 所提供的正是“托管”能力，但初期还比较原始。尽管当时虚拟化已经是比较常见的技术了，用户可以向 AWS 这样的云厂商购买虚拟机实例，但用户的使用习惯仍然是本地环境那一套——登录机器，然后执行脚本或者命令行部署..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>容器从进程到 Namespace &#8212; AIInfra AI基础设施</title>
@@ -84,7 +84,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -315,6 +315,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -348,6 +349,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">Docker 与 K8S 初体验</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">容器从进程到 Namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02Cgroups.html">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -386,7 +388,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -423,9 +425,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -866,11 +868,6 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="namespace">
 <h1>容器从进程到 Namespace<a class="headerlink" href="#namespace" title="Link to this heading">#</a></h1>
 <p>Author by: 张柯帆</p>
-<p>!!!!!!!!!
-聚焦展开下面三个内容，下面的内容都有点浅显，不是很深入，图和技术点也相对较少
-​​Namespaces​​：实现隔离（进程、网络、文件系统挂载等）。
-​​Cgroups​​：实现资源限制（CPU、内存、磁盘 IO 等）。
-​​Union File Systems​​：实现镜像的分层与叠加（AUFS， overlay2）。</p>
 <section id="id1">
 <h2>容器的出现<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到<strong>隔离性</strong>在操作系统里的技术细节。</p>
@@ -896,9 +893,9 @@ document.write(`
 <h2>容器化 VS 虚拟化<a class="headerlink" href="#vs" title="Link to this heading">#</a></h2>
 <p>如果你之前学习过容器化技术，你可能经常会听到“沙箱”、“集装箱”之类的类比。这确实是两个非常好的比喻：“集装箱”试图说明不同容器之间存在明确的<strong>边界</strong>而互不影响，也隐含了易于搬运的特性；而 Docker 这个词的本意——码头（Dock），则恰如其分地扮演了装卸、管理这些集装箱的角色。我们所说的容器化环境，就像一个自动化的高效码头。”</p>
 <p>不过，若是只考虑隔离性，虚拟机也能做到，为什么非得用容器呢？</p>
-<p><img alt="虚拟机和容器的架构对比" src="../_images/02Container01.png" /></p>
+<p><img alt="虚拟机和容器的架构对比" src="03DockCloud02DockerK8s/images/01Container01.png" /></p>
 <p>看这张架构图可以发现：容器是建设在<strong>操作系统之上的</strong>，会利用原本操作系统的能力来部署应用；而虚拟机的方案则是虚拟出任意多个操作系统，再在虚拟操作系统上部署应用。那既然容器是在操作系统之上的应用，那虚拟的操作系统能否继续安装 Docker 呢？答案是肯定的，例如下图的右半部分：</p>
-<p><img alt="容器各种方式的应用" src="../_images/02Container02.png" /></p>
+<p><img alt="容器各种方式的应用" src="03DockCloud02DockerK8s/images/01Container02.png" /></p>
 <p>所以虚拟机跟容器并不是非此即彼的关系，而是可以协同工作，解决不同的问题。</p>
 <p>但我们需要容器，主要是因为容器在<strong>效率、速度和可移植性</strong>上提供了巨大的优势，这在云原生的微服务架构中十分重要。</p>
 <ul class="simple">
@@ -1014,10 +1011,22 @@ PID<span class="w">     </span>USER<span class="w">   </span>TIME<span class="w"
 </pre></div>
 </div>
 <p>只要设置 <code class="docutils literal notranslate"><span class="pre">CLONE_NEWPID</span></code> 这个 flag，子进程就会被创建到一个新的 PID Namespace 里。在这个新的 Namespace 中，这个子进程就是第一个进程，因此它的 PID 为 1。但是父进程拿到的 <code class="docutils literal notranslate"><span class="pre">pid</span></code> 还是其在物理机上的真实 PID。</p>
+<p><img alt="namespace" src="03DockCloud02DockerK8s/images/01Container03.png" /></p>
 <p>子进程创建子子进程和子子子进程时可以继续设置 <code class="docutils literal notranslate"><span class="pre">CLONE_NEWPID</span></code> ，每个子进程在自己的视角里都会认为自己是 1 号进程，在父进程里则会看到递增的 PID：2、3...。而从“上帝视角”（即父进程所在的 Namespace）看，拿到的 <code class="docutils literal notranslate"><span class="pre">pid</span></code> 变量依然是它在宿主机上的真实 PID。</p>
 <p>那么资源限制呢？ 这就要靠 Cgroups 了。虽然我们无法用一个简单的命令直观展示，但其原理就是将进程放入一个特定的“控制组”里。我们可以对这个组设置资源的上限。例如，我们可以规定某个容器内的所有进程，CPU 使用量不能超过 50%，内存最多只能使用 512MB。一旦超出，内核就会进行干预（如限制 CPU 时间、或杀死进程）。</p>
 <p>Docker 正是巧妙地将 Namespace 的视图隔离和 Cgroups 的资源限制结合在一起，才为我们提供了轻量而强大的容器环境。</p>
-<p>不过 <a class="reference external" href="https://man7.org/linux/man-pages/man7/pid_namespaces.7.html">PID Namespace</a> 只能隔离 PID 的视图。为了隔离其他内核资源，Linux 还提供了 <a class="reference external" href="https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html">Cgroup</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html">IPC</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/network_namespaces.7.html">Network</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/mount_namespaces.7.html">Mount</a>、<a class="reference external" href="https://www.man7.org/linux/man-pages/man7/time_namespaces.7.html">Time</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/user_namespaces.7.html">User</a>、<a class="reference external" href="https://man7.org/linux/man-pages/man7/uts_namespaces.7.html">UTS</a> 等 Namespace。</p>
+<p>不过 PID Namespace 只能隔离 PID 的视图。为了隔离其他内核资源，Linux 还提供了其他不同的 Namespace。</p>
+<p>截止最新的 Linux 内核中，已有 8 个不同的 namespace：</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/pid_namespaces.7.html">PID Namespace</a>：隔离系统进程树；</p></li>
+<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/network_namespaces.7.html">Network</a>：主机网络堆栈的隔离；</p></li>
+<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/mount_namespaces.7.html">Mount</a>：隔离主机文件系统挂载点；</p></li>
+<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/uts_namespaces.7.html">UTS</a>：主机名的隔离；</p></li>
+<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html">IPC</a>：隔离进程间通信实用程序（共享段、信号灯）；</p></li>
+<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/user_namespaces.7.html">User</a>：隔离系统用户ID；</p></li>
+<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html">Cgroup</a>：主机的虚拟cgroup文件系统的隔离；</p></li>
+<li><p><a class="reference external" href="https://www.man7.org/linux/man-pages/man7/time_namespaces.7.html">Time</a>：主机的全局时间和启动时间的隔离</p></li>
+</ul>
 <p>这些 API 可以通过 <code class="docutils literal notranslate"><span class="pre">clone()</span></code>, <code class="docutils literal notranslate"><span class="pre">setns()</span></code>, <code class="docutils literal notranslate"><span class="pre">unshare()</span></code> 等系统调用来使用。从版本号为 3.8 的内核开始，<code class="docutils literal notranslate"><span class="pre">/proc/(pid)/ns</span></code> 目录下会包含进程所属的 namespace 信息，可以直接使用如下命令查看当前进程所属的 namespace 信息：</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>/<span class="w"> </span><span class="c1"># ls -l /proc/$$/ns</span>
 total<span class="w"> </span><span class="m">0</span>
@@ -1040,8 +1049,12 @@ lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </spa
 </section>
 <section id="id4">
 <h2>参考与引用<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!!!!!!!!!
-补充参考的资料</p>
+<ul class="simple">
+<li><p>https://www.bmc.com/blogs/containers-vs-virtual-machines/</p></li>
+<li><p>https://dockerlabs.collabnix.com/beginners/difference-vm-containers.html</p></li>
+<li><p>https://man7.org/linux/man-pages/man7/namespaces.7.html</p></li>
+<li><p>https://blog.quarkslab.com/digging-into-linux-namespaces-part-1.html</p></li>
+</ul>
 </section>
 </section>
 
@@ -1151,7 +1164,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

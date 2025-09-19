@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="05Infer02InferSpeedUp/06PagedAttention.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="大模型推理的内存管理挑战: 大模型推理中，处理推理请求的数量受到 GPU 内存容量的限制，也就是说，推理服务系统的吞吐量是 memory-bound，克服这个内存限制需要解决以下内存管理方面的挑战： KV Cache 内存大。KV Cache 的大小随着请求数量的增加而迅速增长，如图所示，KV Cache 所占内存接近大模型参数的一半。, 复杂的解码策略。大模型推理有多种解码策略，每种算法对..." />
+<meta property="og:description" content="大模型推理的内存管理挑战: 内存管理挑战: swapping 大模型推理中，处理推理请求的数量受到 GPU 内存容量的限制，也就是说，推理服务系统的吞吐量是 memory-bound，克服这个内存限制需要解决以下内存管理方面的挑战： KV Cache 内存大。KV Cache 的大小随着请求数量的增加而迅速增长，如图所示，KV Cache 所占内存接近大模型参数的一半。, 复杂的解码策略。大..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="大模型推理的内存管理挑战: 大模型推理中，处理推理请求的数量受到 GPU 内存容量的限制，也就是说，推理服务系统的吞吐量是 memory-bound，克服这个内存限制需要解决以下内存管理方面的挑战： KV Cache 内存大。KV Cache 的大小随着请求数量的增加而迅速增长，如图所示，KV Cache 所占内..." />
-<meta name="description" content="大模型推理的内存管理挑战: 大模型推理中，处理推理请求的数量受到 GPU 内存容量的限制，也就是说，推理服务系统的吞吐量是 memory-bound，克服这个内存限制需要解决以下内存管理方面的挑战： KV Cache 内存大。KV Cache 的大小随着请求数量的增加而迅速增长，如图所示，KV Cache 所占内存接近大模型参数的一半。, 复杂的解码策略。大模型推理有多种解码策略，每种算法对..." />
+<meta property="og:image" content="/_images/social_previews/summary_05Infer02InferSpeedUp_06PagedAttention_b46b6649.png" />
+<meta property="og:image:alt" content="大模型推理的内存管理挑战: 内存管理挑战: swapping 大模型推理中，处理推理请求的数量受到 GPU 内存容量的限制，也就是说，推理服务系统的吞吐量是 memory-bound，克服这个内存限制需要解决以下内存管理方面的挑战： KV Cache 内存大。KV Cache 的大小随着请求数量的增加而迅速增长，..." />
+<meta name="description" content="大模型推理的内存管理挑战: 内存管理挑战: swapping 大模型推理中，处理推理请求的数量受到 GPU 内存容量的限制，也就是说，推理服务系统的吞吐量是 memory-bound，克服这个内存限制需要解决以下内存管理方面的挑战： KV Cache 内存大。KV Cache 的大小随着请求数量的增加而迅速增长，如图所示，KV Cache 所占内存接近大模型参数的一半。, 复杂的解码策略。大..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>Paged Attention 原理 &#8212; AIInfra AI基础设施</title>
@@ -84,7 +84,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -315,6 +315,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -348,6 +349,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -386,7 +388,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -423,9 +425,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -846,21 +848,32 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">大模型推理的内存管理挑战</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Paged Attention 原理</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">操作系统虚拟内存概念</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Paged Attention 算法</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">KV Cache 管理</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Paged Attention 算法</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">KV Cache 管理</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">不同解码策略下的表现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">大模型推理的内存管理挑战</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">内存管理挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">常规内存管理方式与问题</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">调度与抢占</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">分布式场景内存管理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention 算子适配</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Paged Attention 原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">操作系统虚拟内存概念</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Paged Attention算法</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">处理单个推理请求</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">同时处理多个推理请求</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">不同解码策略下的应用</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parallel-sampling">解码策略——Parallel Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-searching">解码策略——Beam Searching</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-prefix">解码策略——Shared prefix</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">调度与抢占</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">分布式场景内存管理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention算子适配</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">小结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">引用与参考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">本节视频</a></li>
 </ul>
             </nav>
         </div>
@@ -876,6 +889,9 @@ document.write(`
 <h1>Paged Attention 原理<a class="headerlink" href="#paged-attention" title="Link to this heading">#</a></h1>
 <section id="id1">
 <h2>大模型推理的内存管理挑战<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="id2">
+<h3>内存管理挑战<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p><img alt="swapping" src="../_images/06PagedAttention01.jpg" /></p>
 <p>大模型推理中，处理推理请求的数量受到 GPU 内存容量的限制，也就是说，推理服务系统的吞吐量是 memory-bound，克服这个内存限制需要解决以下内存管理方面的挑战：</p>
 <ol class="arabic simple">
 <li><p>KV Cache 内存大。KV Cache 的大小随着请求数量的增加而迅速增长，如图所示，KV Cache 所占内存接近大模型参数的一半。</p></li>
@@ -883,66 +899,153 @@ document.write(`
 <li><p>输入与输出序列长度未知。在大模型推理中，输入 prompt 与最终输出长度是不确定的。</p></li>
 </ol>
 </section>
-<section id="id2">
-<h2>Paged Attention 原理<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <section id="id3">
-<h3>操作系统虚拟内存概念<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</p>
+<h3>常规内存管理方式与问题<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p><img alt="swapping" src="../_images/06PagedAttention02.jpg" /></p>
+<p>大部分框架将同一个请求的KV Cache连续存储，按照<code class="docutils literal notranslate"><span class="pre">（batch_size,</span> <span class="pre">max_seq_len）</span></code>这样的的固定尺寸预先分配内存，这样的内存分配方式<strong>会造成三类内存浪费</strong>：</p>
+<ol class="arabic simple">
+<li><p>为未来Token预留的空间。</p></li>
+<li><p>由于为潜在的最大序列长度过度预留而导致的内部碎片。</p></li>
+<li><p>由内存分配器导致的外部碎片。</p></li>
+</ol>
+</section>
 </section>
 <section id="id4">
-<h3>Paged Attention 算法<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
-<p>PagedAttention 算法</p>
-<ul class="simple">
-<li><p>PageAttention 允许在非连续的内存空间中存储连续的键和值【与传统 attention 算法不同的是】</p></li>
-<li><p>将每个序列的 KV 缓存划分为 KV block，每个 block 包含固定数量的 key，value vectors（kv block size）</p></li>
-<li><p>在注意力计算时，PagedAttention kernel 分别对不同的 KV 块进行识别和 fetch</p></li>
-</ul>
-</section>
-<section id="kv-cache">
-<h3>KV Cache 管理<a class="headerlink" href="#kv-cache" title="Link to this heading">#</a></h3>
-<p>=======</p>
-</section>
+<h2>Paged Attention 原理<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>为了解决传统静态分配内存时造成的内存浪费问题，vllm提出了Paged Attention算法，动态地为请求分配KV cache显存，提升显存利用率。</p>
 <section id="id5">
-<h3>Paged Attention 算法<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<h3>操作系统虚拟内存概念<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>Paged Attention的思想来源于操作系统中的虚拟内存与分页技术。因此我们先来简要回顾这一部分内容。</p>
+<p>操作系统的虚拟内存机制为每个程序提供了一个巨大且连续的私有地址空间，这被称为“虚拟地址空间”。然而，在物理内存中，这些数据实际上被存储在**任意位置、不连续的物理页面（Physical Page）**中。</p>
+<p><img alt="os" src="../_images/06PagedAttention03.jpg" /></p>
+<p>系统通过一个名为**页表（Page Table）**的核心数据结构来建立这两者之间的映射关系。页表就像一本地址翻译词典，记录了每个虚拟页面对应哪个物理页面。</p>
+<p>这个机制带来了两大好处：</p>
+<ol class="arabic simple">
+<li><p>消除外部碎片：由于数据可以被存储在任意可用的物理页面中，操作系统不再需要寻找一大块连续的物理内存。只要物理内存的总空闲量足够，程序就能运行，从而极大地提高了内存利用率。</p></li>
+<li><p>灵活的内存管理：数据可以在物理内存和硬盘之间轻松地“换入”（Page-in）和“换出”（Page-out），实现了远超物理内存容量的内存空间，并且可以实现高效的写时复制（Copy-on-Write）等高级功能。</p></li>
+</ol>
+<p>这种“逻辑上连续，物理上分散”的核心思想，为我们解决其他领域的资源管理难题提供启发。</p>
 </section>
 <section id="id6">
-<h3>KV Cache 管理<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
-<p>!!!!!!!! main</p>
-</section>
+<h3>Paged Attention算法<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>在回顾了操作系统中的虚拟内存技术之后，我们再来看paged attention算法，它将操作系统中 “逻辑连续，物理分散” 的经典思想，迁移到了GPU显存管理这一场景，以此解决KV Cache带来的内存浪费问题。</p>
+<p><img alt="overview" src="../_images/06PagedAttention04.jpg" /></p>
+<p>PagedAttention算法的核心内容如下：</p>
+<ul class="simple">
+<li><p>它不再为每个序列预留一块庞大而连续的内存。相反，它将每个序列的KV Cache都划分为许多个固定大小的 “块”（Block）。每一个块都可以存储固定数量Token的Key和Value向量（例如，16个Token）。这些块在物理显存中可以存储在任意不连续的位置。</p></li>
+<li><p>为了管理这种映射关系，PagedAttention为每个序列引入了一个名为 “块表”（Block Table） 的数据结构。这个块表的作用，就如同操作系统中的“页表”，它维护着从序列的“逻辑块”到显存中“物理块”的映射。</p></li>
+</ul>
+<p>接下来，让我们通过实际的推理示例，来直观地感受PagedAttention的完整工作流程。</p>
 <section id="id7">
-<h3>不同解码策略下的表现<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
-</section>
+<h4>处理单个推理请求<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<p><img alt="single" src="../_images/06PagedAttention05.jpg" /></p>
+<p>如图所示，推理的请求prompt为“Four score and seven years ago our”。
+首先是Prefill阶段【对应图中步骤1】：</p>
+<ol class="arabic simple">
+<li><p>划分逻辑块：针对拿到的prompt按照block大小划分逻辑块</p></li>
+<li><p>映射物理块：用一张block table记录逻辑块和物理块的映射关系（其中<code class="docutils literal notranslate"><span class="pre">Physical</span> <span class="pre">block</span> <span class="pre">number</span></code>表示映射关系，<code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">filled</span></code>表示物理块上被填满的槽位编号）</p></li>
+</ol>
+<p>接下来是Decode阶段【对应图中步骤2/3】</p>
+<ol class="arabic simple">
+<li><p>计算attention，生成第一个token fathers</p></li>
+<li><p>更新逻辑块，物理块和block table</p></li>
+<li><p>分配新的逻辑块和物理块：当fathers填入后，逻辑块1已经装满，需要开辟新的逻辑块2，更新对应的物理块和block table</p></li>
+</ol>
 </section>
 <section id="id8">
-<h2>调度与抢占<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
-<p>LLM 服务面临一个独特的挑战：LLM 的输入提示可能在长度上有很大的变化，而最终的输出长度是先验未知的，取决于输入提示和模型
-在此背景下，vLLM 需要回答两个经典问题：( 1 )应该驱逐哪些区块? ( 2 )如果需要，如何恢复被驱逐的块?</p>
-<p>通常，驱逐策略使用启发式来预测未来哪个块将被访问得最远，并将该块驱逐出去。由于在我们的情况下，我们知道一个序列的所有块都被访问在一起，因此我们<strong>实施了一个全或无的驱逐策略</strong>，即要么驱逐一个序列的所有块，要么驱逐一个序列的所有块。此外，一个请求(例如,一个波束搜索请求中的波束候选)中的多个序列被串并作为一个序列组。由于潜在的内存共享，一个序列组内的序列总是被抢占或重新安排在一起。为了回答第二个问题，即如何恢复一个被驱逐的块，我们考虑了两种技术：</p>
-<p><strong>Swapping</strong>:这是大多数虚拟内存实现所使用的经典技术，它将被删除的页复制到磁盘上的交换空间中。在我们的案例中，我们<strong>将被驱逐的块拷贝到 CPU 内存中</strong>。如图 4 所示，除了 GPU 块分配器外，vLLM 还包括一个 CPU 块分配器，用于管理交换到 CPU RAM 中的物理块。当 vLLM 为新令牌耗尽空闲物理块时，它选择一组序列驱逐并将它们的 KV 缓存转移到 CPU 上。一旦 vLLM 抢占一个序列并移除它的块，vLLM 就停止接受新的请求，直到所有被抢占的序列都被完成。一<strong>旦请求完成，它的块从内存中解放出来，并将抢占序列的块带回来继续该序列的处理</strong>。值得注意的是，在本设计中，交换到 CPU RAM 的块数从未超过 GPU RAM 中的总物理块数，因此 CPU RAM 上的交换空间受分配给 KV 缓存的 GPU 内存的限制。</p>
-<p><strong>Recomputation</strong>：当被抢占的序列被重调度时，我们只需<strong>重新计算 KV 缓存</strong>。需要注意的是，<strong>重新计算的延迟可以显著低于原来的延迟</strong>，因为解码时产生的令牌可以与原来的用户提示串接作为新的提示- -它们在所有位置的 KV 缓存可以在一个提示阶段迭代产生。
-（理解：比如原始提示只有 5 个 token，但是在它被替换出来的时候已经生成了 3 个 token，那么等它再次计算的时候，我们可以把已经生成的 token 与原始 token 合并起来当作新的 prompt，提示处理阶段是可以并行的，比 decodeing 阶段要快的多）</p>
-<p><strong>Comparing Recomputation and Swapping</strong>
-vLLM 同时支持重计算和交换作为其恢复机制。为了理解这两种方法之间的折衷，我们评估了它们的端到端性能，并对它们的开销进行了微基准测试，如图 19 所示。我们的结果表明，在块大小较小的情况下，交换会带来过多的开销。这是因为较小的分块大小往往导致 CPU 和 GPU 之间存在大量的小数据传输，限制了 PCIe 的有效带宽。相比之下，重计算的开销在不同的块大小之间保持不变，因为重计算没有使用 KV 块。因此，当块尺寸较小时，重计算更有效；当块尺寸较大时，交换更有效，尽管重计算开销较大</p>
+<h4>同时处理多个推理请求<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<p><img alt="multi" src="../_images/06PagedAttention06.jpg" /></p>
+<p>处理多个推理请求时与单个请求类似。如图所示，两个序列的逻辑块分别映射到不同的物理块，两个序列的相邻逻辑块在物理GPU内存中不需要连续，一旦一个请求完成，其KV块可以被释放以存储其他请求的KV缓存。</p>
+</section>
+</section>
 </section>
 <section id="id9">
-<h2>分布式场景内存管理<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
-<p>许多 LLM 的参数规模超过了单个 GPU 的处理能力,需要将它们划分到分布式 GPU 上,并以模型并行的方式执行,这就需要一个能够处理分布式内存的内存管理器.</p>
-<p>我们观察到，即使模型并行执行，每个模型分片仍然处理相同的输入令牌集合，因此需要 KV Cache 为相同的位置。因此，vLLM 在集中式调度器中具有单个 KV 缓存管理器，如图 4 所示。不同的 GPU 工作者共享管理器，以及从逻辑块到物理块的映射。这种通用映射允许 GPU 工作者使用调度器为每个输入请求提供的物理块来执行模型。虽然每个 GPU 工作者具有相同的物理块 ID，但是一个工作者只存储其对应注意力头的一部分 KV 缓存。</p>
+<h2>不同解码策略下的应用<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<p>在前面我们了解了PagedAttention原理的基本流程，但是在实际的大模型场景中，有很多更加复杂的解码策略，接下来我们将介绍PagedAttention在不同解码策略下的表现。</p>
+<section id="parallel-sampling">
+<h3>解码策略——Parallel Sampling<a class="headerlink" href="#parallel-sampling" title="Link to this heading">#</a></h3>
+<p>Parallel Sampling：LLM对于一个prompt产生多个采样输出，用户可以从各种候选中选择自己喜欢的输出。</p>
+<p><img alt="parallel" src="../_images/06PagedAttention07.jpg" /></p>
+<p>如图所示就是一个parallel sampling的例子。我们可以看到两个输出可以共享一个提示，所以在prefill阶段，我们只需要预留一个prompt的空间，两个序列的prompt的逻辑块映射到相同的物理块。由于单个物理块可以映射到多个逻辑块，因此我们需要为每个物理块引入一个reference count进行计数。</p>
+<p>在decoding阶段，由于两个序列新产生的token不同，因此需要单独存储KV缓存。vllm对需要多序列修改的物理块实现了copy-on-write机制，具体来说，图中当样本A需要将mothers写入block 1的最后一个逻辑块时，vllm识别除对应的物理块的reference count大于1，因此它会分配一个新的物理块（block 3），复制block 1中的信息，并将block 1的引用次数减少到1。</p>
 </section>
-<section id="attention">
-<h2>Attention 算子适配<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
-<p>由于 PagedAttention 引入了现有系统无法有效支持的访存模式，我们开发了多个 GPU 内核对其进行优化：</p>
-<ul class="simple">
-<li><p>融合整形和分块写入。在每个 Transformer 层中，新的 KV cache 被分割成块，重新配置为块读取优化的内存布局，然后保存在块表指定的位置。为了最小化内核启动开销，我们将它们融合到单个内核中。</p></li>
-<li><p>融合块阅读和注意力。将 FasterTransformer 中的注意力核改编为根据块表读取 KV 缓存，并进行动态的注意力操作。为了保证合并后的内存访问，我们为每个块分配一个 GPU 扭曲来读取。此外，我们还增加了对请求批次内可变序列长度的支持。</p></li>
-<li><p>融合块拷贝。块拷贝操作，由写时拷贝机制发布，可以在不连续的块上操作。如果使用 cudaMemcpyAsync API，这将导致大量的小数据移动的调用。为了减少开销，我们实现了一个内核，将不同块的复制操作批处理到一个内核启动中。</p></li>
-</ul>
+<section id="beam-searching">
+<h3>解码策略——Beam Searching<a class="headerlink" href="#beam-searching" title="Link to this heading">#</a></h3>
+<p>Beam Search：在每个decode阶段，产生top k个token（这里k也被称为束宽）。然后再把这top k个序列喂给模型，假设词表的大小为|V|，那么在下一时刻，就要在k*|V|个候选者中再选出top k，以此类推。束搜索在LLM中被广泛使用，因为它减轻了完全遍历的计算复杂度。</p>
+<p><img alt="parallel" src="../_images/06PagedAttention08.jpg" /></p>
+<p>图中所展示的就是k=4的情况下的束搜索示例。我们可以看到，与并行解码不同的是，束搜索不仅可以共享初始提示块，还可以在解码过程中跨不同候选块共享其他块，而且共享模式随着解码过程的进行不断发生变化。</p>
+</section>
+<section id="shared-prefix">
+<h3>解码策略——Shared prefix<a class="headerlink" href="#shared-prefix" title="Link to this heading">#</a></h3>
+<p>Shared prefix：在许多llm应用场景（例如翻译），用户会先提供任务的描述，然后再输入实际的任务，最终的promt是将任务描述与实际任务拼接起来。对于这种类型的应用，许多用户提示可以共享同一个任务描述的前缀。</p>
+<p><img alt="parallel" src="../_images/06PagedAttention09.jpg" /></p>
+<p>如图所示是一个常见的翻译任务，不同用户的前缀都是描述翻译任务并给出示例，再之后的实际任务输入中每个用户的输入不同，再这种情况下，vllm可以提前存储前缀的KV缓存（类似于操作系统中跨进程的共享库）。这样只需要实时计算用户的具体任务输入部分。</p>
+</section>
 </section>
 <section id="id10">
-<h2>总结与思考<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<h2>调度与抢占<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
+<p>上述章节讲述了如何使用paged attention是如何优化kv cache显存分配的，现在我们从vllm这个推理系统的角度，
+探究vllm时如何对推理请求进行调度的。</p>
+<p>当有一堆请求来到vllm服务器上，vllm首先需要有一个原则来安排以何种顺序执行这些请求，在vllm中，采用的是如下调度策略：</p>
+<ol class="arabic simple">
+<li><p><strong>先到的请求先服务（FCFS）</strong>。保证了公平性并防止了饥饿。如有抢占的需要，后来的请求先被抢占。</p></li>
+<li><p><strong>如有抢占的需要，后来的请求先被抢占</strong>。LLM的prompt可能在长度上有很大的变化，而最终的输出长度是未知的。
+当我们采用动态分配显存的方式时，由于没有为每个prompt预留充足的显存空间，可能出现在某一个时刻，显存已经被打满，
+而此时所有的prompt都还没有做完推理的情况，为了推理服务能够继续运行下去，vllm需要暂停这堆请求中最后到达的那些请求的推理，同时将它们相关的KV cache从gpu上驱逐。以便为更早到达的请求留出足够的gpu空间，让它们完成推理任务。vllm采用的是all-or-nothing策略，即释放被抢占请求的所有block。</p></li>
+</ol>
+<p>对于这些被抢占的任务，vLLM需要在gpu充足时，重新恢复这些被驱逐的块。对此vllm设计了两种策略恢复被驱逐的块。</p>
+<p><strong>Swapping（交换）</strong>:这是大多数虚拟内存实现所使用的经典技术，它将被删除的页复制到磁盘上的交换空间中。对于这个任务，vllm<strong>将被驱逐的块拷贝到CPU内存中</strong>。如下图所示，除了GPU块分配器外，vLLM还包括一个CPU块分配器，用于管理交换到CPU RAM中的物理块。等到gpu显存充足时，再将这些block从CPU中加载到GPU中。</p>
+<p><img alt="swapping" src="../_images/06PagedAttention11.jpg" /></p>
+<p><strong>Recomputation（重计算）</strong>：当任务被抢占时，我们也可以不做交换，直接在GPU中释放相应的block，等到GPU显存充足时再重新开始推理。</p>
+<p><strong>两种方式的比较</strong></p>
+<p>vLLM同时支持重计算和交换作为其恢复机制。并对两种方式的性能进行评估，结果表明在块大小较小的情况下，交换会带来过多的开销。这是因为较小的分块大小往往导致CPU和GPU之间存在大量的小数据传输，限制了PCIe的有效带宽。相比之下，重计算的开销在不同的块大小之间保持不变。因此，当块较小时，重计算更有效；当块较大时，交换更有效，因为重计算开销较大。</p>
 </section>
 <section id="id11">
-<h2>本节视频<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
+<h2>分布式场景内存管理<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
+<p>随着模型规模的急剧增长，单张GPU已无法容纳整个LLM的参数。因此，必须采用**模型并行（Model Parallelism）**技术，将模型切分到多张GPU上协同工作。这就需要一个能够处理分布式内存的内存管理器。
+vllm因此设计了一个调度器，其核心思想可以概括为：“中心化内存管理，分布式计算执行”。具体设计如下：</p>
+<p><img alt="distributed" src="../_images/06PagedAttention12.jpg" /></p>
+<ul class="simple">
+<li><p>如图所示，vllm中有一个中央KV Cache管理器，负责计算和管理每张卡上KV Cache逻辑块到物理块的映射表。</p></li>
+<li><p>所有GPU Worker共享映射关系：调度器会将为请求分配好的Block Table广播给所有参与计算的GPU。每张gpu接收到相关信息后，负责管理自己gpu上的KV block。</p></li>
+</ul>
+</section>
+<section id="attention">
+<h2>Attention算子适配<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
+<p>PagedAttention通过分页机制巧妙地管理内存，但也引入了一个挑战：逻辑上连续的KV Cache在物理上却分散存储。传统的GPU计算库专为处理连续内存而优化，直接应用于这种非连续数据会造成严重的性能瓶颈。
+为了解决这个问题，vLLM、直接开发了一系列定制化的高性能GPU Kernel，让计算直接适配这种非连续的内存布局。主要包含三大优化：</p>
+<ol class="arabic simple">
+<li><p>融合的KV Cache写入操作
+在每个生成步骤中，新的KV Cache需要被切分并写入到指定的物理块中。vLLM将这一系列操作（分割、重塑、写入）融合（Fuse）成一个单一的GPU Kernel。这样做减少了CPU与GPU之间的通信开销，提高了写入效率。</p></li>
+<li><p>支持非连续内存的注意力计算
+这是最核心的优化。vLLM对注意力计算Kernel进行了改动，使其能够：</p>
+<ul class="simple">
+<li><p>直接读取Block Table：Kernel在计算时能“实时”地根据逻辑块索引查找到分散的物理块地址，并直接从中读取数据进行注意力计算。这避免了在计算前耗时地将数据拷贝到连续内存中。</p></li>
+<li><p>保持高效内存访问：Kernel通过线程调度设计，确保了即使数据物理上不连续，也能实现高效的“合并内存访问”，充分利用显存带宽。</p></li>
+</ul>
+</li>
+<li><p>批处理的写时复制（Copy-on-Write）
+在Beam Search等场景中，需要复制序列。PagedAttention的写时复制（CoW）机制仅在必要时才拷贝物理块。当需要同时拷贝多个分散的块时，vLLM使用一个批处理拷贝Kernel，将多次小数据拷贝合并为一次GPU任务，显著降低了操作开销。</p></li>
+</ol>
+</section>
+<section id="id12">
+<h2>小结与思考<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>常规大模型内存管理方式内存效率极低</p></li>
+<li><p>Paged Attention算法用类似操作系统管理内存的方式管理KV Cache</p></li>
+<li><p>vllm推理框架基于paged attention算法实现，在多种场景下表现优异</p></li>
+</ol>
+</section>
+<section id="id13">
+<h2>引用与参考<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>https://zhuanlan.zhihu.com/p/691038809</p></li>
+<li><p>https://arxiv.org/pdf/2309.06180</p></li>
+<li><p>https://zhuanlan.zhihu.com/p/673284781</p></li>
+</ul>
+</section>
+<section id="id14">
+<h2>本节视频<a class="headerlink" href="#id14" title="Link to this heading">#</a></h2>
 </section>
 </section>
 
@@ -1014,21 +1117,32 @@ vLLM 同时支持重计算和交换作为其恢复机制。为了理解这两种
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">大模型推理的内存管理挑战</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Paged Attention 原理</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">操作系统虚拟内存概念</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Paged Attention 算法</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">KV Cache 管理</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Paged Attention 算法</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">KV Cache 管理</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">不同解码策略下的表现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">大模型推理的内存管理挑战</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">内存管理挑战</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">常规内存管理方式与问题</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">调度与抢占</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">分布式场景内存管理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention 算子适配</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Paged Attention 原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">操作系统虚拟内存概念</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Paged Attention算法</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">处理单个推理请求</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">同时处理多个推理请求</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">不同解码策略下的应用</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parallel-sampling">解码策略——Parallel Sampling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beam-searching">解码策略——Beam Searching</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shared-prefix">解码策略——Shared prefix</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">调度与抢占</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">分布式场景内存管理</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention算子适配</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">小结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">引用与参考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">本节视频</a></li>
 </ul>
   </nav></div>
 
@@ -1062,7 +1176,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

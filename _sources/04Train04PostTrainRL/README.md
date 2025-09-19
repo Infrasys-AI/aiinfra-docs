@@ -4,17 +4,17 @@
 
 本次大纲内容主要围绕......
 
-## 课程位置
+## 详细内容
 
-xxx
+> 建议优先下载 PDF 版本，PPT 版本会因为字体缺失等原因导致版本很丑哦~
 
-## 课程简介
-
-xxx
-
-## 课程知识
-
-xxx
+| 大纲 | 小节 | 链接 | 状态 |
+|:--- |:---- |:-------------------- |:---:|
+|  |  | [PPT](), [文章](), [视频]() |  |
+|:sparkling_heart:|:star2:|:sparkling_heart:| |
+| RL 实践 :computer: | CODE 01: 经典 InstructGPT 复现 | [Markdown](./Code01InstructGPT.md), [Jupyter](./Code01InstructGPT.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train04PostTrainRL/Code01InstructGPT.html) | :white_check_mark: |
+| RL 实践 :computer: | CODE 02: DPO 与 PPO 在 LLM 对比 | [Markdown](./Code02DPOPPO.md), [Jupyter](./Code02DPOPPO.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train04PostTrainRL/Code02DPOPPO.html) | :white_check_mark: |
+| RL 实践 :computer: | CODE 03: LLM + GRPO 实践  | [Markdown](./Code03GRPO.md), [Jupyter](./Code03GRPO.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train04PostTrainRL/Code03GRPO.html) | :white_check_mark: |
 
 ## 备注
 
@@ -22,7 +22,6 @@ xxx
 
 > 非常希望您参与到这个开源课程中，B 站给 ZOMI 留言哦！
 >
-> 欢迎发现 bug 或者勘误直接提交代码 PR 到社区哦！
 
 ```{toctree}
 :maxdepth: 1

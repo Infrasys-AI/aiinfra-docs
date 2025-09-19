@@ -20,6 +20,3 @@ ChatGPT 是由 OpenAI 开发的一种基于 GPT（生成式预训练变换器）
 
 文字课程开源在 [AI Infra](https://infrasys-ai.github.io/aiinfra-docs)，系列视频托管[B 站](https://space.bilibili.com/517221395)和[油管](https://www.youtube.com/@ZOMI666/playlists)，PPT 开源在[github](https://github.com/Infrasys-AI/AIInfra)，欢迎引用！
 
-> 非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！
->
-> 欢迎发现 bug 或者勘误直接提交代码 PR 到社区哦！

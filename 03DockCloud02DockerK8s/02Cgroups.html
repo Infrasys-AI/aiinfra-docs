@@ -79,12 +79,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="深入 K8S" href="../03DockCloud03DiveintoK8s/README.html" />
+    <link rel="next" title="容器镜像" href="03Image.html" />
     <link rel="prev" title="容器从进程到 Namespace" href="01Container.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -315,6 +315,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -348,6 +349,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">Docker 与 K8S 初体验</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01Container.html">容器从进程到 Namespace</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -386,7 +388,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -423,9 +425,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -823,7 +825,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
 </div></div>
       
     </div>
@@ -839,6 +843,24 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgroups">什么是 Cgroups？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgroups-v1-v2">Cgroups 的两大版本：v1 与 v2</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Cgroups 的核心概念</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subsystem">子系统（Subsystem）</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">如何使用 Cgroups？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Cgroups 与网络控制</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgroups-namespace">Cgroups 与 Namespace 的协同工作</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">参考与引用</a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -856,8 +878,127 @@ document.write(`
 <div><p>注：以下讨论基于 Linux</p>
 </div></blockquote>
 <p>在上一篇文章中，我详细介绍了容器中用来实现“隔离”的其中一种技术手段：Namespace。现在你应该已经明白，Namespace 技术的原理就是修改进程的视图，让进程只能“看到”操作系统一部分的内容。但视图的遮盖终究只是障眼法，对于宿主机来说，这些“隔离”进程与其他进程并没有什么不同。为了实现完整的资源隔离，我们还需要限制容器对 CPU、内存、磁盘资源的访问，否则当其中一个容器将宿主机的资源消耗光了，就会影响到宿主机上的其他容器。</p>
-<p><img alt="虚拟机和容器的架构对比" src="../_images/02Container01.png" /></p>
+<p><img alt="虚拟机和容器的架构对比" src="03DockCloud02DockerK8s/images/01Container01.png" /></p>
 <p>如果你还记得上面这张图，仔细观察会发现只有虚拟机方案才有 Hypervisor 这个组件。这是因为 Hypervisor 主要负责创建虚拟化的硬件，在这个步骤里也间接地完成了资源访问的限制。而 Container Engine 并没有 Hypervisor 这样的功能，所以需要另寻他法进行资源限制，幸好 Linux 操作系统也为我们提供了这样的能力——Cgroups。</p>
+<section id="cgroups">
+<h2>什么是 Cgroups？<a class="headerlink" href="#cgroups" title="Link to this heading">#</a></h2>
+<p>Cgroups（Control Groups 的缩写）是 Linux 内核提供的一种机制，它可以将一系列系统任务及其子任务整合（或分隔）到按资源划分等级的不同组内，从而为系统资源管理提供一个统一的框架。 简单来说，Cgroups 可以限制、记录和隔离进程组所使用的物理资源，例如 CPU 时间、内存、磁盘 I/O 和网络带宽等。</p>
+<p>这个功能最初由 Google 的工程师在 2006 年发起，当时被称为“进程容器”（process containers），并在 2008 年被合并到 Linux 2.6.24 内核中，正式更名为 Cgroups。 目前，Cgroups 已经成为众多容器化技术（如 Docker、Kubernetes）以及 systemd 的基础。</p>
+<p>Cgroups 主要提供以下四大功能：</p>
+<ul class="simple">
+<li><p><strong>资源限制 (Resource Limiting)</strong>：可以对进程组使用的资源总量进行限制，例如设定内存使用上限，一旦超出该限制，系统将触发 OOM (Out of Memory) Killer。</p></li>
+<li><p><strong>优先级控制 (Prioritization)</strong>：可以控制进程组的资源使用优先级，例如分配更多的 CPU 时间片或更高的磁盘 I/O 优先级。</p></li>
+<li><p><strong>审计与统计 (Accounting)</strong>：可以统计进程组的资源使用情况，生成资源使用报告，方便进行计量和监控。</p></li>
+<li><p><strong>进程控制 (Control)</strong>：可以对进程组中的所有进程执行挂起、恢复等操作。</p></li>
+</ul>
+</section>
+<section id="cgroups-v1-v2">
+<h2>Cgroups 的两大版本：v1 与 v2<a class="headerlink" href="#cgroups-v1-v2" title="Link to this heading">#</a></h2>
+<p>与许多 Linux 内核特性一样，Cgroups 也经历了一个发展的过程，目前主要存在 v1 和 v2 两个版本。</p>
+<ul class="simple">
+<li><p><strong>Cgroups v1</strong>：是 Cgroups 的第一个稳定版本，也是目前 Docker 等容器技术中仍然广泛使用的版本。它的设计思路是为每一种需要控制的资源都创建一个独立的层级（Hierarchy）。例如 <code class="docutils literal notranslate"><span class="pre">/sys/fs/cgroup/cpu/GROUPNAME</span></code> 和 <code class="docutils literal notranslate"><span class="pre">/sys/fs/cgroup/memory/GROUPNAME</span></code>，其中 <code class="docutils literal notranslate"><span class="pre">cpu</span></code> 和 <code class="docutils literal notranslate"><span class="pre">memory</span></code> 的控制是分别在不同的层级中进行的。这种设计虽然在某些场景下足够灵活，但也带来了一些问题，比如层级管理混乱，以及无法对不同资源进行统一的协调控制。</p></li>
+<li><p><strong>Cgroups v2</strong>：为了解决 v1 中存在的问题，Cgroups v2 进行了重新设计。v2 最大的特点是采用了单一的、统一的层级结构。 这意味着所有的资源控制器（Controller）都挂载在同一个层级下，从而简化了管理，并能够更好地协调不同资源之间的限制关系：<code class="docutils literal notranslate"><span class="pre">/sys/fs/cgroup/GROUPNAME</span></code> 中的树，如果进程 <code class="docutils literal notranslate"><span class="pre">x</span></code> 加入 <code class="docutils literal notranslate"><span class="pre">/sys/fs/cgroup/GROUPNAME</span></code>，则 <code class="docutils literal notranslate"><span class="pre">GROUPNAME</span></code> 的每个控制器都将控制进程 <code class="docutils literal notranslate"><span class="pre">x</span></code>。此外，v2 还提供了一些新的特性，比如更可靠的进程追踪和更细粒度的资源控制。</p></li>
+</ul>
+<p>虽然 Cgroups v2 在功能和设计上都优于 v1，但由于历史原因和生态兼容性问题，目前 v1 仍然被广泛使用。不过，随着时间的推移，Cgroups v2 必将成为主流。</p>
+<p><img alt="Cgroups overview" src="03DockCloud02DockerK8s/images/02Cgroups01.png" /></p>
+</section>
+<section id="id2">
+<h2>Cgroups 的核心概念<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>要理解 Cgroups 的工作原理，我们需要先了解它的三个核心概念：子系统（Subsystem）、控制组（Control Group）和层级（Hierarchy）。</p>
+<ul class="simple">
+<li><p><strong>子系统 (Subsystem)</strong>：一个子系统就是一个资源控制器，负责控制某一类特定的资源。 例如，<code class="docutils literal notranslate"><span class="pre">cpu</span></code> 子系统负责限制 CPU 的使用，<code class="docutils literal notranslate"><span class="pre">memory</span></code> 子系统负责限制内存的使用。</p></li>
+<li><p><strong>控制组 (Cgroup)</strong>：一个控制组是 Cgroups 中的基本单位，它是一组按照某种资源控制标准划分的进程集合。一个 Cgroup 可以包含多个进程，并且可以关联一个或多个子系统。</p></li>
+<li><p><strong>层级 (Hierarchy)</strong>：层级由一系列 Cgroup 以树状结构排列而成，每个层级可以附加一个或多个子系统。 子 Cgroup 会继承其父 Cgroup 的属性。</p></li>
+</ul>
+<section id="subsystem">
+<h3>子系统（Subsystem）<a class="headerlink" href="#subsystem" title="Link to this heading">#</a></h3>
+<p>Cgroups 的强大功能是通过其丰富的子系统（也称为控制器）来实现的。每个子系统负责一种特定资源的控制。 下面我们介绍几个在容器技术中至关重要的子系统：</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">cpu</span></code> 子系统</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpu.shares</span></code>: 设置一个相对的 CPU 使用权重。如果一个 Cgroup 的 <code class="docutils literal notranslate"><span class="pre">cpu.shares</span></code> 设置为 1024，另一个设置为 512，那么前者获得的 CPU 时间将是后者的两倍（在 CPU 资源紧张的情况下）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">cpu.cfs_period_us</span></code> 和 <code class="docutils literal notranslate"><span class="pre">cpu.cfs_quota_us</span></code>: 这两个参数配合使用，可以精确地限制 Cgroup 在一个周期（<code class="docutils literal notranslate"><span class="pre">cpu.cfs_period_us</span></code>，单位微秒）内最多能使用多少 CPU 时间（<code class="docutils literal notranslate"><span class="pre">cpu.cfs_quota_us</span></code>，单位微秒）。 例如，将 <code class="docutils literal notranslate"><span class="pre">cpu.cfs_period_us</span></code> 设置为 100000（100毫秒），<code class="docutils literal notranslate"><span class="pre">cpu.cfs_quota_us</span></code> 设置为 50000（50毫秒），就意味着该 Cgroup 在每 100 毫秒内最多只能使用 50 毫秒的 CPU 时间，相当于限制其使用 0.5 个 CPU 核心。</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">memory</span></code> 子系统</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">memory.limit_in_bytes</span></code>: 这是最常用的参数，直接限制了 Cgroup 中所有进程能够使用的最大内存量。 一旦进程的内存使用量超过这个限制，系统就会触发 OOM (Out of Memory) Killer，杀死该进程。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">memory.soft_limit_in_bytes</span></code>: 设置一个内存使用的软限制。当系统内存充足时，进程可以超过这个限制。只有在系统内存紧张时，内核才会开始回收超过软限制的内存。</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">blkio</span></code> 子系统</strong>：</p>
+<ul>
+<li><p>用于限制对块设备（如硬盘、SSD）的 I/O 访问。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blkio.throttle.read_bps_device</span></code> 和 <code class="docutils literal notranslate"><span class="pre">blkio.throttle.write_bps_device</span></code>: 分别用来限制读取和写入指定设备的速度，单位是字节/秒。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">blkio.throttle.read_iops_device</span></code> 和 <code class="docutils literal notranslate"><span class="pre">blkio.throttle.write_iops_device</span></code>: 分别用来限制读取和写入指定设备的 IOPS (Input/Output Operations Per Second)。</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">pids</span></code> 子系统</strong>：</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">pids.max</span></code>: 限制一个 Cgroup 内可以创建的进程（或线程）的最大数量。这对于防止 &quot;fork bomb&quot; 等恶意攻击非常有效。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="id3">
+<h2>如何使用 Cgroups？<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>在 Linux 系统中，Cgroups 是通过一个特殊的文件系统（cgroupfs）来暴露给用户空间的。 我们可以像操作普通文件一样，通过读写这些文件来配置 Cgroups。</p>
+<p>通常，Cgroups 的挂载点位于 <code class="docutils literal notranslate"><span class="pre">/sys/fs/cgroup</span></code> 目录下。 在这个目录下，你会看到以各个子系统命名的文件夹。</p>
+<p><strong>以 <code class="docutils literal notranslate"><span class="pre">memory</span></code> 子系统为例：</strong></p>
+<ol class="arabic">
+<li><p><strong>创建一个新的 Cgroup</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/sys/fs/cgroup/memory
+sudo<span class="w"> </span>mkdir<span class="w"> </span>my-container
+</pre></div>
+</div>
+<p>执行 <code class="docutils literal notranslate"><span class="pre">mkdir</span></code> 命令后，系统会自动在 <code class="docutils literal notranslate"><span class="pre">my-container</span></code> 目录下创建一系列与 <code class="docutils literal notranslate"><span class="pre">memory</span></code> 子系统相关的文件。</p>
+</li>
+<li><p><strong>设置资源限制</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 限制内存使用为 512MB</span>
+<span class="nb">echo</span><span class="w"> </span>512M<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>my-container/memory.limit_in_bytes
+</pre></div>
+</div>
+</li>
+<li><p><strong>将进程加入 Cgroup</strong>：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 将当前 shell 进程加入该 Cgroup</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$$</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>my-container/tasks
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">$$</span></code> 是一个特殊的 shell 变量，代表当前进程的 PID。将一个进程的 PID 写入 <code class="docutils literal notranslate"><span class="pre">tasks</span></code> 文件，就意味着将该进程加入了这个 Cgroup。 此后，该进程及其所有子进程都将受到这个 Cgroup 的资源限制。</p>
+</li>
+</ol>
+<p>当然，在实际的容器化场景中，我们很少会直接手动操作这些文件。像 Docker 这样的容器引擎已经为我们封装好了对 Cgroups 的操作。例如，在使用 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span></code> 命令时，我们可以通过参数来方便地设置容器的资源限制：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>my-app<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--cpus<span class="o">=</span><span class="s2">&quot;.5&quot;</span><span class="w"> </span><span class="se">\ </span><span class="w">      </span><span class="c1"># 限制使用 0.5 个 CPU 核心</span>
+<span class="w">  </span>-m<span class="w"> </span><span class="s2">&quot;512m&quot;</span><span class="w"> </span><span class="se">\ </span><span class="w">      </span><span class="c1"># 限制内存为 512MB</span>
+<span class="w">  </span>--pids-limit<span class="w"> </span><span class="m">100</span><span class="w"> </span><span class="se">\ </span><span class="w"> </span><span class="c1"># 限制最多 100 个进程</span>
+<span class="w">  </span>nginx
+</pre></div>
+</div>
+<p>这条命令会创建一个 Nginx 容器，并通过 Cgroups 将其 CPU、内存和进程数量都限制在了一个合理的范围内。</p>
+</section>
+<section id="id4">
+<h2>Cgroups 与网络控制<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>Cgroups v2 对整个 Cgroups 架构进行了简化和统一。 在 v2 中，所有的控制器都挂载在同一个统一的层级下。 对于网络控制，Cgroups v2 不再使用 <code class="docutils literal notranslate"><span class="pre">net_cls</span></code> 子系统，而是通过 eBPF (extended Berkeley Packet Filter) 与 <code class="docutils literal notranslate"><span class="pre">iptables</span></code> 结合的方式来实现更灵活和高效的网络控制。</p>
+<p>你可以编写 eBPF 程序，挂载到 Cgroup v2 的路径上，从而对该 Cgroup 中的网络流量进行精细化的过滤、修改或重定向。这种方式提供了比 <code class="docutils literal notranslate"><span class="pre">net_cls</span></code> 更强大的功能和更好的性能。</p>
+</section>
+<section id="cgroups-namespace">
+<h2>Cgroups 与 Namespace 的协同工作<a class="headerlink" href="#cgroups-namespace" title="Link to this heading">#</a></h2>
+<p>现在我们再回过头来看容器的隔离机制。Namespace 解决了“看”的问题，让容器内的进程只能看到自己的一亩三分地。而 Cgroups 则解决了“用”的问题，为容器的资源使用量设定了上限。 两者协同工作，才最终构建出了一个看似“独立”的容器环境。</p>
+<p>可以说，没有 Namespace，容器就无法实现视图隔离；而没有 Cgroups，容器的资源隔离就无从谈起，也就失去了其在多租户、高密度部署等场景下的核心价值。</p>
+</section>
+<section id="id5">
+<h2>总结<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>Cgroups 作为 Linux 内核提供的强大功能，为实现容器等场景下的资源隔离和限制提供了坚实的基础。通过其灵活的子系统机制，我们可以对 CPU、内存、磁盘 I/O 等多种资源进行精细化的控制。而在网络方面，虽然 Cgroups 不直接进行流量控制，但它通过与 <code class="docutils literal notranslate"><span class="pre">tc</span></code>、<code class="docutils literal notranslate"><span class="pre">iptables</span></code> 和 eBPF 等内核模块的协同工作，同样实现了强大的网络资源管理能力。</p>
+</section>
+<section id="id6">
+<h2>参考与引用<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>https://labs.iximiuz.com/tutorials/controlling-process-resources-with-cgroups</p></li>
+<li><p>https://segmentfault.com/a/1190000045052990</p></li>
+</ul>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -904,11 +1045,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="../03DockCloud03DiveintoK8s/README.html"
+       href="03Image.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">深入 K8S</p>
+        <p class="prev-next-title">容器镜像</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -918,6 +1059,31 @@ document.write(`
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgroups">什么是 Cgroups？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgroups-v1-v2">Cgroups 的两大版本：v1 与 v2</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Cgroups 的核心概念</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#subsystem">子系统（Subsystem）</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">如何使用 Cgroups？</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Cgroups 与网络控制</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cgroups-namespace">Cgroups 与 Namespace 的协同工作</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">参考与引用</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
@@ -947,7 +1113,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

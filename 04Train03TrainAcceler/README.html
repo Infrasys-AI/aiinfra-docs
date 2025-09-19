@@ -86,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -317,6 +317,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -350,6 +351,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -388,7 +390,7 @@
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">大模型训练加速</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -425,9 +427,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -849,8 +851,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">详细内容</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">内容大纲</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">备注</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">备注</a></li>
 </ul>
             </nav>
         </div>
@@ -876,34 +877,53 @@ document.write(`
 <tr class="row-odd"><th class="head text-left"><p>大纲</p></th>
 <th class="head text-left"><p>小节</p></th>
 <th class="head text-left"><p>链接</p></th>
+<th class="head text-center"><p>状态</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td class="text-left"><p>大模型训练加速</p></td>
 <td class="text-left"><p></p></td>
 <td class="text-left"><p><a class="reference internal" href="#"><span class="xref myst">PPT</span></a>, <a class="reference internal" href="#"><span class="xref myst">文章</span></a>, <a class="reference internal" href="#"><span class="xref myst">视频</span></a></p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>:sparkling_heart:</p></td>
+<td class="text-left"><p>:star2:</p></td>
+<td class="text-left"><p>:sparkling_heart:</p></td>
+<td class="text-center"><p></p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>并行 实践 :computer:</p></td>
+<td class="text-left"><p>CODE 01: Flash Attention 实现</p></td>
+<td class="text-left"><p><a class="reference internal" href="Code01FlashAtten.html"><span class="std std-doc">Markdown</span></a>, <a class="reference internal" href="#./Code01FlashAtten.ipynb"><span class="xref myst">Jupyter</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/04Train03TrainAcceler/Code01FlashAtten.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>并行 实践 :computer:</p></td>
+<td class="text-left"><p>CODE 02: 梯度检查点内存优化</p></td>
+<td class="text-left"><p><a class="reference internal" href="Code02GradCheck.html"><span class="std std-doc">Markdown</span></a>, <a class="reference internal" href="#./Code02GradCheck.ipynb"><span class="xref myst">Jupyter</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/04Train03TrainAcceler/Code02GradCheck.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>并行 实践 :computer:</p></td>
+<td class="text-left"><p>CODE 03: FP8 混合精度训练</p></td>
+<td class="text-left"><p><a class="reference internal" href="Code03FP8.html"><span class="std std-doc">Markdown</span></a>, <a class="reference internal" href="#./Code03FP8.ipynb"><span class="xref myst">Jupyter</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/04Train03TrainAcceler/Code03FP8.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>并行 实践 :computer:</p></td>
+<td class="text-left"><p>CODE 04: Ring Attention 实践</p></td>
+<td class="text-left"><p><a class="reference internal" href="Code04RingAttn.html"><span class="std std-doc">Markdown</span></a>, <a class="reference internal" href="#./Code04RingAttn.ipynb"><span class="xref myst">Jupyter</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/04Train03TrainAcceler/Code04RingAttn.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
 <section id="id3">
-<h2>内容大纲<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
-<p>XXXXXX</p>
-</section>
-<section id="id4">
-<h2>备注<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<h2>备注<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <p>文字课程内容正在一节节补充更新，每晚会抽空继续更新正在 <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs">AI Infra</a> ，希望您多多鼓励和参与进来！！！</p>
 <p>文字课程开源在 <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs">AI Infra</a>，系列视频托管<a class="reference external" href="https://space.bilibili.com/517221395">B 站</a>和<a class="reference external" href="https://www.youtube.com/&#64;ZOMI666/playlists">油管</a>，PPT 开源在<a class="reference external" href="https://github.com/Infrasys-AI/AIInfra">github</a>，欢迎引用！</p>
-<blockquote>
-<div><p>非常希望您也参与到这个开源课程中，B 站给 ZOMI 留言哦！</p>
-<p>欢迎发现 bug 或者勘误直接提交代码 PR 到社区哦！</p>
-</div></blockquote>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -991,8 +1011,7 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">详细内容</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">内容大纲</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">备注</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">备注</a></li>
 </ul>
   </nav></div>
 
@@ -1026,7 +1045,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

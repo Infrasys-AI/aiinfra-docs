@@ -86,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -317,6 +317,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -350,6 +351,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -388,7 +390,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -425,9 +427,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -877,7 +879,10 @@ document.write(`
 <section id="id1">
 <h2>1. 实验环境设置<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>首先，我们需要加载 Qwen-1.8B 模型并创建文本生成环境。Qwen 系列模型是由阿里巴巴开发的开源大语言模型，1.8B 版本在保持较好性能的同时计算资源需求适中，适合实验环境。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 首先安装必要的依赖</span>
+<span class="o">%</span><span class="n">pip</span> <span class="n">install</span> <span class="n">torch</span> <span class="n">transformers</span> <span class="n">transformers_stream_generator</span> <span class="n">numpy</span> <span class="n">matplotlib</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch.optim</span> <span class="k">as</span> <span class="nn">optim</span>
 <span class="kn">from</span> <span class="nn">torch.distributions</span> <span class="kn">import</span> <span class="n">Categorical</span>
@@ -894,11 +899,11 @@ document.write(`
 <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">tokenizer</span><span class="o">.</span><span class="n">pad_token</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">eos_token</span>  <span class="c1"># 设置填充标记</span>
 
-<span class="c1"># 加载基础模型，使用 bfloat16 精度减少内存占用</span>
+<span class="c1"># 加载基础模型</span>
 <span class="n">base_model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
     <span class="n">model_name</span><span class="p">,</span> 
     <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
 <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Qwen-1.8B 模型加载完成&quot;</span><span class="p">)</span>
 </pre></div>
@@ -996,7 +1001,7 @@ document.write(`
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PPOPolicy</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;包装语言模型作为策略网络&quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_model</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">PPOPolicy</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">base_model</span>
         
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">,</span> <span class="n">attention_mask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -1034,8 +1039,8 @@ document.write(`
         <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         
         <span class="n">generated</span> <span class="o">=</span> <span class="n">input_ids</span>
-        <span class="n">log_probs</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># 记录每个动作的对数概率</span>
-        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>     <span class="c1"># 记录每个状态的价值</span>
+        <span class="n">last_log_prob</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">last_value</span> <span class="o">=</span> <span class="kc">None</span>
         
         <span class="c1"># 逐步生成文本</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_length</span><span class="p">):</span>
@@ -1054,51 +1059,46 @@ document.write(`
                 
             <span class="c1"># 将新 token 添加到生成序列</span>
             <span class="n">generated</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">generated</span><span class="p">,</span> <span class="n">action</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">log_probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">log_prob</span><span class="p">)</span>
-            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">last_log_prob</span> <span class="o">=</span> <span class="n">log_prob</span>
+            <span class="n">last_value</span> <span class="o">=</span> <span class="n">value</span>
             
             <span class="c1"># 如果生成结束标记则提前终止</span>
             <span class="k">if</span> <span class="n">action</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">==</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">eos_token_id</span><span class="p">:</span>
                 <span class="k">break</span>
         
-        <span class="k">return</span> <span class="n">generated</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">log_probs</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">generated</span><span class="p">,</span> <span class="n">last_log_prob</span><span class="p">,</span> <span class="n">last_value</span>
     
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompts</span><span class="p">,</span> <span class="n">rewards</span><span class="p">,</span> <span class="n">old_log_probs</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;更新策略和价值模型&quot;&quot;&quot;</span>
-        <span class="c1"># 计算折扣回报</span>
-        <span class="n">returns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_returns</span><span class="p">(</span><span class="n">rewards</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
-        <span class="c1"># 计算优势函数：回报 - 价值估计</span>
-        <span class="n">advantages</span> <span class="o">=</span> <span class="n">returns</span> <span class="o">-</span> <span class="n">values</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">old_log_prob</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;单步 PPO 更新&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">reward</span><span class="p">):</span>
+            <span class="n">reward</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">reward</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">advantage</span> <span class="o">=</span> <span class="n">reward</span>
+        
+        <span class="c1"># 编码提示文本</span>
+        <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         
         <span class="c1"># 多轮 PPO 更新</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ppo_epochs</span><span class="p">):</span>
-            <span class="c1"># 重新计算新策略的对数概率</span>
-            <span class="n">new_log_probs</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">prompt</span> <span class="ow">in</span> <span class="n">prompts</span><span class="p">:</span>
-                <span class="n">input_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
-                    <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">get_logits</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span>
-                    <span class="c1"># 只考虑最后一个 token 的分布</span>
-                    <span class="n">dist</span> <span class="o">=</span> <span class="n">Categorical</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
-                    <span class="n">new_log_probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">input_ids</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-            
-            <span class="n">new_log_probs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">new_log_probs</span><span class="p">)</span>
-            
-            <span class="c1"># 计算策略比率</span>
-            <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">new_log_probs</span> <span class="o">-</span> <span class="n">old_log_probs</span><span class="p">)</span>
-            
-            <span class="c1"># 计算 PPO 裁剪目标函数</span>
-            <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">advantages</span>
-            <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">advantages</span>
-            <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
-            
+            <span class="c1"># 重新计算新策略的对数概率（基于当前提示）</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="o">.</span><span class="n">get_logits</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span>
+                <span class="n">dist</span> <span class="o">=</span> <span class="n">Categorical</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">logits</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
+                <span class="n">new_log_prob</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">log_prob</span><span class="p">(</span><span class="n">input_ids</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="c1"># 策略比与裁剪目标</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">new_log_prob</span> <span class="o">-</span> <span class="n">old_log_prob</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+            <span class="n">surr1</span> <span class="o">=</span> <span class="n">ratio</span> <span class="o">*</span> <span class="n">advantage</span>
+            <span class="n">surr2</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">ratio</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">*</span> <span class="n">advantage</span>
+            <span class="n">policy_loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">surr1</span><span class="p">,</span> <span class="n">surr2</span><span class="p">)</span>
+
             <span class="c1"># 更新策略网络</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">policy_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
             <span class="n">policy_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">policy_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            
-            <span class="c1"># 更新价值函数</span>
-            <span class="n">value_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()(</span><span class="bp">self</span><span class="o">.</span><span class="n">value_model</span><span class="p">(</span><span class="n">prompts</span><span class="p">),</span> <span class="n">returns</span><span class="p">)</span>
+
+            <span class="c1"># 更新价值函数（拟合奖励）</span>
+            <span class="n">value_pred</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">value_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()(</span><span class="n">value_pred</span><span class="p">,</span> <span class="n">reward</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">value_pred</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value_optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
             <span class="n">value_loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value_optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
@@ -1157,25 +1157,27 @@ document.write(`
             <span class="n">preferred_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">preferred</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
             <span class="n">dispreferred_ids</span> <span class="o">=</span> <span class="n">tokenizer</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">dispreferred</span><span class="p">,</span> <span class="n">return_tensors</span><span class="o">=</span><span class="s2">&quot;pt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
             
-            <span class="c1"># 计算策略模型对偏好响应的对数概率</span>
-            <span class="n">policy_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="n">preferred_ids</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">policy_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">policy_logits</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">preferred_ids</span><span class="p">)</span>
+            <span class="c1"># 组合输入序列</span>
+            <span class="n">preferred_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="n">preferred_ids</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">dispreferred_input</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="n">dispreferred_ids</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
             
-            <span class="c1"># 计算参考模型对偏好响应的对数概率</span>
-            <span class="n">ref_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="n">preferred_ids</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">ref_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">ref_logits</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">preferred_ids</span><span class="p">)</span>
+            <span class="c1"># 批量计算策略模型和参考模型的输出</span>
+            <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+                <span class="n">ref_preferred_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">(</span><span class="n">preferred_input</span><span class="p">)</span><span class="o">.</span><span class="n">logits</span>
+                <span class="n">ref_dispreferred_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">(</span><span class="n">dispreferred_input</span><span class="p">)</span><span class="o">.</span><span class="n">logits</span>
             
-            <span class="c1"># 计算策略模型对非偏好响应的对数概率</span>
-            <span class="n">policy_dis_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="n">dispreferred_ids</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">policy_dis_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">policy_dis_logits</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">dispreferred_ids</span><span class="p">)</span>
+            <span class="n">policy_preferred_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">preferred_input</span><span class="p">)</span><span class="o">.</span><span class="n">logits</span>
+            <span class="n">policy_dispreferred_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">policy</span><span class="p">(</span><span class="n">dispreferred_input</span><span class="p">)</span><span class="o">.</span><span class="n">logits</span>
             
-            <span class="c1"># 计算参考模型对非偏好响应的对数概率</span>
-            <span class="n">ref_dis_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reference</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">prompt_ids</span><span class="p">,</span> <span class="n">dispreferred_ids</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
-            <span class="n">ref_dis_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">ref_dis_logits</span><span class="o">.</span><span class="n">logits</span><span class="p">,</span> <span class="n">dispreferred_ids</span><span class="p">)</span>
+            <span class="c1"># 计算对数概率</span>
+            <span class="n">policy_preferred_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">policy_preferred_logits</span><span class="p">,</span> <span class="n">preferred_ids</span><span class="p">)</span>
+            <span class="n">ref_preferred_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">ref_preferred_logits</span><span class="p">,</span> <span class="n">preferred_ids</span><span class="p">)</span>
+            <span class="n">policy_dispreferred_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">policy_dispreferred_logits</span><span class="p">,</span> <span class="n">dispreferred_ids</span><span class="p">)</span>
+            <span class="n">ref_dispreferred_log_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_log_probs</span><span class="p">(</span><span class="n">ref_dispreferred_logits</span><span class="p">,</span> <span class="n">dispreferred_ids</span><span class="p">)</span>
             
             <span class="c1"># 计算对数比值</span>
-            <span class="n">log_ratio_preferred</span> <span class="o">=</span> <span class="p">(</span><span class="n">policy_log_probs</span> <span class="o">-</span> <span class="n">ref_log_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="n">log_ratio_dispreferred</span> <span class="o">=</span> <span class="p">(</span><span class="n">policy_dis_log_probs</span> <span class="o">-</span> <span class="n">ref_dis_log_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">log_ratio_preferred</span> <span class="o">=</span> <span class="p">(</span><span class="n">policy_preferred_log_probs</span> <span class="o">-</span> <span class="n">ref_preferred_log_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">log_ratio_dispreferred</span> <span class="o">=</span> <span class="p">(</span><span class="n">policy_dispreferred_log_probs</span> <span class="o">-</span> <span class="n">ref_dispreferred_log_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
             
             <span class="c1"># 计算 DPO 损失</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="o">-</span><span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
@@ -1276,18 +1278,30 @@ document.write(`
 
 <span class="c1"># 价值模型（用于 PPO）</span>
 <span class="c1"># 这是一个简单的神经网络，用于估计状态价值</span>
-<span class="n">value_model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
-    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">base_model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">,</span> <span class="mi">256</span><span class="p">),</span>
-    <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
-    <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">ValueModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linear2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_ids</span><span class="p">):</span>
+        <span class="c1"># 使用语言模型的隐藏状态作为输入</span>
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="n">base_model</span><span class="p">(</span><span class="n">input_ids</span><span class="p">,</span> <span class="n">output_hidden_states</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">hidden_states</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">hidden_states</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># 最后一层的隐藏状态</span>
+            <span class="c1"># 使用最后一个 token 的隐藏状态</span>
+            <span class="n">last_hidden</span> <span class="o">=</span> <span class="n">hidden_states</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># [batch_size, hidden_size]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linear2</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">linear1</span><span class="p">(</span><span class="n">last_hidden</span><span class="p">)))</span>
+
+<span class="n">value_model</span> <span class="o">=</span> <span class="n">ValueModel</span><span class="p">(</span><span class="n">base_model</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">hidden_size</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
 <span class="c1"># 参考模型（用于 DPO）</span>
 <span class="c1"># 我们加载一个新的模型实例作为参考模型</span>
 <span class="n">reference_model</span> <span class="o">=</span> <span class="n">PPOPolicy</span><span class="p">(</span><span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
     <span class="n">model_name</span><span class="p">,</span> 
     <span class="n">trust_remote_code</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">bfloat16</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
 <span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
 
 <span class="c1"># 冻结参考模型参数</span>
@@ -1551,7 +1565,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

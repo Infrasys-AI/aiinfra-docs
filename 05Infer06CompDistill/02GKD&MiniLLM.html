@@ -86,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 14, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
 
 <link
   rel="alternate"
@@ -317,6 +317,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -350,6 +351,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">容器从进程到 Namespace</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">资源的限制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -388,7 +390,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.计算优化：DS GEMM 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
@@ -425,9 +427,9 @@
 
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
 
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective%E7%AE%97%E6%B3%95%EF%BC%9AUnstructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07Selective%E7%AE%97%E6%B3%95%EF%BC%9AStructural%20Masking.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -980,9 +982,9 @@ document.write(`
 <p>因此，我们将 <span class="math notranslate nohighlight">\(D_{KL}(P||Q)\)</span> 称为 P 和 Q 之间的前向 KL 散度，而 <span class="math notranslate nohighlight">\(D_{KL}(Q||P)\)</span> 称为反向 KL 散度。在监督学习中，基于经验数据分布的前向 KL 对应于我们优化的最大似然。当使用分布 <span class="math notranslate nohighlight">\(Q_θ(C)\)</span> 近似 P(C) 时，如果模型容量不匹配，最小化反向和前向 KL 分别会导致均值寻找和模式搜索行为。</p>
 <blockquote>
 <div><h2 class="rubric" id="kl-kl">前向 KL 散度与反向 KL 散度的行为差异</h2>
-<p>下表展示了前向 KL 散度和反向 KL 散度，以及 JS 散度的计算公式。</p>
-<p><img alt="图片描述" src="../_images/Divergence.png" /></p>
-<p>如下图所示我们展示了在最小化前向 KL 散度(\text{KL}(P|Q_\theta))和反向 KL 散度(\text{KL}(Q_\theta|P)时，单峰高斯分布 Q_θ相对于混合分布 P 的学习结果。</p>
+<p>下表展示了前向 KL 散度和反向 KL 散度，以及 JS 散度的计算公式。
+<img alt="图片描述" src="../_images/Divergence.png" />
+如下图所示我们展示了在最小化前向 KL 散度(\text{KL}(P|Q_\theta))和反向 KL 散度(\text{KL}(Q_\theta|P)时，单峰高斯分布 Q_θ相对于混合分布 P 的学习结果。</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>特征</p></th>
@@ -1011,10 +1013,13 @@ document.write(`
 <td><p>当需要精确捕捉单个模式时</p></td>
 <td><p>当需要覆盖所有可能模式时</p></td>
 </tr>
+<tr class="row-odd"><td><p>下图所示的例子是用单峰高斯 <span class="math notranslate nohighlight">\(Q_θ\)</span> 拟合多峰分布 <span class="math notranslate nohighlight">\(P\)</span>，可以观察到，当模型容量不匹配时：</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>下图所示的例子是用单峰高斯 <span class="math notranslate nohighlight">\(Q_θ\)</span> 拟合多峰分布 <span class="math notranslate nohighlight">\(P\)</span>，可以观察到，当模型容量不匹配时：</p>
 <ul class="simple">
 <li><p>反向 KL 会选择一个模式并精确拟合</p></li>
 <li><p>前向 KL 会尝试覆盖所有模式，但可能导致在实际上不存在数据的区域产生概率质量</p></li>
@@ -1350,7 +1355,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 14, 2025.
+  Last updated on Sep 19, 2025.
   <br/>
 </p>
   </div>

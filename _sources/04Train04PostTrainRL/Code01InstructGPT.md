@@ -117,32 +117,41 @@ sft_dataloader = DataLoader(sft_dataset, batch_size=2, shuffle=True)
 
 ```python
 class SimpleTransformer(nn.Module):
-    def __init__(self, vocab_size, d_model=64, nhead=2, num_layers=2):
+    def __init__(self, vocab_size, d_model=64, nhead=2, num_layers=2, max_len=50):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, d_model)
-        self.pos_enc = self._simple_pos_enc(d_model, max_len=32)  # 简化位置编码
+        self.d_model = d_model
+        self.max_len = max_len
+        # 位置编码
+        self.register_buffer('pos_enc', self._create_pos_encoding(d_model, max_len))
         encoder_layer = nn.TransformerEncoderLayer(d_model=d_model, nhead=nhead, batch_first=True)
         self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
         self.fc_out = nn.Linear(d_model, vocab_size)
     
-    def _simple_pos_enc(self, d_model, max_len):
-        # 简化版位置编码：使用正弦函数
-        pos = torch.arange(max_len).unsqueeze(1)
-        enc = torch.sin(pos / (10000 ** (torch.arange(d_model)/d_model)))
-        return enc  # [max_len, d_model]
+    def _create_pos_encoding(self, d_model, max_len):
+        # 正弦/余弦位置编码
+        pos = torch.arange(max_len).unsqueeze(1).float()  # [max_len, 1]
+        # 简化频率计算
+        div_term = 1.0 / (1000 ** (torch.arange(0, d_model, 2).float() / d_model))
+        enc = torch.zeros(max_len, d_model)
+        enc[:, 0::2] = torch.sin(pos * div_term)  # 偶数位置
+        enc[:, 1::2] = torch.cos(pos * div_term)  # 奇数位置
+        return enc
     
     def forward(self, x):
         # x: [batch_size, seq_len]
         batch_size, seq_len = x.shape
         x_emb = self.embedding(x)  # [batch_size, seq_len, d_model]
-        x_emb = x_emb + self.pos_enc[:seq_len, :].to(device)  # 添加位置编码
+        # 添加位置编码（截断到实际序列长度）
+        pos_enc = self.pos_enc[:seq_len, :]  # [seq_len, d_model]
+        x_emb = x_emb + pos_enc.unsqueeze(0)  # 添加位置编码
         output = self.transformer(x_emb)  # [batch_size, seq_len, d_model]
         return self.fc_out(output)  # [batch_size, seq_len, vocab_size]
 
 model = SimpleTransformer(vocab_size=tokenizer.vocab_size).to(device)
 ```
 
-简化 Transformer 模型包含嵌入层、位置编码和 Transformer 编码器。位置编码是关键补充，它让模型能够理解文本中的顺序信息，这是原代码缺失的重要组件。
+简化 Transformer 模型包含嵌入层、位置编码和 Transformer 编码器。我们使用了正弦/余弦位置编码，位置编码让模型能够理解文本中的顺序信息，是 Transformer 架构的关键组件。
 
 ### 2.3 SFT 训练
 
@@ -274,7 +283,9 @@ class RewardModel(nn.Module):
     def forward(self, x):
         # x: [batch_size, seq_len]
         x_emb = self.base_model.embedding(x)  # [batch_size, seq_len, d_model]
-        x_emb = x_emb + self.base_model.pos_enc[:x.shape[1], :].to(device)  # 添加位置编码
+        # 添加位置编码（截断到实际序列长度）
+        pos_enc = self.base_model.pos_enc[:x.shape[1], :]  # [seq_len, d_model]
+        x_emb = x_emb + pos_enc.unsqueeze(0)  # 添加位置编码
         
         # 获取基础模型的特征输出
         features = self.base_model.transformer(x_emb)  # [batch_size, seq_len, d_model]
@@ -369,46 +380,59 @@ def ppo_train(model, reward_model, tokenizer, epochs=2):
         for instruction in progress_bar:
             # 准备输入：指令 + "回答："前缀
             input_text = f"指令：{instruction} 回答："
-            input_ids = tokenizer.encode(input_text)[:-1].unsqueeze(0).to(device)  # [1, seq_len]
+            input_ids = tokenizer.encode(input_text).unsqueeze(0).to(device)  # [1, seq_len]
             
-            # 模型生成回答
-            generated_ids = input_ids.clone()
-            for _ in range(10):  # 生成 10 个 token
-                logits = model(generated_ids)[:, -1, :]  # 获取最后一个 token 的 logits
-                next_token = torch.argmax(logits, dim=-1, keepdim=True)  # 贪心选择
-                generated_ids = torch.cat([generated_ids, next_token], dim=1)
+            # 存储生成过程中的动作和对数概率
+            generated_tokens = []
+            log_probs = []
             
-            # 计算当前生成的奖励
+            # 生成回答并记录每个token的选择概率
+            current_ids = input_ids.clone()
+            for _ in range(8):  # 生成 8 个 token
+                logits = model(current_ids)[:, -1, :]  # 获取最后一个 token 的 logits
+                probs = torch.softmax(logits, dim=-1)
+                
+                # 使用采样而不是贪心选择，以保持探索性
+                next_token = torch.multinomial(probs, 1)  # [1, 1]
+                log_prob = torch.log(probs.gather(1, next_token))  # [1, 1]
+                
+                generated_tokens.append(next_token)
+                log_probs.append(log_prob)
+                current_ids = torch.cat([current_ids, next_token], dim=1)
+            
+            # 计算当前生成序列的奖励
             with torch.no_grad():
-                reward = reward_model(generated_ids).item()
-            total_reward += reward
+                reward_value = reward_model(current_ids).item()
+            total_reward += reward_value
             
-            # 简化 PPO 损失计算
-            # 1. 计算旧策略的概率
-            with torch.no_grad():
-                old_logits = model(input_ids)
-                old_probs = torch.softmax(old_logits, dim=-1)
+            # 将奖励转换为tensor以便参与梯度计算
+            reward_tensor = torch.tensor(reward_value, dtype=torch.float32, device=device)
             
-            # 2. 计算新策略的概率
-            new_logits = model(input_ids)
-            new_probs = torch.softmax(new_logits, dim=-1)
+            # PPO 损失计算 - 对每个生成的token进行优化
+            policy_loss = torch.tensor(0.0, device=device, requires_grad=True)
+            for i, (token, old_log_prob) in enumerate(zip(generated_tokens, log_probs)):
+                # 重新计算当前策略下该token的概率
+                context_ids = torch.cat([input_ids] + generated_tokens[:i], dim=1)
+                new_logits = model(context_ids)[:, -1, :]
+                new_probs = torch.softmax(new_logits, dim=-1)
+                new_log_prob = torch.log(new_probs.gather(1, token))
+                
+                # 计算策略比率
+                ratio = torch.exp(new_log_prob - old_log_prob.detach())
+                
+                # 计算PPO裁剪损失
+                surr1 = ratio * reward_tensor
+                surr2 = torch.clamp(ratio, 1 - clip_epsilon, 1 + clip_epsilon) * reward_tensor
+                policy_loss = policy_loss - torch.min(surr1, surr2)  # 负号因为我们要最大化
             
-            # 3. 计算策略比率 r(θ) = new_probs / old_probs
-            ratio = (new_probs / (old_probs + 1e-10)).mean(dim=-1)  # 简化：取平均值
-            
-            # 4. 计算裁剪和未裁剪的优势
-            surr1 = ratio * reward
-            surr2 = torch.clamp(ratio, 1 - clip_epsilon, 1 + clip_epsilon) * reward
-            
-            # 5. PPO 损失：取两者的最小值并取负（因为我们要最大化奖励）
-            policy_loss = -torch.min(surr1, surr2).mean()
+            policy_loss = policy_loss / len(generated_tokens)  # 平均损失
             
             # 优化步骤
             optimizer.zero_grad()
             policy_loss.backward()
             optimizer.step()
             
-            progress_bar.set_postfix({"奖励": reward})
+            progress_bar.set_postfix({"奖励": reward_value})
         
         avg_reward = total_reward / len(instructions)
         print(f"PPO Epoch {epoch+1} 完成。平均奖励: {avg_reward:.4f}")
@@ -418,7 +442,7 @@ print("开始 PPO 训练阶段...")
 ppo_train(model, reward_model, tokenizer, epochs=2)
 ```
 
-PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。我们首先冻结奖励模型参数，确保奖励信号稳定。然后，对于每个指令，模型生成回答并获得奖励。PPO 的关键是使用裁剪机制限制策略更新的幅度，防止更新过大导致训练不稳定。随着训练进行，模型生成的回答应该能获得越来越高的奖励。
+PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。我们首先冻结奖励模型参数，确保奖励信号稳定。在生成过程中，我们使用采样而不是贪心选择来保持探索性，并记录每个token的选择概率。PPO 的关键是计算策略比率（新策略概率/旧策略概率）并使用裁剪机制限制更新幅度，防止策略偏离过大导致训练不稳定。对于每个生成的token，我们都计算其对应的 PPO 损失并进行优化。随着训练进行，模型生成的回答应该能获得越来越高的奖励。
 
 ## 5. 实验结果与分析
 
