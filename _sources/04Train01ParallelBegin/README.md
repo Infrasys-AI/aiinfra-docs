@@ -25,10 +25,6 @@
 :maxdepth: 1
 
 01Introduction
-02.single_device
-03.data_parallel
-04.data_parallel_implement
-05MGConfig
 Code01DDP
 Code02MP
 ```

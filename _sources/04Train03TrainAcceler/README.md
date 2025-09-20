@@ -29,7 +29,7 @@
 01Introduction
 02FlashAttn
 03DSGEMM
-04MultiTokenGen
+04MTP
 05Ulysses
 06RingAttn
 07MLA

@@ -2,7 +2,10 @@
 
 # 04.Attention 注意力机制
 
-Author by: 张志达
+> Author by: 张志达
+
+!!!!!!!!!
+内容太过于常规和简单，参考 PDF 和 PPT 里面的，对于 Attention 的由来，最简单的原理开始。
 
 ## 1. Attention 机制要解决的问题
 
@@ -257,7 +260,7 @@ def complexity_analysis(seq_len, d_model, num_heads):
     }
 ```
 
-## 6. 总结
+## 6. 总结与思考
 
 Attention 机制是 Transformer 架构的核心创新，它通过以下方式解决了传统序列建模的问题：
 
@@ -278,3 +281,7 @@ Attention 机制的设计体现了深度学习中对"关注重要信息"这一�
 <html>
 <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=114665426262438&bvid=BV11AMHzuEet&cid=30444554230&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>
+
+## 参考与引用
+
+!!!!!!!!!加入参考的文章和内容

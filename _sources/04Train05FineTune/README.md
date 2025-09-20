@@ -2,7 +2,7 @@
 
 # 大模型微调 SFT
 
-本次大纲内容主要围绕......
+大模型微调正从“全参训练”的粗放模式，快速演进为“高效、可控、任务自适应”的精细化工程体系。2024年以来，以LoRA为代表的参数高效微调（PEFT）已成工业标配，而QLoRA、DoRA、PiSSA等新方法进一步突破显存与表达力瓶颈，使70B级模型可在消费级GPU上微调。数据层面，合成指令（如Evol-Instruct、Self-Rewarding）与课程学习策略大幅提升样本质量与训练稳定性。训练策略上，多阶段渐进微调、损失函数定制、梯度裁剪优化等技巧显著提升收敛效率与泛化能力。更重要的是，微调不再孤立，它正与RLHF、DPO、模型编辑等对齐技术深度融合，构建“训练-对齐-评估”闭环。微调，成为释放大模型垂直领域的核心钥匙。
 
 ## 详细内容
 
@@ -26,10 +26,8 @@
 :maxdepth: 1
 
 01Introduction
-04LoRA
-05LoRA Variants
-06UnstructuralMask
-07StructuralMask
+05LoRA
+06Selective
 Code01Qwen3SFT
 Code02SDLoRA
 ```

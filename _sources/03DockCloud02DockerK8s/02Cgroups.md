@@ -1,127 +1,200 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 资源的限制
+# 02. Cgroups：容器资源控制关键(DONE)
 
-Author by: 张柯帆
+Author by: 张柯帆，ZOMI
 
-> 注：以下讨论基于 Linux
+> 注：以下讨论基于 Linux 操作系统环境
 
-在上一篇文章中，我详细介绍了容器中用来实现“隔离”的其中一种技术手段：Namespace。现在你应该已经明白，Namespace 技术的原理就是修改进程的视图，让进程只能“看到”操作系统一部分的内容。但视图的遮盖终究只是障眼法，对于宿主机来说，这些“隔离”进程与其他进程并没有什么不同。为了实现完整的资源隔离，我们还需要限制容器对 CPU、内存、磁盘资源的访问，否则当其中一个容器将宿主机的资源消耗光了，就会影响到宿主机上的其他容器。
+在上一篇关于容器隔离的文章中，我们详细介绍了实现“视图隔离”的核心技术——Namespace。其原理是通过修改进程的系统视图，让进程只能“看到”操作系统的部分资源，但这种视图层面的隔离终究是“障眼法”：对宿主机而言，这些“隔离进程”与其他进程并无本质区别，仍可能无限制抢占CPU、内存等物理资源。若某一容器耗尽宿主机资源，会直接影响其他容器甚至宿主机本身，因此必须通过技术手段限制容器的资源使用——Linux内核提供的**Cgroups**，正是解决这一问题的关键。
 
-![虚拟机和容器的架构对比](images/01Container01.png)
+![虚拟机和容器的架构对比](../images/03DockCloud02DockerK8s/01Container01.png)
 
-如果你还记得上面这张图，仔细观察会发现只有虚拟机方案才有 Hypervisor 这个组件。这是因为 Hypervisor 主要负责创建虚拟化的硬件，在这个步骤里也间接地完成了资源访问的限制。而 Container Engine 并没有 Hypervisor 这样的功能，所以需要另寻他法进行资源限制，幸好 Linux 操作系统也为我们提供了这样的能力——Cgroups。
+观察上图可发现：虚拟机方案通过**Hypervisor**组件模拟硬件，在虚拟化过程中间接实现了资源限制；而容器引擎（Container Engine）没有类似Hypervisor的硬件模拟能力，因此需依赖Cgroups完成资源管控。接下来，我们将从Cgroups的定义、版本、核心概念、使用方式等维度，全面解析其如何为容器提供资源隔离能力。
 
-## 什么是 Cgroups？
+## 1. 什么是 Cgroups
 
-Cgroups（Control Groups 的缩写）是 Linux 内核提供的一种机制，它可以将一系列系统任务及其子任务整合（或分隔）到按资源划分等级的不同组内，从而为系统资源管理提供一个统一的框架。 简单来说，Cgroups 可以限制、记录和隔离进程组所使用的物理资源，例如 CPU 时间、内存、磁盘 I/O 和网络带宽等。
+Cgroups是Linux内核实现资源管控的核心机制，也是容器技术能够稳定运行的基础之一。本节将从定义、起源和核心功能三个维度，明确Cgroups的本质定位。
 
-这个功能最初由 Google 的工程师在 2006 年发起，当时被称为“进程容器”（process containers），并在 2008 年被合并到 Linux 2.6.24 内核中，正式更名为 Cgroups。 目前，Cgroups 已经成为众多容器化技术（如 Docker、Kubernetes）以及 systemd 的基础。
+### 1.1 Cgroups 定义与起源
 
-Cgroups 主要提供以下四大功能：
+Cgroups（全称为Control Groups）是Linux内核提供的一种资源管理机制，其核心能力是：将系统中的进程及其子进程“分组”，按资源类别（如CPU、内存）为不同进程组设定管控规则，最终形成统一的资源管理框架。
 
-*   **资源限制 (Resource Limiting)**：可以对进程组使用的资源总量进行限制，例如设定内存使用上限，一旦超出该限制，系统将触发 OOM (Out of Memory) Killer。
-*   **优先级控制 (Prioritization)**：可以控制进程组的资源使用优先级，例如分配更多的 CPU 时间片或更高的磁盘 I/O 优先级。
-*   **审计与统计 (Accounting)**：可以统计进程组的资源使用情况，生成资源使用报告，方便进行计量和监控。
-*   **进程控制 (Control)**：可以对进程组中的所有进程执行挂起、恢复等操作。
+从发展历程来看，2006年，Google工程师发起该项目，最初命名为“进程容器（process containers）”，目标是实现进程级的资源限制；2008年，该功能被合并至Linux 2.6.24内核，正式更名为Cgroups；如今，Cgroups已成为Docker、Kubernetes等容器技术，以及systemd等系统管理工具的底层依赖，是Linux生态中资源管控的“基础设施”。
 
-## Cgroups 的两大版本：v1 与 v2
+简单来说，Cgroups的核心价值是：**为进程组提供“资源限制、统计、优先级控制”的标准化能力**，让上层应用（如容器）无需关心内核细节，即可实现精细化资源管控。
 
-与许多 Linux 内核特性一样，Cgroups 也经历了一个发展的过程，目前主要存在 v1 和 v2 两个版本。
+### 1.2 Cgroups 四大功能
 
-*   **Cgroups v1**：是 Cgroups 的第一个稳定版本，也是目前 Docker 等容器技术中仍然广泛使用的版本。它的设计思路是为每一种需要控制的资源都创建一个独立的层级（Hierarchy）。例如 `/sys/fs/cgroup/cpu/GROUPNAME` 和 `/sys/fs/cgroup/memory/GROUPNAME`，其中 `cpu` 和 `memory` 的控制是分别在不同的层级中进行的。这种设计虽然在某些场景下足够灵活，但也带来了一些问题，比如层级管理混乱，以及无法对不同资源进行统一的协调控制。
+Cgroups通过四大核心能力，覆盖资源管控的全场景需求，具体如下：
 
-*   **Cgroups v2**：为了解决 v1 中存在的问题，Cgroups v2 进行了重新设计。v2 最大的特点是采用了单一的、统一的层级结构。 这意味着所有的资源控制器（Controller）都挂载在同一个层级下，从而简化了管理，并能够更好地协调不同资源之间的限制关系：`/sys/fs/cgroup/GROUPNAME` 中的树，如果进程 `x` 加入 `/sys/fs/cgroup/GROUPNAME`，则 `GROUPNAME` 的每个控制器都将控制进程 `x`。此外，v2 还提供了一些新的特性，比如更可靠的进程追踪和更细粒度的资源控制。
+- **资源限制（Resource Limiting）**：为进程组设定资源使用上限。例如，限制某进程组的最大内存使用量，一旦超出上限，系统会触发OOM（Out of Memory）Killer机制，终止超限进程以保护其他资源；
+- **优先级控制（Prioritization）**：为不同进程组分配资源优先级。例如，为核心业务进程组分配更高的CPU时间片权重，或提升其磁盘I/O优先级，确保关键服务在资源紧张时仍能正常运行；
+- **审计与统计（Accounting）**：实时统计进程组的资源使用情况。例如，记录某进程组的CPU占用率、内存使用量、磁盘I/O次数等数据，为监控、计费等场景提供数据支撑；
+- **进程控制（Control）**：对进程组执行统一操作。例如，批量挂起、恢复某进程组内的所有进程，或限制进程组内的进程创建数量，防止“fork炸弹”等恶意攻击。
 
-虽然 Cgroups v2 在功能和设计上都优于 v1，但由于历史原因和生态兼容性问题，目前 v1 仍然被广泛使用。不过，随着时间的推移，Cgroups v2 必将成为主流。
+## 2. Cgroups 两大版本
 
-![Cgroups overview](images/02Cgroups01.png)
+Cgroups随Linux内核迭代不断优化，目前主要存在v1和v2两个版本，两者在架构设计和功能支持上有显著差异。本节将对比两个版本的核心特点，以及当前的生态应用现状。
 
-## Cgroups 的核心概念
+### 2.1 v1：多层级架构
 
-要理解 Cgroups 的工作原理，我们需要先了解它的三个核心概念：子系统（Subsystem）、控制组（Control Group）和层级（Hierarchy）。
+Cgroups v1是首个稳定版本，目前仍被Docker等主流容器技术广泛使用，其核心设计是为每种资源创建独立层级（Hierarchy）：
 
-*   **子系统 (Subsystem)**：一个子系统就是一个资源控制器，负责控制某一类特定的资源。 例如，`cpu` 子系统负责限制 CPU 的使用，`memory` 子系统负责限制内存的使用。
-*   **控制组 (Cgroup)**：一个控制组是 Cgroups 中的基本单位，它是一组按照某种资源控制标准划分的进程集合。一个 Cgroup 可以包含多个进程，并且可以关联一个或多个子系统。
-*   **层级 (Hierarchy)**：层级由一系列 Cgroup 以树状结构排列而成，每个层级可以附加一个或多个子系统。 子 Cgroup 会继承其父 Cgroup 的属性。
+- 层级与资源绑定：每种资源（如CPU、内存）对应一个独立的层级，例如CPU管控对应`/sys/fs/cgroup/cpu/`目录，内存管控对应`/sys/fs/cgroup/memory/`目录；
+- 进程组独立配置：若需同时限制某进程组的CPU和内存，需在两个层级下分别创建同名进程组，并将进程加入两个层级的进程组中；
 
-### 子系统（Subsystem）
+这种设计的优势是“资源管控灵活”，但存在明显缺陷：
 
-Cgroups 的强大功能是通过其丰富的子系统（也称为控制器）来实现的。每个子系统负责一种特定资源的控制。 下面我们介绍几个在容器技术中至关重要的子系统：
+- 层级管理混乱：多资源管控时需维护多个层级，易出现配置不一致问题；
+- 资源协调困难：无法统一协调不同资源的限制逻辑（如内存超限与CPU调度的联动）。
 
-*   **`cpu` 子系统**：
-    *   `cpu.shares`: 设置一个相对的 CPU 使用权重。如果一个 Cgroup 的 `cpu.shares` 设置为 1024，另一个设置为 512，那么前者获得的 CPU 时间将是后者的两倍（在 CPU 资源紧张的情况下）。
-    *   `cpu.cfs_period_us` 和 `cpu.cfs_quota_us`: 这两个参数配合使用，可以精确地限制 Cgroup 在一个周期（`cpu.cfs_period_us`，单位微秒）内最多能使用多少 CPU 时间（`cpu.cfs_quota_us`，单位微秒）。 例如，将 `cpu.cfs_period_us` 设置为 100000（100毫秒），`cpu.cfs_quota_us` 设置为 50000（50毫秒），就意味着该 Cgroup 在每 100 毫秒内最多只能使用 50 毫秒的 CPU 时间，相当于限制其使用 0.5 个 CPU 核心。
+### 2.2 v2：统一层级架构
 
-*   **`memory` 子系统**：
-    *   `memory.limit_in_bytes`: 这是最常用的参数，直接限制了 Cgroup 中所有进程能够使用的最大内存量。 一旦进程的内存使用量超过这个限制，系统就会触发 OOM (Out of Memory) Killer，杀死该进程。
-    *   `memory.soft_limit_in_bytes`: 设置一个内存使用的软限制。当系统内存充足时，进程可以超过这个限制。只有在系统内存紧张时，内核才会开始回收超过软限制的内存。
+为解决v1的缺陷，Cgroups v2进行了架构重构，核心设计是单一统一层级（Unified Hierarchy）：
 
-*   **`blkio` 子系统**：
-    *   用于限制对块设备（如硬盘、SSD）的 I/O 访问。
-    *   `blkio.throttle.read_bps_device` 和 `blkio.throttle.write_bps_device`: 分别用来限制读取和写入指定设备的速度，单位是字节/秒。
-    *   `blkio.throttle.read_iops_device` 和 `blkio.throttle.write_iops_device`: 分别用来限制读取和写入指定设备的 IOPS (Input/Output Operations Per Second)。
+- 所有资源共享一个层级：CPU、内存、磁盘I/O等资源的管控，均在`/sys/fs/cgroup/`目录下的统一层级中完成；
+- 进程组自动继承资源规则：若将进程加入某进程组（如`/sys/fs/cgroup/my-container/`），该进程组关联的所有资源控制器（如CPU、内存）会自动对其生效；
 
-*   **`pids` 子系统**：
-    *   `pids.max`: 限制一个 Cgroup 内可以创建的进程（或线程）的最大数量。这对于防止 "fork bomb" 等恶意攻击非常有效。
+此外，Cgroups v2还新增了“更可靠的进程追踪”“细粒度资源控制”等功能，例如支持基于“内存压力”动态调整进程优先级，或精确限制进程的“匿名页内存”使用量。
 
-## 如何使用 Cgroups？
+### 2.3 版本生态现状
 
-在 Linux 系统中，Cgroups 是通过一个特殊的文件系统（cgroupfs）来暴露给用户空间的。 我们可以像操作普通文件一样，通过读写这些文件来配置 Cgroups。
+尽管Cgroups v2在设计和功能上优于v1，但目前仍以v1为主流，原因如下：1）历史兼容性：大量现有工具（如Docker、Kubernetes旧版本）基于v1开发，迁移至v2需修改底层逻辑；2）生态成熟度：v1的文档、问题解决方案更丰富，开发者对其认知度更高。
 
-通常，Cgroups 的挂载点位于 `/sys/fs/cgroup` 目录下。 在这个目录下，你会看到以各个子系统命名的文件夹。
+不过，随着Linux内核版本升级（Linux 5.4+已默认支持v2），以及Kubernetes 1.25+对v2的全面支持，Cgroups v2正逐步成为主流，未来将全面替代v1。
 
-**以 `memory` 子系统为例：**
+## 3. Cgroups 核心概念
 
-1.  **创建一个新的 Cgroup**：
-    ```bash
-    cd /sys/fs/cgroup/memory
-    sudo mkdir my-container
-    ```
-    执行 `mkdir` 命令后，系统会自动在 `my-container` 目录下创建一系列与 `memory` 子系统相关的文件。
+要理解Cgroups的工作原理，需先掌握“子系统、控制组、层级”三个核心概念——它们是Cgroups架构的基石，也是实现资源管控的逻辑基础。
 
-2.  **设置资源限制**：
-    ```bash
-    # 限制内存使用为 512MB
-    echo 512M | sudo tee my-container/memory.limit_in_bytes
-    ```
+### 3.1 三大核心概念解析
 
-3.  **将进程加入 Cgroup**：
-    ```bash
-    # 将当前 shell 进程加入该 Cgroup
-    echo $$ | sudo tee my-container/tasks
-    ```
-    `$$` 是一个特殊的 shell 变量，代表当前进程的 PID。将一个进程的 PID 写入 `tasks` 文件，就意味着将该进程加入了这个 Cgroup。 此后，该进程及其所有子进程都将受到这个 Cgroup 的资源限制。
+Cgroups的三个核心概念相互关联，共同构成资源管控的逻辑框架，具体定义如下：
 
-当然，在实际的容器化场景中，我们很少会直接手动操作这些文件。像 Docker 这样的容器引擎已经为我们封装好了对 Cgroups 的操作。例如，在使用 `docker run` 命令时，我们可以通过参数来方便地设置容器的资源限制：
+- **子系统（Subsystem）**：又称“资源控制器”，是Cgroups管控某类资源的最小单元。例如，`cpu`子系统负责CPU资源管控，`memory`子系统负责内存资源管控，每个子系统对应一种特定资源；
+- **控制组（Control Group）**：简称“Cgroup”，是进程的“分组单位”。一个控制组可包含多个进程，且可关联多个子系统（如同时关联`cpu`和`memory`子系统），进程加入控制组后，会自动遵循该组的资源规则；
+- **层级（Hierarchy）**：是控制组的“组织形式”，以树状结构管理多个控制组。子控制组会继承父控制组的资源规则，例如父控制组限制内存使用1GB，子控制组的内存上限无法超过1GB。
+
+三者的关系为层级是控制组的组织框架，子系统是控制组的资源管控规则，进程通过加入控制组，间接遵循子系统的资源限制。
+
+### 3.2 子系统与配置参数
+
+在容器场景中，常用的子系统包括`cpu`、`memory`、`blkio`、`pids`等，每个子系统通过特定配置参数实现资源管控。以下是各子系统的核心参数及使用场景：
+
+1. `cpu`子系统
+
+`cpu`子系统负责限制进程组的CPU使用，核心参数如下：
+
+- `cpu.shares`：相对权重参数，默认值为1024。例如，进程组A的`cpu.shares`设为1024，进程组B设为512，在CPU资源紧张时，A获得的CPU时间是B的2倍（资源充足时该参数不生效）；
+- `cpu.cfs_period_us`与`cpu.cfs_quota_us`：绝对限制参数，需配合使用：
+  - `cpu.cfs_period_us`：CPU调度周期（单位：微秒），默认值为100000（即100毫秒）；
+  - `cpu.cfs_quota_us`：周期内最大CPU使用时间（单位：微秒）；
+
+  例如，将`cpu.cfs_period_us`设为100000、`cpu.cfs_quota_us`设为50000，意味着该进程组每100毫秒最多使用50毫秒CPU，相当于限制使用0.5个CPU核心。
+
+2. `memory`子系统
+
+`memory`子系统负责限制进程组的内存使用，核心参数如下：
+- `memory.limit_in_bytes`：内存使用硬限制，即进程组的最大内存使用量。例如，设为`512M`表示该组进程总内存使用不能超过512MB，超出后系统触发OOM Killer；
+- `memory.soft_limit_in_bytes`：内存使用软限制，仅在系统内存紧张时生效。例如，设为`256M`时，若系统内存充足，进程组可使用超过256MB的内存；若内存紧张，内核会回收超出部分的内存。
+
+3. `blkio`子系统
+
+`blkio`子系统负责限制进程组对块设备（如硬盘、SSD）的I/O访问，核心参数如下：
+
+- `blkio.throttle.read_bps_device`/`blkio.throttle.write_bps_device`：限制块设备的读写速度（单位：字节/秒）。例如，`echo "8:0 104857600" > blkio.throttle.write_bps_device`表示限制对`8:0`（设备号）的写入速度为100MB/s；
+- `blkio.throttle.read_iops_device`/`blkio.throttle.write_iops_device`：限制块设备的读写IOPS（单位：次/秒）。例如，`echo "8:0 1000" > blkio.throttle.read_iops_device`表示限制对`8:0`的读取IOPS为1000次/秒。
+
+4. `pids`子系统
+
+`pids`子系统负责限制进程组内的进程（含线程）创建数量，核心参数为`pids.max`：
+- 例如，`echo "100" > pids.max`表示该进程组内最多可创建100个进程，超出后无法创建新进程，可有效防止“fork炸弹”等恶意攻击。
+
+## 4. 如何使用 Cgroups
+
+Cgroups通过“cgroupfs”特殊文件系统暴露给用户空间，用户可通过“读写文件”的方式配置Cgroups。本节将分别介绍“手动操作Cgroups”和“容器引擎中使用Cgroups”两种场景，帮助理解其实际应用方式。
+
+### 4.1 手动操作 Cgroups
+
+手动操作Cgroups的核心是“创建进程组→设置资源限制→加入进程”，以限制进程内存使用为例，具体步骤如下：
+
+步骤1：进入 memory 子系统目录
+
+Cgroups默认挂载于`/sys/fs/cgroup/`目录，memory子系统对应`/sys/fs/cgroup/memory/`，执行以下命令进入该目录：
 
 ```bash
-docker run -d --name my-app \
-  --cpus=".5" \       # 限制使用 0.5 个 CPU 核心
-  -m "512m" \       # 限制内存为 512MB
-  --pids-limit 100 \  # 限制最多 100 个进程
+cd /sys/fs/cgroup/memory
+```
+
+步骤2：创建进程组
+
+通过`mkdir`命令创建名为`my-container`的进程组（系统会自动在该目录下生成memory子系统的所有配置文件）：
+
+```bash
+sudo mkdir my-container
+```
+
+步骤3：设置资源限制
+
+通过`tee`命令将内存限制（512MB）写入`memory.limit_in_bytes`配置文件：
+
+```bash
+# 限制该进程组的最大内存使用为 512MB
+echo 512M | sudo tee my-container/memory.limit_in_bytes
+```
+
+步骤4：将进程加入进程组
+
+通过将进程PID写入`tasks`文件，将进程加入`my-container`进程组。例如，将当前Shell进程（PID通过`$$`获取）加入该组：
+
+```bash
+# 将当前Shell进程加入 my-container 进程组
+echo $$ | sudo tee my-container/tasks
+```
+
+加入后，当前Shell及后续在该Shell中启动的进程，均会受到“512MB内存限制”的管控，若超出限制，系统会触发OOM Killer终止超限进程。
+
+### 4.2 容器中 Cgroups 应用
+
+在实际容器场景中，用户无需手动操作Cgroups——容器引擎（如Docker）已封装Cgroups的配置逻辑，只需通过命令行参数即可设置资源限制。
+
+例如，通过`docker run`命令创建Nginx容器，并限制其CPU、内存、进程数量，具体命令如下：
+
+```bash
+docker run -d --name my-nginx \
+  --cpus="0.5" \       # 限制CPU使用为 0.5 个核心（对应 cpu.cfs_period_us=100000、cpu.cfs_quota_us=50000）
+  -m "512m" \          # 限制内存使用为 512MB（对应 memory.limit_in_bytes=536870912）
+  --pids-limit 100 \   # 限制进程数量为 100（对应 pids.max=100）
   nginx
 ```
 
-这条命令会创建一个 Nginx 容器，并通过 Cgroups 将其 CPU、内存和进程数量都限制在了一个合理的范围内。
+Docker的底层逻辑是：创建容器时，自动在Cgroups各子系统下创建同名进程组，将容器内的所有进程加入该组，并根据用户参数设置对应的Cgroups配置文件，最终实现资源限制。
 
-## Cgroups 与网络控制
+## 5. Cgroups 与 Namespace 的协同工作
 
-Cgroups v2 对整个 Cgroups 架构进行了简化和统一。 在 v2 中，所有的控制器都挂载在同一个统一的层级下。 对于网络控制，Cgroups v2 不再使用 `net_cls` 子系统，而是通过 eBPF (extended Berkeley Packet Filter) 与 `iptables` 结合的方式来实现更灵活和高效的网络控制。
+容器的“完整隔离”需依赖Namespace和Cgroups的协同——两者分别解决“视图隔离”和“资源隔离”问题，共同构建容器的独立运行环境。
 
-你可以编写 eBPF 程序，挂载到 Cgroup v2 的路径上，从而对该 Cgroup 中的网络流量进行精细化的过滤、修改或重定向。这种方式提供了比 `net_cls` 更强大的功能和更好的性能。
+### 5.1 解决不同维度隔离
 
-## Cgroups 与 Namespace 的协同工作
+- **Namespace**：解决“看得到”的问题，通过修改进程的系统视图，让容器内进程只能看到“专属资源”（如独立的PID、网络栈、文件系统），但不限制资源使用量；
+- **Cgroups**：解决“用多少”的问题，通过为进程组设定资源上限，防止容器无限制抢占宿主机资源，确保多容器共存时的稳定性。
 
-现在我们再回过头来看容器的隔离机制。Namespace 解决了“看”的问题，让容器内的进程只能看到自己的一亩三分地。而 Cgroups 则解决了“用”的问题，为容器的资源使用量设定了上限。 两者协同工作，才最终构建出了一个看似“独立”的容器环境。
+例如，某容器通过PID Namespace看到独立的PID树（容器内PID=1对应宿主机PID=1234），同时通过Cgroups限制其CPU使用为1核、内存为1GB——两者结合，既让容器“误以为独占系统”，又确保其不会影响其他容器。
 
-可以说，没有 Namespace，容器就无法实现视图隔离；而没有 Cgroups，容器的资源隔离就无从谈起，也就失去了其在多租户、高密度部署等场景下的核心价值。
+### 5.2 容器隔离必要性
 
-## 总结
+若只有Namespace无Cgroups：容器可无限制使用宿主机资源，某一容器耗尽CPU或内存后，会导致宿主机及其他容器崩溃；若只有Cgroups无Namespace：容器内进程可看到宿主机的所有资源（如其他进程、网络设备），易出现进程冲突（如PID重复）或安全风险（如访问宿主机敏感文件）。
 
-Cgroups 作为 Linux 内核提供的强大功能，为实现容器等场景下的资源隔离和限制提供了坚实的基础。通过其灵活的子系统机制，我们可以对 CPU、内存、磁盘 I/O 等多种资源进行精细化的控制。而在网络方面，虽然 Cgroups 不直接进行流量控制，但它通过与 `tc`、`iptables` 和 eBPF 等内核模块的协同工作，同样实现了强大的网络资源管理能力。
+因此，Namespace和Cgroups是容器隔离的“两大支柱”，只有两者协同，才能实现“安全、稳定、高效”的容器运行环境。
+
+## 6. 总结与思考
+
+Cgroups作为Linux内核的核心资源管控机制，通过“子系统、控制组、层级”三大概念，为容器提供了CPU、内存、磁盘I/O等资源的精细化管控能力。在实际应用中，Cgroups需与Namespace协同工作：前者限制资源使用量，后者构建独立视图，共同实现容器的完整隔离。
 
 ## 参考与引用
 
-- https://labs.iximiuz.com/tutorials/controlling-process-resources-with-cgroups
-- https://segmentfault.com/a/1190000045052990
+- https://labs.iximiuz.com/tutorials/controlling-process-resources-with-cgroups（Cgroups 实践教程）
+- https://segmentfault.com/a/1190000045052990（Cgroups v1 与 v2 对比解析）
+- https://www.kernel.org/doc/Documentation/cgroup-v2.txt（Linux Cgroups v2 官方文档）
+- https://man7.org/linux/man-pages/man7/cgroups.7.html（Cgroups 核心概念官方手册）

@@ -35,8 +35,9 @@
 
 01Define
 02TrendHard
-03TrendSoft
-04Develop1
+03TrendBaseSoft
+04TrendAppSoft
+05Develop1
 05Develop2
 06Challenge
 07Architecture

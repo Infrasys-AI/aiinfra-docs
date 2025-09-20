@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="容器从进程到 Namespace" />
+<meta property="og:title" content="01. 容器隔离从进程到命名空间(DONE)" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="03DockCloud02DockerK8s/01Container.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 张柯帆 容器的出现: 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到 隔离性 在操作系统里的技术细节。 容器技术其实来源于 PaaS 的发展。PaaS 所提供的正是“托管”能力，但初期还比较原始。尽管当时虚拟化已经是比较常见的技术了，用户可以向 AWS 这样的云厂商购买虚拟机实例，但用户的使用习惯仍然是本地环境那一套——登录机器，然后执行脚本或者命令行部署..." />
+<meta property="og:description" content="Author by: 张柯帆，ZOMI 容器技术的隔离本质，其核心在于利用 Linux 内核的 Namespace 和 Cgroups 两大机制。其中，Namespace 是实现“视图隔离”的关键——它让进程“误以为”自己独占了系统资源（如进程树、网络栈、文件系统），而这一切的前提，是理解“进程”这个操作系统最基本的资源载体。本文将从进程原理切入，深入剖析 Namespace 的内核逻辑，最..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: 张柯帆 容器的出现: 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到 隔离性 在操作系统里的技术细节。 容器技术其实来源于 PaaS 的发展。PaaS 所提供的正是“托管”能力，但初期还比较原始。尽管当时虚拟化已经是比较常见的技术了，用户可以向 AWS 这样的云厂商购买虚拟机实..." />
-<meta name="description" content="Author by: 张柯帆 容器的出现: 本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到 隔离性 在操作系统里的技术细节。 容器技术其实来源于 PaaS 的发展。PaaS 所提供的正是“托管”能力，但初期还比较原始。尽管当时虚拟化已经是比较常见的技术了，用户可以向 AWS 这样的云厂商购买虚拟机实例，但用户的使用习惯仍然是本地环境那一套——登录机器，然后执行脚本或者命令行部署..." />
+<meta property="og:image:alt" content="Author by: 张柯帆，ZOMI 容器技术的隔离本质，其核心在于利用 Linux 内核的 Namespace 和 Cgroups 两大机制。其中，Namespace 是实现“视图隔离”的关键——它让进程“误以为”自己独占了系统资源（如进程树、网络栈、文件系统），而这一切的前提，是理解“进程”这个操作系统最基..." />
+<meta name="description" content="Author by: 张柯帆，ZOMI 容器技术的隔离本质，其核心在于利用 Linux 内核的 Namespace 和 Cgroups 两大机制。其中，Namespace 是实现“视图隔离”的关键——它让进程“误以为”自己独占了系统资源（如进程树、网络栈、文件系统），而这一切的前提，是理解“进程”这个操作系统最基本的资源载体。本文将从进程原理切入，深入剖析 Namespace 的内核逻辑，最..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>容器从进程到 Namespace &#8212; AIInfra AI基础设施</title>
+    <title>01. 容器隔离从进程到命名空间(DONE) &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -79,12 +79,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="资源的限制" href="02Cgroups.html" />
+    <link rel="next" title="02. Cgroups：容器资源控制关键(DONE)" href="02Cgroups.html" />
     <link rel="prev" title="Docker 与 K8S 初体验" href="README.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 19, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 21, 2025"/>
 
 <link
   rel="alternate"
@@ -257,8 +257,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendSoft.html">03.HPC 软件与应用趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC基础软件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
@@ -315,7 +316,11 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05NetTopoIntro.html">网络拓扑基本概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离RDMA挑战与机遇</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
+
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -336,6 +341,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07%E5%A4%A7%E6%A8%A1%E5%9E%8BCKPT%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5.html">大模型 CKPT 优化手段</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
@@ -347,9 +353,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">Docker 与 K8S 初体验</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">容器从进程到 Namespace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02Cgroups.html">资源的限制</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03Image.html">容器镜像</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">01. 容器隔离从进程到命名空间(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02Cgroups.html">02. Cgroups：容器资源控制关键(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03Image.html">容器镜像文件系统(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -367,18 +373,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02.single_device.html">单设备高效训练</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03.data_parallel.html">数据并行</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04.data_parallel_implement.html">数据并行实现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/05MGConfig.html">Megatron-LM 并行策略与通信域</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/07Gpipe.html">07.PP 并行：基本原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">07.流水并行 PP 基本原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
@@ -387,9 +390,9 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention 从 V1、V2 到 V3 的演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MultiTokenGen.html">04.计算优化：MTP 算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/07MLA.html">07.内存优化：MLA 优化算法</a></li>
@@ -421,12 +424,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/04LoRA.html">LoRA 算法</a></li>
-
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA%20Variants.html">LoRA 变体算法</a></li>
-
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06UnstructuralMask.html">Selective 算法：Unstructural Masking</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/07StructuralMask.html">Selective 算法：Unstructural Masking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.参数高效微调算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
@@ -533,25 +532,25 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Transformer_Review.html">Transformer 结构回顾与核心挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient_Transformer.html">高效 Transformer 研究：Linear Attention、Attention Free Transformer 与 Longformer 的结构原理及应用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKV_Intro.html">RWKV 架构研究:核心特点与版本演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKV_Evolution.html"><strong>RWKV 在工业化的演进、潜力以及挑战</strong></a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05Mamba_SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba_S6.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07Mamba_V2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09Break_Transformer_BottleNeck.html">Mixture-of-Recursions (MoR)：大型语言模型的统一效率范式</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer回顾与挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">Mixture-of-Recursions, MoR 架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/01CLIP.html">图文对齐基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02CLIP.html">图文对齐基础 CLIP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
@@ -838,7 +837,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>容器从进程到 Namespace</h1>
+    <h1>01. 容器隔离从进程到命名空间(DONE)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -848,11 +847,28 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">容器的出现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">容器化 VS 虚拟化</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">隔离技术</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 容器的出现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 进程：容器隔离资源载体</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.1 从程序到进程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linux">2.2 Linux 进程核心</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.3 进程的矛盾</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#namespace">3. Namespace 命名空间</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 Namespace 核心原理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 Namespace 关键调用</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linux-namespace">3.3 Linux Namespace 类型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.4 查看进程 Namespace</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 容器隔离的核心</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#docker">4.1 Docker 创建容器</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2 容器内 1 号进程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 为何比虚拟机轻</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5. 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">参考与引用</a></li>
 </ul>
             </nav>
         </div>
@@ -865,195 +881,270 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="namespace">
-<h1>容器从进程到 Namespace<a class="headerlink" href="#namespace" title="Link to this heading">#</a></h1>
-<p>Author by: 张柯帆</p>
+<section class="tex2jax_ignore mathjax_ignore" id="done">
+<h1>01. 容器隔离从进程到命名空间(DONE)<a class="headerlink" href="#done" title="Link to this heading">#</a></h1>
+<p>Author by: 张柯帆，ZOMI</p>
+<p>容器技术的隔离本质，其核心在于利用 Linux 内核的 <strong>Namespace</strong> 和 <strong>Cgroups</strong> 两大机制。其中，Namespace 是实现“视图隔离”的关键——它让进程“误以为”自己独占了系统资源（如进程树、网络栈、文件系统），而这一切的前提，是理解“进程”这个操作系统最基本的资源载体。本文将从进程原理切入，深入剖析 Namespace 的内核逻辑，最终串联起两者如何协同构建容器的隔离边界。</p>
 <section id="id1">
-<h2>容器的出现<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>本节会先从讲解概念入手，谈谈容器与虚拟机的对比，再逐步深入到<strong>隔离性</strong>在操作系统里的技术细节。</p>
-<p>容器技术其实来源于 PaaS 的发展。PaaS 所提供的正是“托管”能力，但初期还比较原始。尽管当时虚拟化已经是比较常见的技术了，用户可以向 AWS 这样的云厂商购买虚拟机实例，但用户的使用习惯仍然是本地环境那一套——登录机器，然后执行脚本或者命令行部署应用。但是假如本地环境和虚拟机的网络配置、认证配置、文件系统等资源不一致，导致部署失败了怎么办呢？又或是同实例其他人的应用资源抢占、崩溃影响了我的应用怎么办呢？这就存在两个需求：</p>
-<ol class="arabic simple">
-<li><p>如何保证本地环境和虚拟机的环境一致？如果总是不一致，能否更稳定地“打包”？</p></li>
-<li><p>应用隔离，互不影响</p></li>
-</ol>
-<p>应用隔离好办，使用操作系统提供的 Cgroups、Namespace 机制创建一个隔离的“沙箱”即可。Docker 也是这么做的。另外，早期除了 Docker 其实还有像 Cloud Foundry 这样的项目，也是使用一样的技术原理，但它并不好用。主要原因是它在环境的一致性做得并不好。Cloud Foundry 只提供了可执行文件 + 启动脚本的打包组合。但这样的方式其实只是把以前本地做的工作在云上再做一遍罢了，并没有优化效率。</p>
-<p>举个例子，相信几乎所有的技术人员都经历过搭建开发环境吧。假如你是一位 C++ 开发者，你需要准备的东西有：包管理器、编译器（正确的版本）、构建工具、依赖库、环境变量、IDE 设置、正常的网络等等。任何一环出错了都没法进行工作。如果只需要设置一次那还能接受，但是线上系统的变更可是非常频繁的，如果每次部署都从头搞一遍那也太令人崩溃了！你可能想：我写个脚本自动执行所有命令不就得了。但也可能出现脚本在本地运行正常，在服务器上却执行失败的情况。同时由于生产环境实际非常复杂，不同框架、不同虚拟机、不同网络、甚至不同应用版本都可能需要使用不同的脚本，导致脚本管理也很麻烦。归根究底，操作系统、基础设施的方方面面都可能影响应用部署。从这个角度看，可执行文件加脚本的表达能力和约束能力都实在太弱了。</p>
-<p>而 Docker 流行起来的原因恰恰是对“打包”的优化，这个功能就叫 Docker 镜像。它会将一个操作系统所需要的所有文件都打包成一个压缩包，包括所有依赖。再把可执行文件放进去，这样无论在哪里解压缩，应用的运行环境都跟本地是一摸一样的。而制作镜像也非常简单，只需要一行命令：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>.
-</pre></div>
-</div>
-<p>接下来只要创建一个上面提到的“沙箱”，在里面解压这个压缩包并运行，就能保证环境的一致性和应用的隔离性了，完全不需要修改任何配置！开发人员可以专心在代码开发和镜像制作上了。运行镜像也非常简单：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span><span class="s2">&quot;我的镜像&quot;</span>
-</pre></div>
-</div>
-<p>这种便利的机制极大地释放了生产力，开发者纷纷选择了用脚投票，抛弃 PaaS，拥抱 Docker。</p>
-<p>不过值得一提的是，Docker 虽然解决了打包的困难，但是却没法很好地完成复杂应用部署，也就是“容器编排”。而在云原生技术中，真正的商业价值其实并不是容器，而是容器编排。也因此，Docker 公司与 CNCF 社区爆发了一场争夺生态霸主的战争，最终以 Kubernetes 的胜利告终。先按下不表，留待后续介绍。</p>
-</section>
-<section id="vs">
-<h2>容器化 VS 虚拟化<a class="headerlink" href="#vs" title="Link to this heading">#</a></h2>
-<p>如果你之前学习过容器化技术，你可能经常会听到“沙箱”、“集装箱”之类的类比。这确实是两个非常好的比喻：“集装箱”试图说明不同容器之间存在明确的<strong>边界</strong>而互不影响，也隐含了易于搬运的特性；而 Docker 这个词的本意——码头（Dock），则恰如其分地扮演了装卸、管理这些集装箱的角色。我们所说的容器化环境，就像一个自动化的高效码头。”</p>
-<p>不过，若是只考虑隔离性，虚拟机也能做到，为什么非得用容器呢？</p>
-<p><img alt="虚拟机和容器的架构对比" src="03DockCloud02DockerK8s/images/01Container01.png" /></p>
-<p>看这张架构图可以发现：容器是建设在<strong>操作系统之上的</strong>，会利用原本操作系统的能力来部署应用；而虚拟机的方案则是虚拟出任意多个操作系统，再在虚拟操作系统上部署应用。那既然容器是在操作系统之上的应用，那虚拟的操作系统能否继续安装 Docker 呢？答案是肯定的，例如下图的右半部分：</p>
-<p><img alt="容器各种方式的应用" src="03DockCloud02DockerK8s/images/01Container02.png" /></p>
-<p>所以虚拟机跟容器并不是非此即彼的关系，而是可以协同工作，解决不同的问题。</p>
-<p>但我们需要容器，主要是因为容器在<strong>效率、速度和可移植性</strong>上提供了巨大的优势，这在云原生的微服务架构中十分重要。</p>
+<h2>1. 容器的出现<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>本节会从容器技术的起源出发，对比虚拟机与容器的本质差异，为后续理解“进程+Namespace”的隔离逻辑铺垫背景。</p>
+<p>容器技术的兴起与 PaaS（平台即服务）的发展密不可分。PaaS 的核心价值是提供应用“托管”能力，但早期形态存在明显局限：尽管虚拟化技术（如 AWS EC2）已普及，用户仍需像操作本地机器一样登录虚拟机、执行脚本部署应用——这种模式面临两大核心痛点：</p>
 <ul class="simple">
-<li><p><strong>虚拟机（VM）就像独栋房子</strong></p>
-<ul>
-<li><p>每栋房子都有自己的地基、水管、电路、煤气系统（即完整的操作系统和虚拟硬件），然后你才能在里面住人、放家具（运行你的应用）。房子之间隔离性非常好，但建造起来又慢又耗费资源。主要通过 Hypervisor（如 VMware, KVM, Hyper-V），在物理硬件之上虚拟出一整套硬件（虚拟 CPU、内存、硬盘、网卡）。</p></li>
-<li><p>缺点：完整的操作系统通常需要独占大量的磁盘空间（几十 GB）和内存（几百 MB 到几 GB），而且启动时需要像启动一台真实电脑一样，耗费较多时间。</p></li>
+<li><p><strong>环境一致性问题</strong>：本地与虚拟机的网络配置、依赖版本、文件系统差异，常导致“本地能跑，线上崩掉”；</p></li>
+<li><p><strong>应用隔离问题</strong>：同一虚拟机上的多个应用会争抢 CPU、内存，甚至一个应用崩溃会波及其他应用。</p></li>
 </ul>
-</li>
-<li><p><strong>容器（Container）就像公寓楼里的一个个套间</strong></p>
-<ul>
-<li><p>整栋楼共享同一个地基、总水管和总电路（即宿主机的操作系统内核）。每个套间（容器）只包含自己的家具和生活用品（即应用及其依赖库），并且有独立的门锁和墙壁（通过 Namespace 和 Cgroups 实现隔离）。入住（启动）非常快，而且在一栋楼里可以容纳很多住户（高密度）。</p></li>
-<li><p>优点：容器本身非常轻量级（几 MB-几 GB），启动速度更快（秒级甚至毫秒级），由于没有 Hypervisor，资源损耗很少。另外由于是共享宿主机资源，也使得部分场景下的超卖成为可能。</p></li>
+<p>这两个痛点催生了技术需求：如何让应用“带着环境跑”？如何让应用间“互不干扰”？</p>
+<p>早期解决方案（如 Cloud Foundry）虽尝试用“可执行文件+脚本”打包应用，但本质仍是“将本地操作迁移到云端重复执行”——例如 C++ 开发需配置编译器、依赖库、环境变量，每次部署都要重复这套流程，且脚本在不同环境的行为可能不一致。这种方案的核心缺陷是：<strong>无法完整描述应用所需的操作系统级环境</strong>。</p>
+<p>Docker 的革命性突破在于“镜像”：它将应用运行所需的全部文件（包括操作系统内核之外的依赖、文件系统、环境变量）打包成一个不可变的压缩包。无论在何处解压，镜像都能提供与构建时完全一致的环境。制作和运行镜像的命令极其简洁：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 构建镜像：将当前目录的环境打包</span>
+$<span class="w"> </span>docker<span class="w"> </span>build<span class="w"> </span>.
+<span class="c1"># 运行镜像：在隔离环境中启动应用</span>
+$<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span><span class="s2">&quot;我的镜像&quot;</span>
+</pre></div>
+</div>
+<p>这种“一次打包，处处运行”的能力解决了环境一致性问题，而隔离问题则依赖 Linux 内核的进程+Namespace 机制——这正是本文的核心。</p>
+<p>需要补充的是，Docker 虽解决了“打包”，却难以应对复杂应用的“编排”（如多容器部署、扩缩容）。最终 Kubernetes 凭借强大的编排能力成为云原生领域的标准，这部分将在后续文章深入。</p>
+</section>
+<section id="id2">
+<h2>2. 进程：容器隔离资源载体<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>要理解容器隔离，首先要搞懂“进程”——它是操作系统<strong>资源分配和调度的基本单位</strong>，也是 Namespace 实现隔离的“操作对象”。没有进程，就没有“隔离”的载体。</p>
+<section id="id3">
+<h3>2.1 从程序到进程<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>程序（Program）</strong>：是磁盘上的静态二进制文件（如 Linux 下的 ELF 格式），仅包含代码、数据和指令，不占用系统资源；</p></li>
+<li><p><strong>进程（Process）</strong>：是程序的“动态运行实例”——当程序被执行时，操作系统会将其加载到内存，分配 CPU、内存、文件描述符等资源，并创建一个核心数据结构（<code class="docutils literal notranslate"><span class="pre">task_struct</span></code>）来管理它。</p></li>
 </ul>
-</li>
+<p>简单说：程序是“死的”文件，进程是“活的”资源集合。容器的隔离，本质就是对“进程所占用的资源”进行隔离。</p>
+</section>
+<section id="linux">
+<h3>2.2 Linux 进程核心<a class="headerlink" href="#linux" title="Link to this heading">#</a></h3>
+<p>在 Linux 内核中，每个进程都对应一个 <code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 结构体（可理解为进程的“身份证+资源清单”），它记录了进程的所有状态和资源信息。其中与“隔离”密切相关的字段如下：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">task_struct</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w">        </span><span class="n">__state</span><span class="p">;</span><span class="w">  </span><span class="c1">// 进程状态（如运行、睡眠、僵死）</span>
+<span class="w">    </span><span class="kt">void</span><span class="w">                </span><span class="o">*</span><span class="n">stack</span><span class="p">;</span><span class="w">   </span><span class="c1">// 进程内核栈地址</span>
+<span class="w">    </span><span class="kt">pid_t</span><span class="w">               </span><span class="n">pid</span><span class="p">;</span><span class="w">      </span><span class="c1">// 全局进程ID（宿主机可见）</span>
+<span class="w">    </span><span class="kt">pid_t</span><span class="w">               </span><span class="n">tgid</span><span class="p">;</span><span class="w">     </span><span class="c1">// 线程组ID（进程组的标识）</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">mm_struct</span><span class="w">    </span><span class="o">*</span><span class="n">mm</span><span class="p">;</span><span class="w">      </span><span class="c1">// 内存描述符（管理进程虚拟内存）</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">fs_struct</span><span class="w">    </span><span class="o">*</span><span class="n">fs</span><span class="p">;</span><span class="w">      </span><span class="c1">// 文件系统信息（当前工作目录、根目录）</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">files_struct</span><span class="w"> </span><span class="o">*</span><span class="n">files</span><span class="p">;</span><span class="w">   </span><span class="c1">// 打开的文件表（记录文件描述符）</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">nsproxy</span><span class="w">      </span><span class="o">*</span><span class="n">nsproxy</span><span class="p">;</span><span class="w"> </span><span class="c1">// Namespace代理（关键！指向进程所属的所有Namespace）</span>
+<span class="w">    </span><span class="k">struct</span><span class="w"> </span><span class="nc">signal_struct</span><span class="w"> </span><span class="o">*</span><span class="n">signal</span><span class="p">;</span><span class="w"> </span><span class="c1">// 信号处理信息</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>这些字段的核心作用是：将进程与它所占用的资源绑定。其中，</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mm</span></code> 字段让进程拥有独立的虚拟内存空间；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fs</span></code> 字段定义了进程能访问的文件系统范围；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 字段是连接进程与 Namespace 的关键——它像一个“地址簿”，记录了进程所属的所有 Namespace（如 PID Namespace、Network Namespace），后续进程访问资源时，内核会通过 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 找到对应的 Namespace 视图。</p></li>
 </ul>
+</section>
+<section id="id4">
+<h3>2.3 进程的矛盾<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>默认情况下，所有进程共享 Linux 内核的“全局资源视图”：</p>
+<ul class="simple">
+<li><p>进程 A 执行 <code class="docutils literal notranslate"><span class="pre">ps</span></code> 命令，能看到系统中所有进程（包括进程 B）；</p></li>
+<li><p>进程 B 绑定 80 端口后，进程 A 就无法再绑定 80 端口；</p></li>
+<li><p>所有进程看到的根目录（<code class="docutils literal notranslate"><span class="pre">/</span></code>）都是宿主机的根目录。</p></li>
+</ul>
+<p>这种“共享”在多应用场景下会导致冲突——而容器隔离的本质，就是通过 Namespace 改造进程的 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 字段，让进程看到“独立的资源视图”，而非全局视图。</p>
+</section>
+</section>
+<section id="namespace">
+<h2>3. Namespace 命名空间<a class="headerlink" href="#namespace" title="Link to this heading">#</a></h2>
+<p>有了进程这个“资源载体”，接下来需要理解 Namespace 如何为进程“定制视图”。Namespace 是 Linux 内核提供的<strong>轻量级虚拟化技术</strong>，核心目标是：让一组进程拥有“独占”的资源视图，从而实现“看不见即隔离”。</p>
+<section id="id5">
+<h3>3.1 Namespace 核心原理<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>Linux 内核为每种类型的资源（如 PID、网络、文件系统）设计了对应的 Namespace 类型，其实现逻辑可概括为三点：</p>
+<ol class="arabic simple">
+<li><p><strong>Namespace 是“资源视图的集合”</strong>：每种 Namespace 类型（如 PID Namespace）对应一种资源视图，内核会为每个 Namespace 维护一个独立的“资源列表”（例如 PID Namespace 维护该视图下的进程 PID 映射）。</p></li>
+<li><p><strong>进程通过 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 关联 Namespace</strong>：进程的 <code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 指针，指向一个 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 结构体，该结构体包含了进程所属的所有 Namespace 指针（如 <code class="docutils literal notranslate"><span class="pre">pid_ns</span></code> 指向 PID Namespace，<code class="docutils literal notranslate"><span class="pre">net_ns</span></code> 指向 Network Namespace）。</p></li>
+<li><p><strong>资源访问时“按视图过滤”</strong>：当进程访问资源（如执行 <code class="docutils literal notranslate"><span class="pre">ps</span></code>、绑定端口）时，内核会先通过 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 找到对应的 Namespace，再从该 Namespace 的“资源列表”中查询资源——而非查询全局资源列表。</p></li>
+</ol>
+<p>举个通俗的例子：如果把内核比作“公寓管理员”，Namespace 就是“公寓房间”，进程就是“住户”。每个住户（进程）的 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 就是“房间钥匙”，只能打开自己的房间（Namespace）；住户要找东西（访问资源）时，管理员（内核）只允许在其房间内查找，看不到其他房间的东西。</p>
+</section>
+<section id="id6">
+<h3>3.2 Namespace 关键调用<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>Linux 提供了三个核心系统调用，用于管理进程与 Namespace 的关联：</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>特性</p></th>
-<th class="head"><p>虚拟机 (Virtual Machine)</p></th>
-<th class="head"><p>容器 (Container)</p></th>
-<th class="head"><p>为什么容器胜出？</p></th>
+<tr class="row-odd"><th class="head"><p>系统调用</p></th>
+<th class="head"><p>作用</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>启动速度</p></td>
-<td><p>慢 (分钟级/秒级)</p></td>
-<td><p>快 (秒级/毫秒级)</p></td>
-<td><p>部署更快，方便弹性伸缩，敏捷性更高</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clone()</span></code></p></td>
+<td><p>创建新进程时，通过指定 <code class="docutils literal notranslate"><span class="pre">CLONE_NEW*</span></code> 标志，让新进程进入新的 Namespace</p></td>
 </tr>
-<tr class="row-odd"><td><p>资源开销</p></td>
-<td><p>高 (GB 级内存/磁盘)</p></td>
-<td><p>低 (MB 级内存/磁盘)</p></td>
-<td><p>在相同配置的服务器上，可以运行更多的容器，成本更低</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">setns()</span></code></p></td>
+<td><p>将已存在的进程“加入”到一个已有的 Namespace（如进入容器的 Network Namespace）</p></td>
 </tr>
-<tr class="row-even"><td><p>性能</p></td>
-<td><p>有 Hypervisor 层的性能损耗</p></td>
-<td><p>接近原生性能，几乎没有开销</p></td>
-<td><p>应用程序运行效率更高。</p></td>
-</tr>
-<tr class="row-odd"><td><p>可移植性</p></td>
-<td><p>镜像巨大，与 Hypervisor 耦合</p></td>
-<td><p>镜像小巧，分层构建，标准化（OCI 标准），移植性极强</p></td>
-<td><p>一次构建，随处运行，可移植性更强大</p></td>
-</tr>
-<tr class="row-even"><td><p>隔离性</p></td>
-<td><p>强隔离 (硬件级别)</p></td>
-<td><p>弱隔离 (进程级别)</p></td>
-<td><p>该项是虚拟机的优势。一个 VM 的内核崩溃不会影响其他 VM。容器共享内核，内核漏洞可能影响所有容器。不过近年也有像 Kata Containers、gVisor 这样的安全容器项目</p></td>
-</tr>
-<tr class="row-odd"><td><p>应用场景</p></td>
-<td><p>运行不同操作系统、强安全隔离、传统应用</p></td>
-<td><p>微服务、CI/CD (持续集成/持续部署)、快速迭代、弹性伸缩</p></td>
-<td><p>符合现代云原生部署需求</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unshare()</span></code></p></td>
+<td><p>让当前进程“脱离”当前 Namespace，创建并加入新的 Namespace（不创建新进程）</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<blockquote>
-<div><p>注：在云上，通常会在虚拟机中运行容器编排系统（如 Kubernetes），然后在这些虚拟机节点上部署和管理成千上万的容器。这种模式既利用了虚拟机的安全隔离能力，又享受了容器带来的所有好处。</p>
-</div></blockquote>
-</section>
-<section id="id2">
-<h2>隔离技术<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p>在容器中，隔离具体是怎么实现的呢？怎么能做到不同的应用互不影响呢？</p>
-<p>认知：<strong>应用隔离的本质是资源隔离</strong>。无论是虚拟机、容器还是简单的进程，实现“隔离”的手段，都是限制一个应用程序能够访问和使用的资源。这些资源可以分为不同层次：</p>
-<ul class="simple">
-<li><p><strong>硬件资源</strong>：CPU 时间、内存空间、硬盘 I/O、网络带宽。虚拟机（VM）主要是在这个层面做隔离。</p></li>
-<li><p><strong>内核资源</strong>：进程 ID（PID）、用户 ID（UID）、网络协议栈、文件系统挂载点。容器（如 Docker）主要是在这个层面做隔离。</p></li>
-<li><p><strong>运行时资源</strong>：特定编程语言独有的资源，比如 Java 虚拟机（JVM）中的类、堆内存，也有资源隔离的诉求。</p></li>
-</ul>
-<p>假设你要写一个输出 <code class="docutils literal notranslate"><span class="pre">Hello</span> <span class="pre">World</span></code> 的程序。不论你用什么编程语言实现（先忽略 Java、Python 这种使用解释器的情况），最终都需要将代码编译成操作系统可以理解的可执行文件，在 Linux 下则是 ELF(Executable and Linkable Format)。这时的程序还只是硬盘上的 01 字节，但只要执行起来，操作系统就会将这个文件加载到内存里，为其分配运行所需要的各种资源和一个 id，然后交给内核调度。</p>
-<p>此时运行中的程序已经变成内存空间里的数据、打开的文件、堆栈状态的总和，被称为<strong>进程</strong>（Linux 其实不区分进程、线程，统一叫 LWP，下文统一称为进程）。这个进程也有一个数据结构，在 Linux 中被定义为 <code class="docutils literal notranslate"><span class="pre">task_struct</span></code>，是操作系统调度的一个实体，其持有运行一个程序所必要的内存空间、文件描述符、信号处理等<strong>资源</strong>。<code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 结构体过于庞大，我们可以简单一窥几个重要成员。</p>
-<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">task_struct</span><span class="w"> </span><span class="p">{</span>
-<span class="w">	</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w">        </span><span class="n">__state</span><span class="p">;</span><span class="w"> </span><span class="c1">// 表示当前进程状态，例如可运行、睡眠、僵死等。</span>
-<span class="w">	</span><span class="kt">void</span><span class="w">                </span><span class="o">*</span><span class="n">stack</span><span class="p">;</span><span class="w">  </span><span class="c1">// 指向进程的内核栈。</span>
-<span class="w">	</span><span class="k">struct</span><span class="w"> </span><span class="nc">sched_entity</span><span class="w"> </span><span class="n">se</span><span class="p">;</span><span class="w">      </span><span class="c1">// CFS（完全公平调度器）的调度实体。</span>
-<span class="w">	</span><span class="k">struct</span><span class="w"> </span><span class="nc">mm_struct</span><span class="w">    </span><span class="o">*</span><span class="n">mm</span><span class="p">;</span><span class="w">     </span><span class="c1">// 指向进程的内存描述符结构（mm_struct），管理进程的虚拟内存。</span>
-<span class="w">	</span><span class="kt">pid_t</span><span class="w">               </span><span class="n">pid</span><span class="p">;</span><span class="w">     </span><span class="c1">// 进程 ID</span>
-<span class="w">	</span><span class="k">struct</span><span class="w"> </span><span class="nc">fs_struct</span><span class="w">    </span><span class="o">*</span><span class="n">fs</span><span class="p">;</span><span class="w">     </span><span class="c1">// 指向文件系统信息结构，记录进程的当前工作目录、根目录等文件系统相关信息。</span>
-<span class="w">	</span><span class="k">struct</span><span class="w"> </span><span class="nc">files_struct</span><span class="w"> </span><span class="o">*</span><span class="n">files</span><span class="p">;</span><span class="w">  </span><span class="c1">// 指向进程打开的文件表</span>
-<span class="w">	</span><span class="p">...</span>
+<p>最常用的是 <code class="docutils literal notranslate"><span class="pre">clone()</span></code>，例如创建一个进入新 PID Namespace 的进程：</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sched.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sys/wait.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unistd.h&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">child_func</span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="n">arg</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 子进程在新的 PID Namespace 中，PID 为 1</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;子进程 PID（Namespace 内）: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">getpid</span><span class="p">());</span>
+<span class="w">    </span><span class="n">system</span><span class="p">(</span><span class="s">&quot;ps aux&quot;</span><span class="p">);</span><span class="w"> </span><span class="c1">// 仅能看到当前 Namespace 内的进程</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">stack</span><span class="p">[</span><span class="mi">1024</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">1024</span><span class="p">];</span><span class="w"> </span><span class="c1">// 子进程栈空间（必须指定）</span>
+<span class="w">    </span><span class="c1">// 创建子进程，指定 CLONE_NEWPID 标志，进入新的 PID Namespace</span>
+<span class="w">    </span><span class="kt">pid_t</span><span class="w"> </span><span class="n">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clone</span><span class="p">(</span><span class="n">child_func</span><span class="p">,</span><span class="w"> </span><span class="n">stack</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">stack</span><span class="p">),</span><span class="w"> </span><span class="n">SIGCHLD</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">CLONE_NEWPID</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pid</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">perror</span><span class="p">(</span><span class="s">&quot;clone failed&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 父进程看到的是子进程的“全局 PID”（非 Namespace 内的 PID）</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;子进程 PID（宿主机全局）: %d</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">pid</span><span class="p">);</span>
+<span class="w">    </span><span class="n">waitpid</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// 等待子进程结束</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>可以看到，<code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 中包含了进程 ID(pid)、内存空间(mm)、文件系统(fs)等与资源相关的字段。那么，要实现隔离，思路就变得清晰了：只要我们能让一个进程在访问这些资源时，看到的是一套“专属”的版本，不就实现了隔离吗？比如，让进程 A 看到的进程列表里只有它自己，让它看到的文件系统根目录是一个特定目录，分配给它的 CPU 和内存是受限的。Linux 内核恰恰提供了实现这两大目标的两大核心技术：Namespace（命名空间） 和 Cgroups（控制组）。</p>
-<ul class="simple">
-<li><p>Namespace：<strong>解决“看不看得到”的问题</strong>。 它负责“欺骗”进程，为进程创建一个独立的视图，让它感觉自己独占了整个系统资源（如独立的 PID、网络、文件系统）。这是一种视图隔离。</p></li>
-<li><p>Cgroups：<strong>解决“用多少”的问题</strong>。 它负责限制进程实际能使用的物理资源量，比如 CPU、内存、磁盘 I/O。这是一种资源限制。</p></li>
-</ul>
-<p>我们可以通过 docker 命令直观感受一下这两项技术的威力。</p>
-<p>假设你已经安装了 docker 环境，可以运行以下命令来启动一个容器：</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>alpine<span class="w"> </span>/bin/sh
-</pre></div>
+<p>编译运行后，会看到：</p>
+<p>父进程打印的“全局 PID”是一个较大的数字（如 1234）；子进程打印的“Namespace 内 PID”是 1，且 <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">aux</span></code> 仅能看到自身和 <code class="docutils literal notranslate"><span class="pre">ps</span></code> 进程——这就是 PID Namespace 的隔离效果。</p>
+</section>
+<section id="linux-namespace">
+<h3>3.3 Linux Namespace 类型<a class="headerlink" href="#linux-namespace" title="Link to this heading">#</a></h3>
+<p>截至 Linux 5.18 内核，共有 8 种 Namespace，分别对应不同的资源隔离场景。每种 Namespace 都改造了进程的某类资源视图：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Namespace 类型</p></th>
+<th class="head"><p>隔离资源</p></th>
+<th class="head"><p>核心作用举例</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PID Namespace</p></td>
+<td><p>进程 ID 空间、进程树</p></td>
+<td><p>容器内进程认为自己是 1 号进程，看不到宿主机进程</p></td>
+</tr>
+<tr class="row-odd"><td><p>Network Namespace</p></td>
+<td><p>网络设备、协议栈、端口、路由表</p></td>
+<td><p>容器拥有独立的虚拟网卡，可绑定 80 端口而不冲突</p></td>
+</tr>
+<tr class="row-even"><td><p>Mount Namespace</p></td>
+<td><p>文件系统挂载点、根目录</p></td>
+<td><p>容器看到的根目录是镜像的挂载目录，而非宿主机 <code class="docutils literal notranslate"><span class="pre">/</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>UTS Namespace</p></td>
+<td><p>主机名、NIS 域名</p></td>
+<td><p>容器可设置独立的主机名（如 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">--hostname</span> <span class="pre">my-container</span></code>）</p></td>
+</tr>
+<tr class="row-even"><td><p>IPC Namespace</p></td>
+<td><p>System V IPC 对象、POSIX 消息队列</p></td>
+<td><p>容器内进程无法与其他容器的进程通过 IPC 通信</p></td>
+</tr>
+<tr class="row-odd"><td><p>User Namespace</p></td>
+<td><p>用户 ID（UID）、组 ID（GID）空间</p></td>
+<td><p>容器内的 root 用户（UID 0）在宿主机可能是普通用户</p></td>
+</tr>
+<tr class="row-even"><td><p>Cgroup Namespace</p></td>
+<td><p>Cgroup 文件系统视图</p></td>
+<td><p>容器仅能看到分配给自己的 Cgroup 层级，无法修改其他 Cgroup</p></td>
+</tr>
+<tr class="row-odd"><td><p>Time Namespace</p></td>
+<td><p>系统启动时间、单调时间</p></td>
+<td><p>容器可独立修改时间（如模拟时区），不影响宿主机</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>以上 docker 命令的含义就是：启动一个容器，并在容器里运行 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 程序，同时为当前的终端分配一个可交互的 TTY。当启动完成后，你在终端上的输入就会传输到容器内部，而容器的输出也会传输到你当前的终端。这时候，一个运行着 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 的程序就运行在了你的宿主机上。此时如果你使用 <code class="docutils literal notranslate"><span class="pre">ps</span></code> 命令检查容器内的进程，你会发现这样的输出：</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>/<span class="w"> </span><span class="c1"># ps</span>
-PID<span class="w">  </span>USER<span class="w">   </span>TIME<span class="w"> </span>COMMAND
-<span class="w">  </span><span class="m">1</span><span class="w"> </span>root<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/bin/sh
-<span class="w">  </span><span class="m">7</span><span class="w"> </span>root<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>ps
-</pre></div>
-</div>
-<p>这个容器里居然只有 2 个进程，且 1 号进程居然是 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 而不是 Linux 的引导进程 <code class="docutils literal notranslate"><span class="pre">init</span></code>。如果你在宿主机也运行 <code class="docutils literal notranslate"><span class="pre">ps</span></code>，也许能看到这样的输出：</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>/<span class="w"> </span><span class="c1"># ps</span>
-PID<span class="w">     </span>USER<span class="w">   </span>TIME<span class="w"> </span>COMMAND
-...
-<span class="w">  </span><span class="m">29965</span><span class="w"> </span>root<span class="w">   </span><span class="m">0</span>:00<span class="w"> </span>/bin/sh
-</pre></div>
-</div>
-<p>这意味着这个容器的进程空间跟宿主机已经完全不同了。这种机制，其实就是对被隔离应用的进程空间做了手脚，使得这些进程看不到其他进程，并且以为自己就是 1 号进程。可实际上，他们在宿主机的操作系统里，还是原来的进程 PID。这就是 Namespace 技术。</p>
-<p>PID Namespace 的使用也非常简单，在创建 Linux 子进程的时候传入一个参数即可：</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>int<span class="w"> </span><span class="nv">pid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>clone<span class="o">(</span>fn,<span class="w"> </span>stack,<span class="w"> </span>SIGCHLD<span class="w"> </span><span class="p">|</span><span class="w"> </span>CLONE_NEWPID,<span class="w"> </span>NULL<span class="o">)</span><span class="p">;</span>
-</pre></div>
-</div>
-<p>只要设置 <code class="docutils literal notranslate"><span class="pre">CLONE_NEWPID</span></code> 这个 flag，子进程就会被创建到一个新的 PID Namespace 里。在这个新的 Namespace 中，这个子进程就是第一个进程，因此它的 PID 为 1。但是父进程拿到的 <code class="docutils literal notranslate"><span class="pre">pid</span></code> 还是其在物理机上的真实 PID。</p>
-<p><img alt="namespace" src="03DockCloud02DockerK8s/images/01Container03.png" /></p>
-<p>子进程创建子子进程和子子子进程时可以继续设置 <code class="docutils literal notranslate"><span class="pre">CLONE_NEWPID</span></code> ，每个子进程在自己的视角里都会认为自己是 1 号进程，在父进程里则会看到递增的 PID：2、3...。而从“上帝视角”（即父进程所在的 Namespace）看，拿到的 <code class="docutils literal notranslate"><span class="pre">pid</span></code> 变量依然是它在宿主机上的真实 PID。</p>
-<p>那么资源限制呢？ 这就要靠 Cgroups 了。虽然我们无法用一个简单的命令直观展示，但其原理就是将进程放入一个特定的“控制组”里。我们可以对这个组设置资源的上限。例如，我们可以规定某个容器内的所有进程，CPU 使用量不能超过 50%，内存最多只能使用 512MB。一旦超出，内核就会进行干预（如限制 CPU 时间、或杀死进程）。</p>
-<p>Docker 正是巧妙地将 Namespace 的视图隔离和 Cgroups 的资源限制结合在一起，才为我们提供了轻量而强大的容器环境。</p>
-<p>不过 PID Namespace 只能隔离 PID 的视图。为了隔离其他内核资源，Linux 还提供了其他不同的 Namespace。</p>
-<p>截止最新的 Linux 内核中，已有 8 个不同的 namespace：</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/pid_namespaces.7.html">PID Namespace</a>：隔离系统进程树；</p></li>
-<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/network_namespaces.7.html">Network</a>：主机网络堆栈的隔离；</p></li>
-<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/mount_namespaces.7.html">Mount</a>：隔离主机文件系统挂载点；</p></li>
-<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/uts_namespaces.7.html">UTS</a>：主机名的隔离；</p></li>
-<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/ipc_namespaces.7.html">IPC</a>：隔离进程间通信实用程序（共享段、信号灯）；</p></li>
-<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/user_namespaces.7.html">User</a>：隔离系统用户ID；</p></li>
-<li><p><a class="reference external" href="https://man7.org/linux/man-pages/man7/cgroup_namespaces.7.html">Cgroup</a>：主机的虚拟cgroup文件系统的隔离；</p></li>
-<li><p><a class="reference external" href="https://www.man7.org/linux/man-pages/man7/time_namespaces.7.html">Time</a>：主机的全局时间和启动时间的隔离</p></li>
-</ul>
-<p>这些 API 可以通过 <code class="docutils literal notranslate"><span class="pre">clone()</span></code>, <code class="docutils literal notranslate"><span class="pre">setns()</span></code>, <code class="docutils literal notranslate"><span class="pre">unshare()</span></code> 等系统调用来使用。从版本号为 3.8 的内核开始，<code class="docutils literal notranslate"><span class="pre">/proc/(pid)/ns</span></code> 目录下会包含进程所属的 namespace 信息，可以直接使用如下命令查看当前进程所属的 namespace 信息：</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>/<span class="w"> </span><span class="c1"># ls -l /proc/$$/ns</span>
+</section>
+<section id="id7">
+<h3>3.4 查看进程 Namespace<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>Linux 提供了 <code class="docutils literal notranslate"><span class="pre">/proc/(pid)/ns</span></code> 目录，用于查看指定进程所属的所有 Namespace。该目录下的每个文件都是符号链接，格式为 <code class="docutils literal notranslate"><span class="pre">类型:[inode</span> <span class="pre">编号]</span></code>——<strong>inode 编号相同的进程，共享该类型的 Namespace</strong>。</p>
+<p>例如，查看容器内 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 进程（PID 1）的 Namespace：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 容器内执行（进程 PID 1）</span>
+ls<span class="w"> </span>-l<span class="w"> </span>/proc/1/ns
 total<span class="w"> </span><span class="m">0</span>
 lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>cgroup<span class="w"> </span>-&gt;<span class="w"> </span>cgroup:<span class="o">[</span><span class="m">4026531835</span><span class="o">]</span>
 lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>ipc<span class="w"> </span>-&gt;<span class="w"> </span>ipc:<span class="o">[</span><span class="m">4026531839</span><span class="o">]</span>
 lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>mnt<span class="w"> </span>-&gt;<span class="w"> </span>mnt:<span class="o">[</span><span class="m">4026531840</span><span class="o">]</span>
 lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>net<span class="w"> </span>-&gt;<span class="w"> </span>net:<span class="o">[</span><span class="m">4026531993</span><span class="o">]</span>
 lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>pid<span class="w"> </span>-&gt;<span class="w"> </span>pid:<span class="o">[</span><span class="m">4026531836</span><span class="o">]</span>
-lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>pid_for_children<span class="w"> </span>-&gt;<span class="w"> </span>pid:<span class="o">[</span><span class="m">4026531836</span><span class="o">]</span>
 lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>user<span class="w"> </span>-&gt;<span class="w"> </span>user:<span class="o">[</span><span class="m">4026531837</span><span class="o">]</span>
 lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>uts<span class="w"> </span>-&gt;<span class="w"> </span>uts:<span class="o">[</span><span class="m">4026531838</span><span class="o">]</span>
 </pre></div>
 </div>
-<p>这些都是链接文件。链接文件的内容的格式为 xxx:[inode number]。其中的 xxx 为 namespace 的类型，inode number 则用来标识一个 namespace，可以理解为 namespace 的 ID。如果两个进程的某个 namespace 文件指向同一个链接文件，说明其相关资源在同一个 namespace 中。</p>
+<p>再查看宿主机上对应的全局进程（假设 PID 29965）：</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 宿主机执行（进程 PID 29965）</span>
+ls<span class="w"> </span>-l<span class="w"> </span>/proc/29965/ns
+total<span class="w"> </span><span class="m">0</span>
+lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>cgroup<span class="w"> </span>-&gt;<span class="w"> </span>cgroup:<span class="o">[</span><span class="m">4026531835</span><span class="o">]</span><span class="w">  </span><span class="c1"># 可能与宿主机共享（取决于配置）</span>
+lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>ipc<span class="w"> </span>-&gt;<span class="w"> </span>ipc:<span class="o">[</span><span class="m">4026531839</span><span class="o">]</span><span class="w">        </span><span class="c1"># 容器独立的 IPC Namespace</span>
+lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </span>root<span class="w"> </span>root<span class="w"> </span><span class="m">0</span><span class="w"> </span>Aug<span class="w">  </span><span class="m">1</span><span class="w"> </span><span class="m">12</span>:00<span class="w"> </span>mnt<span class="w"> </span>-&gt;<span class="w"> </span>mnt:<span class="o">[</span><span class="m">4026531840</span><span class="o">]</span><span class="w">        </span><span class="c1"># 容器独立的 Mount Namespace</span>
+...
+</pre></div>
+</div>
+<p>可见，容器内进程的 <code class="docutils literal notranslate"><span class="pre">ipc</span></code>、<code class="docutils literal notranslate"><span class="pre">mnt</span></code>、<code class="docutils literal notranslate"><span class="pre">pid</span></code> 等 Namespace 的 inode 编号与宿主机其他进程不同——这意味着它们属于独立的 Namespace，资源视图完全隔离。</p>
 </section>
-<section id="id3">
-<h2>总结与思考<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
-<p><strong>容器的隔离，本质就是资源的隔离</strong>，技术上利用了 Linux 内核提供的两大特性：Namespace 负责构建“与世隔绝”的独立视图；而 Cgroups 则像一个“资源管家”，严格限制每个容器能消耗的资源配额。</p>
-<p>在接下来的文章中，我们还会详细介绍 Cgroups 的技术细节。</p>
 </section>
-<section id="id4">
-<h2>参考与引用<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<section id="id8">
+<h2>4. 容器隔离的核心<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<p>理解了进程的“资源载体”角色和 Namespace 的“视图隔离”能力后，我们终于能串联起容器隔离的完整逻辑：容器本质是一组被“Namespace 改造过”的进程集合，这些进程共享同一套 Namespace，从而拥有独立的资源视图。</p>
+<section id="docker">
+<h3>4.1 Docker 创建容器<a class="headerlink" href="#docker" title="Link to this heading">#</a></h3>
+<p>当执行 <code class="docutils literal notranslate"><span class="pre">docker</span> <span class="pre">run</span> <span class="pre">-it</span> <span class="pre">alpine</span> <span class="pre">/bin/sh</span></code> 时，Docker 后台会完成以下关键步骤，本质是“进程与 Namespace 的绑定”：</p>
+<ol class="arabic simple">
+<li><p><strong>创建新的 Namespace 集合</strong>：Docker 通过 <code class="docutils literal notranslate"><span class="pre">clone()</span></code> 系统调用，指定多个 <code class="docutils literal notranslate"><span class="pre">CLONE_NEW*</span></code> 标志（如 <code class="docutils literal notranslate"><span class="pre">CLONE_NEWPID</span></code>、<code class="docutils literal notranslate"><span class="pre">CLONE_NEWNET</span></code>、<code class="docutils literal notranslate"><span class="pre">CLONE_NEWNS</span></code> 等），创建一个新的子进程（即容器内的 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 进程）。此时，该子进程会自动进入 6-7 种新的 Namespace（取决于配置）。</p></li>
+<li><p><strong>配置 Namespace 资源视图</strong>：</p>
 <ul class="simple">
-<li><p>https://www.bmc.com/blogs/containers-vs-virtual-machines/</p></li>
-<li><p>https://dockerlabs.collabnix.com/beginners/difference-vm-containers.html</p></li>
-<li><p>https://man7.org/linux/man-pages/man7/namespaces.7.html</p></li>
-<li><p>https://blog.quarkslab.com/digging-into-linux-namespaces-part-1.html</p></li>
+<li><p>为 <strong>Mount Namespace</strong> 挂载镜像的根文件系统（如 alpine 的 <code class="docutils literal notranslate"><span class="pre">/</span></code> 目录），让容器进程看到独立的文件系统；</p></li>
+<li><p>为 <strong>Network Namespace</strong> 创建虚拟网卡（如 <code class="docutils literal notranslate"><span class="pre">veth</span></code> 设备），并连接到宿主机的 Docker 网桥（<code class="docutils literal notranslate"><span class="pre">docker0</span></code>），让容器拥有独立的网络栈；</p></li>
+<li><p>为 <strong>UTS Namespace</strong> 设置容器的主机名（如 <code class="docutils literal notranslate"><span class="pre">--hostname</span></code> 指定的值）；</p></li>
+<li><p>为 <strong>PID Namespace</strong> 初始化 PID 映射，让容器内的子进程（<code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code>）成为该 Namespace 的 1 号进程。</p></li>
+</ul>
+</li>
+<li><p><strong>继承 Namespace 形成进程组</strong>：容器内后续创建的进程（如执行 <code class="docutils literal notranslate"><span class="pre">ps</span></code>、<code class="docutils literal notranslate"><span class="pre">ls</span></code>），会自动继承父进程（<code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code>）的 <code class="docutils literal notranslate"><span class="pre">nsproxy</span></code> 结构体——即共享同一套 Namespace，因此看到的资源视图与父进程完全一致。</p></li>
+<li><p><strong>绑定 Cgroups 限制资源</strong>：（补充背景）Docker 同时会将容器内所有进程加入到一个新的 Cgroups 组，限制其 CPU、内存等资源的使用量（解决“用多少”的问题），与 Namespace 共同实现完整隔离。</p></li>
+</ol>
+</section>
+<section id="id9">
+<h3>4.2 容器内 1 号进程<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p>我们以容器内的 <code class="docutils literal notranslate"><span class="pre">/bin/sh</span></code> 进程为例，看进程与 Namespace 如何协同实现隔离：</p>
+<ul class="simple">
+<li><p><strong>宿主机视角</strong>：该进程有一个全局 PID（如 29965），其 <code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 中的 <code class="docutils literal notranslate"><span class="pre">pid</span></code> 字段为 29965，<code class="docutils literal notranslate"><span class="pre">nsproxy-&gt;pid_ns</span></code> 指向容器的 PID Namespace（而非全局 PID Namespace）。宿主机执行 <code class="docutils literal notranslate"><span class="pre">ps</span> <span class="pre">-ef</span> <span class="pre">|</span> <span class="pre">grep</span> <span class="pre">29965</span></code> 能看到该进程，但执行 <code class="docutils literal notranslate"><span class="pre">ps</span></code> 时不会将其计入“全局进程树”的 1 号位置。</p></li>
+<li><p><strong>容器视角</strong>：该进程的 <code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 在其 PID Namespace 中的映射 PID 为 1，内核遍历该 Namespace 的进程列表时，会将其作为“初始化进程”（类似宿主机的 <code class="docutils literal notranslate"><span class="pre">systemd</span></code>）。因此，容器内执行 <code class="docutils literal notranslate"><span class="pre">ps</span></code> 时，会看到该进程是 1 号进程，且只能看到容器内的其他进程（如 <code class="docutils literal notranslate"><span class="pre">ps</span></code> 自身）。</p></li>
+</ul>
+<p>这种双重身份的本质，是进程的 <code class="docutils literal notranslate"><span class="pre">task_struct</span></code> 同时关联了“全局资源标识”（如全局 PID）和“Namespace 资源标识”（如 Namespace 内 PID），内核根据访问者的 Namespace 视图，动态展示对应的标识。</p>
+</section>
+<section id="id10">
+<h3>4.3 为何比虚拟机轻<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>对比虚拟机的隔离逻辑，能更清晰地看到“进程+Namespace”的优势：</p>
+<ul class="simple">
+<li><p><strong>虚拟机</strong>：通过模拟硬件（如 CPU、内存、网卡），在硬件之上运行完整的操作系统（如 Guest OS），应用进程是 Guest OS 的子进程。隔离粒度是“操作系统级”，资源开销大（需占用独立的内存、CPU），启动慢（需加载完整 OS）。</p></li>
+<li><p><strong>容器</strong>：直接复用宿主机的 Linux 内核，仅通过 Namespace 改造进程的资源视图，隔离粒度是“进程级”。无需模拟硬件、无需运行 Guest OS，资源开销仅相当于普通进程，启动时间可缩短至毫秒级。</p></li>
+</ul>
+<p>因此，虚拟机是“装了系统的盒子”，容器是“带了视图的进程组”。</p>
+</section>
+</section>
+<section id="id11">
+<h2>5. 总结与思考<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
+<p>容器隔离的本质，是以进程为资源载体，以 Namespace 为视图改造工具，以 Cgroups 为资源限制手段的协同方案。理解“进程+Namespace”的逻辑，是掌握容器技术的关键——后续的 Kubernetes 编排（如 Pod 共享 Namespace、Sidecar 容器）、容器网络（如 CNI 插件操作 Network Namespace）、容器安全（如 User Namespace 降权），本质都是基于这一核心逻辑的扩展。</p>
+</section>
+<section id="id12">
+<h2>参考与引用<a class="headerlink" href="#id12" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p>https://man7.org/linux/man-pages/man7/namespaces.7.html（Linux Namespace 官方文档）</p></li>
+<li><p>https://www.kernel.org/doc/Documentation/cgroup-v2.txt（Linux Cgroups v2 官方文档）</p></li>
+<li><p>https://www.kernel.org/doc/html/latest/process/namespaces.html（Linux Namespace 内核实现细节）</p></li>
+<li><p>https://blog.quarkslab.com/digging-into-linux-namespaces-part-1.html（Linux Namespace 深度解析系列）</p></li>
+<li><p>https://dockerlabs.collabnix.com/beginners/difference-vm-containers.html（Docker 与 VM 的实践差异）</p></li>
 </ul>
 </section>
 </section>
@@ -1106,7 +1197,7 @@ lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </spa
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">资源的限制</p>
+        <p class="prev-next-title">02. Cgroups：容器资源控制关键(DONE)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1126,11 +1217,28 @@ lrwxrwxrwx<span class="w"> </span><span class="m">1</span><span class="w"> </spa
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">容器的出现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vs">容器化 VS 虚拟化</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">隔离技术</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 容器的出现</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2. 进程：容器隔离资源载体</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.1 从程序到进程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linux">2.2 Linux 进程核心</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.3 进程的矛盾</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#namespace">3. Namespace 命名空间</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 Namespace 核心原理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 Namespace 关键调用</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linux-namespace">3.3 Linux Namespace 类型</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.4 查看进程 Namespace</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. 容器隔离的核心</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#docker">4.1 Docker 创建容器</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2 容器内 1 号进程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 为何比虚拟机轻</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">5. 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">参考与引用</a></li>
 </ul>
   </nav></div>
 
@@ -1164,7 +1272,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 19, 2025.
+  Last updated on Sep 21, 2025.
   <br/>
 </p>
   </div>

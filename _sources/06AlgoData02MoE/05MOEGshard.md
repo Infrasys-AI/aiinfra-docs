@@ -22,7 +22,7 @@ GShard要解决的核心问题可归纳为三点：
 
 GShard基于**Encoder-Decoder结构的Transformer**。其关键设计在于MoE层的插入位置：**在编码器（Encoder）和解码器（Decoder）中，每隔一层（即每两个Transformer层）将一个普通的FFN层替换为一个MoE层**。每两层只激活 2 个 expert，但 expert 数可以飙到 2048，从而把参数撑到 600B，而计算量几乎不变。
 
-![Moe Gshrd](images/05MOEGshard_01.png)
+![Moe Gshrd](../images/06AlgoData02MoE/05MOEGshard_01.png)
 
 对于一个总层数为N的模型，其中包含N/2个MoE层。这种设计在引入大量稀疏参数（主要存在于MoE-FFN中）的同时，保留了足够多的共享稠密层（如注意力层、剩余的FFN层），保证了模型的表示能力和稳定性。
 

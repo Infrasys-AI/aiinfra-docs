@@ -41,7 +41,7 @@ Performance │
 
 与GShard等先前采用Top-2路由的策略不同，Switch Transformer做出了一个大胆而关键的决定：**将路由专家数量简化至Top-1**。即，每个输入令牌（Token）只被路由到**唯一一个**最合适的专家（Expert）进行处理。
 
-![Moe Switch](images/06MOESwitch_01.png)
+![Moe Switch](../images/06AlgoData02MoE/06MOESwitch_01.png)
 
 这种简化带来了多重优势：
 

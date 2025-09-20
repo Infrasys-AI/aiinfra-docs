@@ -34,8 +34,9 @@
 :maxdepth: 1
 
 01DSZero
-07Gpipe
-08PPInterleaved
+01DeepSpeedIntro
+08PPGpipe
+09PPInterleaved
 Code01ZeRO
 Code02Megatron
 Code03Pipeline

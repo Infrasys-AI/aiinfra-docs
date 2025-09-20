@@ -1,6 +1,8 @@
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+
 # DALLE: 零样本文本到图像生成
 
-Author By: 李佳函
+> Author By: 李佳函
 
 ## 引言：AI 生成图像的里程碑
 

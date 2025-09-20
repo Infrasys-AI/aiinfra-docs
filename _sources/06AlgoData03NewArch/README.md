@@ -27,15 +27,15 @@
 ```{toctree}
 :maxdepth: 1
 
-01Transformer_Review
-02Efficient_Transformer
-03RWKV_Intro
-04RWKV_Evolution
-05Mamba_SSM
-06Mamba_S6
-07Mamba_V2
-08ResNet_MultiCompute
-09Break_Transformer_BottleNeck
+01Review
+02Efficient
+03RWKVIntro
+04RWKVEvolution
+05SSM
+06Mamba
+07MambaV2
+08ResNet
+09MoR
 CODE01RWKV
 CODE02Mamba
 CODE03RetNet
