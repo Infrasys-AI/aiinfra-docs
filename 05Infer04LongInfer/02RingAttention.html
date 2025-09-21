@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="05Infer04LongInfer/02RingAttention.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式..." />
+<meta property="og:description" content="Author by: 付溦崴 随着模型参数量与序列长度的急剧增长，单一维度的并行手段已无法满足训练需求。由此，研究者们提出了 张量并行（Tensor Parallelism, TP） 与 序列并行（Sequence Parallelism, SP） 等策略来突破限制。本节将介绍 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将..." />
-<meta name="description" content="Author by: 付溦崴 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 K 、 V 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式..." />
+<meta property="og:image" content="/_images/social_previews/summary_05Infer04LongInfer_02RingAttention_a1320fdb.png" />
+<meta property="og:image:alt" content="Author by: 付溦崴 随着模型参数量与序列长度的急剧增长，单一维度的并行手段已无法满足训练需求。由此，研究者们提出了 张量并行（Tensor Parallelism, TP） 与 序列并行（Sequence Parallelism, SP） 等策略来突破限制。本节将介绍 Ring Attention 将一..." />
+<meta name="description" content="Author by: 付溦崴 随着模型参数量与序列长度的急剧增长，单一维度的并行手段已无法满足训练需求。由此，研究者们提出了 张量并行（Tensor Parallelism, TP） 与 序列并行（Sequence Parallelism, SP） 等策略来突破限制。本节将介绍 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 Q 、 K 、 V 矩阵的一部分，通过环..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>Ring Attention &#8212; AIInfra AI基础设施</title>
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="输出采样" href="../05Infer05Sampling/README.html" />
+    <link rel="next" title="Ulysses 长序列并行" href="03Ulysses.html" />
     <link rel="prev" title="LongLoRA 介绍" href="01LongLoRA.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 21, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 22, 2025"/>
 
 <link
   rel="alternate"
@@ -321,6 +321,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离RDMA挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
 
 </ul>
@@ -410,18 +413,17 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/02RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/03PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/04GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/05DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/06GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/07RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
-
-
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -464,8 +466,9 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">长序列推理</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01LongLoRA.html">LongLoRA 介绍</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03Ulysses.html">Ulysses 长序列并行</a></li>
 
-
+<li class="toctree-l2"><a class="reference internal" href="04HybridAttention.html">Hybrid Attention</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -475,16 +478,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
-
-
-
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -849,17 +846,11 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Ring Attention</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention 分块计算</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu">多 GPU 环状通信</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">显存分析</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunk-size">Chunk Size 设置</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ulysses">Ulysses 长序列并行</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#hybrid-attention">Hybrid Attention</a></li>
-</ul>
-
             </nav>
         </div>
     </div>
@@ -873,6 +864,7 @@ document.write(`
 <section class="tex2jax_ignore mathjax_ignore" id="ring-attention">
 <h1>Ring Attention<a class="headerlink" href="#ring-attention" title="Link to this heading">#</a></h1>
 <p>Author by: 付溦崴</p>
+<p>随着模型参数量与序列长度的急剧增长，单一维度的并行手段已无法满足训练需求。由此，研究者们提出了 张量并行（Tensor Parallelism, TP） 与 序列并行（Sequence Parallelism, SP） 等策略来突破限制。本节将介绍</p>
 <p>Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 <span class="math notranslate nohighlight">\(Q\)</span>、<span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 <span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式版本的 BPT（Blockwisew Parallel Transformers），可以简单地将两者与 Flash Attention2 的关系理解为：Flash Attention2-&gt;BPT(Flash Attention2 + 分块 MLP)-&gt;Ring Attention(分布式版本的 BPT)。</p>
 <section id="attention">
 <h2>Attention 分块计算<a class="headerlink" href="#attention" title="Link to this heading">#</a></h2>
@@ -921,16 +913,10 @@ document.write(`
 <p>传输数据（<span class="math notranslate nohighlight">\(K\)</span>，<span class="math notranslate nohighlight">\(V\)</span> 分块）的通信总量为 <span class="math notranslate nohighlight">\(4dC\)</span> bytes。根据【传输时间&lt;=计算时间】的基本要求，我们有：
 <span class="math notranslate nohighlight">\(\frac{4dC}{B} \leq \frac{4dC^2}{F}\)</span>，进一步可得：<span class="math notranslate nohighlight">\(C \geq \frac{F}{B}\)</span>，及我们根据硬件的算力和带宽得到的最优切块大小。</p>
 <p>上面的推导过程中没有考虑 <span class="math notranslate nohighlight">\(W_Q\)</span>，<span class="math notranslate nohighlight">\(W_K\)</span>，<span class="math notranslate nohighlight">\(W_V\)</span> 矩阵的映射的计算量，因此对 <span class="math notranslate nohighlight">\(C\)</span> 的要求也是更严格的，因为这意味着要求在 Attention Score 的计算量下完成通信，而不是在实际情况 Attention score + Projection 的计算量下完成通信。</p>
-</section>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="ulysses">
-<h1>Ulysses 长序列并行<a class="headerlink" href="#ulysses" title="Link to this heading">#</a></h1>
-</section>
-<section class="tex2jax_ignore mathjax_ignore" id="hybrid-attention">
-<h1>Hybrid Attention<a class="headerlink" href="#hybrid-attention" title="Link to this heading">#</a></h1>
 <p>参考链接：</p>
 <p><a class="reference external" href="https://arxiv.org/abs/2310.01889">Ring Attention with Blockwise Transformers for Near-Infinite Context</a></p>
 <p><a class="reference external" href="https://zhuanlan.zhihu.com/p/4963530231">图解大模型训练系列：序列并行 3，Ring Attention</a></p>
+</section>
 </section>
 
     <script type="text/x-thebe-config">
@@ -977,11 +963,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="../05Infer05Sampling/README.html"
+       href="03Ulysses.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">输出采样</p>
+        <p class="prev-next-title">Ulysses 长序列并行</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1001,17 +987,11 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Ring Attention</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attention">Attention 分块计算</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gpu">多 GPU 环状通信</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">显存分析</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#chunk-size">Chunk Size 设置</a></li>
 </ul>
-</li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#ulysses">Ulysses 长序列并行</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#hybrid-attention">Hybrid Attention</a></li>
-</ul>
-
   </nav></div>
 
 </div></div>
@@ -1044,7 +1024,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 21, 2025.
+  Last updated on Sep 22, 2025.
   <br/>
 </p>
   </div>

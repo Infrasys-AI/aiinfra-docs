@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train02ParallelAdv/Code03Pipeline.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其核心思想是将一个庞大的神经网络模型，沿着层（Layer）的维度进行纵向切割，分割..." />
+<meta property="og:description" content="Author by: 许灿岷 本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其核心思想是将一个庞大的神经网络模型，沿着层（Lay..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其..." />
-<meta name="description" content="本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其核心思想是将一个庞大的神经网络模型，沿着层（Layer）的维度进行纵向切割，分割..." />
+<meta property="og:image" content="/_images/social_previews/summary_04Train02ParallelAdv_Code03Pipeline_bb04f78a.png" />
+<meta property="og:image:alt" content="Author by: 许灿岷 本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Par..." />
+<meta name="description" content="Author by: 许灿岷 本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。 1. Pipeline 并行基础: Pipeline 并行（Pipeline Parallelism, PP） 其核心思想是将一个庞大的神经网络模型，沿着层（Lay..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>CODE 03: Pipeline 并行实践 &#8212; AIInfra AI基础设施</title>
@@ -86,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 21, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 22, 2025"/>
 
 <link
   rel="alternate"
@@ -321,6 +321,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离RDMA挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
 
 </ul>
@@ -410,18 +413,17 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/02RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/03PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/04GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/05DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/06GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/07RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/DAPO.html">DAPO</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GRPO.html">概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/GSPO.html">GSPO</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
-
-
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLHF.html">概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/VAPO.html">VAPO</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -464,8 +466,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
 
-
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -475,16 +478,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">蒸馏技术简介</a></li>
-
-
-
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE 01: 低精度推理性能对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE 02: FastVLM-0.5B 量化对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE 02: 大模型 Qwen3 蒸馏</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -856,7 +853,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b">5. 1F1B 调度策略实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interleaved-1f1b">6. Interleaved 1F1B 调度策略实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">7. 混合并行策略</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">6. 完整实验与性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">8. 完整实验与性能分析</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
 </ul>
             </nav>
@@ -872,6 +869,7 @@ document.write(`
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="code-03-pipeline">
 <h1>CODE 03: Pipeline 并行实践<a class="headerlink" href="#code-03-pipeline" title="Link to this heading">#</a></h1>
+<p>Author by: 许灿岷</p>
 <p>本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。</p>
 <section id="pipeline">
 <h2>1. Pipeline 并行基础<a class="headerlink" href="#pipeline" title="Link to this heading">#</a></h2>
@@ -1090,24 +1088,176 @@ Bubble = (T_{fill} + T_{drain}) / (T_{total}) = (S - 1 + S - 1) / (2*(M + S - 1)
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[1F1B 调度] 微批次</span><span class="si">{</span><span class="n">reverse_mb_idx</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2">反向计算 | 损失: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># 返回所有微批次的平均损失</span>
-        <span class="k">return</span> <span class="n">total_loss</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span>
+        <span class="n">avg_loss</span> <span class="o">=</span> <span class="n">total_loss</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">avg_loss</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>1F1B 调度的核心思想是在流水线中交替执行前向传播和反向传播，而不是先完成所有前向传播再进行反向传播。这种策略有两个主要优势：</p>
 <ol class="arabic simple">
-<li><p>减少内存使用：不需要存储所有微批次的前向传播中间结果</p></li>
-<li><p>降低空泡率：通过更早开始反向传播，减少设备空闲时间</p></li>
+<li><p><strong>减少内存使用</strong>：不需要存储所有微批次的前向传播中间结果</p></li>
+<li><p><strong>降低空泡率</strong>：通过更早开始反向传播，减少设备空闲时间</p></li>
 </ol>
 </section>
 <section id="interleaved-1f1b">
 <h2>6. Interleaved 1F1B 调度策略实现<a class="headerlink" href="#interleaved-1f1b" title="Link to this heading">#</a></h2>
 <p>Interleaved 1F1B 调度是一种改进的 1F1B 调度策略，它通过交替执行前向和反向传播，并引入额外的填充和排空步骤来减少空泡率。</p>
 <p><img alt="" src="../_images/Code03Pipeline04.png" /></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="k">class</span> <span class="nc">PipelineParallelInterleaved1F1B</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Interleaved 1F1B 调度策略的 Pipeline 并行（修正版）</span>
+<span class="sd">    核心思想：</span>
+<span class="sd">      - 每个物理设备运行多个“虚拟阶段”，交错处理不同微批次</span>
+<span class="sd">      - 前向和反向紧密交错，压缩流水线气泡</span>
+<span class="sd">      - 微批次数 M 应 &gt;= 总虚拟阶段数 V = S * K（S=物理阶段数，K=虚拟倍数）</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span> <span class="n">device_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">num_microbatches</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">virtual_pipeline_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">module_list</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">),</span> <span class="s2">&quot;物理阶段数必须等于设备数&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">physical_stages</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">module_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span> <span class="o">=</span> <span class="n">device_ids</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span> <span class="o">=</span> <span class="n">num_microbatches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_physical_stages</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">physical_stages</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">virtual_pipeline_size</span> <span class="o">=</span> <span class="n">virtual_pipeline_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_physical_stages</span> <span class="o">*</span> <span class="n">virtual_pipeline_size</span>
+
+        <span class="c1"># 验证微批次数量是否满足交织条件（简化：要求 M &gt;= V）</span>
+        <span class="k">assert</span> <span class="n">num_microbatches</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span><span class="p">,</span> \
+            <span class="sa">f</span><span class="s2">&quot;微批次数量</span><span class="si">{</span><span class="n">num_microbatches</span><span class="si">}</span><span class="s2">需 &gt;= 总虚拟阶段数</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">dev</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">physical_stages</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">physical_stages</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">dev</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Interleaved 初始化] 物理阶段 </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> 已部署到设备: </span><span class="si">{</span><span class="n">dev</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interleaved 1F1B 调度核心逻辑：</span>
+<span class="sd">          - 输入被切分为多个微批次，每个微批次被分配到不同的设备</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">micro_batches</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">micro_batches</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;输入无法均匀划分为指定微批次&quot;</span><span class="p">)</span>
+
+        <span class="n">physical_outputs</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span><span class="p">)]</span>
+                        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_physical_stages</span><span class="p">)]</span>
+
+        <span class="n">forward_progress</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span>  <span class="c1"># mb_id -&gt; next vs_id to forward</span>
+        <span class="n">backward_progress</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span>
+
+        <span class="n">total_timesteps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Interleaved 1F1B] 总时间步数: </span><span class="si">{</span><span class="n">total_timesteps</span><span class="si">}</span><span class="s2">, 虚拟阶段数: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">total_loss</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">loss_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">timestep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_timesteps</span><span class="p">):</span>
+            <span class="c1"># ================= 前向传播 =================</span>
+            <span class="k">for</span> <span class="n">vs_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span><span class="p">):</span>
+                <span class="n">mb_id</span> <span class="o">=</span> <span class="n">timestep</span> <span class="o">-</span> <span class="n">vs_id</span>
+                <span class="k">if</span> <span class="n">mb_id</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mb_id</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">forward_progress</span><span class="p">[</span><span class="n">mb_id</span><span class="p">]</span> <span class="o">!=</span> <span class="n">vs_id</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">physical_stage_id</span> <span class="o">=</span> <span class="n">vs_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_physical_stages</span>
+                <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">[</span><span class="n">physical_stage_id</span><span class="p">]</span>
+                <span class="n">stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">physical_stages</span><span class="p">[</span><span class="n">physical_stage_id</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">physical_stage_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">micro_batches</span><span class="p">[</span><span class="n">mb_id</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># 从上一个物理阶段获取输出</span>
+                    <span class="n">prev_physical_stage</span> <span class="o">=</span> <span class="n">physical_stage_id</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">prev_output</span> <span class="o">=</span> <span class="n">physical_outputs</span><span class="p">[</span><span class="n">prev_physical_stage</span><span class="p">][</span><span class="n">mb_id</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">prev_output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>  <span class="c1"># 依赖未就绪，跳过</span>
+                    <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">prev_output</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+                <span class="c1"># 执行前向</span>
+                <span class="n">input_tensor</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">set_grad_enabled</span><span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+                    <span class="n">output_tensor</span> <span class="o">=</span> <span class="n">stage</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">)</span>
+
+                <span class="n">physical_outputs</span><span class="p">[</span><span class="n">physical_stage_id</span><span class="p">][</span><span class="n">mb_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_tensor</span>
+                <span class="n">forward_progress</span><span class="p">[</span><span class="n">mb_id</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  时间步</span><span class="si">{</span><span class="n">timestep</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 微批次</span><span class="si">{</span><span class="n">mb_id</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 虚拟阶段</span><span class="si">{</span><span class="n">vs_id</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> (物理</span><span class="si">{</span><span class="n">physical_stage_id</span><span class="si">}</span><span class="s2">) | 输入形状: </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">input_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2"> → 输出形状: </span><span class="si">{</span><span class="nb">tuple</span><span class="p">(</span><span class="n">output_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+                <span class="c1"># 如果是最后一个虚拟阶段，准备触发反向</span>
+                <span class="k">if</span> <span class="n">vs_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">backward_progress</span><span class="p">[</span><span class="n">mb_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">vs_id</span>
+
+            <span class="c1"># ================= 反向传播 =================</span>
+            <span class="k">for</span> <span class="n">mb_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_microbatches</span><span class="p">):</span>
+                <span class="n">vs_id</span> <span class="o">=</span> <span class="n">backward_progress</span><span class="p">[</span><span class="n">mb_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">vs_id</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span> <span class="ow">or</span> <span class="n">vs_id</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">physical_stage_id</span> <span class="o">=</span> <span class="n">vs_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_physical_stages</span>
+                <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_ids</span><span class="p">[</span><span class="n">physical_stage_id</span><span class="p">]</span>
+
+                <span class="n">output_tensor</span> <span class="o">=</span> <span class="n">physical_outputs</span><span class="p">[</span><span class="n">physical_stage_id</span><span class="p">][</span><span class="n">mb_id</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">output_tensor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">vs_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_virtual_stages</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="p">(</span><span class="n">output_tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+                    <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">output_tensor</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+                    <span class="n">total_loss</span> <span class="o">+=</span> <span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                    <span class="n">loss_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  时间步</span><span class="si">{</span><span class="n">timestep</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 微批次</span><span class="si">{</span><span class="n">mb_id</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 虚拟阶段</span><span class="si">{</span><span class="n">vs_id</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 反向完成 | 损失: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">output_tensor</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">grad_output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">output_tensor</span><span class="p">)</span>
+                        <span class="n">output_tensor</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">grad_output</span><span class="p">,</span> <span class="n">retain_graph</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  时间步</span><span class="si">{</span><span class="n">timestep</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 微批次</span><span class="si">{</span><span class="n">mb_id</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 虚拟阶段</span><span class="si">{</span><span class="n">vs_id</span><span class="si">:</span><span class="s2">2d</span><span class="si">}</span><span class="s2"> | 反向完成（梯度传递）&quot;</span><span class="p">)</span>
+
+                <span class="n">backward_progress</span><span class="p">[</span><span class="n">mb_id</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">1</span>
+
+        <span class="n">avg_loss</span> <span class="o">=</span> <span class="n">total_loss</span> <span class="o">/</span> <span class="n">loss_count</span> <span class="k">if</span> <span class="n">loss_count</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">avg_loss</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="id2">
 <h2>7. 混合并行策略<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <p>混合并行结合了数据并行、流水线并行和张量并行，以充分利用多种并行策略的优势。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">HybridParallelModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="c1"># 辅助函数：获取可用 GPU 设备（模拟）</span>
+<span class="k">def</span> <span class="nf">get_available_devices</span><span class="p">(</span><span class="n">max_devices</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">devices</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">max_devices</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">devices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cuda:</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">devices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">devices</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cpu&#39;</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_devices</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">devices</span>
+
+<span class="c1"># 示例模型（复用原结构，确保兼容性）</span>
+<span class="k">class</span> <span class="nc">ExampleModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<span class="c1"># 混合并行模型：Pipeline + DataParallel</span>
+<span class="k">class</span> <span class="nc">HybridParallelModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_model</span><span class="p">,</span> <span class="n">device_ids</span><span class="p">,</span> <span class="n">dp_size</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">pp_size</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dp_size</span> <span class="o">=</span> <span class="n">dp_size</span>  <span class="c1"># 数据并行路数（每个 Pipeline 阶段的复制份数）</span>
@@ -1120,6 +1270,7 @@ Bubble = (T_{fill} + T_{drain}) / (T_{total}) = (S - 1 + S - 1) / (2*(M + S - 1)
 
         <span class="c1"># 1. Pipeline 分割：将基础模型拆分为 pp_size 个阶段</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_stages</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_split_model_for_pipeline</span><span class="p">(</span><span class="n">base_model</span><span class="p">,</span> <span class="n">pp_size</span><span class="p">)</span>
+
         <span class="c1"># 2. 数据并行：为每个 Pipeline 阶段创建 dp_size 份副本（使用 nn.DataParallel）</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parallel_stages</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">()</span>
         <span class="n">current_devices</span> <span class="o">=</span> <span class="n">device_ids</span>  <span class="c1"># 待分配的设备列表</span>
@@ -1127,6 +1278,10 @@ Bubble = (T_{fill} + T_{drain}) / (T_{total}) = (S - 1 + S - 1) / (2*(M + S - 1)
             <span class="c1"># 为当前 Pipeline 阶段分配 dp_size 个设备（数据并行）</span>
             <span class="n">dp_devices</span> <span class="o">=</span> <span class="n">current_devices</span><span class="p">[:</span><span class="n">dp_size</span><span class="p">]</span>
             <span class="n">current_devices</span> <span class="o">=</span> <span class="n">current_devices</span><span class="p">[</span><span class="n">dp_size</span><span class="p">:]</span>  <span class="c1"># 剩余设备用于下一阶段</span>
+
+            <span class="c1"># 🔥 修复关键：将 stage 移动到第一个设备（DataParallel 要求）</span>
+            <span class="n">stage</span> <span class="o">=</span> <span class="n">stage</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cuda:</span><span class="si">{</span><span class="n">dp_devices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
             <span class="c1"># 包装为数据并行模块</span>
             <span class="n">dp_stage</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">device_ids</span><span class="o">=</span><span class="n">dp_devices</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parallel_stages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp_stage</span><span class="p">)</span>
@@ -1156,54 +1311,63 @@ Bubble = (T_{fill} + T_{drain}) / (T_{total}) = (S - 1 + S - 1) / (2*(M + S - 1)
 <span class="sd">        混合并行前向传播流程：</span>
 <span class="sd">        输入 → Pipeline 阶段 1（数据并行）→ Pipeline 阶段 2（数据并行）→ 输出</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">current_x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parallel_stages</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+
+        <span class="c1"># 确保输入在第一个 stage 的第一个设备上</span>
+        <span class="n">first_device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_stages</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">device_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">current_x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;cuda:</span><span class="si">{</span><span class="n">first_device</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parallel_stages</span><span class="p">:</span>
             <span class="n">current_x</span> <span class="o">=</span> <span class="n">stage</span><span class="p">(</span><span class="n">current_x</span><span class="p">)</span>  <span class="c1"># 每个阶段内部数据并行计算</span>
         <span class="k">return</span> <span class="n">current_x</span>
 
-<span class="c1"># 示例模型（复用原结构，确保兼容性）</span>
-<span class="k">class</span> <span class="nc">ExampleModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">relu</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">x</span>
+<span class="c1"># ========== 主程序：配置与测试 ==========</span>
 
-<span class="c1"># 1. 模型参数配置</span>
-<span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span>
-<span class="n">base_model</span> <span class="o">=</span> <span class="n">ExampleModel</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c1"># 1. 模型参数配置</span>
+    <span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">10</span>
+    <span class="n">base_model</span> <span class="o">=</span> <span class="n">ExampleModel</span><span class="p">(</span><span class="n">input_size</span><span class="p">,</span> <span class="n">hidden_size</span><span class="p">,</span> <span class="n">output_size</span><span class="p">)</span>
 
-<span class="c1"># 2. 自动获取设备</span>
-<span class="n">device_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">get_available_devices</span><span class="p">(</span><span class="n">max_devices</span><span class="o">=</span><span class="mi">4</span><span class="p">)]</span>
+    <span class="c1"># 2. 自动获取设备（模拟）</span>
+    <span class="n">available_devices</span> <span class="o">=</span> <span class="n">get_available_devices</span><span class="p">(</span><span class="n">max_devices</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">device_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">dev</span> <span class="ow">in</span> <span class="n">available_devices</span> <span class="k">if</span> <span class="n">dev</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;cuda&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚠️  未检测到 CUDA 设备，回退到 CPU 模式（不支持 DataParallel）&quot;</span><span class="p">)</span>
+        <span class="n">device_ids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 模拟 CPU index，但 DataParallel 不支持纯 CPU，需特殊处理</span>
+        <span class="c1"># 为演示，我们强制至少 2 个设备，若无 GPU 则跳过并行</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚠️  跳过并行测试（无 GPU）&quot;</span><span class="p">)</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="c1"># 3. 调整并行配置以匹配设备数</span>
-<span class="n">dp_size</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="k">else</span> <span class="mi">1</span>
-<span class="n">pp_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span> <span class="o">//</span> <span class="n">dp_size</span>
+    <span class="c1"># 3. 调整并行配置以匹配设备数</span>
+    <span class="n">dp_size</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span> <span class="k">else</span> <span class="mi">1</span>
+    <span class="n">pp_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">device_ids</span><span class="p">)</span> <span class="o">//</span> <span class="n">dp_size</span>
 
-<span class="c1"># 4. 创建混合并行模型</span>
-<span class="n">hybrid_model</span> <span class="o">=</span> <span class="n">HybridParallelModel</span><span class="p">(</span>
-    <span class="n">base_model</span><span class="p">,</span>
-    <span class="n">device_ids</span><span class="o">=</span><span class="n">device_ids</span><span class="p">,</span>
-    <span class="n">dp_size</span><span class="o">=</span><span class="n">dp_size</span><span class="p">,</span>
-    <span class="n">pp_size</span><span class="o">=</span><span class="n">pp_size</span>
-<span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;可用设备: </span><span class="si">{</span><span class="n">device_ids</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;配置 → 数据并行路数: </span><span class="si">{</span><span class="n">dp_size</span><span class="si">}</span><span class="s2">, Pipeline 阶段数: </span><span class="si">{</span><span class="n">pp_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="c1"># 5. 测试输入与输出</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">input_size</span><span class="p">)</span>  <span class="c1"># 输入：批量 32，维度 100</span>
-<span class="n">output</span> <span class="o">=</span> <span class="n">hybrid_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="c1"># 4. 创建混合并行模型</span>
+    <span class="n">hybrid_model</span> <span class="o">=</span> <span class="n">HybridParallelModel</span><span class="p">(</span>
+        <span class="n">base_model</span><span class="p">,</span>
+        <span class="n">device_ids</span><span class="o">=</span><span class="n">device_ids</span><span class="p">,</span>
+        <span class="n">dp_size</span><span class="o">=</span><span class="n">dp_size</span><span class="p">,</span>
+        <span class="n">pp_size</span><span class="o">=</span><span class="n">pp_size</span>
+    <span class="p">)</span>
 
-<span class="c1"># 6. 打印测试结果</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 混合并行测试结果 ===&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;输入形状: </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, 输出形状: </span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;并行配置: 数据并行路数=</span><span class="si">{</span><span class="n">dp_size</span><span class="si">}</span><span class="s2">, Pipeline 阶段数=</span><span class="si">{</span><span class="n">pp_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;各阶段设备分配: 阶段 1 用设备</span><span class="si">{</span><span class="n">device_ids</span><span class="p">[:</span><span class="n">dp_size</span><span class="p">]</span><span class="si">}</span><span class="s2">, 阶段 2 用设备</span><span class="si">{</span><span class="n">device_ids</span><span class="p">[</span><span class="n">dp_size</span><span class="p">:]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># 5. 测试输入与输出</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="n">input_size</span><span class="p">)</span>  <span class="c1"># 输入：批量 32，维度 100</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">hybrid_model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># 6. 打印测试结果</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">=== 混合并行测试结果 ===&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;输入形状: </span><span class="si">{</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, 输出形状: </span><span class="si">{</span><span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;并行配置: 数据并行路数=</span><span class="si">{</span><span class="n">dp_size</span><span class="si">}</span><span class="s2">, Pipeline 阶段数=</span><span class="si">{</span><span class="n">pp_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">current_devices</span> <span class="o">=</span> <span class="n">device_ids</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pp_size</span><span class="p">):</span>
+        <span class="n">dp_devices</span> <span class="o">=</span> <span class="n">current_devices</span><span class="p">[:</span><span class="n">dp_size</span><span class="p">]</span>
+        <span class="n">current_devices</span> <span class="o">=</span> <span class="n">current_devices</span><span class="p">[</span><span class="n">dp_size</span><span class="p">:]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline 阶段 </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> 用设备: </span><span class="si">{</span><span class="n">dp_devices</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">当前使用设备列表</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;cuda:0&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda:1&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda:2&#39;</span><span class="p">,</span> <span class="s1">&#39;cuda:3&#39;</span><span class="p">]</span>
@@ -1216,7 +1380,7 @@ Bubble = (T_{fill} + T_{drain}) / (T_{total}) = (S - 1 + S - 1) / (2*(M + S - 1)
 </div>
 </section>
 <section id="id3">
-<h2>6. 完整实验与性能分析<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<h2>8. 完整实验与性能分析<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <p>下面是一个完整的流水线并行实验，包括训练循环和性能分析。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">pipeline_parallel_experiment</span><span class="p">(</span><span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>
     <span class="c1"># 1. 自动获取设备与配置</span>
@@ -1319,8 +1483,18 @@ Epoch  5/5, 损失值: 2.1326
 </section>
 <section id="id4">
 <h2>总结与思考<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
-<p>Pipeline 并行的核心价值在于能够训练超出单个设备内存容量的大型模型。通过将模型分割到多个设备，并采用优化的调度策略如 1F1B，可以显著提高训练效率。空泡率作为衡量 Pipeline 效率的重要指标，可以通过增加微批次数量来降低。</p>
-<p>混合并行结合了数据并行、Pipeline 并行和张量并行的优势，是大模型训练的主流方法。</p>
+<p>通过补充 Interleaved 1F1B 实现，我们完成了 Pipeline 并行三大核心调度策略的覆盖：</p>
+<ol class="arabic simple">
+<li><p><strong>Gpipe (Native PP)</strong>：简单直观，空泡率高，显存占用大。</p></li>
+<li><p><strong>1F1B</strong>：通过前向/反向交替，降低显存占用，压缩部分空泡。</p></li>
+<li><p><strong>Interleaved 1F1B</strong>：引入虚拟阶段，在同一设备上交织执行多个微批次，进一步压缩空泡，尤其适合大微批次场景。</p></li>
+</ol>
+<p>工程建议：</p>
+<ul class="simple">
+<li><p>微批次数量 M 应远大于阶段数 S（推荐 M &gt;= 4S）。</p></li>
+<li><p>Interleaved 1F1B 在 M &gt;&gt; S 时优势明显，但实现复杂度高。</p></li>
+<li><p>混合并行（DP+PP+TP）是大模型训练标配，需配合梯度检查点、通信优化等技术。。</p></li>
+</ul>
 </section>
 </section>
 
@@ -1399,7 +1573,7 @@ Epoch  5/5, 损失值: 2.1326
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b">5. 1F1B 调度策略实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interleaved-1f1b">6. Interleaved 1F1B 调度策略实现</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">7. 混合并行策略</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">6. 完整实验与性能分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">8. 完整实验与性能分析</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">总结与思考</a></li>
 </ul>
   </nav></div>
@@ -1434,7 +1608,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 21, 2025.
+  Last updated on Sep 22, 2025.
   <br/>
 </p>
   </div>

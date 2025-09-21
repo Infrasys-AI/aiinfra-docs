@@ -30,5 +30,8 @@ xxx
 03Lossless
 04
 05Topology
+07TopoAlgorithm2
+08TopoAlgorithm3
+09TopoCompare
 10
 ```

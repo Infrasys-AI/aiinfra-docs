@@ -1,6 +1,8 @@
 # Ring Attention
 Author by: 付溦崴
 
+随着模型参数量与序列长度的急剧增长，单一维度的并行手段已无法满足训练需求。由此，研究者们提出了 张量并行（Tensor Parallelism, TP） 与 序列并行（Sequence Parallelism, SP） 等策略来突破限制。本节将介绍
+
 Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 $Q$、$K$、$V$ 矩阵的一部分，通过环状通信在多卡之间发送/接受新的 $K$、$V$ 矩阵 block，达到更新注意力输出的目的。Ring Attention 除了对 Attention 进行多卡分块计算，还将 FFN 层进行多卡分块计算，因此 Ring Attention 本质上就是分布式版本的 BPT（Blockwisew Parallel Transformers），可以简单地将两者与 Flash Attention2 的关系理解为：Flash Attention2->BPT(Flash Attention2 + 分块 MLP)->Ring Attention(分布式版本的 BPT)。
 
 ## Attention 分块计算
@@ -46,14 +48,6 @@ Ring Attention 将一段序列放到多张卡上进行计算，每张卡保存 $
 $\frac{4dC}{B} \leq \frac{4dC^2}{F}$，进一步可得：$C \geq \frac{F}{B}$，及我们根据硬件的算力和带宽得到的最优切块大小。
 
 上面的推导过程中没有考虑 $W_Q$，$W_K$，$W_V$ 矩阵的映射的计算量，因此对 $C$ 的要求也是更严格的，因为这意味着要求在 Attention Score 的计算量下完成通信，而不是在实际情况 Attention score + Projection 的计算量下完成通信。
-
-
-# Ulysses 长序列并行
-
-
-
-
-# Hybrid Attention
 
 
  参考链接：

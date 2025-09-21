@@ -28,4 +28,6 @@ xxx
 
 01LongLoRA
 02RingAttention
+03Ulysses
+04HybridAttention
 ```

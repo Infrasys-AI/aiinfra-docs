@@ -33,11 +33,11 @@ model_name = "Qwen/Qwen-1_8B"
 tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
 tokenizer.pad_token = tokenizer.eos_token  # 设置填充标记
 
-# 加载基础模型
+# 加载基础模型，使用 bfloat16 精度减少内存占用
 base_model = AutoModelForCausalLM.from_pretrained(
     model_name, 
     trust_remote_code=True,
-    torch_dtype=torch.float32
+    torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32
 ).to(device)
 print("Qwen-1.8B 模型加载完成")
 ```
@@ -139,7 +139,7 @@ $$L^{CLIP}(\theta) = \mathbb{E}_t[\min(r_t(\theta)A_t, \text{clip}(r_t(\theta), 
 class PPOPolicy(nn.Module):
     """包装语言模型作为策略网络"""
     def __init__(self, base_model):
-        super().__init__()
+        super(PPOPolicy, self).__init__()
         self.model = base_model
         
     def forward(self, input_ids, attention_mask=None):
@@ -176,67 +176,98 @@ class PPO:
         # 编码提示文本
         input_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
         
-        generated = input_ids
-        last_log_prob = None
-        last_value = None
+        generated = input_ids  # [batch=1, seq]
+        states = []            # 保存每个时间步的状态序列
+        actions = []           # 保存采样出的 token
+        log_probs = []         # 记录每个动作的对数概率
+        values = []            # 记录每个状态的价值
         
         # 逐步生成文本
         for _ in range(max_length):
             with torch.no_grad():
-                # 获取当前策略的输出 logits
-                logits = self.policy.get_logits(generated)
-                next_token_logits = logits[:, -1, :]
-                
-                # 创建分类分布并采样
+                # 计算当前分布与状态价值
+                outputs = self.policy.model(
+                    generated,
+                    output_hidden_states=True,
+                    use_cache=False
+                )
+                next_token_logits = outputs.logits[:, -1, :].to(torch.float32)
                 dist = Categorical(logits=next_token_logits)
                 action = dist.sample()
-                log_prob = dist.log_prob(action)
-                
-                # 获取当前状态的价值
-                value = self.value_model(generated).squeeze(-1)
-                
-            # 将新 token 添加到生成序列
-            generated = torch.cat([generated, action.unsqueeze(0)], dim=-1)
-            last_log_prob = log_prob
-            last_value = value
+                log_prob = dist.log_prob(action).to(torch.float32)
+                last_hidden = outputs.hidden_states[-1][:, -1, :].to(torch.float32)
+                value = self.value_model(last_hidden).squeeze(-1).to(torch.float32)
             
-            # 如果生成结束标记则提前终止
+            # 记录当前时间步
+            states.append(generated.clone())
+            actions.append(action)
+            log_probs.append(log_prob)
+            values.append(value)
+            
+            # 将新 token 添加到生成序列
+            generated = torch.cat([generated, action.unsqueeze(-1)], dim=-1)
             if action.item() == tokenizer.eos_token_id:
                 break
         
-        return generated, last_log_prob, last_value
+        return (
+            generated,
+            states,
+            actions,
+            torch.stack(log_probs).squeeze(-1).to(torch.float32),
+            torch.stack(values).squeeze(-1).to(torch.float32)
+        )
     
-    def update(self, prompt, reward, old_log_prob, value):
-        """单步 PPO 更新"""
-        if not torch.is_tensor(reward):
-            reward = torch.tensor(reward, dtype=torch.float32, device=device)
-        advantage = reward
+    def update(self, states, actions, reward, old_log_probs, values):
+        """更新策略和价值模型
+        :param states: 每步的输入序列
+        :param actions: 每步选择的 token
+        :param reward: 最终奖励
+        """
+        T = len(actions)
+        if T == 0:
+            return
         
-        # 编码提示文本
-        input_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
+        # 构造按步奖励
+        if isinstance(reward, torch.Tensor):
+            r_final = reward.detach().to(device=device, dtype=torch.float32).item()
+        else:
+            r_final = float(reward)
+        rewards = [0.0] * (T - 1) + [r_final]
+        returns = self._calculate_returns(rewards, values)
+        returns = returns.to(torch.float32)
+        advantages = (returns - values.detach()).to(torch.float32)
         
         # 多轮 PPO 更新
         for _ in range(self.ppo_epochs):
-            # 重新计算新策略的对数概率（基于当前提示）
-            with torch.no_grad():
-                logits = self.policy.get_logits(input_ids)
-                dist = Categorical(logits=logits[:, -1, :])
-                new_log_prob = dist.log_prob(input_ids[:, -1])
-
-            # 策略比与裁剪目标
-            ratio = torch.exp(new_log_prob - old_log_prob.detach())
-            surr1 = ratio * advantage
-            surr2 = torch.clamp(ratio, 1 - self.epsilon, 1 + self.epsilon) * advantage
-            policy_loss = -torch.min(surr1, surr2)
-
+            # 重新计算新策略的对数概率
+            new_log_probs = []
+            for state_ids, action_id in zip(states, actions):
+                outputs = self.policy.model(state_ids, use_cache=False)
+                logits = outputs.logits[:, -1, :].to(torch.float32)
+                dist = Categorical(logits=logits)
+                new_log_probs.append(dist.log_prob(action_id))
+            new_log_probs = torch.stack(new_log_probs).squeeze(-1).to(torch.float32)
+            
+            # 策略比率与裁剪目标
+            ratio = torch.exp((new_log_probs - old_log_probs).clamp(-20, 20))
+            surr1 = ratio * advantages
+            surr2 = torch.clamp(ratio, 1 - self.epsilon, 1 + self.epsilon) * advantages
+            policy_loss = -torch.min(surr1, surr2).mean()
+            
             # 更新策略网络
             self.policy_optimizer.zero_grad()
             policy_loss.backward()
             self.policy_optimizer.step()
-
-            # 更新价值函数（拟合奖励）
-            value_pred = self.value_model(input_ids).squeeze(-1)
-            value_loss = nn.MSELoss()(value_pred, reward.expand_as(value_pred))
+            
+            # 重新计算每步的 value 以训练价值网络
+            value_preds = []
+            for state_ids in states:
+                outputs = self.policy.model(state_ids, output_hidden_states=True, use_cache=False)
+                last_hidden = outputs.hidden_states[-1][:, -1, :].to(torch.float32)
+                value_preds.append(self.value_model(last_hidden).squeeze(-1))
+            value_preds = torch.stack(value_preds).squeeze(-1).to(torch.float32)  # [T]
+            
+            value_loss = nn.MSELoss()(value_preds, returns)
             self.value_optimizer.zero_grad()
             value_loss.backward()
             self.value_optimizer.step()
@@ -299,57 +330,45 @@ class DPO:
             preferred_ids = tokenizer.encode(preferred, return_tensors="pt").to(device)
             dispreferred_ids = tokenizer.encode(dispreferred, return_tensors="pt").to(device)
             
-            # 组合输入序列
-            preferred_input = torch.cat([prompt_ids, preferred_ids], dim=-1)
-            dispreferred_input = torch.cat([prompt_ids, dispreferred_ids], dim=-1)
-            
-            # 批量计算策略模型和参考模型的输出
+            # 计算策略与参考的条件对数概率
+            logp_pref = self._sequence_logprob(self.policy.model, prompt_ids, preferred_ids).sum()
             with torch.no_grad():
-                ref_preferred_logits = self.reference(preferred_input).logits
-                ref_dispreferred_logits = self.reference(dispreferred_input).logits
-            
-            policy_preferred_logits = self.policy(preferred_input).logits
-            policy_dispreferred_logits = self.policy(dispreferred_input).logits
-            
-            # 计算对数概率
-            policy_preferred_log_probs = self._get_log_probs(policy_preferred_logits, preferred_ids)
-            ref_preferred_log_probs = self._get_log_probs(ref_preferred_logits, preferred_ids)
-            policy_dispreferred_log_probs = self._get_log_probs(policy_dispreferred_logits, dispreferred_ids)
-            ref_dispreferred_log_probs = self._get_log_probs(ref_dispreferred_logits, dispreferred_ids)
+                logp_pref_ref = self._sequence_logprob(self.reference.model, prompt_ids, preferred_ids).sum()
+            logp_dis = self._sequence_logprob(self.policy.model, prompt_ids, dispreferred_ids).sum()
+            with torch.no_grad():
+                logp_dis_ref = self._sequence_logprob(self.reference.model, prompt_ids, dispreferred_ids).sum()
             
             # 计算对数比值
-            log_ratio_preferred = (policy_preferred_log_probs - ref_preferred_log_probs).sum()
-            log_ratio_dispreferred = (policy_dispreferred_log_probs - ref_dispreferred_log_probs).sum()
+            log_ratio_preferred = (logp_pref - logp_pref_ref)
+            log_ratio_dispreferred = (logp_dis - logp_dis_ref)
             
             # 计算 DPO 损失
-            loss = -torch.log(
-                torch.sigmoid(
-                    self.beta * (log_ratio_preferred - log_ratio_dispreferred)
-                )
-            )
-            
+            diff = (log_ratio_preferred - log_ratio_dispreferred).to(torch.float32)
+            loss = -torch.log(torch.sigmoid(self.beta * diff))
             losses.append(loss)
         
         # 平均损失并更新策略
-        total_loss = torch.stack(losses).mean()
+        total_loss = torch.stack(losses).mean().to(torch.float32)
         self.optimizer.zero_grad()
         total_loss.backward()
         self.optimizer.step()
         
         return total_loss.item()
     
-    def _get_log_probs(self, logits, labels):
-        """计算标签序列的对数概率"""
-        # 将 logits 和 labels 对齐
-        shift_logits = logits[:, :-1, :].contiguous()
-        shift_labels = labels[:, 1:].contiguous()
-        
-        # 计算每个 token 的对数概率
-        return nn.functional.cross_entropy(
-            shift_logits.view(-1, shift_logits.size(-1)),
-            shift_labels.view(-1),
-            reduction='none'
-        ).view(shift_labels.shape)
+    def _sequence_logprob(self, model, prompt_ids, response_ids):
+        """计算条件在 prompt 上的 response 序列逐 token 对数概率 [1, L-1]"""
+        prompt_ids = prompt_ids.to(device=device, dtype=torch.long)
+        response_ids = response_ids.to(device=device, dtype=torch.long)
+        if response_ids.size(1) < 2:
+            return torch.zeros((1, 0), dtype=torch.float32, device=device)
+        x = torch.cat([prompt_ids, response_ids[:, :-1]], dim=-1) 
+        outputs = model(x)
+        logits = outputs.logits.to(torch.float32)
+        resp_len = response_ids.size(1)
+        target_logits = logits[:, -(resp_len - 1):, :]
+        logprobs = torch.log_softmax(target_logits, dim=-1)
+        token_logprobs = logprobs.gather(2, response_ids[:, 1:].unsqueeze(-1)).squeeze(-1)
+        return token_logprobs
 ```
 
 ## 5. 准备训练数据
@@ -422,35 +441,26 @@ policy_model = PPOPolicy(base_model).to(device)
 
 # 价值模型（用于 PPO）
 # 这是一个简单的神经网络，用于估计状态价值
-class ValueModel(nn.Module):
-    def __init__(self, hidden_size):
-        super().__init__()
-        self.linear1 = nn.Linear(hidden_size, 256)
-        self.relu = nn.ReLU()
-        self.linear2 = nn.Linear(256, 1)
-    
-    def forward(self, input_ids):
-        # 使用语言模型的隐藏状态作为输入
-        with torch.no_grad():
-            outputs = base_model(input_ids, output_hidden_states=True)
-            hidden_states = outputs.hidden_states[-1]  # 最后一层的隐藏状态
-            # 使用最后一个 token 的隐藏状态
-            last_hidden = hidden_states[:, -1, :]  # [batch_size, hidden_size]
-        return self.linear2(self.relu(self.linear1(last_hidden)))
-
-value_model = ValueModel(base_model.config.hidden_size).to(device)
+value_model = nn.Sequential(
+    nn.Linear(base_model.config.hidden_size, 256),
+    nn.ReLU(),
+    nn.Linear(256, 1)
+).to(device=device, dtype=torch.float32)
 
 # 参考模型（用于 DPO）
 # 我们加载一个新的模型实例作为参考模型
 reference_model = PPOPolicy(AutoModelForCausalLM.from_pretrained(
     model_name, 
     trust_remote_code=True,
-    torch_dtype=torch.float32
+    torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32
 ).to(device))
 
 # 冻结参考模型参数
 for param in reference_model.parameters():
     param.requires_grad = False
+
+# 参考模型设为评估模式
+reference_model.eval()
 
 # 初始化训练器
 ppo_trainer = PPO(policy_model, value_model)
@@ -471,7 +481,7 @@ def train_ppo(ppo_trainer, env, num_episodes=50):
         prompt = env.reset()
         
         # 生成文本
-        generated, log_probs, values = ppo_trainer.generate(prompt)
+        generated, states, actions, old_log_probs, values = ppo_trainer.generate(prompt)
         generated_text = tokenizer.decode(generated[0])
         
         # 计算奖励（使用环境中的奖励函数）
@@ -480,7 +490,7 @@ def train_ppo(ppo_trainer, env, num_episodes=50):
         reward = env._calculate_reward()
         
         # 更新策略
-        ppo_trainer.update([prompt], [reward], log_probs, values)
+        ppo_trainer.update(states, actions, reward, old_log_probs, values)
         
         # 记录奖励历史
         rewards_history.append(reward)
