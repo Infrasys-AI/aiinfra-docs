@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 02.Efficient Transformer结构
+# 02.Efficient Transformer 结构
 
 > Author：张嘉瑶
 

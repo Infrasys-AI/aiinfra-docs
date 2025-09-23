@@ -6,10 +6,10 @@ Author by: 潘江
 PPO（Proximal Policy Optimization，近端策略优化）是一种强化学习算法，它通过优化策略来最大化奖励，适用于连续和离散动作空间。
 
 
-在强化学习中策略优化是核心问题之一。传统的策略优化方法可能会导致策略更新过大，从而破坏学习过程的稳定性。PPO通过限制策略更新的幅度，确保学习过程更加平稳，同时保持较高的样本效率。
+在强化学习中策略优化是核心问题之一。传统的策略优化方法可能会导致策略更新过大，从而破坏学习过程的稳定性。PPO 通过限制策略更新的幅度，确保学习过程更加平稳，同时保持较高的样本效率。
 
 
-PPO的核心思想是通过限制策略更新的幅度来实现稳定的优化。它引入了一个重要的概念——**剪辑（Clipping）**，用于约束策略变化范围。具体来说，PPO优化目标函数如下：
+PPO 的核心思想是通过限制策略更新的幅度来实现稳定的优化。它引入了一个重要的概念——**剪辑（Clipping）**，用于约束策略变化范围。具体来说，PPO 优化目标函数如下：
 
 $$
 L^{CLIP}(\theta) = \mathbb{E}_t \left[ \min(r_t(\theta) \cdot A_t, \text{clip}(r_t(\theta), 1-\epsilon, 1+\epsilon) \cdot A_t) \right]
@@ -21,7 +21,7 @@ $$
 - ϵ 是剪辑范围的超参数。
 
 
-在RLHF-PPO阶段，一共有四个主要模型
+在 RLHF-PPO 阶段，一共有四个主要模型
 
 - Actor Model：演员模型，这就是我们想要训练的目标语言模型
 
@@ -29,9 +29,9 @@ $$
 
 - Reward Model：奖励模型，它的作用是计算即时收益 
 
-- Reference Model：参考模型，它的作用是在RLHF阶段给语言模型增加一些“约束”，防止语言模型训歪（朝不受控制的方向更新，效果可能越来越差）
+- Reference Model：参考模型，它的作用是在 RLHF 阶段给语言模型增加一些“约束”，防止语言模型训歪（朝不受控制的方向更新，效果可能越来越差）
 
-在上面的四个模型中Actor/Critic Model在RLHF阶段是需要训练的，而Reward/Reference Model是参数冻结的。
+在上面的四个模型中 Actor/Critic Model 在 RLHF 阶段是需要训练的，而 Reward/Reference Model 是参数冻结的。
 
 
 ## DPO (Direct Preference Optimization)

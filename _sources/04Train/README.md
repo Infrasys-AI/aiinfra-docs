@@ -49,7 +49,7 @@
 | 并行 实践 :computer: | CODE 03: FP8 混合精度训练  | [Markdown](./03TrainAcceler/Code03FP8.md), [Jupyter](./03TrainAcceler/Code03FP8.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train03TrainAcceler/Code03FP8.html) | :white_check_mark: |
 | 并行 实践 :computer: | CODE 04: Ring Attention 实践 | [Markdown](./03TrainAcceler/Code04RingAttn.md), [Jupyter](./03TrainAcceler/Code04RingAttn.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train03TrainAcceler/Code04RingAttn.html) | :white_check_mark: |
 
-- [**《后训练与强化学习》**](./04PostTrainRL/)：大模型后训练与RL正从“辅助对齐手段”跃升为“塑造模型行为的核心引擎”。传统SFT已难以满足复杂人类偏好，以RLHF为代表的后训练技术，通过奖励建模与策略优化，使模型输出更安全、有用、符合价值观。DPO、KTO、IPO等无需显式奖励模型的算法迅速崛起，大幅降低训练复杂度，提升稳定性与可复现性。同时，后训练正走向多目标协同：兼顾事实性、创造性、安全性与风格控制，并与在线学习、持续对齐、模型自我进化结合。RL 不再局限于PPO，CPO、Reinforce++、GRPO等新算法在样本效率与训练鲁棒性上持续突破。后训练，已成为大模型从“聪明”走向“可控、可信、可协作”的关键跃迁。
+- [**《后训练与强化学习》**](./04PostTrainRL/)：大模型后训练与 RL 正从“辅助对齐手段”跃升为“塑造模型行为的核心引擎”。传统 SFT 已难以满足复杂人类偏好，以 RLHF 为代表的后训练技术，通过奖励建模与策略优化，使模型输出更安全、有用、符合价值观。DPO、KTO、IPO 等无需显式奖励模型的算法迅速崛起，大幅降低训练复杂度，提升稳定性与可复现性。同时，后训练正走向多目标协同：兼顾事实性、创造性、安全性与风格控制，并与在线学习、持续对齐、模型自我进化结合。RL 不再局限于 PPO，CPO、Reinforce++、GRPO 等新算法在样本效率与训练鲁棒性上持续突破。后训练，已成为大模型从“聪明”走向“可控、可信、可协作”的关键跃迁。
 
 | 大纲 | 小节 | 链接 | 状态 |
 |:--- |:---- |:-------------------- |:---:|
@@ -59,7 +59,7 @@
 | RL 实践 :computer: | CODE 02: DPO 与 PPO 在 LLM 对比 | [Markdown](./04PostTrainRL/Code02DPOPPO.md), [Jupyter](./04PostTrainRL/Code02DPOPPO.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train04PostTrainRL/Code02DPOPPO.html) | :white_check_mark: |
 | RL 实践 :computer: | CODE 03: LLM + GRPO 实践  | [Markdown](./04PostTrainRL/Code03GRPO.md), [Jupyter](./04PostTrainRL/Code03GRPO.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train04PostTrainRL/Code03GRPO.html) | :white_check_mark: |
 
-- [**《大模型微调 SFT》**](./05FineTune/)：大模型微调正从“全参训练”的粗放模式，快速演进为“高效、可控、任务自适应”的精细化工程体系。2024年以来，以LoRA为代表的参数高效微调（PEFT）已成工业标配，而QLoRA、DoRA、PiSSA等新方法进一步突破显存与表达力瓶颈，使70B级模型可在消费级GPU上微调。数据层面，合成指令（如Evol-Instruct、Self-Rewarding）与课程学习策略大幅提升样本质量与训练稳定性。训练策略上，多阶段渐进微调、损失函数定制、梯度裁剪优化等技巧显著提升收敛效率与泛化能力。更重要的是，微调不再孤立，它正与RLHF、DPO、模型编辑等对齐技术深度融合，构建“训练-对齐-评估”闭环。微调，成为释放大模型垂直领域的核心钥匙。
+- [**《大模型微调 SFT》**](./05FineTune/)：大模型微调正从“全参训练”的粗放模式，快速演进为“高效、可控、任务自适应”的精细化工程体系。2024 年以来，以 LoRA 为代表的参数高效微调（PEFT）已成工业标配，而 QLoRA、DoRA、PiSSA 等新方法进一步突破显存与表达力瓶颈，使 70B 级模型可在消费级 GPU 上微调。数据层面，合成指令（如 Evol-Instruct、Self-Rewarding）与课程学习策略大幅提升样本质量与训练稳定性。训练策略上，多阶段渐进微调、损失函数定制、梯度裁剪优化等技巧显著提升收敛效率与泛化能力。更重要的是，微调不再孤立，它正与 RLHF、DPO、模型编辑等对齐技术深度融合，构建“训练-对齐-评估”闭环。微调，成为释放大模型垂直领域的核心钥匙。
 
 | 大纲 | 小节 | 链接 | 状态 |
 |:--- |:---- |:-------------------- |:---:|
@@ -68,7 +68,7 @@
 | SFT 实践 :computer: | CODE 01: Qwen3-4B 模型微调 | [Markdown](./Code01Qwen3SFT.md), [Jupyter](./Code01Qwen3SFT.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train05FineTune/Code01Qwen3SFT.html) | :white_check_mark: |
 | SFT 实践 :computer: | CODE 02: LoRA 微调 SD | [Markdown](./Code02SDLoRA.md), [Jupyter](./Code02SDLoRA.ipynb), [文章](https://infrasys-ai.github.io/aiinfra-docs/04Train05FineTune/Code02SDLoRA.html) | :white_check_mark: |
 
-- [**《大模型验证评估》**](./06VerifValid/)：大模型评估正从“单一指标打分”迈向“多维动态对齐”的新阶段。随着模型能力跃升，传统自动指标（如BLEU、ROUGE）已难以反映真实语义与人类偏好，业界正转向以GPT-4、Claude等强模型作为裁判的自动化评估（如AlpacaEval、MT-Bench），并结合多维度人工评测（有用性、安全性、事实性、风格一致性）。同时，评估范式从静态测试集走向动态对抗（如HELM、Big-Bench Hard）、领域专项（医疗、法律、代码）和长上下文压力测试。近年来，评估更强调“对齐人类意图”与“价值观校准”，引入偏好一致性、幻觉检测、可解释性追踪等新维度。大模型评估，已不仅是性能度量，更是模型可信、可控、可落地的核心保障体系。
+- [**《大模型验证评估》**](./06VerifValid/)：大模型评估正从“单一指标打分”迈向“多维动态对齐”的新阶段。随着模型能力跃升，传统自动指标（如 BLEU、ROUGE）已难以反映真实语义与人类偏好，业界正转向以 GPT-4、Claude 等强模型作为裁判的自动化评估（如 AlpacaEval、MT-Bench），并结合多维度人工评测（有用性、安全性、事实性、风格一致性）。同时，评估范式从静态测试集走向动态对抗（如 HELM、Big-Bench Hard）、领域专项（医疗、法律、代码）和长上下文压力测试。近年来，评估更强调“对齐人类意图”与“价值观校准”，引入偏好一致性、幻觉检测、可解释性追踪等新维度。大模型评估，已不仅是性能度量，更是模型可信、可控、可落地的核心保障体系。
 
 | 大纲 | 小节 | 链接 | 状态 |
 |:--- |:---- |:-------------------- |:---:|

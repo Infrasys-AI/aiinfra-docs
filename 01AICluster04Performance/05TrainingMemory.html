@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="05.大模型训练内存与参数计算" />
+<meta property="og:title" content="大模型训练内存与参数计算" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="01AICluster04Performance/05TrainingMemory.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 视频: 这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！" />
+<meta property="og:description" content="Author by: 刘凯旋!!!!!!!!! 1）看 PR 修改，注意格式 2）没意义的信息，或者太通用的信息删掉了 大模型参数量的计算: 准确计算模型的参数量是理解其复杂性和显存占用的基础。以下以一个 L 层的标准 Transformer 模型为例，逐模块分解其参数。!!!!!!!!! 把下面每一层的计算单独分开一个三级标题，单独用公式呈现，不要大模型的了列表方式!!!!!!!!! 除了..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 视频: 这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！" />
-<meta name="description" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 视频: 这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！" />
+<meta property="og:image:alt" content="Author by: 刘凯旋!!!!!!!!! 1）看 PR 修改，注意格式 2）没意义的信息，或者太通用的信息删掉了 大模型参数量的计算: 准确计算模型的参数量是理解其复杂性和显存占用的基础。以下以一个 L 层的标准 Transformer 模型为例，逐模块分解其参数。!!!!!!!!! 把下面每一层的计算单独..." />
+<meta name="description" content="Author by: 刘凯旋!!!!!!!!! 1）看 PR 修改，注意格式 2）没意义的信息，或者太通用的信息删掉了 大模型参数量的计算: 准确计算模型的参数量是理解其复杂性和显存占用的基础。以下以一个 L 层的标准 Transformer 模型为例，逐模块分解其参数。!!!!!!!!! 把下面每一层的计算单独分开一个三级标题，单独用公式呈现，不要大模型的了列表方式!!!!!!!!! 除了..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>05.大模型训练内存与参数计算 &#8212; AIInfra AI基础设施</title>
+    <title>大模型训练内存与参数计算 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -74,6 +74,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '01AICluster04Performance/05TrainingMemory';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
@@ -84,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 22, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
 
 <link
   rel="alternate"
@@ -243,11 +245,11 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -257,7 +259,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC基础软件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
@@ -291,7 +293,7 @@
 <li class="toctree-l2"><a class="reference internal" href="02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
@@ -317,10 +319,10 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离RDMA挑战与机遇</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
 
@@ -341,6 +343,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/08HCCLIntro.html">08.华为 HCCL 架构介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -362,7 +365,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">K8S 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -382,9 +385,9 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">07.流水并行 PP 基本原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">PP 并行：1F1B/1F1B Interleaved</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行 1F1B 及衍生算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
@@ -393,7 +396,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -411,6 +414,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/01Introduction.html">概述</a></li>
+
+
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/02RLHF.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/03PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
 
@@ -529,8 +535,8 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer 回顾与挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer 结构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
@@ -834,7 +840,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>05.大模型训练内存与参数计算</h1>
+    <h1>大模型训练内存与参数计算</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -844,7 +850,18 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">大模型参数量的计算</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#embedding">Embedding 层参数</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">浮点数精度与字节占用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">训练显存分析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">静态显存占用分析</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">动态显存占用分析</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">参考与引用</a></li>
 </ul>
             </nav>
         </div>
@@ -858,15 +875,259 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1>05.大模型训练内存与参数计算<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<h1>大模型训练内存与参数计算<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
 <blockquote>
-<div><p>这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！</p>
+<div><p>Author by: 刘凯旋</p>
 </div></blockquote>
+<p>!!!!!!!!!
+1）看 PR 修改，注意格式
+2）没意义的信息，或者太通用的信息删掉了</p>
 <section id="id2">
-<h2>视频<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！</p>
-</div></blockquote>
+<h2>大模型参数量的计算<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>准确计算模型的参数量是理解其复杂性和显存占用的基础。以下以一个 <span class="math notranslate nohighlight">\(L\)</span> 层的标准 Transformer 模型为例，逐模块分解其参数。</p>
+<p>!!!!!!!!!
+把下面每一层的计算单独分开一个三级标题，单独用公式呈现，不要大模型的了列表方式</p>
+<p>!!!!!!!!!
+除了通用的 GPT 模型结构以外，把当前经典的几个模型 LLAMA4、DeepSeek3、Qwen3、Grok4 的模型结构和参数量计算拿出来看，去深入到模型结构的真正计算。</p>
+<section id="embedding">
+<h3>Embedding 层参数<a class="headerlink" href="#embedding" title="Link to this heading">#</a></h3>
+<p><strong>Token Embedding</strong>：矩阵 <span class="math notranslate nohighlight">\(W_t \in \mathbb{R}^{vocab\_size \times hidden\_size}\)</span>，参数量为：</p>
+<div class="math notranslate nohighlight">
+\[P_{TE} = vocab\_size \times hidden\_size\]</div>
+<p><strong>Position Embedding</strong>：若为可学习矩阵 <span class="math notranslate nohighlight">\(W_p \in \mathbb{R}^{max\_seq\_len \times hidden\_size}\)</span>，参数量为： <span class="math notranslate nohighlight">\(P_{PE} = max\_seq\_len \times hidden\_size\)</span> （若使用正弦编码，则此项参数量为 0）</p>
+<ul class="simple">
+<li><p><strong>Transformer Block（每层）</strong> 每个 Block 主要由一个带残差连接的注意力模块和一个带残差连接的前馈网络（FFN）模块组成，每个模块前都配有 LayerNorm。</p>
+<ul>
+<li><p><strong>LayerNorm</strong>：对特征进行标准化：<span class="math notranslate nohighlight">\(y = \frac{x - \mathbb{E}[x]}{\sqrt{\mathbb{V}ar[x] + \epsilon}} \cdot \gamma + \beta\)</span>。包含两个可训练向量：增益 <span class="math notranslate nohighlight">\(\gamma\)</span> 和偏置 <span class="math notranslate nohighlight">\(\beta\)</span>，形状均为 <span class="math notranslate nohighlight">\([hidden\_size]\)</span>。每层有两个 LayerNorm（Attn 和 FFN 前各一个），因此参数量为： <span class="math notranslate nohighlight">\(P_{LN} = 2 \times 2 \times hidden\_size = 4 \cdot hidden\_size\)</span> （通常因其占比较小，在估算总量时可忽略不计）</p></li>
+<li><p><strong>注意力模块 (Attention Module)</strong>：</p>
+<ul>
+<li><p>一个最简单的 Single-Head Attention 模块前向计算过程如下：
+<img alt="" src="../_images/05TrainingMemory02.png" /></p>
+<ul>
+<li><p>输入： <span class="math notranslate nohighlight">\(X \in \mathbb R^{batch\_ size \times seq\_len \times hidden\_size}\)</span></p></li>
+<li><p>Linear Proj： <span class="math notranslate nohighlight">\(W_{Q,K,V} \in \mathbb R^{hidden\_size \times 3 hidden\_size}\)</span> <span class="math notranslate nohighlight">\([Q,K,V] = XW_{Q,K,V} \in \mathbb R^{batch\_size \times seq\_len \times 3hidden\_size}\)</span></p></li>
+<li><p>计算注意力分数并归一化（概率空间）： <span class="math notranslate nohighlight">\(\text{alignment} = \frac{QK^T}{\sqrt {hidden\_size}} \in \mathbb R^{batch\_size \times seq\_len \times seq\_len}\)</span> <span class="math notranslate nohighlight">\(\text{attn\_score} =\text{ softmax}(\text{alignment})\)</span></p></li>
+<li><p>输出： <span class="math notranslate nohighlight">\(\text{Output} = \text{drop\_out}(\text{attn\_score})V,\quad \in \mathbb R^{batch\_size \times seq\_len \times hidden\_size}\)</span></p></li>
+<li><p>输出投影: <span class="math notranslate nohighlight">\(W_o\in \mathbb R^{hidden\_size \times hidden\_size}\)</span></p></li>
+</ul>
+</li>
+<li><p><strong>Q, K, V 投影矩阵</strong>：通常通过一个大的线性层实现，其权重矩阵 <span class="math notranslate nohighlight">\(W_{QKV} \in \mathbb{R}^{hidden\_size \times (3 \cdot hidden\_size)}\)</span>，参数量为 <span class="math notranslate nohighlight">\(3 \cdot hidden\_size^2\)</span>。</p></li>
+<li><p><strong>输出投影矩阵</strong>：将注意力输出投影回 <span class="math notranslate nohighlight">\(hidden\_size\)</span> 维，<span class="math notranslate nohighlight">\(W_O \in \mathbb{R}^{hidden\_size \times hidden\_size}\)</span>，参数量为 <span class="math notranslate nohighlight">\(hidden\_size^2\)</span>。</p></li>
+<li><p><strong>Dropout</strong>：在注意力分数计算后和最终输出后通常会应用 Dropout 层。Dropout 是一种正则化技术，它在训练阶段以概率 <span class="math notranslate nohighlight">\(p\)</span> 随机将神经元的输出置零，但在前向传播时并不引入任何可训练参数，因此不贡献参数量。它仅影响计算过程，而不增加模型大小。 
+综上，注意力模块参数量为： <span class="math notranslate nohighlight">\(P_{Attn} = 4 \cdot hidden\_size^2\)</span></p></li>
+</ul>
+</li>
+<li><p><strong>前馈网络模块 (FFN Module)</strong>：通常由一个升维层（激活函数，如 GELU）、一个降维层和一个 Dropout 组成。</p>
+<ul>
+<li><p>计算流程如下：</p>
+<ul>
+<li><p>输入：<span class="math notranslate nohighlight">\(X \in \mathbb R^{batch\_ size \times seq\_len \times hidden\_size}\)</span></p></li>
+<li><p>第一层：<span class="math notranslate nohighlight">\(W_1 \in \mathbb R^{hidden\_size \times h'}\)</span></p></li>
+<li><p>第二层： <span class="math notranslate nohighlight">\(W_2 \in \mathbb R^{h' \times hidden\_size}\)</span>,通常 <span class="math notranslate nohighlight">\(h'\)</span> 取 <span class="math notranslate nohighlight">\(4hidden\_size\)</span></p></li>
+<li><p>输出：<span class="math notranslate nohighlight">\(GELU(XW_1)W_2\)</span> 其中 GeLU 不贡献参数</p></li>
+</ul>
+</li>
+<li><p><strong>Dropout</strong>：同样，FFN 中的 Dropout <strong>不引入可训练参数</strong>。 因此，FFN 参数量为：
+$<span class="math notranslate nohighlight">\(\begin{align}
+P_{FFN} \nonumber\\
+&amp; = (hidden\_size \times 4h + 4h) + (4h \times hidden\_size + hidden\_size) \nonumber \\
+&amp;= 8 \cdot hidden\_size^2 + 5 \cdot hidden\_size \nonumber \\
+&amp; \approx 8 \cdot hidden\_size^2 \nonumber \nonumber
+\end{align}\)</span>$</p></li>
+</ul>
+</li>
+<li><p><strong>每层总参数量</strong>： <span class="math notranslate nohighlight">\(P_{layer} = P_{Attn} + P_{FFN} \approx 12 \cdot hidden\_size^2\)</span></p></li>
+</ul>
+</li>
+<li><p><strong>输出层</strong></p>
+<ul>
+<li><p>通常与 Token Embedding 共享权重，即使用 <span class="math notranslate nohighlight">\(W_t^T\)</span> 进行投影，<strong>不引入额外参数</strong>。若不共享，则需要一个独立的线性层，参数量为 <span class="math notranslate nohighlight">\(vocab\_size \times hidden\_size\)</span>。
+<strong>模型总参数量 <span class="math notranslate nohighlight">\(\phi\)</span> 估算公式：</strong></p></li>
+</ul>
+</li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align} 
+\phi &amp;\approx P_{TE} + P_{PE} + L \times P_{layer} \nonumber \\
+ &amp;= (vocab\_size \times hidden\_size) + (max\_seq\_len \times hidden\_size) \nonumber\\
+ &amp; + L \times (12 \cdot hidden\_size^2) \nonumber\end{align}
+ \end{split}\]</div>
+</section>
+</section>
+<section id="id3">
+<h2>浮点数精度与字节占用<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>!!!!!!!!
+现在都用 FP8/FP6 混合精度训练了，了解最新的技术，然后补充详细内容</p>
+<p>计算机中的浮点数遵循 IEEE 754 标准，由符号位 <span class="math notranslate nohighlight">\(S\)</span>、指数位 <span class="math notranslate nohighlight">\(E\)</span> 和尾数位 <span class="math notranslate nohighlight">\(M\)</span> 组成，下图是 FP16 的 IEEE 754 表示。</p>
+<p><img alt="" src="../_images/05TrainingMemory03.png" /></p>
+<p>一个浮点数的数学表示为：</p>
+<div class="math notranslate nohighlight">
+\[
+(-1)^{\text{符号位}} \times (1.\text{尾数}) \times 2^{(\text{指数} - \text{偏置})}
+\]</div>
+<p>其中，记指数位的 bit 数为 <span class="math notranslate nohighlight">\(k\)</span>, 偏置值：<span class="math notranslate nohighlight">\(2^{k-1}-1\)</span>。</p>
+<p><strong>指数位</strong>决定了数值的<strong>动态范围</strong>（能表示的最大最小值），<strong>尾数位</strong>决定了数值的<strong>精度</strong>（有效数字位数）。更多的指数位意味着能表示更大或更小的数值，更多的尾数位意味着更高的精度。
+现代深度学习中常用的数值精度格式如下：</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>精度格式</p></th>
+<th class="head text-left"><p>位宽</p></th>
+<th class="head text-left"><p>字节数</p></th>
+<th class="head text-left"><p>符号位</p></th>
+<th class="head text-left"><p>指数位</p></th>
+<th class="head text-left"><p>尾数位</p></th>
+<th class="head text-left"><p>应用场景</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p><strong>FP32</strong></p></td>
+<td class="text-left"><p>32 bits</p></td>
+<td class="text-left"><p>4 bytes</p></td>
+<td class="text-left"><p>1 bit</p></td>
+<td class="text-left"><p>8 bits</p></td>
+<td class="text-left"><p>23 bits</p></td>
+<td class="text-left"><p>传统训练，高精度推理</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>FP16</strong></p></td>
+<td class="text-left"><p>16 bits</p></td>
+<td class="text-left"><p>2 bytes</p></td>
+<td class="text-left"><p>1 bit</p></td>
+<td class="text-left"><p>5 bits</p></td>
+<td class="text-left"><p>10 bits</p></td>
+<td class="text-left"><p>混合精度训练，快速推理</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>BF16</strong></p></td>
+<td class="text-left"><p>16 bits</p></td>
+<td class="text-left"><p>2 bytes</p></td>
+<td class="text-left"><p>1 bit</p></td>
+<td class="text-left"><p>8 bits</p></td>
+<td class="text-left"><p>7 bits</p></td>
+<td class="text-left"><p>现代混合精度训练</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p><strong>INT8</strong></p></td>
+<td class="text-left"><p>8 bits</p></td>
+<td class="text-left"><p>1 byte</p></td>
+<td class="text-left"><p>1 bit</p></td>
+<td class="text-left"><p>-</p></td>
+<td class="text-left"><p>7 bits</p></td>
+<td class="text-left"><p>量化推理，边缘设备</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p><strong>INT4</strong></p></td>
+<td class="text-left"><p>4 bits</p></td>
+<td class="text-left"><p>0.5 bytes</p></td>
+<td class="text-left"><p>1 bit</p></td>
+<td class="text-left"><p>-</p></td>
+<td class="text-left"><p>3 bits</p></td>
+<td class="text-left"><p>极端量化推理</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>混合精度训练 (Mixed Precision Training)</strong> 是当前的主流实践。它在前向传播和反向传播过程中使用 FP16/BF16 进行计算和存储，以提升速度并节省显存，同时维护一个 FP32 格式的<strong>主参数副本 (Master Weight)</strong> 用于优化器更新，以此保证训练的数值稳定性。</p>
+</section>
+<section id="id4">
+<h2>训练显存分析<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<p>!!!!!!!
+大模型要做性能优化，优化哪部分？深度学习了解</p>
+<p>模型训练中，GPU 显存的消耗远不止模型参数本身。对于一个拥有 ϕ 个参数的模型，一次完整的训练迭代（Step）所产生的显存占用可以系统地分为以下几个核心部分。理解这些组成有助于进行有效的显存优化和模型部署。</p>
+<section id="id5">
+<h3>静态显存占用分析<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>!!!!!!!!!
+不要用大模型的列表方式，改成自己理解的形式</p>
+<ol class="arabic simple">
+<li><p>模型参数内存 (Model Parameters)
+模型的 <span class="math notranslate nohighlight">\(\phi\)</span> 个参数需要在 GPU 显存中存储。在混合精度训练中：</p>
+<ul class="simple">
+<li><p><strong>FP16 格式</strong>：每个参数占用 2 字节</p></li>
+<li><p><strong>参数内存</strong>：<span class="math notranslate nohighlight">\(2\phi\)</span> 字节</p></li>
+</ul>
+</li>
+<li><p>梯度显存 (Gradients)
+反向传播过程中，需要为每个参数计算并存储一个梯度值 <span class="math notranslate nohighlight">\(g_t = \frac{\partial \mathcal{L}}{\partial \theta}\)</span>：</p>
+<ul class="simple">
+<li><p>每个参数对应 1 个梯度值：共 <span class="math notranslate nohighlight">\(\phi\)</span> 个梯度值</p></li>
+<li><p>梯度精度：通常使用 FP32</p></li>
+<li><p>梯度内存：<span class="math notranslate nohighlight">\(2\phi\)</span> 字节</p></li>
+</ul>
+</li>
+<li><p>优化器状态显存 (Optimizer States)
+Adam 优化器为每个参数维护两个指数移动平均量：</p>
+<ul class="simple">
+<li><p><strong>一阶动量 <span class="math notranslate nohighlight">\(m_t^{(i)}\)</span></strong>：存储该参数梯度的指数移动平均</p>
+<ul>
+<li><p>初始化：<span class="math notranslate nohighlight">\(m_0^{(i)} = 0\)</span></p></li>
+<li><p>更新公式：<span class="math notranslate nohighlight">\(m_t^{(i)} = \beta_1 m_{t-1}^{(i)} + (1-\beta_1) g_t^{(i)}\)</span></p></li>
+<li><p>数据类型：FP32（4 字节）</p></li>
+<li><p>作用：提供动量，帮助优化器在梯度方向上保持惯性</p></li>
+</ul>
+</li>
+<li><p><strong>二阶动量 <span class="math notranslate nohighlight">\(v_t^{(i)}\)</span></strong>：存储该参数梯度平方的指数移动平均</p>
+<ul>
+<li><p>初始化：<span class="math notranslate nohighlight">\(v_0^{(i)} = 0\)</span></p></li>
+<li><p>更新公式：<span class="math notranslate nohighlight">\(v_t^{(i)} = \beta_2 v_{t-1}^{(i)} + (1-\beta_2) (g_t^{(i)})^2\)</span></p></li>
+<li><p>数据类型：FP32（4 字节）</p></li>
+<li><p>作用：自适应调整学习率，对频繁更新的参数使用较小学习率</p></li>
+</ul>
+</li>
+<li><p>优化器内存：<span class="math notranslate nohighlight">\(8\phi\)</span> 字节</p></li>
+</ul>
+</li>
+</ol>
+<p>综上，近考虑上述三个因素，显存占用。</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+Mem\_{static} \nonumber\\
+&amp; = Mem\_param + Mem\_grad + Mem\_optim \nonumber \\
+&amp; = 2\phi + 4\phi + 8\phi \nonumber \\
+&amp; = 14\phi \nonumber
+ \end{align}
+ \end{split}\]</div>
+</section>
+<section id="id6">
+<h3>动态显存占用分析<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<ol class="arabic">
+<li><p>激活值（Activation）</p>
+<p>激活值是指在前向传播过程中产生、并在反向传播梯度计算中必须保留的中间张量，不包括模型参数和优化器状态。</p>
+<p>以标准 Transformer 层为例，对其需要保存的激活值进行分析如下：</p>
+<ul class="simple">
+<li><p>残差连接的结果不属于必须存储的激活值，因其梯度计算仅依赖于该分支内的中间结果。例如，对于 <span class="math notranslate nohighlight">\(y = x + f_\theta(x)\)</span>，在计算 <span class="math notranslate nohighlight">\(\partial y / \partial \theta\)</span> 时，仅需 <span class="math notranslate nohighlight">\(f_\theta(x)\)</span> 内部的前向缓存。</p></li>
+<li><p>Dropout 所使用的掩码矩阵（Mask Matrix）属于激活值，需在前向时保存。通常掩码矩阵以 Byte 类型存储（1 字节），而中间激活值若为 FP16/BF16 则占用 2 字节。</p></li>
+</ul>
+<p>下图中紫色图标标识出了需要存储的激活张量（不考虑 Embedding 层，并忽略 LayerNorm 的均值与方差所占的约 <span class="math notranslate nohighlight">\(2bs\)</span> 字节）：
+<img alt="" src="../_images/05TrainingMemory04.png" />
+总激活值显存占用估算如下：</p>
+</li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{align}
+		MemActive_{Attn} = 2(bsh + 3bsh + 2bss + bsh) + bs^2 + bsh = 11bsh + 5bs^2\ \text{Byte} \nonumber \\
+		MemActive_{FFN} = 2(bsh + 4bsh + 4bsh + bsh + bsh) + bsh = 23 bsh \  \text{Byte} \nonumber\\
+		MemActive = MemActive_{Attn} + MemActive_{FFN} = 34bsh + 5bs^2 \  \text{Byte} \nonumber
+	\end{align}\end{split}\]</div>
+<ol class="arabic simple" start="2">
+<li><p>其他显存开销
+包括各种临时内存分配：</p>
+<ul class="simple">
+<li><p>通信缓冲区：分布式训练中的 all-reduce 操作</p></li>
+<li><p>内存碎片：GPU 内存分配产生的碎片</p></li>
+<li><p>CUDA 上下文：CUDA 运行时的开销
+根据经验，这类额外显存占用可大致估算为模型参数内存的 <span class="math notranslate nohighlight">\(1.X\)</span> 倍，即 <span class="math notranslate nohighlight">\(2.X\phi\)</span> 字节</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="id7">
+<h2>总结与思考<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<p>!!!!!!!
+一段话总结</p>
+</section>
+<section id="id8">
+<h2>参考与引用<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<p>!!!!!!!
+希望你不是大模型生成的，而是自己去看论文，看知乎，看别人的解读，然后总结成自己的理解；补充参考</p>
 </section>
 </section>
 
@@ -938,7 +1199,18 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">大模型参数量的计算</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#embedding">Embedding 层参数</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">浮点数精度与字节占用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">训练显存分析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">静态显存占用分析</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">动态显存占用分析</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">参考与引用</a></li>
 </ul>
   </nav></div>
 
@@ -972,7 +1244,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 22, 2025.
+  Last updated on Sep 23, 2025.
   <br/>
 </p>
   </div>

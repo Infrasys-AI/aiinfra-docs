@@ -93,7 +93,6 @@ CRI shim 有哪些优势呢？
 - 支持多运行时：支持 Docker、containerd、CRI-O 等。
 - 简化维护
 
-## 参考文档
+## 参考与引用
 https://www.cnblogs.com/zhangmingcheng/p/17495311.html
 
-## 参考与引用

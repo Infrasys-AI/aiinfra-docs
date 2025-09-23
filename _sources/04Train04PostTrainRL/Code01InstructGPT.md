@@ -386,7 +386,7 @@ def ppo_train(model, reward_model, tokenizer, epochs=2):
             generated_tokens = []
             log_probs = []
             
-            # 生成回答并记录每个token的选择概率
+            # 生成回答并记录每个 token 的选择概率
             current_ids = input_ids.clone()
             for _ in range(8):  # 生成 8 个 token
                 logits = model(current_ids)[:, -1, :]  # 获取最后一个 token 的 logits
@@ -405,13 +405,13 @@ def ppo_train(model, reward_model, tokenizer, epochs=2):
                 reward_value = reward_model(current_ids).item()
             total_reward += reward_value
             
-            # 将奖励转换为tensor以便参与梯度计算
+            # 将奖励转换为 tensor 以便参与梯度计算
             reward_tensor = torch.tensor(reward_value, dtype=torch.float32, device=device)
             
-            # PPO 损失计算 - 对每个生成的token进行优化
+            # PPO 损失计算 - 对每个生成的 token 进行优化
             policy_loss = torch.tensor(0.0, device=device, requires_grad=True)
             for i, (token, old_log_prob) in enumerate(zip(generated_tokens, log_probs)):
-                # 重新计算当前策略下该token的概率
+                # 重新计算当前策略下该 token 的概率
                 context_ids = torch.cat([input_ids] + generated_tokens[:i], dim=1)
                 new_logits = model(context_ids)[:, -1, :]
                 new_probs = torch.softmax(new_logits, dim=-1)
@@ -420,7 +420,7 @@ def ppo_train(model, reward_model, tokenizer, epochs=2):
                 # 计算策略比率
                 ratio = torch.exp(new_log_prob - old_log_prob.detach())
                 
-                # 计算PPO裁剪损失
+                # 计算 PPO 裁剪损失
                 surr1 = ratio * reward_tensor
                 surr2 = torch.clamp(ratio, 1 - clip_epsilon, 1 + clip_epsilon) * reward_tensor
                 policy_loss = policy_loss - torch.min(surr1, surr2)  # 负号因为我们要最大化
@@ -442,7 +442,7 @@ print("开始 PPO 训练阶段...")
 ppo_train(model, reward_model, tokenizer, epochs=2)
 ```
 
-PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。我们首先冻结奖励模型参数，确保奖励信号稳定。在生成过程中，我们使用采样而不是贪心选择来保持探索性，并记录每个token的选择概率。PPO 的关键是计算策略比率（新策略概率/旧策略概率）并使用裁剪机制限制更新幅度，防止策略偏离过大导致训练不稳定。对于每个生成的token，我们都计算其对应的 PPO 损失并进行优化。随着训练进行，模型生成的回答应该能获得越来越高的奖励。
+PPO 训练的核心是通过奖励模型提供的反馈来优化语言模型。我们首先冻结奖励模型参数，确保奖励信号稳定。在生成过程中，我们使用采样而不是贪心选择来保持探索性，并记录每个 token 的选择概率。PPO 的关键是计算策略比率（新策略概率/旧策略概率）并使用裁剪机制限制更新幅度，防止策略偏离过大导致训练不稳定。对于每个生成的 token，我们都计算其对应的 PPO 损失并进行优化。随着训练进行，模型生成的回答应该能获得越来越高的奖励。
 
 ## 5. 实验结果与分析
 

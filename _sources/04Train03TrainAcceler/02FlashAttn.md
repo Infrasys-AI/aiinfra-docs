@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 02.计算优化：FA演进
+# 02.计算优化：FA 演进
 
 Author by: 桑青园
 

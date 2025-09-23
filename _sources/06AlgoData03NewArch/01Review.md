@@ -1,11 +1,11 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 01.Transformer回顾与挑战
+# 01.Transformer 回顾与挑战
 
 > Author by: 张嘉瑶
 
 !!!!!!!
-1）I和II合并到一个内容里面，不用讲那么多前面已经有的知识；2）Attention 的显存的分析呢？图和论文对应的 Experience 没有；3）计算复杂度分析呢？对应的论文 Experience 有没有？4）避免都用大模型，这里面缺乏灵魂，缺乏思考。
+1）I 和 II 合并到一个内容里面，不用讲那么多前面已经有的知识；2）Attention 的显存的分析呢？图和论文对应的 Experience 没有；3）计算复杂度分析呢？对应的论文 Experience 有没有？4）避免都用大模型，这里面缺乏灵魂，缺乏思考。
 
 ## I. Transformer 的起源与架构蓝图
 

@@ -1,32 +1,21 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
 # K8S 容器持久化存储
+Author by: 何晨阳，ZOMI
 
-!!!!!!!!!!!
-技术文章写出来的东西一定要有骨肉和连贯性。
-
-!!!!!!!!!
-1）注意 markdown 的格式，看我修改和提交的内容；2）看上去基本上是大模型生成的，尽可能用自己的语言和自己的理解去写内容，才有骨肉；3）成段落，不要用大模型的列表和总结展现形式，一定要自己深入核心技术，去挖掘自己以前不懂的东西。4）图很重要，图是理解的很重要一步，自己理解了，然后自己画图，这才是最重要最核心的内容。
-
-开发者视角：只需声明存储需求，无需关注底层实现。
-
-运维视角：自由更换存储后端（NFS/云盘/分布式存储）不影响业务。
-
-核心价值：实现应用与基础设施的关注点分离。
+容器持久化存储是有状态服务容器化的基石，解决了临时存储无法满足数据持久性、共享性和高可用性的核心痛点。从以下三个视角可以看出其存在的必要性与合理性：
+- **开发者视**：只需声明存储需求，无需关注底层实现。
+- **运维视角**：自由更换存储后端（NFS/云盘/分布式存储）不影响业务。
+- **核心价值**：实现应用与基础设施的关注点分离。
 
 ## 核心概念与架构
-
+首先了解容器持久化相关的基础概念，主要包括一些概念的抽象。
 ### 存储抽象层
-
-```mermaid
-A[Pod] --> B[Volume]
-B --> C[PersistentVolumeClaim]
-C --> D[PersistentVolume]
-D --> E[StorageClass]
-E --> F[实际存储系统]
-```
+Kubernetes 的存储抽象层是解耦应用与底层存储基础设施的核心设计，其核心组件与逻辑关系如下：
+![CRI 架构](../images/03DockCloud03DiveintoK8s/02storagedfi.png)
 
 ### 核心组件关系
+其中核心组件的角色、生命周期关系如下表所示：
 
 | 组件 | 角色 | 生命周期 | 创建者 |
 |------|------|----------|----------|
@@ -35,8 +24,10 @@ E --> F[实际存储系统]
 | StorageClass (SC) | 存储动态供应模板 | 集群级别长期存在 | 管理员 |
 
 ## 存储类型详解
+为了支持不同存储介质，支持了多种不同的卷类型。
 
 ### 卷类型比较
+Kubernetes 中主要存储卷类型的对比分析，主要特点、适用场景如下所示：
 
 | 类型 | 特点 | 适用场景 | 示例 |
 |------|------|----------|----------|
@@ -46,6 +37,7 @@ E --> F[实际存储系统]
 | 分布式存储 | 可扩展性强 | 大数据平台 | GlusterFS, Ceph RBD |
 
 ### 访问模式
+Kubernetes 中存储卷的访问模式（Access Modes）定义了存储介质如何被节点（Node）或 Pod 挂载和使用。以下是核心访问模式的详细说明及适用场景：
 
 | 类型 | 特点 | 适用场景 | 
 |------|------|----------|
@@ -65,6 +57,7 @@ Volume（存储卷） 是用于在容器之间或容器重启后持久化数据�
 - 配置管理：通过 Volume 向容器注入配置文件（如 ConfigMap、Secret）。
 
 ### 临时卷类型
+临时卷的使用说明、和场景示例如下所示：
 
 | 类型 | 说明 | 场景示例 | 
 |------|------|----------|
@@ -74,6 +67,7 @@ Volume（存储卷） 是用于在容器之间或容器重启后持久化数据�
 | downwardAPI	 | 将 Pod 或容器的元数据（如名称、IP）挂载为文件	 | 应用获取自身运行时信息 | 
 
 ### 持久化存储类（跨 Pod 生命周期）
+以下是持久化存储类型及场景示例：
 
 | 类型                          | 说明                                                                 | 场景示例                     |
 |-------------------------------|----------------------------------------------------------------------|------------------------------|
@@ -146,50 +140,27 @@ parameters:
 
 延迟绑定(WaitForFirstConsumer)
 
-```flowchart TD
-    A[创建 PVC] --> B[等待 Pod 调度]
-    B --> C{确定节点}
-    C --> D[在目标节点所在区创建 PV]
-    D --> E[绑定 PVC-PV]
-```
+![延迟绑定](../images/03DockCloud03DiveintoK8s/02storagetype.png)
 
-卷扩容流程
+卷扩容流程：
 
-```sequenceDiagram
-    User->>PVC: kubectl edit pvc size=30Gi
-    PVC->>StorageClass: 检查 allowVolumeExpansion
-    StorageClass->>Cloud-Plugin: 调用扩容 API
-    Cloud-Plugin->>Storage: 扩展卷容量
-    Storage-->>Node: 通知文件系统扩容
-    Node->>Pod: 在线扩容无需重启
-```
+![卷扩容流程](../images/03DockCloud03DiveintoK8s/02volumexp.png)
 
 ## 工作流程解析
 
-静态工作流程
+静态配置指管理员手动创建 PV，而非通过 StorageClass 动态生成。CSI 在此场景中负责底层存储的挂载与卸载操作。流程如下：
 
-```mermaid
-sequenceDiagram
-    管理员->>集群： 创建 PV (my-pv)
-    开发者->>集群： 创建 PVC (my-pvc)
-    集群->>集群： 绑定 PV 和 PVC
-    开发者->>集群： 创建 Pod 使用 PVC
-    Pod->>PV： 挂载存储
-```
+![静态工作流程](../images/03DockCloud03DiveintoK8s/02static_pro.png)
 
-动态工作流程
+动态配置指通过 StorageClass 和 PVC 自动创建并绑定 PV，无需管理员手动预配存储资源。流程如下：
 
-```sequenceDiagram
-    开发者->>集群： 创建 PVC (指定 StorageClass)
-    集群->>StorageClass： 请求创建 PV
-    StorageClass->>云存储： 调用 API 创建卷
-    云存储-->>集群： 返回新 PV
-    集群->>PVC： 自动绑定
-```
+![动态工作流程](../images/03DockCloud03DiveintoK8s/02dynamic_pro.png)
 
 ## 关键配置详解
 
 ### StorageClass 示例
+
+StorageClass 为管理员提供了描述和管理存储资源的标准化方法，使用示例如下：
 
 ```yaml
 apiVersion: storage.k8s.io/v1
@@ -208,25 +179,21 @@ volumeBindingMode: WaitForFirstConsumer
 ```
 
 ### PV/PVC 状态机
+PV 的状态转换规则如下：
+- Available → Bound：PVC 与 PV 的 storageClassName、accessModes、容量 匹配，且 PV 处于可用状态。
+- Bound → Released：绑定的 PVC 被删除，且 PV 的 persistentVolumeReclaimPolicy 为 Retain。
+触发操作：kubectl delete pvc <name>。
+- Released → Available：管理员手动清理 PV（删除并重新创建相同配置的 PV）。
+- Released → Failed：PV 回收策略为 Delete，但存储后端删除卷失败（如权限不足、网络故障）。
+- Failed → 删除：管理员手动删除 PV。
 
-```yaml
-stateDiagram-v2
-    PV: PersistentVolume
-    state PV {
-        [*] --> Available
-        Available --> Bound
-        Bound --> Released
-        Released --> Available
-        Released --> Failed
-    }
-    
-    PVC: PersistentVolumeClaim
-    state PVC {
-        [*] --> Pending
-        Pending --> Bound
-        Bound --> Lost
-    }
-```
+![pv 状态机](../images/03DockCloud03DiveintoK8s/02pv_state.png)
+
+PVC 的状态转换规则如下：
+- Pending → Bound：找到匹配的 Available PV；StorageClass 的 Provisioner 成功创建 PV；PV 控制器完成绑定。
+- Bound → Lost：条件：绑定的 PV 被手动删除或存储后端故障导致 PV 不可用。
+
+![pvc 状态机](../images/03DockCloud03DiveintoK8s/02pvc_state.png)
 
 ## 高级特性
 
@@ -257,9 +224,10 @@ kubectl edit pvc my-pvc # 修改 storage 请求大小
 存储配额：限制命名空间存储用量
 
 ## 总结与思考
-
-!!!!!!!!!!!!!!
+Kubernetes 存储系统通过抽象层设计与插件化架构，已成为云原生生态的核心支柱。其当前设计在灵活性、扩展性上表现突出，但面临性能优化、多租户安全等挑战。未来发展方向将聚焦于高性能（如 PMEM、NVMe-oF）、生态融合和安全合规。
 
 ## 参考与引用
 
-!!!!!!!!!!!!!!
+- https://jimmysong.io/book/kubernetes-handbook/storage/volume/（Volume）
+- https://jimmysong.io/book/kubernetes-handbook/storage/persistent-volume/（持久化卷）
+- https://jimmysong.io/book/kubernetes-handbook/storage/storageclass/（）

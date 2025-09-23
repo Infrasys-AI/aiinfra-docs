@@ -51,12 +51,12 @@ $ docker run "我的镜像"
 struct task_struct {
     unsigned int        __state;  // 进程状态（如运行、睡眠、僵死）
     void                *stack;   // 进程内核栈地址
-    pid_t               pid;      // 全局进程ID（宿主机可见）
-    pid_t               tgid;     // 线程组ID（进程组的标识）
+    pid_t               pid;      // 全局进程 ID（宿主机可见）
+    pid_t               tgid;     // 线程组 ID（进程组的标识）
     struct mm_struct    *mm;      // 内存描述符（管理进程虚拟内存）
     struct fs_struct    *fs;      // 文件系统信息（当前工作目录、根目录）
     struct files_struct *files;   // 打开的文件表（记录文件描述符）
-    struct nsproxy      *nsproxy; // Namespace代理（关键！指向进程所属的所有Namespace）
+    struct nsproxy      *nsproxy; // Namespace 代理（关键！指向进程所属的所有 Namespace）
     struct signal_struct *signal; // 信号处理信息
     ...
 };

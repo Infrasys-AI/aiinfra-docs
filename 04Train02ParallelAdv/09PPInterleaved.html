@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="PP 并行：1F1B/1F1B Interleaved" />
+<meta property="og:title" content="09. 流水并行 1F1B 及衍生算法" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train02ParallelAdv/09PPInterleaved.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 高亮 abstract：先前介绍的 Gpipe 存在硬件利用率低，动态内存压力大的问题，本篇介绍新的流水线技术来规避 PipeDream 基本原理:!!!!!!!!! 对Gpipe问题的描述稍显笼统；1F1B的调度细节和内存管理机制深度不足。 回顾一下 Gpipe 流水并行存在动态峰值内存大的问题，如图所示：若输入 batch 被划分为 n 个 micro-batch，..." />
+<meta property="og:description" content="Author by：高亮 在大模型训练中，并行技术是突破硬件算力与显存瓶颈的核心手段，而 PP 凭借对模型层的纵向切分能力，成为大规模训练的关键支柱。传统 GPipe 虽通过 micro-batch 切分摊薄气泡，却面临尾部气泡先天存在、激活显存随微批数 m 线性增长的难题，当 m 受硬件限制时，流水线深度增加反而会降低吞吐效率。 为突破这一困境，1F1B 即 PipeDream 应运而生，..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: 高亮 abstract：先前介绍的 Gpipe 存在硬件利用率低，动态内存压力大的问题，本篇介绍新的流水线技术来规避 PipeDream 基本原理:!!!!!!!!! 对Gpipe问题的描述稍显笼统；1F1B的调度细节和内存管理机制深度不足。 回顾一下 Gpipe 流水并行存在动态峰值内存大..." />
-<meta name="description" content="Author by: 高亮 abstract：先前介绍的 Gpipe 存在硬件利用率低，动态内存压力大的问题，本篇介绍新的流水线技术来规避 PipeDream 基本原理:!!!!!!!!! 对Gpipe问题的描述稍显笼统；1F1B的调度细节和内存管理机制深度不足。 回顾一下 Gpipe 流水并行存在动态峰值内存大的问题，如图所示：若输入 batch 被划分为 n 个 micro-batch，..." />
+<meta property="og:image" content="/_images/social_previews/summary_04Train02ParallelAdv_09PPInterleaved_cfee2c88.png" />
+<meta property="og:image:alt" content="Author by：高亮 在大模型训练中，并行技术是突破硬件算力与显存瓶颈的核心手段，而 PP 凭借对模型层的纵向切分能力，成为大规模训练的关键支柱。传统 GPipe 虽通过 micro-batch 切分摊薄气泡，却面临尾部气泡先天存在、激活显存随微批数 m 线性增长的难题，当 m 受硬件限制时，流水线深度增加反..." />
+<meta name="description" content="Author by：高亮 在大模型训练中，并行技术是突破硬件算力与显存瓶颈的核心手段，而 PP 凭借对模型层的纵向切分能力，成为大规模训练的关键支柱。传统 GPipe 虽通过 micro-batch 切分摊薄气泡，却面临尾部气泡先天存在、激活显存随微批数 m 线性增长的难题，当 m 受硬件限制时，流水线深度增加反而会降低吞吐效率。 为突破这一困境，1F1B 即 PipeDream 应运而生，..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>PP 并行：1F1B/1F1B Interleaved &#8212; AIInfra AI基础设施</title>
+    <title>09. 流水并行 1F1B 及衍生算法 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -82,11 +82,11 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="CODE 01: ZeRO 显存优化实践" href="Code01ZeRO.html" />
-    <link rel="prev" title="07.流水并行 PP 基本原理" href="08PPGpipe.html" />
+    <link rel="prev" title="08. PP 流水并行原理(DONE)" href="08PPGpipe.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 22, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 23, 2025"/>
 
 <link
   rel="alternate"
@@ -245,11 +245,11 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -259,7 +259,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC基础软件发展趋势</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
@@ -293,7 +293,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
@@ -319,10 +319,10 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离RDMA挑战与机遇</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法2</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
 
@@ -343,6 +343,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/08HCCLIntro.html">08.华为 HCCL 架构介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -364,7 +365,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">K8S 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -384,9 +385,9 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型并行进阶</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="01DeepSpeedIntro.html">DeepSpeed介绍</a></li>
-<li class="toctree-l2"><a class="reference internal" href="08PPGpipe.html">07.流水并行 PP 基本原理</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">PP 并行：1F1B/1F1B Interleaved</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01DeepSpeedIntro.html">DeepSpeed 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">09. 流水并行 1F1B 及衍生算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
@@ -395,7 +396,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -413,6 +414,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/01Introduction.html">概述</a></li>
+
+
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/02RLHF.html">概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/03PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
 
@@ -531,8 +535,8 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer 回顾与挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer 结构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
@@ -836,7 +840,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>PP 并行：1F1B/1F1B Interleaved</h1>
+    <h1>09. 流水并行 1F1B 及衍生算法</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -846,17 +850,46 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream">PipeDream 基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#virtual-pipeline">Virtual pipeline 基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pp">新兴 PP 技术</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream-2bw">PipeDream-2BW</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zb-v-schedule">ZB-V schedule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hanayo-wave-like-pipeline">Hanayo wave-like pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream">PipeDream 基本原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">“两段式”流水线并行存在问题：</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b-pipedream">流水并行 1F1B：PipeDream</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">分布式框架里的 PP 实现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">参考文献</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#virtual-pipeline">Virtual pipeline 基本原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">虚拟化的理解</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">降低空泡率</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vpp">VPP 的通信开销：</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pp">新兴 PP 技术（扩充）</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream-2bw">PipeDream-2BW</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">核心思想：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">调度：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#stale">更新语义（1-stale）与优化器</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">显存与吞吐：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">和常见基线对比：</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zb-v-schedule">ZB-V schedule</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">核心思想：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#v">V 字形调度：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-bubble">何时能做到“Zero-Bubble”</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">内存影响（与 1F1B/可控内存的关系）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">通信/实现代价</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b-vpp">与 1F1B / VPP 的对比：</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hanayo-wave-like-pipeline">Hanayo wave-like pipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">核心思路：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">气泡/吞吐</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">内存语义：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">通信语义：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">与 1F1B / VPP 的关系</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">参考文献：</a></li>
 </ul>
             </nav>
         </div>
@@ -869,768 +902,362 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="pp-1f1b-1f1b-interleaved">
-<h1>PP 并行：1F1B/1F1B Interleaved<a class="headerlink" href="#pp-1f1b-1f1b-interleaved" title="Link to this heading">#</a></h1>
-<p>Author by: 高亮</p>
-<p>abstract：先前介绍的 Gpipe 存在硬件利用率低，动态内存压力大的问题，本篇介绍新的流水线技术来规避</p>
+<section class="tex2jax_ignore mathjax_ignore" id="f1b">
+<h1>09. 流水并行 1F1B 及衍生算法<a class="headerlink" href="#f1b" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>Author by：高亮</p>
+</div></blockquote>
+<p>在大模型训练中，并行技术是突破硬件算力与显存瓶颈的核心手段，而 PP 凭借对模型层的纵向切分能力，成为大规模训练的关键支柱。传统 GPipe 虽通过 micro-batch 切分摊薄气泡，却面临尾部气泡先天存在、激活显存随微批数 m 线性增长的难题，当 m 受硬件限制时，流水线深度增加反而会降低吞吐效率。</p>
+<p>为突破这一困境，1F1B 即 PipeDream 应运而生，通过让 micro-batch 反向计算尽早折返并与后续前向交错，将激活驻留时间从 O(m) 压缩至 O(p)，大幅降低显存压力。在此基础上，Virtual Pipeline、PipeDream-2BW、ZB-V 等衍生技术进一步优化气泡率与通信开销。本文将从原理出发，拆解这些主流流水并行技术的设计逻辑与优势，为大模型高效并行训练提供技术参考。</p>
 <section id="pipedream">
 <h2>PipeDream 基本原理<a class="headerlink" href="#pipedream" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!!
-对Gpipe问题的描述稍显笼统；1F1B的调度细节和内存管理机制深度不足。</p>
-<p>回顾一下 Gpipe 流水并行存在动态峰值内存大的问题，如图所示：若输入 batch 被划分为 n 个 micro-batch，则对于任意 device，需要缓存 n 份前向激活值（图中 n=8）.</p>
-<p><img alt="Gpipeline 原理" src="../_images/10pipeline01.png" /></p>
-<p>PipeDream 流水线并行采取了<strong>1FIB</strong>的策略，很好的规避了硬件内存有限的问题。</p>
-<p>在流水线并行（pipeline parallel）中，每次前向计算产生的 activation 只有在对应的反向计算完成之后才能释放（即使使用了 Checkpointing 技术）。因此，要尽可能地节省 activation 占用的显存，就需要尽量缩短每份 activation 在内存中停留的时间，也就是让它们尽早被释放。要做到这一点，关键便是让每 micro-batch 的反向计算尽早开始并完成。</p>
-<p>具体做法是，将反向计算的优先级调高，使得编号较小的 micro-batch 的反向步骤，能在编号较大的 micro-batch 的前向步骤之前执行。以一个多阶段（stage）流水线为例：如果我们让最后一个 stage 在完成当前 micro-batch 的前向计算后，立刻启动该 micro-batch 的反向计算，那么后续的各个 stage 就能更早地收到反向计算的数据，进而开始它们自己的反向计算。</p>
-<p>通过“前向做一批、反向紧跟一批”（1F1B one-forward-one-backward）的调度策略，不仅能够减少 activation 在显存中的滞留时间，还能平衡各个 stage 的计算负载，最终最大化显存利用效率并降低整体训练时的内存峰值需求。</p>
-<p>因此我们实现了将激活值数量上限从 micro-batch 数量 <strong>m</strong> 变成 pipeline stage 阶段 <strong>p</strong>，但只是降低了设备的峰值内存，并没有降低气泡大小，因此空泡率与 Gpipe 保持一致：</p>
+<section id="id1">
+<h3>“两段式”流水线并行存在问题：<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>先全前向、再全反向的两段式调度流水线技术，以朴素流水和 Gpipe 为代表，参见<a class="reference internal" href="#fig1"><span class="xref myst">图 1</span></a>。朴素流水相当于 <span class="math notranslate nohighlight">\(m{=}1\)</span>，GPipe 则把 mini-batch 切成 <span class="math notranslate nohighlight">\(m\)</span> 个 micro-batch 并在前/反两个阶段各自成流水。两段式流水调度的核心问题在于结构性气泡不可消除、只能用 <span class="math notranslate nohighlight">\(m\)</span> 摊薄：总空泡时间为 <span class="math notranslate nohighlight">\(t_{\text{bubble}}=(p-1)(t_f+t_b)\)</span>，理想计算时间为 <span class="math notranslate nohighlight">\(t_{\text{ideal}}=m(t_f+t_b)\)</span>，因此空泡率 <span class="math notranslate nohighlight">\(\frac{p-1}{m+p-1}\)</span>，利用率 <span class="math notranslate nohighlight">\(U=\frac{m}{m+p-1}\)</span>。当 <span class="math notranslate nohighlight">\(m\)</span> 由于硬件内存有限而受限时，即使加深流水线 <span class="math notranslate nohighlight">\(p\)</span> 也会让头尾气泡相对占比上升，吞吐反而不增。此外，两段式流水调度还存在以下问题：</p>
+<ul class="simple">
+<li><p><strong>尾部气泡先天存在</strong>。因为前/反向两个阶段被硬性分隔，反向无法与后续前向交错，cooldown 的尾巴完全暴露，最多只能靠 <span class="math notranslate nohighlight">\(m\)</span> 变大来“摊薄”。</p></li>
+<li><p><strong>通信–计算重叠受限</strong>。前/反向阶段内可以把激活/梯度传输与算子计算重叠，但跨阶段无法把反向藏进下一轮前向，整体关键路径仍包含两段各自的 warmup/cooldown 开销，单步时延为 <span class="math notranslate nohighlight">\((m+p-1)(t_f) + (m+p-1)(t_b)\)</span>。</p></li>
+<li><p><strong>显存与 <span class="math notranslate nohighlight">\(m\)</span> 线性冲突</strong>。为等反向传输、stage 必须同时长期保留本段 <strong><span class="math notranslate nohighlight">\(m\)</span></strong> 份前向激活，峰值近似 <span class="math notranslate nohighlight">\(M^{(i)}_{\text{act,peak}}\!\approx m\,L_i A_{\text{layer}}\)</span>，从而限制 <span class="math notranslate nohighlight">\( m \)</span> 的上限。</p></li>
+</ul>
 <div class="math notranslate nohighlight">
 \[
-\begin{equation}
-bubble ration=\frac{t_{bubble}}{t_{ideal}}=\frac{p-1}{m}
-\end{equation}
+ M_{\text{peak}} \;\approx\; \underbrace{P_{\max}}_{\text{参数系}} \;+\; \underbrace{\max_i \big(m L_i A_{\text{layer}}\big)}_{\text{激活系}}\;\;\propto\;\; \text{Params} + \text{Activations}\times m.
 \]</div>
-<p><img alt="PipeDream 原理" src="../_images/10pipeline02.png" /></p>
+<ul class="simple">
+<li><p><strong>微批切分的边际收益递减</strong>。增大 <span class="math notranslate nohighlight">\(m\)</span> 还会引入更密的启动/同步开销与更小的 per-kernel 批量，可能抵消部分吞吐收益。综合来看，“两段式”PP 的瓶颈是：要效率就要大 <span class="math notranslate nohighlight">\(m\)</span>，但大 <span class="math notranslate nohighlight">\(m\)</span> 又受激活显存与系统长尾约束——这正是后续更先进调度试图突破的根因。</p></li>
+</ul>
+<p><a id="fig1"></a>
+<img alt="两段式流水原理" src="../_images/10pipeline01.png" />
+<strong>图 1</strong> 两段式流水原理</p>
+</section>
+<section id="f1b-pipedream">
+<h3>流水并行 1F1B：PipeDream<a class="headerlink" href="#f1b-pipedream" title="Link to this heading">#</a></h3>
+<p>1F1B 的核心是让每个 micro-batch 的反向尽早折返并与后续前向交错。与两段式：先全前向、再全反调度过程不同，1F1B 在 warmup 完成后直接进入稳态：末段 stage 一旦完成某个 micro-batch 的前向，就立即启动该 micro-batch 的反向（因此为 1F1B 即 one-forward-one-backward）；与此同时，前端 stage 继续为后续 micro-batch 做前向，如<a class="reference internal" href="#fig2"><span class="xref myst">图 2</span></a>所示。这样，反向梯度沿着流水线向前回传，各 stage 在时间线上呈现出 F, B, F, B… 的交替节奏，仅在开头/结尾保留不可避免的 warmup/cooldown。由于反向被尽早触发，同一份激活从“产生到被消耗”的距离由 GPipe 的 <span class="math notranslate nohighlight">\(O(m)\)</span>（要等全前向结束）降为 <span class="math notranslate nohighlight">\(O(p)\)</span>（只需等反向折返到本段），显著缩短驻留时间。</p>
+<blockquote>
+<div><p>理解： “激活从产出到被消耗的距离”理解为：该激活在内存里需要等待多少个流水“时隙（slot）” 才会被本段的反向读取并释放。对比 GPipe（两段式）与 1F1B（交错式），这个等待里是否包含“要等完全部 <span class="math notranslate nohighlight">\(m\)</span> 个 micro-batch 的前向”是关键差异。设单个 stage 的前/反向各占 1 个时隙（便于计数），第 <span class="math notranslate nohighlight">\(i\)</span> 段在前向处理第 <span class="math notranslate nohighlight">\(j\)</span> 个 micro-batch 时产生活动张量。</p>
+<ul class="simple">
+<li><p><strong>GPipe（先全前向、再全反向）</strong>
+这份激活要等所有前向都做完，反向阶段才开始；随后还要等反向从末段折返到第 <span class="math notranslate nohighlight">\(i\)</span> 段，并轮到编号 <span class="math notranslate nohighlight">\(j\)</span> 的样本。等待时隙近似：
+$<span class="math notranslate nohighlight">\(
+\Delta t_{\text{GPipe}}(i,j)\;\approx\;
+\underbrace{(m+p-1)}_{\text{等前向阶段结束}}
++\underbrace{(p-1-i)}_{\text{反向回传到第 }i\text{ 段}}
++\underbrace{(m-1-j)}_{\text{倒序轮到第 }j\text{ 个样本}}
+\;-\;\underbrace{(i+j)}_{\text{激活产生时刻}}
+\;=\;\mathcal{O}(m)\;+\;\mathcal{O}(p).
+\)</span><span class="math notranslate nohighlight">\(
+核心在第一项：必须先等完全部 \)</span>m<span class="math notranslate nohighlight">\( 个 micro-batch 的前向，因此主导量级是 \)</span>\mathcal{O}(m)$。</p></li>
+<li><p><strong>1F1B（One-Forward–One-Backward）</strong>
+末段对第 <span class="math notranslate nohighlight">\(j\)</span> 个样本一做完前向就立刻启动该样本的反向，不再等待其它样本的前向完成；反向只需沿流水深度折返到第 <span class="math notranslate nohighlight">\(i\)</span> 段即可：
+$<span class="math notranslate nohighlight">\(
+\Delta t_{\text{1F1B}}(i,j)\;\approx\;
+\underbrace{(p-1)}_{\text{等末段拿到该样本}}
++\underbrace{(p-1-i)}_{\text{反向回传到第 }i\text{ 段}}
+\;-\;\underbrace{i}_{\text{激活产生时刻的相位}}
+\;=\;\mathcal{O}(p).
+\)</span><span class="math notranslate nohighlight">\(
+没有“等完整个 \)</span>m<span class="math notranslate nohighlight">\(”这项，量级与流水深度 \)</span>p<span class="math notranslate nohighlight">\( 有关，而与 \)</span>m$ 无关。</p></li>
+</ul>
+</div></blockquote>
+<blockquote>
+<div><p>若取 <span class="math notranslate nohighlight">\(p=4,\;m=8\)</span>，看 <span class="math notranslate nohighlight">\( i=0 \)</span> 段、样本 <span class="math notranslate nohighlight">\(j=0\)</span> 的激活，对于 GPipe 来说，时延为：<span class="math notranslate nohighlight">\(\Delta t_{\text{GPipe}}\approx (8+4-1)+(4-1-0)+(8-1-0)-(0+0)=21\)</span> 个时隙，随 <span class="math notranslate nohighlight">\(m\)</span> 增大而变长。对于 1F1B 来说，时延为：<span class="math notranslate nohighlight">\(\Delta t_{\text{1F1B}}\approx (4-1)+(4-1-0)-0=6\)</span> 个时隙，与 <span class="math notranslate nohighlight">\(m\)</span> 无关。GPipe 单段需同时保留约 <span class="math notranslate nohighlight">\(m\)</span> 份激活（峰值 <span class="math notranslate nohighlight">\(\propto m\)</span>）。1F1B 单段保留约与流水深度相关的少量份数（峰值 <span class="math notranslate nohighlight">\(\propto p\)</span>）。这就是“由 <span class="math notranslate nohighlight">\(\mathcal{O}(m)\)</span> 降到 <span class="math notranslate nohighlight">\(\mathcal{O}(p)\)</span>，驻留时间缩短，从而激活峰值显存显著下降”的精确含义。</p>
+</div></blockquote>
+<p>这一调度直接改写了动态峰值内存的量纲：若不做重计算（checkpointing 关闭），GPipe 的第 <span class="math notranslate nohighlight">\(i\)</span> 段在前向结束时需同时保留 <span class="math notranslate nohighlight">\(m\)</span> 份可反向激活，峰值近似 <span class="math notranslate nohighlight">\(m\,L_i A_{\text{layer}}\)</span>；而在 1F1B 的稳态交错下，每段同时“挂起”的在途 micro-batch 数量受流水深度限制，记常数 <span class="math notranslate nohighlight">\(k_i\!\sim\!O(p)\)</span>，峰值近似</p>
+<div class="math notranslate nohighlight">
+\[
+M^{(i)}_{\text{act, peak}} \approx k_i \cdot L_i \cdot A_{\text{layer}}
+\quad\text{（无重算）},
+\]</div>
+<p>若开启梯度检查点，仅长期保留段边界激活，则</p>
+<div class="math notranslate nohighlight">
+\[
+M^{(i)}_{\text{act, peak}} \approx k_i \cdot A_{\text{boundary}} + \alpha\,L_i A_{\text{layer}}
+\quad\text{（有重算）}.
+\]</div>
+<p>对比可见，1F1B 将激活峰值从 <span class="math notranslate nohighlight">\(\mathcal{O}(m)\)</span> 压到 <span class="math notranslate nohighlight">\(\mathcal{O}(p)\)</span>，这正是其“先天降低显存压力”的根因：即使在相同 <span class="math notranslate nohighlight">\(m\)</span> 下更省显存，或者在相同显存下允许把 <span class="math notranslate nohighlight">\(m\)</span> 调得更大，从而进一步摊薄气泡、提升吞吐。</p>
+<p>但就“气泡”本身而言，定义 <span class="math notranslate nohighlight">\(t_{\text{bubble}}=(p-1)(t_f+t_b)\)</span>、<span class="math notranslate nohighlight">\(t_{\text{ideal}}=m(t_f+t_b)\)</span>，则 bubble radio 保持不变，即：</p>
+<div class="math notranslate nohighlight">
+\[
+\mathit{bubble\ ratio}
+=\frac{t_{\text{bubble}}}{t_{\text{bubble}}+t_{\text{ideal}}}
+=\frac{p-1}{m+p-1}.
+\]</div>
+<p>这里 <span class="math notranslate nohighlight">\(p\)</span> 为流水线深度（stage 数），<span class="math notranslate nohighlight">\(m\)</span> 为 micro-batch 数，<span class="math notranslate nohighlight">\(t_f,t_b\)</span> 为单个 micro-batch 在单个 stage 的前/反向时间。关键在于 <span class="math notranslate nohighlight">\(t_{\text{bubble}}\)</span> 的来源与调度无关：不管是两段式（GPipe）还是交错式（1F1B），都必须经历 <span class="math notranslate nohighlight">\( (p−1) \)</span> 个“warmup/cooldown”的结构性头尾时延；这部分是由有限流水深度决定的不可消除开销，与是否交错无关（即 1F1B）。</p>
+<p>即 1F1B 改善的是内存，而非空泡大小本身。1F1B 把反向尽早折返并与后续前向交错，使单份激活的驻留距离从 <span class="math notranslate nohighlight">\(O(m)\)</span>（需等全前向）降到 <span class="math notranslate nohighlight">\(O(p)\)</span>（只等反向折返），从而将峰值激活显存从 <span class="math notranslate nohighlight">\(\mathcal{O}(m)\)</span> 压到 <span class="math notranslate nohighlight">\(\mathcal{O}(p)\)</span>。这并不会改变上式中的 <span class="math notranslate nohighlight">\((p-1)\)</span> 头尾时隙，也就不改变空泡率；但它显著降低峰值显存，允许在相同显存预算下把 <span class="math notranslate nohighlight">\(m\)</span> 开得更大，于是 <span class="math notranslate nohighlight">\( bubble\ radio\)</span> 可以通过更大的 <span class="math notranslate nohighlight">\(m\)</span> 被进一步压低——这是 1F1B 间接降低空泡占比、提升稳态吞吐的根本机制。</p>
+<p><a id="fig2"></a>
+<img alt="PipeDream 原理" src="../_images/10pipeline02.png" />
+<strong>图 2</strong> 1F1B 流水原理</p>
+</section>
 </section>
 <section id="virtual-pipeline">
 <h2>Virtual pipeline 基本原理<a class="headerlink" href="#virtual-pipeline" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!
-VPP的通信开销分析不足；“虚拟化”的本质解释不够透彻；气泡率公式缺乏推导和直观解释。</p>
-<p>后续 Megatron-LM 在 1F1B 的基础上做了 Interleaved 1F1B 的优化，减少了流水线气泡，也就是本篇介绍的虚拟流水并行（Virtual Pipeline Parallelism，简称 VPP）。</p>
-<p>VPP 的核心在于，让一个物理层面的 device 虚拟成为 v 个 devices，device 从计算 1 个或连续 layer 段到计算 v 个不相邻的 layer，如图所示：GPU1 之前只负责 layer1 或 layer1+layer2 层的计算，经过虚拟化流水线后，负责 layer0 和 layer5 层的计算，使得 layer1 层计算完成后无需等待 layer2 的计算，可以直接进入 GPU2 进行计算，从而减少等待空泡时间，此处 v 被称为虚拟流水线阶段（virtual pipeline stage）。</p>
-<p><img alt="原理" src="../_images/10pipeline03.png" /></p>
-<p>假设模型总层数为 16，张量并行大小 tp=1，流水线并行大小 pp=4，虚拟流水线并行大小 v=2，则模型将被划分为 4 * 2 = 8 个阶段，每个阶段包含 16 / 8 = 2 个层。前向的顺序为 GPU 1 -&gt; GPU 2 -&gt; GPU 3 -&gt; GPU 4 -&gt; GPU 1 -&gt; GPU 2 -&gt; GPU 3 -&gt; GPU 4。</p>
-<p>在设备数量不变的情况下，分出更多的流水线阶段，这样可以让流水线中每个 stage 更小，因而下个 stage 的等待时间更短，气泡更小。需要注意的是，m 需要是 p 的整数倍。</p>
-<p><img alt="VirtualPP 原理" src="../_images/10pipeline04.png" /></p>
-<p>𝑚 为 micro-batch，𝑝为 pipeline stages，v 为 virtual pipeline stage,完成 v 个 layer 段中一个的前向、后向时间分别为 <span class="math notranslate nohighlight">\(t_f/v\)</span> 和 <span class="math notranslate nohighlight">\(t_b/v\)</span>,流水线气泡的耗时 <span class="math notranslate nohighlight">\(t_{pd}^{int}\)</span>:</p>
+<p>后续 Megatron-LM 在 1F1B 的基础上提出 Interleaved 1F1B，即虚拟流水并行（Virtual Pipeline Parallelism，VPP），用于进一步削减流水线气泡。其核心并非简单的通过增大 <span class="math notranslate nohighlight">\( m \)</span>，即流水并行的数量来将流水线划分的更细，降低气泡占比，而是在每张物理 GPU 上引入 <span class="math notranslate nohighlight">\(v\)</span> 个“虚拟流水阶段”（virtual pipeline stages）并交错调度（interleaving）：</p>
+<p>如<a class="reference internal" href="#fig3"><span class="xref myst">图 3</span></a>所示，不同于之前的 Pipeline 方案，一台 GPU 设备只承担一个或几个连续流水线阶段的计算任务，这导致了其它 GPU 存在等待数据的情况，因此采用了虚拟化的方法将多个不相邻阶段的流水线计算由同一 GPU 来承担，并通过多个并行线程或 CUDA 流在同一 GPU 上交错进行不同阶段的前向、反向计算，这样就实现了 GPU 在等待上/下游数据的空隙中能切换到本卡的其他虚拟阶段继续计算，充分利用了原本的空等（idle）时间。</p>
+<p><a id="fig3"></a>
+<img alt="VirtualPP 原理" src="../_images/10pipeline04.png" />
+<strong>图 3</strong> VPP 原理</p>
+<section id="id2">
+<h3>虚拟化的理解<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>给定总层数 <span class="math notranslate nohighlight">\(L_{\text{total}}\)</span>、流水线并行度 <span class="math notranslate nohighlight">\(p\)</span>（物理设备数）、虚拟并行度 <span class="math notranslate nohighlight">\(v\)</span>（每卡虚拟阶段数），将模型划分为：</p>
 <div class="math notranslate nohighlight">
 \[
-\begin{equation}
-t_{pd}^{int}=\frac{(p-1)*(t_f+t_b)}{v}
-\end{equation}
+p\times v \quad \text{个连续、等长的层段，段长度} \; L_{\text{seg}}=\frac{L_{\text{total}}}{p\,v}.
 \]</div>
-<p>因此可得出 VPP 的空泡率：</p>
+<p>对第 <span class="math notranslate nohighlight">\(d\in\{0,\dots,p-1\}\)</span> 张 GPU，分配其虚拟阶段索引：</p>
 <div class="math notranslate nohighlight">
 \[
-\begin{equation}
-bubble ration=\frac{1}{v}*\frac{p-1}{m}
-\end{equation}
+\mathcal{S}_d=\{\,s\mid s\equiv d \ (\mathrm{mod}\ p),\ s\in[0,pv-1]\}.
 \]</div>
-<p>空泡率除了跟 micro batch 成反比，与 v 也成反比。</p>
-<p>需要注意的是，VPP 是以增加通信量为代价，换取更低的空泡比率，相比于 1FB 现在的气泡占比就减少到了 1/v。但是流水线之间的通信量也增加了 v 倍。对于一个 pipeline stage，里面包括多个 Transformer layer，所以现在相当于流水线的 stage 增加了，通信量也会增加。特别是当 global 的 batch 越来越大的时候，这个通信开销就会更显著。</p>
+<p>虚拟化的对象为流水阶段，因此同一 GPU 负责 <span class="math notranslate nohighlight">\(v\)</span> 个不相邻的阶段（跨步映射）。执行时，为 <span class="math notranslate nohighlight">\(\mathcal{S}_d\)</span> 中的每个虚拟阶段各开一条 CUDA 流，在 1F1B 语义下交错推进这些更小的前/反片段：当某虚拟阶段因 P2P 传输/上游依赖而空等时，GPU 立即切换到本卡的另一虚拟阶段计算，以此填充原本等待的时隙。</p>
+<p><a id="fig4"></a>
+<img alt="原理" src="../_images/10pipeline03.png" />
+<strong>图 4</strong> 虚拟化解释</p>
+</section>
+<section id="id3">
+<h3>降低空泡率<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>在 1F1B 中，warmup/cooldown 需要跨越 <span class="math notranslate nohighlight">\((p-1)\)</span> 个总量不变的流水线阶段（因为 <span class="math notranslate nohighlight">\( p \)</span> 恒定，即模型的纵向切分数目确定，总的流水线阶段数目确定）。VPP 并不减少流水线阶段总数，而是把“每次跨越单台设备对应的流水线阶段”按 <span class="math notranslate nohighlight">\(1/v\)</span> 缩短（因为单台设备流水线阶段不相邻，若之前跨越单个 GPU 需要跨越 4 个流水线阶段，VPP 仅需跨越 1 个阶段就可以进入下一个 GPU 进行下一阶段流水线计算，<a class="reference internal" href="#fig3"><span class="xref myst">图 4</span></a>清晰的展示了这一过程）：因此给定不开启 VPP 情况下前/反向时间分别为 <span class="math notranslate nohighlight">\(t_f, t_b\)</span>，则开启 VPP 后的前/反向时间为：</p>
+<div class="math notranslate nohighlight">
+\[
+t_f^{(v)}=\frac{t_f}{v},\qquad t_b^{(v)}=\frac{t_b}{v}.
+\]</div>
+<p>于是同样 <span class="math notranslate nohighlight">\((p-1)\)</span> 次跨越的 bubble 时间压缩为</p>
+<div class="math notranslate nohighlight">
+\[
+t_{\text{bubble}}^{\text{VPP}}
+=(p-1)\Bigl(t_f^{(v)}+t_b^{(v)}\Bigr)
+=\frac{(p-1)(t_f+t_b)}{v}.
+\]</div>
+<p>理想工作量不变（<span class="math notranslate nohighlight">\(t_{\text{ideal}}=m(t_f+t_b)\)</span>），因此空泡率</p>
+<div class="math notranslate nohighlight">
+\[
+\text{bubble ratio}^{\text{VPP}}
+=\frac{t_{\text{bubble}}^{\text{VPP}}}{t_{\text{ideal}}}
+=\frac{\frac{(p-1)(t_f+t_b)}{v}}{m(t_f+t_b)}
+=\frac{1}{v}\cdot\frac{p-1}{m}.
+\]</div>
+<blockquote>
+<div><p>直观解释：必须经历的流水线阶段数量仍是 <span class="math notranslate nohighlight">\((p-1)\)</span> 次，但每次只推进 <span class="math notranslate nohighlight">\(1/v\)</span> 的前/反向片段，因而总等待时隙宽度按 <span class="math notranslate nohighlight">\(1/v\)</span> 缩减；理想算量不变，故空泡率与 <span class="math notranslate nohighlight">\(v\)</span> 成反比。</p>
+</div></blockquote>
+<p><strong>总结</strong>
+VPP 的“虚拟化”不是把多张 GPU 合并，而是在每张 GPU 内开出 <span class="math notranslate nohighlight">\(v\)</span> 个虚拟流水阶段，并行/交错推动更小的前/反片段以填补时隙。其结果是：在不改变总算量与 1F1B 低驻留优势的前提下，将气泡时间缩小为 <span class="math notranslate nohighlight">\(\tfrac{1}{v}\)</span> 倍（<span class="math notranslate nohighlight">\(\text{bubble ratio}^{\text{VPP}}=\tfrac{1}{v}\cdot\tfrac{p-1}{m}\)</span>），以通信频率 <span class="math notranslate nohighlight">\(\times v\)</span> 的代价换取更小的气泡和更高的稳态利用率。</p>
+</section>
+<section id="vpp">
+<h3>VPP 的通信开销：<a class="headerlink" href="#vpp" title="Link to this heading">#</a></h3>
+<p>通信开销体现在两个方面：通信频率的提升和通信容量的提升。</p>
+<p>相比于非 VPP 流水线技术，由于每张 GPU 承载了 <span class="math notranslate nohighlight">\(v\)</span> 个虚拟流水线阶段，micro-batch 的需要先经过每台设备的第一个虚拟阶段，再循环经过每台设备的第二个虚拟阶段……因此单个 micro-batch 需要以 1F1B 的方式穿过共计 <span class="math notranslate nohighlight">\(p\times v\)</span> 个流水线阶段，对于非 VPP 来说仅需穿过 <span class="math notranslate nohighlight">\(p\)</span> 个流水线阶段即可。与非 VPP 技术相比，由于 VPP 将相邻的流水线阶段落在不同的 GPU 上，因此在模型前向训练过程的跨 GPU 跃迁次数由之前的 <span class="math notranslate nohighlight">\(p-1\)</span> 次增加到 <span class="math notranslate nohighlight">\(vp-1\)</span> 次，对于反向过程同理。</p>
+<p>若设跨越 GPU 通信的激活量大小为 <span class="math notranslate nohighlight">\(S\)</span> 字节（梯度大小近似同阶），则：</p>
+<ul class="simple">
+<li><p><strong>非 VPP（<span class="math notranslate nohighlight">\(v=1\)</span>）</strong>：</p>
+<ul>
+<li><p>前向全路径字节：<span class="math notranslate nohighlight">\((p-1)\,S\)</span></p></li>
+<li><p>反向全路径字节：<span class="math notranslate nohighlight">\((p-1)\,S\)</span></p></li>
+<li><p>合计：<span class="math notranslate nohighlight">\((p-1)\,2S\)</span> / micro-batch</p></li>
+</ul>
+</li>
+<li><p><strong>VPP（<span class="math notranslate nohighlight">\(v&gt;1\)</span>）</strong>：</p>
+<ul>
+<li><p>前向：<span class="math notranslate nohighlight">\((p\,v-1)\,S \approx v(p-1)S\)</span></p></li>
+<li><p>反向：同上</p></li>
+<li><p>合计：<span class="math notranslate nohighlight">\(v\,(p-1)\,2S\)</span> / micro-batch</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p>结论：与非 VPP（<span class="math notranslate nohighlight">\(v{=}1\)</span>）相比，通信频率 <span class="math notranslate nohighlight">\(\times v\)</span>，总字节量 <span class="math notranslate nohighlight">\(\times v\)</span>。</p>
+</div></blockquote>
+</section>
 </section>
 <section id="pp">
-<h2>新兴 PP 技术<a class="headerlink" href="#pp" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!!
-原理分析太简单，缺乏深度，需要进一步深度理解。</p>
+<h2>新兴 PP 技术（扩充）<a class="headerlink" href="#pp" title="Link to this heading">#</a></h2>
 <section id="pipedream-2bw">
 <h3>PipeDream-2BW<a class="headerlink" href="#pipedream-2bw" title="Link to this heading">#</a></h3>
-<p>PipeDream-2BW 是一种面向超大模型的异步流水线并行方法：它将模型切分为多个阶段并复制多路流水线，在 1F1B 调度下通过“双缓冲”权重更新和梯度合并技术，大幅降低显存占用与通信开销；内置的自动化 Planner 根据设备内存和互联拓扑搜索最优阶段划分与复制宽度，并可选激活重计算；在多卡集群上训练大规模 Transformer 模型时，相较于传统流水线并行，吞吐量可提升数倍，同时保留与数据并行一致的权重更新语义。</p>
 <p><img alt="PipeDream-2BW 原理" src="../_images/10pipeline05.png" /></p>
+<section id="id4">
+<h4>核心思想：<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
+<p>目标：在不做周期性 flush 的前提下，兼顾高吞吐与低显存，同时尽量贴近数据并行的更新语义。做法是把 1F1B 调度与双缓冲权重（2-Buffered Weights, 2BW）和梯度合并（coalescing）结合起来，即每个 stage 只保留两份权重版本（current / shadow），而不是像原始 PipeDream 可能需要最多 <span class="math notranslate nohighlight">\(d\)</span> 份；同时对同一 micro-batch 的前/反向严格用同一份权重（消除“前后不一致”），但权重更新采用 1-stale 语义，避免 flush 引起的停顿。</p>
+</section>
+<section id="id5">
+<h4>调度：<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>仍按 1F1B 调度：各 stage 交替执行不同 micro-batch 的前向、反向过程。</p></li>
+<li><p>设每批累计 <span class="math notranslate nohighlight">\(m\)</span> 个 micro-batch（梯度在批内合并），每处理完 <span class="math notranslate nohighlight">\(m\)</span> 个 micro-batch 产出一个新权重版本，且要求 <span class="math notranslate nohighlight">\(m\ge d\)</span>（流水深度），常见简化是 <span class="math notranslate nohighlight">\(m=d\)</span>。新版本只供新进入管线的样本使用，管线中尚在飞行的样本继续用其前向时那份版本完成反向，因此每个 stage 最多只需两份版本（current + shadow）。</p></li>
+</ul>
+<blockquote>
+<div><p>直观：版本推进是“批”为单位滚动的；“老版本”一旦其对应的 in-flight micro-batch 反向都消化完，就可丢弃，内存占用上限因此被钉在 2 份。</p>
+</div></blockquote>
+</section>
+<section id="stale">
+<h4>更新语义（1-stale）与优化器<a class="headerlink" href="#stale" title="Link to this heading">#</a></h4>
+<p>把批级权重记作 <span class="math notranslate nohighlight">\(W(t)\)</span>，批平均梯度为 <span class="math notranslate nohighlight">\(\nabla f(W)\)</span>。</p>
+<ul class="simple">
+<li><p><strong>标准小批 SGD</strong>：<span class="math notranslate nohighlight">\(W(t{+}1)=W(t)-\nu\,\nabla f(W(t))\)</span>。</p></li>
+<li><p><strong>2BW（1-stale）</strong>：<span class="math notranslate nohighlight">\(\boxed{W(t{+}1)=W(t)-\nu\,\nabla f\big(W(t{-}1)\big)}\)</span>。
+延迟常数为 <strong>1</strong>，对所有 stage 一致；实验显示与 vanilla 语义<strong>收敛相当</strong>。动量/Adam 等也可平移到“1-stale 梯度”上，无需额外影子变量。</p></li>
+</ul>
+</section>
+<section id="id6">
+<h4>显存与吞吐：<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>显存</strong>：</p>
+<ul>
+<li><p>权重版本：2 份（2BW） vs 最多 <span class="math notranslate nohighlight">\(d\)</span> 份（PipeDream），显存大幅下降；</p></li>
+<li><p>激活：仅为 in-flight micro-batch 的缓存（随 1F1B 为 <span class="math notranslate nohighlight">\(O(p)\)</span> 量级），远小于两段式在大 <span class="math notranslate nohighlight">\(m\)</span> 下的 <span class="math notranslate nohighlight">\(O(m)\)</span> 驻留。</p></li>
+</ul>
+</li>
+<li><p><strong>吞吐</strong>：无 flush 的结构性空转，稳态效率显著高于 GPipe；论文报告对 GPT/BERT 类模型可比优化基线加速 1.3×–20×、较 GPipe 可达 3.2×。</p></li>
+</ul>
+</section>
+<section id="id7">
+<h4>和常见基线对比：<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>技术</p></th>
+<th class="head"><p>调度</p></th>
+<th class="head"><p>权重版本</p></th>
+<th class="head"><p>语义</p></th>
+<th class="head"><p>典型特征</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>GPipe</strong></p></td>
+<td><p>两段式</p></td>
+<td><p>1</p></td>
+<td><p>vanilla</p></td>
+<td><p>需周期性 flush；空泡显著；激活驻留 <span class="math notranslate nohighlight">\(\propto m\)</span>。</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>PipeDream（原版）</strong></p></td>
+<td><p>1F1B（无 flush）</p></td>
+<td><p>≤ <span class="math notranslate nohighlight">\(d\)</span></p></td>
+<td><p>多步 stale（不均匀）</p></td>
+<td><p>吞吐高但权重版本多、显存高、staleness 难控。</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>PipeDream-Flush</strong></p></td>
+<td><p>1F1B（有 flush）</p></td>
+<td><p>1</p></td>
+<td><p>vanilla</p></td>
+<td><p>显存更低，但因 flush 吞吐下降。</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>PipeDream-2BW</strong></p></td>
+<td><p>1F1B（无 flush）</p></td>
+<td><p><strong>2</strong></p></td>
+<td><p><strong>1-stale</strong></p></td>
+<td><p>兼顾高吞吐与低显存；收敛与 vanilla 接近。</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>总结：2BW = 1F1B + 两份权重 + 批内合并 + 1-stale 更新：把 PipeDream 的多版本与不均匀陈旧度收敛成“每段最多两份、全段统一 1-stale”，在不 flush 的前提下做到高吞吐、低显存、收敛几乎等同数据并行。</p>
+</section>
 </section>
 <section id="zb-v-schedule">
 <h3>ZB-V schedule<a class="headerlink" href="#zb-v-schedule" title="Link to this heading">#</a></h3>
-<p>ZB-V schedule 是一种面向流水线并行的内存高效零气泡调度策略：它将 p 个阶段划分为 2p 个模型块，并给每个 worker 分配两个模型块，按照从首到尾再返回首的 V 型顺序进行分配，以确保每个微批次的前向和对权重的后向都在同一 worker 上执行，从而利用后向权重计算填充流水线空隙；在与 1F1B 相同的显存约束下，可在正向、后向输入与权重后向计算时间相等时实现近零气泡；同时，该调度保持各 worker 峰值激活内存均衡，兼顾吞吐与显存效率。</p>
 <p><img alt="ZB-V schedule 原理" src="../_images/10pipeline06.png" /></p>
+<section id="id8">
+<h4>核心思想：<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<p>ZB 系列的关键创新是把反向传播拆成两部分：B<sub>in</sub>：对输入的梯度（把梯度往上游传）；B<sub>w</sub>：对权重的梯度（局部权重的 dW 计算）。 利用这两段可“自由插入”的反向子片段去填充流水线中原本不可避免的空隙，从而在同步训练语义下把气泡压到接近 0。ZB-V 是其中一类手工设计的日程：每张 GPU 负责 2 个模型分块（chunk），前向与两段反向的依赖在时间轴上呈 “V” 字形，因此得名。</p>
+</section>
+<section id="v">
+<h4>V 字形调度：<a class="headerlink" href="#v" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>将每个物理 stage 再细分为 两个 chunk，并安排它们在时间线上以 F → B<sub>in</sub> / B<sub>w</sub> 交错的方式执行；不同设备上的两个 chunk 彼此错位，让一个 chunk 的 B<sub>w</sub> 能“卡位”填上另一个 chunk 上的空隙。</p></li>
+<li><p>稳态下，前向（F）与两段反向（B<sub>in</sub>、B<sub>w</sub>）交替推进，把原本 1F1B 尾部 cooldown 暴露的空隙用 B<sub>w</sub> 塞满，因此“零气泡”的条件变成：F、B<sub>in</sub>、B<sub>w</sub> 的时长足够匹配，否则仍会留下少量残余空隙（需用贪心/自动调度补偿）。</p></li>
+</ul>
+<blockquote>
+<div><p>直观理解：相比 1F1B 只有“F 与 B”两种拼块，ZB-V 有了“F、B<sub>in</sub>、B<sub>w</sub>”三种拼块，可在时间线上更细粒度地“打补丁”。当三者时长接近时，补丁正好把缝隙补平，气泡≈0。</p>
+</div></blockquote>
+</section>
+<section id="zero-bubble">
+<h4>何时能做到“Zero-Bubble”<a class="headerlink" href="#zero-bubble" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>理想条件</strong>：若单 chunk 的 F ≈ B<sub>in</sub> ≈ B<sub>w</sub>，ZB-V 能实现“零气泡”属性（同步训练语义下）。实际模型不完全等时，需引入贪心/搜索调度以靠近零气泡。</p></li>
+<li><p><strong>优化器屏障</strong>：论文还提出通过绕过优化器步的同步进一步消除尾部屏障，这是达成“真正零气泡”的工程要点之一。</p></li>
+</ul>
+</section>
+<section id="id9">
+<h4>内存影响（与 1F1B/可控内存的关系）<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>激活峰值</strong>：ZB 的设计可在不抬升 1F1B 峰值的情况下显著减泡；若把零气泡作为硬约束，通常需要更高的激活占用（文献报告“接近零气泡”在现实设定下往往需要 ~2× 1F1B 的激活预算；而在理想均衡下最低可到 ~1/2 的参数-激活校准内存）。</p></li>
+<li><p><strong>权重与版本</strong>：ZB-V 不必像 PipeDream 那样存很多权重版本；其重点在于切分 B<sub>in</sub>/B<sub>w</sub> 的算子级时序，在 1F1B 的低驻留量纲上（≈O(p)）做更精细的时间编排。</p></li>
+</ul>
+</section>
+<section id="id10">
+<h4>通信/实现代价<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>通信条数</strong>：与 VPP 相似，更细粒度的片段意味着更多边界消息；B<sub>in</sub>、B<sub>w</sub> 的交错也会引入额外的依赖与消息序列。需要通过多 stream + NCCL 多通道 + 分块来隐藏通信。</p></li>
+<li><p><strong>复杂度</strong>：需要调度器管理三类片段（F / B<sub>in</sub> / B<sub>w</sub>）的事件依赖与“何时插补”策略；官方实现已在 Megatron-LM 分支开源（含通用运行时与不同 ZB 族 schedule）。([GitHub][4])</p></li>
+</ul>
+</section>
+<section id="f1b-vpp">
+<h4>与 1F1B / VPP 的对比：<a class="headerlink" href="#f1b-vpp" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>对 1F1B</strong>：在保持 1F1B 低驻留（≈O(p)）的前提下，通过 B<sub>in</sub>/B<sub>w</sub>的三片段交错进一步吃掉空隙；当三者等时，理论上可达零气泡。</p></li>
+<li><p><strong>对 VPP</strong>：VPP 用“更多虚拟阶段”把时隙宽度缩小到 <span class="math notranslate nohighlight">\(1/v\)</span>，气泡率随 <span class="math notranslate nohighlight">\(1/v\)</span> 下降但通信×v；ZB-V 不依赖增加虚拟阶段，而是靠反向拆分与插补来减泡，属于不同维度的改进（两者可叠加，但需评估通信与内存的联合作用）。</p></li>
+</ul>
+<p>总结：ZB-V 通过把反向拆成 B<sub>in</sub>/B<sub>w</sub> 并以 “V 字形”两块/卡 的方式交错插补，使前/反片段更细粒度地占满时间轴；在 F≈B<sub>in</sub>≈B<sub>w</sub>的条件下可实现近乎零气泡，同时维持接近 1F1B 的激活驻留量纲，但带来更复杂的调度与通信序列，落地时需依赖成熟的开源实现与周到的通信/均衡优化。在类似内存预算下，ZB-V 相对 1F1B 的吞吐提升可达 ~15–23%；在放宽内存时可到~30%，体现其“以更细粒度时序填补空隙”的优势。</p>
+</section>
 </section>
 <section id="hanayo-wave-like-pipeline">
 <h3>Hanayo wave-like pipeline<a class="headerlink" href="#hanayo-wave-like-pipeline" title="Link to this heading">#</a></h3>
-<p>Hanayo 是一种波浪式流水线并行策略：它将模型划分为 S 个阶段并将micro-batch分成 W 个波（wave），以波浪形的顺序在各阶段交错执行前向和后向计算，能够将流水线气泡比例降低至原来的 1/(2W) 且无需复制模型，从而保持与主流方法一致的权重和激活内存占用；同时，其轻量级运行时引擎将调度逻辑与执行和通信优化解耦，支持在多卡集群上灵活部署；在对 GPT 和 BERT 类模型、最多 32 块 GPU 的测试中，Hanayo 相较最先进方案实现了最高 30.4%的吞吐量提升</p>
 <p><img alt="Hanayo wave-like 原理" src="../_images/10pipeline07.png" /></p>
+<section id="id11">
+<h4>核心思路：<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
+<p>将阶段数 <span class="math notranslate nohighlight">\(S\)</span> 与设备数 <span class="math notranslate nohighlight">\(P\)</span> 解耦，把模型切成比设备更多的阶段，并按“波（wave）”推进；一轮前后向中的波数定义为</p>
+<div class="math notranslate nohighlight">
+\[
+  W=\frac{S}{2P}.
+  \]</div>
+<p>当 <span class="math notranslate nohighlight">\(W&gt;1\)</span> 时，同一批微样本会像“波峰”一样在更细的阶段序列上连续推进，形成 wave-like 时序。这样能在不复制模型的前提下，进一步细化时隙、压缩气泡。统一框架：Hanayo 提供可表达主流流水方案的运行时，使用 action list 驱动执行，并配合异步预取（prefetch）把通信尽量叠在计算后侧。</p>
+</section>
+<section id="id12">
+<h4>气泡/吞吐<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<p>对 wave-like 时序的理论气泡模型（单轮前后向）给出总时长形式（含前/反向与通信三部分）：</p>
+<div class="math notranslate nohighlight">
+\[
+T_{\text{iter}} \;=\; 
+\underbrace{\frac{P-1}{P}\,T_F}_{\text{F 的结构性等待}}
++\underbrace{\Bigl(\frac{1}{2W}+\frac{1}{P}\cdot\frac{P}{P-1}\Bigr)T_B}_{\text{B 的结构性等待}}
++\underbrace{\Bigl(\frac{P-2}{2}+4W\Bigr)T_C}_{\text{通信残差}}
+\}. 
+\]</div>
+<p>在常用近似 <span class="math notranslate nohighlight">\(T_B\!=\!2T_F\)</span>、忽略通信 <span class="math notranslate nohighlight">\(T_C\)</span> 时，可化为气泡占比随 <span class="math notranslate nohighlight">\(W\)</span> 单调下降的闭式：</p>
+<div class="math notranslate nohighlight">
+\[
+\text{BubbleRatio}\;\propto\;\frac{2P-2}{\,3PW+P-1\,},
+\]</div>
+<p>即波数翻倍，气泡近似减半；这也是文中图示“wave=2,4 气泡率依次降低”的来源。</p>
+<blockquote>
+<div><p>直观解释：与 VPP 将单次跃迁的“时隙宽度”切细不同，Hanayo 通过增加阶段总数 <span class="math notranslate nohighlight">\(S\)</span> 让一轮内出现 <span class="math notranslate nohighlight">\(W\)</span> 个波；波之间彼此“接力”，把不可避免的首/尾空档摊得更细，暴露气泡随 <span class="math notranslate nohighlight">\(W\)</span> 缩小。文中实验显示吞吐可随 <span class="math notranslate nohighlight">\(W\)</span> 增长而上升，并对优化后 Chimera 取得最高 30.4%的加速。</p>
+</div></blockquote>
+</section>
+<section id="id13">
+<h4>内存语义：<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>不复制模型</strong>：区别于 Chimera 的双向复制（参数×2），Hanayo 不做模型副本；因此权重内存 <span class="math notranslate nohighlight">\(M_w\)</span> 与激活内存 <span class="math notranslate nohighlight">\(M_a\)</span> 量纲与主流同步流水相当。实际测评中，其峰值显存分布更均衡，有助于整体利用率提升。</p></li>
+<li><p><strong>激活生命周期</strong>：仍可与梯度检查点等通用手段叠加；wave-like 通过更细的阶段推进“边算边消耗”激活，使不同设备的峰值更平滑（而非抬高量纲）。</p></li>
+</ul>
+</section>
+<section id="id14">
+<h4>通信语义：<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<p>更多边界，更多条数：阶段数 <span class="math notranslate nohighlight">\(S\)</span> 增大意味着跨设备边界次数增加，消息条数上升；Hanayo 依靠 action list + 预取 + 异步收发（NCCL batch_isend_irecv） 把大部分传输叠在下一片计算后侧，从而使“条数↑”不必然转化为“暴露时延↑”。</p>
+</section>
+<section id="id15">
+<h4>与 1F1B / VPP 的关系<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p><strong>对 1F1B</strong>：同属同步流水家族；Hanayo 通过 <span class="math notranslate nohighlight">\(W\)</span> 的“波级细化”进一步<strong>摊薄首尾空档</strong>。</p></li>
+<li><p><strong>对 VPP</strong>：VPP 在每卡内引入 <span class="math notranslate nohighlight">\(v\)</span> 个虚拟阶段细化时间粒度；Hanayo 通过增加全局阶段数 <span class="math notranslate nohighlight">\(S\)</span> 并引入 <span class="math notranslate nohighlight">\(W\)</span> 个波来细化迭代结构。两者针对的“细化维度”不同，原则上可组合（需综合评估通信与调度复杂度）。</p></li>
+</ul>
+<p>总结：Hanayo 用“波（<span class="math notranslate nohighlight">\(W\)</span>）”把一轮前后向拆成多段接力式推进，在不复制模型的前提下，让气泡随 <span class="math notranslate nohighlight">\(W\)</span> 近似按 <span class="math notranslate nohighlight">\(1/W\)</span> 缩小；配合预取和异步通信，在多种集群上取得了对 SOTA 的显著吞吐优势。</p>
 </section>
 </section>
-<section id="id1">
-<h2>分布式框架里的 PP 实现<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!!!!
-代码太多了，需要精简成伪代码，不要直接贴，看不过来</p>
-<ul class="simple">
-<li><p>模型运行入口与 PP 配置：</p></li>
-</ul>
-<p>pretrain_gpt.py main 函数调用 pretrain-&gt;get_model,get_model 函数判断 pipeline 的划分策略</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-<span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">pretrain_gpt</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-
-    <span class="c1"># Temporary for transition to core datasets</span>
-    <span class="n">train_valid_test_datasets_provider</span><span class="o">.</span><span class="n">is_distributed</span> <span class="o">=</span> <span class="kc">True</span>
-
-    <span class="c1"># Optionally enable inprocess restart on pretrain</span>
-    <span class="n">pretrain</span><span class="p">,</span> <span class="n">store</span> <span class="o">=</span> <span class="n">inprocess_restart</span><span class="o">.</span><span class="n">maybe_wrap_for_inprocess_restart</span><span class="p">(</span><span class="n">pretrain</span><span class="p">)</span>
-
-    <span class="n">pretrain</span><span class="p">(</span>
-        <span class="n">train_valid_test_datasets_provider</span><span class="p">,</span>
-        <span class="n">model_provider</span><span class="p">,</span>
-        <span class="n">ModelType</span><span class="o">.</span><span class="n">encoder_or_decoder</span><span class="p">,</span>
-        <span class="n">forward_step</span><span class="p">,</span>
-        <span class="n">args_defaults</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;tokenizer_type&#39;</span><span class="p">:</span> <span class="s1">&#39;GPT2BPETokenizer&#39;</span><span class="p">},</span>
-        <span class="n">extra_args_provider</span><span class="o">=</span><span class="n">add_modelopt_args</span> <span class="k">if</span> <span class="n">has_nvidia_modelopt</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">store</span><span class="o">=</span><span class="n">store</span><span class="p">,</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>pretrain 函数内部调用 setup_model_and_optimizer 函数，该函数内部调用 get_model</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">training</span><span class="o">.</span><span class="n">py</span><span class="o">/</span><span class="k">def</span> <span class="nf">pretrain</span>
-
-<span class="c1"># Model, optimizer, and learning rate.</span>
-<span class="n">timers</span><span class="p">(</span><span class="s1">&#39;model-and-optimizer-setup&#39;</span><span class="p">,</span> <span class="n">log_level</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">barrier</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">app_metrics</span><span class="p">[</span><span class="s1">&#39;app_build_optimizer_start_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_logger_utils</span><span class="o">.</span><span class="n">get_timestamp_in_ms</span><span class="p">()</span>
-<span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">opt_param_scheduler</span> <span class="o">=</span> <span class="n">setup_model_and_optimizer</span><span class="p">(</span>
-    <span class="n">model_provider</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="n">checkpointing_context</span><span class="o">=</span><span class="n">checkpointing_context</span>
-<span class="p">)</span>
-
-<span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">training</span><span class="o">.</span><span class="n">py</span><span class="o">/</span><span class="k">def</span> <span class="nf">setup_model_and_optimizer</span>
-
-<span class="k">def</span> <span class="nf">setup_model_and_optimizer</span><span class="p">(</span>
-    <span class="n">model_provider_func</span><span class="p">,</span>
-    <span class="n">model_type</span><span class="p">,</span>
-    <span class="n">no_wd_decay_cond</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">scale_lr_cond</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">lr_mult</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-    <span class="n">checkpointing_context</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Setup model and optimizer.&quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">()</span>
-    <span class="n">timers</span> <span class="o">=</span> <span class="n">get_timers</span><span class="p">()</span>
-    <span class="n">one_logger</span> <span class="o">=</span> <span class="n">get_one_logger</span><span class="p">()</span>
-
-    <span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">model_provider_func</span><span class="p">,</span> <span class="n">model_type</span><span class="p">)</span>
-    <span class="n">unwrapped_model</span> <span class="o">=</span> <span class="n">unwrap_model</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>get_model 通过 get_args 函数拿到启动脚本设置的超参，参数设置如图所示：</p>
-<p><img alt="args 超参设置" src="../_images/10pipeline08.png" /></p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">training</span><span class="o">.</span><span class="n">py</span><span class="o">/</span><span class="k">def</span> <span class="nf">get_model</span>
-
-<span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="n">model_provider_func</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">ModelType</span><span class="o">.</span><span class="n">encoder_or_decoder</span><span class="p">,</span> <span class="n">wrap_with_ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build the model.&quot;&quot;&quot;</span>
-    <span class="n">args</span> <span class="o">=</span> <span class="n">get_args</span><span class="p">()</span>
-    <span class="n">args</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="n">model_type</span>
-
-    <span class="c1"># Build model.</span>
-</pre></div>
-</div>
-<p>此处分为两种情况讨论，以下是启用虚拟管道(VPP)的模型构建，判断条件如第一个 if 所示。判定逻辑标记了：只有第一个 rank 做输入，最后一个 rank 做输出，利用 model_provider_func 函数计算当前 Rank 该“切”哪一段 Transformer 层并实例化，最终把所有 Rank 按顺序放入 model 列表，供后面的流水线调度器循环调用。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">training</span><span class="o">.</span><span class="n">py</span><span class="o">/</span><span class="k">def</span> <span class="nf">get_model</span>
- 
-  <span class="k">if</span> <span class="p">(</span>
-            <span class="n">mpu</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_world_size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
-            <span class="ow">and</span> <span class="n">args</span><span class="o">.</span><span class="n">virtual_pipeline_model_parallel_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="p">):</span>
-            <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">encoder_and_decoder</span><span class="p">:</span>
-                <span class="k">assert</span> <span class="p">(</span>
-                    <span class="n">args</span><span class="o">.</span><span class="n">encoder_pipeline_model_parallel_size</span> <span class="o">==</span> <span class="mi">0</span>
-                <span class="p">),</span> <span class="s2">&quot;Interleaved schedule not supported for model with encoder on separate PP rank&quot;</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">virtual_pipeline_model_parallel_size</span><span class="p">):</span>
-                <span class="c1"># Set pre_process and post_process only after virtual rank is set.</span>
-                <span class="n">pre_process</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">(</span><span class="n">ignore_virtual</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vp_stage</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
-                <span class="n">post_process</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">is_pipeline_last_stage</span><span class="p">(</span><span class="n">ignore_virtual</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vp_stage</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
-                <span class="n">this_model</span> <span class="o">=</span> <span class="n">model_provider_func</span><span class="p">(</span>
-                    <span class="n">pre_process</span><span class="o">=</span><span class="n">pre_process</span><span class="p">,</span> <span class="n">post_process</span><span class="o">=</span><span class="n">post_process</span><span class="p">,</span> <span class="n">vp_stage</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
-                <span class="n">this_model</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="n">model_type</span>
-                <span class="n">this_model</span><span class="o">.</span><span class="n">vp_stage</span> <span class="o">=</span> <span class="n">i</span>
-                <span class="n">model</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_model</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>否则启用 PipeDream 流水线并行，根据模型类型和并行度，将编码器和解码器模块合理地拆分到不同 GPU，保证前向/反向传递的正确性与高效性。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">training</span><span class="o">.</span><span class="n">py</span><span class="o">/</span><span class="k">def</span> <span class="nf">get_model</span>
-
-<span class="k">else</span><span class="p">:</span>
-            <span class="n">pre_process</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">()</span>
-            <span class="n">post_process</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">is_pipeline_last_stage</span><span class="p">()</span>
-            <span class="n">add_encoder</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="n">add_decoder</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">if</span> <span class="n">model_type</span> <span class="o">==</span> <span class="n">ModelType</span><span class="o">.</span><span class="n">encoder_and_decoder</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">mpu</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_world_size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">rank</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_rank</span><span class="p">()</span>
-                    <span class="n">first_decoder_rank</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">encoder_pipeline_model_parallel_size</span>
-                    <span class="n">world_size</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_world_size</span><span class="p">()</span>
-                    <span class="n">pre_process</span> <span class="o">=</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">rank</span> <span class="o">==</span> <span class="n">first_decoder_rank</span>
-                    <span class="n">post_process</span> <span class="o">=</span> <span class="p">(</span><span class="n">rank</span> <span class="o">==</span> <span class="p">(</span><span class="n">first_decoder_rank</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="n">rank</span> <span class="o">==</span> <span class="p">(</span><span class="n">world_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
-                    <span class="n">add_encoder</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">is_inside_encoder</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
-                    <span class="n">add_decoder</span> <span class="o">=</span> <span class="n">mpu</span><span class="o">.</span><span class="n">is_inside_decoder</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
-                <span class="n">model</span> <span class="o">=</span> <span class="n">model_provider_func</span><span class="p">(</span>
-                    <span class="n">pre_process</span><span class="o">=</span><span class="n">pre_process</span><span class="p">,</span>
-                    <span class="n">post_process</span><span class="o">=</span><span class="n">post_process</span><span class="p">,</span>
-                    <span class="n">add_encoder</span><span class="o">=</span><span class="n">add_encoder</span><span class="p">,</span>
-                    <span class="n">add_decoder</span><span class="o">=</span><span class="n">add_decoder</span><span class="p">,</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">model</span> <span class="o">=</span> <span class="n">model_provider_func</span><span class="p">(</span><span class="n">pre_process</span><span class="o">=</span><span class="n">pre_process</span><span class="p">,</span> <span class="n">post_process</span><span class="o">=</span><span class="n">post_process</span><span class="p">)</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">model_type</span> <span class="o">=</span> <span class="n">model_type</span>
-        <span class="k">return</span> <span class="n">model</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>PP 模型实例化：（没找全）</p></li>
-</ul>
-<p>通过上述 get_model 函数里的 model_provider_func 函数构建模型实例，model_provider_func 并不是 Megatron-Core 库里一个单独的全局函数，而是由各个预训练脚本(如 pretrain_gpt.py)定义并传入核心训练流程的回调。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">pretrain_gpt</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">model_provider</span><span class="p">(</span>
-    <span class="n">pre_process</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">post_process</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">vp_stage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">GPTModel</span><span class="p">,</span> <span class="n">megatron</span><span class="o">.</span><span class="n">legacy</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">GPTModel</span><span class="p">]:</span>
-</pre></div>
-</div>
-<p>构建 GPTModel 实例，</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">gpt</span><span class="o">/</span><span class="n">gpt_model</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">class</span> <span class="nc">GPTModel</span><span class="p">(</span><span class="n">LanguageModule</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
-
-        <span class="c1"># Transformer.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">TransformerBlock</span><span class="p">(</span>
-            <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
-            <span class="n">spec</span><span class="o">=</span><span class="n">transformer_layer_spec</span><span class="p">,</span>
-            <span class="n">pre_process</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pre_process</span><span class="p">,</span>
-            <span class="n">post_process</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">post_process</span><span class="p">,</span>
-            <span class="n">vp_stage</span><span class="o">=</span><span class="n">vp_stage</span><span class="p">,</span>
-        <span class="p">)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>PP 获取需要执行的层数：（没看懂）</p></li>
-</ul>
-<p>TransformerBlock 注册通过 get_num_layers_to_build 计算当前 Stage 包含几个 Transformer Layer</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">transformer</span><span class="o">/</span><span class="n">transformer_block</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">get_num_layers_to_build</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">TransformerConfig</span><span class="p">,</span> <span class="n">vp_stage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">num_layers_to_build</span>
-
-<span class="k">class</span> <span class="nc">TransformerBlockSubmodules</span><span class="p">:</span>
-
-    <span class="k">def</span> <span class="nf">_get_block_submodules</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">TransformerBlockSubmodules</span><span class="p">):</span>
-            <span class="k">return</span> <span class="n">spec</span>
-
-        <span class="c1"># ModuleSpec here is generally assumed to be for a transformer layer that</span>
-        <span class="c1"># is implemented in `transformer_layer.py` or if it subclasses</span>
-        <span class="c1"># `BaseTransformerLayer` from the `transformer_layer.py` file.</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">ModuleSpec</span><span class="p">):</span>
-            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">TransformerBlock</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">spec</span><span class="o">.</span><span class="n">submodules</span>
-            <span class="k">elif</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="n">BaseTransformerLayer</span><span class="p">):</span>
-                <span class="n">num_layers</span> <span class="o">=</span> <span class="n">get_num_layers_to_build</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">vp_stage</span><span class="p">)</span>
-                <span class="k">return</span> <span class="n">TransformerBlockSubmodules</span><span class="p">(</span>
-                    <span class="n">layer_specs</span><span class="o">=</span><span class="p">[</span><span class="n">spec</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_layers</span><span class="p">,</span> <span class="n">layer_norm</span><span class="o">=</span><span class="n">LayerNormImpl</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;specialize for </span><span class="si">{</span><span class="n">spec</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;specialize for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>在 GPT 模型运行示例中每个 Stage build_layer 的个数为 number_lyaer = L / PP_num</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Megatron-LM/megatron/core/transformer/transformer_block.py
-
-class TransformerBlock(MegatronModule):
-    &quot;&quot;&quot;Transformer class.&quot;&quot;&quot;
-
-    def __init__（
-        self.num_layers_per_pipeline_rank = len(self.layers)
-
-    def _build_layers(self):
-        # Transformer layers.
-        # @jcasper can we improve how we deal with layer_number?
-        # currently it&#39;s only used in CoreAttention?
-        # if self.apply_query_key_layer_scaling:
-        #     coeff = self.layer_number
-        #     self.norm_factor *= coeff
-        def build_layer(layer_spec, layer_number):
-            global_layer_number = layer_number + get_transformer_layer_offset(
-                self.config, self.vp_stage
-            )  # 1-based index
-            if self.config.heterogeneous_block_specs:
-                layer_config = self.config.get_config_for_layer(global_layer_number)
-            else:
-                layer_config = self.config
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>执行 PP 训练：</p></li>
-</ul>
-<p>GPT 训练调用 pretrain -&gt; train -&gt; train_step，执行一个 iteration, train_step 函数通过 get_forward_backward_fun()函数进入 schedulers.py 模块，并根据当前的 PP 模式返回 forward_backward_pipelining_with_interleaving 执行前向和反向计算</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">training</span><span class="o">/</span><span class="n">training</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">train_step</span><span class="p">(</span><span class="n">forward_step_func</span><span class="p">,</span> <span class="n">data_iterator</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">opt_param_scheduler</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Single training step.&quot;&quot;&quot;</span>
-            <span class="o">...</span>
-    <span class="c1"># Forward pass.</span>
-        <span class="n">forward_backward_func</span> <span class="o">=</span> <span class="n">get_forward_backward_func</span><span class="p">()</span>
-        <span class="n">losses_reduced</span> <span class="o">=</span> <span class="n">forward_backward_func</span><span class="p">(</span>
-            <span class="n">forward_step_func</span><span class="o">=</span><span class="n">forward_step_func</span><span class="p">,</span>
-            <span class="n">data_iterator</span><span class="o">=</span><span class="n">data_iterator</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">num_microbatches</span><span class="o">=</span><span class="n">get_num_microbatches</span><span class="p">(),</span>
-            <span class="n">seq_length</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">seq_length</span><span class="p">,</span>
-            <span class="n">micro_batch_size</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">micro_batch_size</span><span class="p">,</span>
-            <span class="n">decoder_seq_length</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">decoder_seq_length</span><span class="p">,</span>
-            <span class="n">forward_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-            <span class="n">adjust_tensor_shapes_fn</span><span class="o">=</span><span class="n">adjust_tensor_shapes_fn</span><span class="p">,</span>
-        <span class="p">)</span>
-
-
-<span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">get_forward_backward_func</span><span class="p">():</span>
-    <span class="n">pipeline_model_parallel_size</span> <span class="o">=</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_world_size</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">pipeline_model_parallel_size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">get_virtual_pipeline_model_parallel_world_size</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">forward_backward_func</span> <span class="o">=</span> <span class="n">forward_backward_pipelining_with_interleaving</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">forward_backward_func</span> <span class="o">=</span> <span class="n">forward_backward_pipelining_without_interleaving</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">forward_backward_func</span> <span class="o">=</span> <span class="n">forward_backward_no_pipelining</span>
-    <span class="k">return</span> <span class="n">forward_backward_func</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU0 执行 stage0（不清晰）</p></li>
-</ul>
-<p>执行 Forward 计算，选择 forward_backward_pipelining_without_interleaving 模式
-(以 Pipeline 1F1B 为例，即 PipeDream) 先关闭梯度更新，等所有的 microbatch 执行完毕才更新梯度。过程如图所示：</p>
-<p><img alt="args 超参设置" src="../_images/10pipeline10.png" /></p>
-<p>部分代码展示：</p>
-<p>其中：num_microbatches：总的 micro batch 个数。num_warmup_microbatches：当前 rank warmup 阶段需要计算，直到 1F1B 的 microbatch 的个数。</p>
-<p>num_microbatches_remaining：当前 rank 还剩下多少个 microbatch 执行才到 1F1B 阶段，即 num_microbatches - num_warmup_microbatches。</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">forward_backward_pipelining_without_interleaving</span><span class="p">(</span>
-    <span class="o">...</span>
-    <span class="n">micro_batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="o">...</span>
-<span class="p">):</span>
-    <span class="o">...</span>
-    <span class="n">disable_grad_sync</span><span class="p">()</span>
-
-    <span class="c1"># Compute number of warmup microbatches.</span>
-    <span class="n">num_warmup_microbatches</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">parallel_state</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_world_size</span><span class="p">()</span>
-        <span class="o">-</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_rank</span><span class="p">()</span>
-        <span class="o">-</span> <span class="mi">1</span>
-    <span class="p">)</span>
-    <span class="n">num_warmup_microbatches</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">num_warmup_microbatches</span><span class="p">,</span> <span class="n">num_microbatches</span><span class="p">)</span>
-    <span class="n">num_microbatches_remaining</span> <span class="o">=</span> <span class="n">num_microbatches</span> <span class="o">-</span> <span class="n">num_warmup_microbatches</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU0 完成前向计算，如图所示：</p></li>
-</ul>
-<p>NPU0 在 stage0 阶段没有其它的 Stage 激活输入，因此忽略 recv_forward()函数，forward_step 调用 forward_step_func 真正调用模型执行：
-<img alt="NPU0 完成 FI" src="../_images/10pipeline12.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
- <span class="c1"># Run warmup forward passes.</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_warmup_microbatches</span><span class="p">):</span>
-        <span class="c1"># Decide to checkpoint all layers&#39; activations of the current micro-batch</span>
-        <span class="k">if</span> <span class="n">max_outstanding_backprops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">checkpoint_activations_microbatch</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">i</span> <span class="o">%</span> <span class="n">max_outstanding_backprops</span>
-                <span class="o">&gt;=</span> <span class="n">config</span><span class="o">.</span><span class="n">num_microbatches_with_partial_activation_checkpoints</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">checkpoint_activations_microbatch</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">recv_forward</span><span class="p">(</span>
-            <span class="n">recv_tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="n">output_tensor</span><span class="p">,</span> <span class="n">num_tokens</span> <span class="o">=</span> <span class="n">forward_step</span><span class="p">(</span>
-            <span class="n">forward_step_func</span><span class="p">,</span>
-            <span class="n">data_iterator</span><span class="p">,</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">num_microbatches</span><span class="p">,</span>
-            <span class="n">input_tensor</span><span class="p">,</span>
-            <span class="n">forward_data_store</span><span class="p">,</span>
-            <span class="n">config</span><span class="p">,</span>
-            <span class="n">collect_non_loss_data</span><span class="p">,</span>
-            <span class="n">checkpoint_activations_microbatch</span><span class="p">,</span>
-            <span class="n">check_first_val_step</span><span class="p">(</span><span class="n">first_val_step</span><span class="p">,</span> <span class="n">forward_only</span><span class="p">,</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="n">current_microbatch</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
-            <span class="n">encoder_decoder_xattn</span><span class="o">=</span><span class="n">encoder_decoder_xattn</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">forward_step</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-            <span class="o">...</span>
-            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">enable_autocast</span><span class="p">:</span>
-                <span class="n">context_manager</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">autocast</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">autocast_dtype</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">context_manager</span> <span class="o">=</span> <span class="n">contextlib</span><span class="o">.</span><span class="n">nullcontext</span><span class="p">()</span>
-            <span class="k">with</span> <span class="n">context_manager</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">checkpoint_activations_microbatch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">output_tensor</span><span class="p">,</span> <span class="n">loss_func</span> <span class="o">=</span> <span class="n">forward_step_func</span><span class="p">(</span><span class="n">data_iterator</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">output_tensor</span><span class="p">,</span> <span class="n">loss_func</span> <span class="o">=</span> <span class="n">forward_step_func</span><span class="p">(</span>
-                        <span class="n">data_iterator</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">checkpoint_activations_microbatch</span>
-                    <span class="p">)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU0 前向传递激活，如图所示：</p></li>
-</ul>
-<p><img alt="NPU0 传递激活" src="../_images/10pipeline13.png" /></p>
-<p>NPU0 上输出 Stage0 output_tensor 后 send_forward 发送给下一个 Stage，通过 P2P_communication.send_forward 发送 output_tensor，通过 torch.distributed.P2POp 异步 send output_tensor，最后调用 torch.cuda.synchronize() 执行同步</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
-        <span class="n">send_forward</span><span class="p">(</span>
-            <span class="n">output_tensor</span><span class="p">,</span> <span class="n">send_tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_last_stage</span><span class="p">()</span>
-        <span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">send_forward</span><span class="p">(</span><span class="n">output_tensors</span><span class="p">,</span> <span class="n">tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">is_last_stage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper for p2p_communication.send_forward used with non-interleaving schedule.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_tensors</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">output_tensors</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_tensors</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">output_tensor</span><span class="p">,</span> <span class="n">tensor_shape</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">output_tensors</span><span class="p">,</span> <span class="n">tensor_shapes</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">tensor_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">continue</span>
-        <span class="n">p2p_communication</span><span class="o">.</span><span class="n">send_forward</span><span class="p">(</span><span class="n">output_tensor</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">is_last_stage</span><span class="p">)</span>
-
-<span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">p2p_communication</span><span class="o">.</span><span class="n">py</span>
-
-      <span class="k">if</span> <span class="n">wait_on_reqs</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">reqs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">reqs</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">reqs</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="k">else</span> <span class="n">reqs</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">req</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-        <span class="n">reqs</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">if</span> <span class="p">(</span>
-        <span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">batch_p2p_comm</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">batch_p2p_sync</span><span class="p">)</span>
-        <span class="c1"># The lists below have a size &gt; 1 only when ETP ≠ DTP,</span>
-        <span class="c1"># meaning this synchronization is required when ETP ≠ DTP.</span>
-        <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensor_recv_prev_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
-        <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">tensor_recv_next_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
-    <span class="p">):</span>
-        <span class="c1"># To protect against race condition when using batch_isend_irecv().</span>
-        <span class="c1"># User should assert that we have a modern enough PyTorch to not need this</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>    
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU0 继续计算：</p></li>
-</ul>
-<p>NPU0 继续执行 forward_step,Stage0 前向计算得到第二个 output_tensor,利用 sedn_forward_recv_backward 函数发送 output_tensor 等待 backward，进入 1F1B 状态，通过 send_backward_recv_backward 底层试下通过 P2PPp 异步，send output_tesnor，且异步 recv tensor_recv_next，最后调用 synchronize()等待 recv backward，NPU0 进入等待状态。</p>
-<p><img alt="NPU0 计算 F2" src="../_images/10pipeline17.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">forward_backward_pipelining_without_interleaving</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
- <span class="k">def</span> <span class="nf">enable_grad_sync</span><span class="p">():</span>
-    <span class="c1"># Run warmup forward passes.</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_warmup_microbatches</span><span class="p">):</span>
-        <span class="c1"># Decide to checkpoint all layers&#39; activations of the current micro-batch</span>
-        <span class="k">if</span> <span class="n">max_outstanding_backprops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">checkpoint_activations_microbatch</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">i</span> <span class="o">%</span> <span class="n">max_outstanding_backprops</span>
-                <span class="o">&gt;=</span> <span class="n">config</span><span class="o">.</span><span class="n">num_microbatches_with_partial_activation_checkpoints</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">checkpoint_activations_microbatch</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">recv_forward</span><span class="p">(</span>
-            <span class="n">recv_tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="n">output_tensor</span><span class="p">,</span> <span class="n">num_tokens</span> <span class="o">=</span> <span class="n">forward_step</span><span class="p">(</span>
-            <span class="n">forward_step_func</span><span class="p">,</span>
-            <span class="n">data_iterator</span><span class="p">,</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">num_microbatches</span><span class="p">,</span>
-            <span class="n">input_tensor</span><span class="p">,</span>
-            <span class="n">forward_data_store</span><span class="p">,</span>
-            <span class="n">config</span><span class="p">,</span>
-            <span class="n">collect_non_loss_data</span><span class="p">,</span>
-            <span class="n">checkpoint_activations_microbatch</span><span class="p">,</span>
-            <span class="n">check_first_val_step</span><span class="p">(</span><span class="n">first_val_step</span><span class="p">,</span> <span class="n">forward_only</span><span class="p">,</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
-            <span class="n">current_microbatch</span><span class="o">=</span><span class="n">i</span><span class="p">,</span>
-            <span class="n">encoder_decoder_xattn</span><span class="o">=</span><span class="n">encoder_decoder_xattn</span><span class="p">,</span>
-        <span class="p">)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU1 进行前向计算：</p></li>
-</ul>
-<p>其过程同 GPU0 一致，如图所示：</p>
-<p>num_warmup_microbatches=0，进入 1F1B 状态，num_microbatches_remaining=3，recv_forward 调用 P2POp 异步 recv，NPU1 最后调用 synchronize() 执行同步等待 NPU0 Stage0 输出，从而保证 NPU0 to NPU1 的执行顺序。</p>
-<p><img alt="NPU1 计算" src="../_images/10pipeline14.png" /></p>
-<p>NPU1 recv_forward 等待 NPU0 Stage0 发送 intput_tensor 后 NPU1 forward_step 设置 iNPUt_tensor，实现 NPU0&amp;NPU1 交换输入输出 NPU1 进入 1F1B 循环，forward_step_func 调用 GPTModel 执行前向计算。NPU1 上 TransformerBlock 执行第一个 Stage，Pre_process=False，即不会把 iNPUt_embeddings 作为 ransformer 的输入，使用 NPU0 Stage0 输入的 iNPUt_tensor 作为输入执行得到 output tensor。</p>
-<p><img alt="NPU1 计算" src="../_images/10pipeline15.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">transformer</span><span class="o">/</span><span class="n">transformer_block</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">class</span> <span class="nc">TransformerBlock</span><span class="p">(</span><span class="n">MegatronModule</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transformer class.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">config</span><span class="p">:</span> <span class="n">TransformerConfig</span><span class="p">,</span>
-        <span class="n">spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TransformerBlockSubmodules</span><span class="p">,</span> <span class="n">ModuleSpec</span><span class="p">],</span>
-        <span class="n">post_layer_norm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">pre_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">post_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">model_comm_pgs</span><span class="p">:</span> <span class="n">ModelCommProcessGroups</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">vp_stage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">submodules</span> <span class="o">=</span> <span class="n">_get_block_submodules</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">spec</span><span class="p">,</span> <span class="n">vp_stage</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">post_layer_norm</span> <span class="o">=</span> <span class="n">post_layer_norm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pre_process</span> <span class="o">=</span> <span class="n">pre_process</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">post_process</span> <span class="o">=</span> <span class="n">post_process</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vp_stage</span> <span class="o">=</span> <span class="n">vp_stage</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_process</span><span class="p">:</span>
-            <span class="c1"># See set_input_tensor()</span>
-            <span class="n">hidden_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_tensor</span>
-</pre></div>
-</div>
-<p>示例中 NPU1 Stage1 是最后一层 Staege，因此 post_process=True,执行 is_pipeline_last_stage 计算 GPT 模型的 output_tensor 和 loss。</p>
-<p><img alt="NPU1 计算" src="../_images/10pipeline16.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">transformer</span><span class="o">/</span><span class="n">transformer_block</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">class</span> <span class="nc">TransformerBlock</span><span class="p">(</span><span class="n">MegatronModule</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Transformer class.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">config</span><span class="p">:</span> <span class="n">TransformerConfig</span><span class="p">,</span>
-        <span class="n">spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">TransformerBlockSubmodules</span><span class="p">,</span> <span class="n">ModuleSpec</span><span class="p">],</span>
-        <span class="n">post_layer_norm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">pre_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">post_process</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">model_comm_pgs</span><span class="p">:</span> <span class="n">ModelCommProcessGroups</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">vp_stage</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-
-<span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">forward_step</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-    <span class="o">...</span>
-   <span class="k">if</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_last_stage</span><span class="p">(</span><span class="n">ignore_virtual</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">vp_stage</span><span class="o">=</span><span class="n">vp_stage</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">collect_non_loss_data</span><span class="p">:</span>
-            <span class="n">outputs</span> <span class="o">=</span> <span class="n">loss_func</span><span class="p">(</span><span class="n">output_tensor</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">output_tensor</span><span class="p">,</span> <span class="n">num_tokens</span><span class="p">,</span> <span class="n">loss_reduced</span> <span class="o">=</span> <span class="n">outputs</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">calculate_per_token_loss</span><span class="p">:</span>
-                    <span class="n">output_tensor</span> <span class="o">/=</span> <span class="n">num_tokens</span>
-                    <span class="n">output_tensor</span> <span class="o">/=</span> <span class="n">num_microbatches</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="c1"># preserve legacy loss averaging behavior (ie, over the number of microbatches)</span>
-                <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-                <span class="n">output_tensor</span><span class="p">,</span> <span class="n">loss_reduced</span> <span class="o">=</span> <span class="n">outputs</span>
-                <span class="n">output_tensor</span> <span class="o">*=</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">get_context_parallel_world_size</span><span class="p">()</span>
-                <span class="n">output_tensor</span> <span class="o">/=</span> <span class="n">num_microbatches</span>
-            <span class="n">forward_data_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss_reduced</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">loss_func</span><span class="p">(</span><span class="n">output_tensor</span><span class="p">,</span> <span class="n">non_loss_data</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">forward_data_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU1 反向执行 Stage1：</p></li>
-</ul>
-<p>执行完 forward_step 后执行 backward_step 得到 iNPUt_tensor_grad，并
-进入 1F1B 状态，执行 send_backward_recc_forward-&gt;_communication-&gt;异步发送 iNPUt_tensor_grad 给 NPU0 并等待 NPU0 发送下一个 MB forward 结果。</p>
-<p><img alt="NPU1 反向计算" src="../_images/10pipeline18.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">forward_backward_pipelining_without_interleaving</span><span class="p">(</span><span class="o">...</span><span class="p">):</span>
-    <span class="c1"># Enable grad sync for the last microbatch in the batch if the full</span>
-    <span class="c1"># backward pass completes in the 1F1B stage.</span>
-    <span class="k">if</span> <span class="n">num_warmup_microbatches</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">last_iteration</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">grad_sync_func</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">enable_grad_sync</span><span class="p">()</span>
-
-    <span class="n">input_tensor_grad</span> <span class="o">=</span> <span class="n">backward_step</span><span class="p">(</span>
-        <span class="n">input_tensor</span><span class="p">,</span> <span class="n">output_tensor</span><span class="p">,</span> <span class="n">output_tensor_grad</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="n">config</span>
-    <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">last_iteration</span><span class="p">:</span>
-        <span class="n">input_tensor</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">send_backward</span><span class="p">(</span>
-            <span class="n">input_tensor_grad</span><span class="p">,</span>
-            <span class="n">recv_tensor_shapes</span><span class="p">,</span>
-            <span class="n">config</span><span class="p">,</span>
-            <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">(),</span>
-        <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">send_backward_recv_forward</span><span class="p">(</span>
-            <span class="n">input_tensor_grad</span><span class="p">,</span>
-            <span class="n">recv_tensor_shapes</span><span class="p">,</span>
-            <span class="n">config</span><span class="p">,</span>
-            <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">(),</span>
-        <span class="p">)</span> 
-
-<span class="k">def</span> <span class="nf">send_backward_recv_forward</span><span class="p">(</span><span class="n">input_tensor_grads</span><span class="p">,</span> <span class="n">tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">is_first_stage</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper for p2p_communication.send_backward_recv_forward used</span>
-<span class="sd">    with non-interleaving schedule.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_tensor_grads</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">input_tensor_grads</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_tensor_grads</span><span class="p">]</span>
-    <span class="n">input_tensors</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">input_tensor_grad</span><span class="p">,</span> <span class="n">tensor_shape</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">input_tensor_grads</span><span class="p">,</span> <span class="n">tensor_shapes</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">tensor_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">input_tensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-            <span class="k">continue</span>
-        <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">p2p_communication</span><span class="o">.</span><span class="n">send_backward_recv_forward</span><span class="p">(</span>
-            <span class="n">input_tensor_grad</span><span class="p">,</span> <span class="n">tensor_shape</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">is_first_stage</span>
-        <span class="p">)</span>
-        <span class="n">input_tensors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">input_tensor</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">input_tensors</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU0 反向执行 Stage0：</p></li>
-</ul>
-<p>NPU0 Srage0 等待 send_backward_recv_forward 被唤醒后获得 NPU1 Staege1 发送的 output_tensor_grad，NPU0 Stage0 执行 backward_step 输出 intput_tensor_grad，NPU0 计入 1F1B 状态，NPU0 num_warmup_mbs=1, num_mbs_remaining=2，进入 1F1B 循环，执行 forward_step 执行 Starge1 前向计算得到 output_tensor(Forward 3)，执行 send_forward_recv_backward 发送 output_tensor 等待 backward，异步 recv tensor_recv_next，调用 synnchronize()同步等待 backward，NPU0 进入等待状态。</p>
-<p><img alt="NPU0 反向传输" src="../_images/10pipeline19.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
- <span class="c1"># Run 1F1B in steady state.</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_microbatches_remaining</span><span class="p">):</span>
-        <span class="n">last_iteration</span> <span class="o">=</span> <span class="n">i</span> <span class="o">==</span> <span class="p">(</span><span class="n">num_microbatches_remaining</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="c1"># Decide to checkpoint all layers&#39; activations of the current micro-batch</span>
-        <span class="k">if</span> <span class="n">max_outstanding_backprops</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">checkpoint_activations_microbatch</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">num_warmup_microbatches</span><span class="p">)</span> <span class="o">%</span> <span class="n">max_outstanding_backprops</span>
-            <span class="p">)</span> <span class="o">&gt;=</span> <span class="n">config</span><span class="o">.</span><span class="n">num_microbatches_with_partial_activation_checkpoints</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">checkpoint_activations_microbatch</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="n">output_tensor</span><span class="p">,</span> <span class="n">num_tokens</span> <span class="o">=</span> <span class="n">forward_step</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-        <span class="n">total_num_tokens</span> <span class="o">+=</span> <span class="n">num_tokens</span>
-
-        <span class="k">if</span> <span class="n">forward_only</span><span class="p">:</span>
-            <span class="n">send_forward</span><span class="p">(</span>
-                <span class="n">output_tensor</span><span class="p">,</span> <span class="n">send_tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_last_stage</span><span class="p">()</span>
-            <span class="p">)</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">last_iteration</span><span class="p">:</span>
-                <span class="n">input_tensor</span> <span class="o">=</span> <span class="n">recv_forward</span><span class="p">(</span>
-                    <span class="n">recv_tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">()</span>
-                <span class="p">)</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">output_tensor_grad</span> <span class="o">=</span> <span class="n">send_forward_recv_backward</span><span class="p">(</span>
-                <span class="n">output_tensor</span><span class="p">,</span> <span class="n">send_tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_last_stage</span><span class="p">()</span>
-            <span class="p">)</span>
-
-
-<span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">p2p_communication</span><span class="o">.</span><span class="n">py</span>
-
-  <span class="k">if</span> <span class="n">recv_prev</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">pipeline_dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;pipeline_dtype must be provided if recv_prev is True&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">tensor_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;tensor_shape must be specified if recv_prev is True. &quot;</span>
-                <span class="s2">&quot;Common tensor_shape is (seq_length, micro_batch_size, hidden_size)&quot;</span>
-            <span class="p">)</span>
-        <span class="n">tensor_recv_prev_func</span> <span class="o">=</span> <span class="n">create_tensor_recv_prev</span>
-
-    <span class="k">if</span> <span class="n">recv_next</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">pipeline_dtype</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;dtype must be provided if recv_next is True&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">tensor_shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-                <span class="s2">&quot;tensor_shape must be specified if recv_next is True. &quot;</span>
-                <span class="s2">&quot;Common tensor_shape is (seq_length, micro_batch_size, hidden_size)&quot;</span>
-            <span class="p">)</span>
-        <span class="n">tensor_recv_next_func</span> <span class="o">=</span> <span class="n">create_tensor_recv_next</span>
-</pre></div>
-</div>
-<ul class="simple">
-<li><p>NPU1 反向执行 Stage1：</p></li>
-</ul>
-<p>同理，NPU1 Stage1 上执行 send_backward_recv_forward 同步等待收到 NPU0
-Stge0 发送 iNPUt_tensor（Forward 2）,NPU1 Stage1 将 iNPUt_tensor（Forward 2）作为 TransformerBlock 执行 forward_step,得到输出 output_tensor。
-<img alt="NPU1 反向传输" src="../_images/10pipeline19.png" /></p>
-<ul class="simple">
-<li><p>NPU0 执行 Stage0</p></li>
-</ul>
-<p>NPU0 等待 send_forward_recv_backward 执行 NPU1 输出 output_grad(B2)，执行 backward_step 输出 iNPUt_tensor_grad（B2），NPU0 num_warmup_mbs=1, num_mbs_remaing=2, i=2，退出 1F1B，进入 cooldown backwrd pass enable_grad_sync 打开模型梯度更新，recv_backward 等待 NPU1 发送最后一个 mbs 的 backward（B3），NPU0 准备更新模型的梯度和参数。</p>
-<p><img alt="NPU1 反向传输" src="../_images/10pipeline20.png" /></p>
-<ul class="simple">
-<li><p>NPU1 执行 Stage1</p></li>
-</ul>
-<p>NPU1 Stage1 执行 send_backward_recv_forward 同步等待 iNPUt(F3),NPU1 num_warmup_mbs=0，num_mbs_remaining=3，进入 1F1B 循环,将 NPU0 Stage0 发送 iNPUt(F3)作为 TransformerBlock 的 iNPUt 计算前向,forward_step()输出 output (F3)执行 backward_step()得到 iNPUt_tensor_grad(B3),send_backward()异步发送 iNPUt_tesnor_grad(B3)给 NPU0。</p>
-<p><img alt="NPU1 反向传输" src="../_images/10pipeline21.png" /></p>
-<ul class="simple">
-<li><p>NPU0 执行 Stage0 后，执行完完整的 iteration</p></li>
-</ul>
-<p>NPU0 等待 cooldown backward 的 recv_backward()获得 NPU1 输出(B3)，执行 backward_step()输出 iNPUt_tensor_grad(B3)，forward_backward_func()返回 LOSS，enable_grad_sync()累加更新模型梯度，finalize_model_grads_func()更新模型参数。</p>
-<p><img alt="NPU1 反向传输" src="../_images/10pipeline22.png" /></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Megatron</span><span class="o">-</span><span class="n">LM</span><span class="o">/</span><span class="n">megatron</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">pipeline_parallel</span><span class="o">/</span><span class="n">schedules</span><span class="o">.</span><span class="n">py</span>
-
-<span class="k">def</span> <span class="nf">get_forward_backward_func</span><span class="p">():</span>
-  <span class="n">pipeline_model_parallel_size</span> <span class="o">=</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">get_pipeline_model_parallel_world_size</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">pipeline_model_parallel_size</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">get_virtual_pipeline_model_parallel_world_size</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">forward_backward_func</span> <span class="o">=</span> <span class="n">forward_backward_pipelining_with_interleaving</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">forward_backward_func</span> <span class="o">=</span> <span class="n">forward_backward_pipelining_without_interleaving</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">forward_backward_func</span> <span class="o">=</span> <span class="n">forward_backward_no_pipelining</span>
-    <span class="k">return</span> <span class="n">forward_backward_func</span>
-
-
-<span class="k">def</span> <span class="nf">forward_backward_pipelining_without_interleaving</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-    <span class="k">def</span> <span class="nf">enable_grad_sync</span><span class="p">():</span>
-        <span class="n">output_tensor_grad</span> <span class="o">=</span> <span class="n">recv_backward</span><span class="p">(</span>
-                        <span class="n">send_tensor_shapes</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_last_stage</span><span class="p">()</span>
-                    <span class="p">)</span>
-
-                    <span class="n">input_tensor_grad</span> <span class="o">=</span> <span class="n">backward_step</span><span class="p">(</span>
-                        <span class="n">input_tensor</span><span class="p">,</span> <span class="n">output_tensor</span><span class="p">,</span> <span class="n">output_tensor_grad</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="n">config</span>
-                    <span class="p">)</span>
-
-                    <span class="n">send_backward</span><span class="p">(</span>
-                        <span class="n">input_tensor_grad</span><span class="p">,</span>
-                        <span class="n">recv_tensor_shapes</span><span class="p">,</span>
-                        <span class="n">config</span><span class="p">,</span>
-                        <span class="n">parallel_state</span><span class="o">.</span><span class="n">is_pipeline_first_stage</span><span class="p">(),</span>
-                    <span class="p">)</span>
-
-                <span class="c1"># Launch any remaining grad reductions.</span>
-                <span class="k">if</span> <span class="n">no_sync_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">enable_grad_sync</span><span class="p">()</span>
-                    <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">grad_sync_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">config</span><span class="o">.</span><span class="n">grad_sync_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-
-            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">finalize_model_grads_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">forward_only</span><span class="p">:</span>
-
-                <span class="c1"># If defer_embedding_wgrad_compute is enabled we need to do the</span>
-                <span class="c1"># weight gradient GEMM&#39;s here.</span>
-                <span class="n">finish_embedding_wgrad_compute</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">embedding_module</span><span class="p">)</span>
-
-                <span class="c1"># Finalize model grads (perform full grad all-reduce / reduce-scatter for</span>
-                <span class="c1"># data parallelism, layernorm all-reduce for sequence parallelism, and</span>
-                <span class="c1"># embedding all-reduce for pipeline parallelism).</span>
-                <span class="n">config</span><span class="o">.</span><span class="n">finalize_model_grads_func</span><span class="p">(</span>
-                    <span class="p">[</span><span class="n">model</span><span class="p">],</span> <span class="n">total_num_tokens</span> <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">calculate_per_token_loss</span> <span class="k">else</span> <span class="kc">None</span>
-                <span class="p">)</span>
-
-            <span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">timers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">config</span><span class="o">.</span><span class="n">timers</span><span class="p">(</span><span class="s1">&#39;forward-backward&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
-
-            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s1">&#39;enable_cuda_graph&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">config</span><span class="o">.</span><span class="n">enable_cuda_graph</span><span class="p">:</span>
-                <span class="n">create_cudagraphs</span><span class="p">()</span>
-
-            <span class="k">return</span> <span class="n">forward_data_store</span>
-</pre></div>
-</div>
 </section>
-<section id="id2">
-<h2>总结与思考<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!
-补充内容</p>
-</section>
-<section id="id3">
-<h2>参考文献<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>https://zhuanlan.zhihu.com/p/650744349</p></li>
-<li><p>https://zhuanlan.zhihu.com/p/701716465</p></li>
-<li><p>https://blog.csdn.net/just_sort/article/details/135981391</p></li>
-<li><p>https://blog.csdn.net/HaoBBNuanMM/article/details/134095326</p></li>
-<li><p>https://github.com/NVIDIA/Megatron-LM</p></li>
-</ul>
+<section id="id16">
+<h2>参考文献：<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
+<p>https://zhuanlan.zhihu.com/p/650744349
+https://zhuanlan.zhihu.com/p/701716465
+https://medium.com/&#64;dpratishraj7991/demystifying-virtualpipeline-parallelism-in-llama-3-model-training-faf2fe7e60e5
+https://blog.csdn.net/just_sort/article/details/135981391
+https://blog.csdn.net/HaoBBNuanMM/article/details/134095326
+https://github.com/NVIDIA/Megatron-LM</p>
 </section>
 </section>
 
@@ -1674,7 +1301,7 @@ Stge0 发送 iNPUt_tensor（Forward 2）,NPU1 Stage1 将 iNPUt_tensor（Forward 
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">07.流水并行 PP 基本原理</p>
+        <p class="prev-next-title">08. PP 流水并行原理(DONE)</p>
       </div>
     </a>
     <a class="right-next"
@@ -1702,17 +1329,46 @@ Stge0 发送 iNPUt_tensor（Forward 2）,NPU1 Stage1 将 iNPUt_tensor（Forward 
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream">PipeDream 基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#virtual-pipeline">Virtual pipeline 基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pp">新兴 PP 技术</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream-2bw">PipeDream-2BW</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zb-v-schedule">ZB-V schedule</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hanayo-wave-like-pipeline">Hanayo wave-like pipeline</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream">PipeDream 基本原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">“两段式”流水线并行存在问题：</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b-pipedream">流水并行 1F1B：PipeDream</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">分布式框架里的 PP 实现</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">参考文献</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#virtual-pipeline">Virtual pipeline 基本原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">虚拟化的理解</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">降低空泡率</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vpp">VPP 的通信开销：</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pp">新兴 PP 技术（扩充）</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipedream-2bw">PipeDream-2BW</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">核心思想：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">调度：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#stale">更新语义（1-stale）与优化器</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">显存与吞吐：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">和常见基线对比：</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#zb-v-schedule">ZB-V schedule</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">核心思想：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#v">V 字形调度：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#zero-bubble">何时能做到“Zero-Bubble”</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">内存影响（与 1F1B/可控内存的关系）</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">通信/实现代价</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#f1b-vpp">与 1F1B / VPP 的对比：</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hanayo-wave-like-pipeline">Hanayo wave-like pipeline</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">核心思路：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">气泡/吞吐</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">内存语义：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">通信语义：</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">与 1F1B / VPP 的关系</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">参考文献：</a></li>
 </ul>
   </nav></div>
 
@@ -1746,7 +1402,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 22, 2025.
+  Last updated on Sep 23, 2025.
   <br/>
 </p>
   </div>

@@ -37,4 +37,5 @@ MPI 是集合通信库的鼻祖，英伟达 NVIDIA 大量的参考和借鉴 MPI 
 02XCCL
 04NCCLIntro
 05NCCLAPI
+08HCCLIntro
 ```
