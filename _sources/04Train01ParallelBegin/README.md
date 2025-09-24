@@ -25,6 +25,7 @@
 :maxdepth: 1
 
 01Introduction
+03ContextParallelism
 Code01DDP
 Code02MP
 ```

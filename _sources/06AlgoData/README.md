@@ -50,10 +50,10 @@
 | 手撕 MOE 代码 | 12 单机多卡 MoE  | [PPT](./02MoE/11MOECode.pdf), [视频](https://www.bilibili.com/video/BV1JaR5YSEMN) |
 | 视觉 MoE | 13 视觉 MoE 模型  | [PPT](./02MoE/12MOEFuture.pdf), [视频](https://www.bilibili.com/video/BV1JNQVYBEq7), [文章](./02MoE/12MOEFuture.md) |
 |:sparkling_heart:|:star2:|:sparkling_heart:|
-| MOE 实践 :computer: | 01 基于 Huggingface 实现 MOE 推理任务 | [Markdown](./02MoE/Practice01MOEInfer.md), [Jupyter](./02MoE/notebook/Practice01MOEInfer.ipynb) |
-| MOE 实践 :computer: | 02 从零开始手撕 MoE | [Markdown](./02MoE/Practice02SignalMOE.md), [Jupyter](./02MoE/notebook/Practice02SignalMOE.ipynb) |
-| MOE 实践 :computer: | 03 MoE 从原理到分布式实现 | [Markdown](./02MoE/Practice03IntrtaMOE.md), [Jupyter](./02MoE/notebook/Practice03IntrtaMOE.ipynb) |
-| MOE 实践 :computer: | 04 MoE 分布式性能分析 | [Markdown](./02MoE/Practice04MOEAnalysize.md), [Jupyter](./02MoE/notebook/Practice04MOEAnalysize.ipynb) |
+| MOE 实践 :computer: | 01 基于 Huggingface 实现 MOE 推理任务 | [Markdown](./02MoE/CODE01MOEInfer.md), [Jupyter](./02MoE/notebook/CODE01MOEInfer.ipynb) |
+| MOE 实践 :computer: | 02 从零开始手撕 MoE | [Markdown](./02MoE/CODE02SignalMOE.md), [Jupyter](./02MoE/notebook/CODE02SignalMOE.ipynb) |
+| MOE 实践 :computer: | 03 MoE 从原理到分布式实现 | [Markdown](./02MoE/CODE03IntrtaMOE.md), [Jupyter](./02MoE/notebook/CODE03IntrtaMOE.ipynb) |
+| MOE 实践 :computer: | 04 MoE 分布式性能分析 | [Markdown](./02MoE/CODE04MOEAnalysize.md), [Jupyter](./02MoE/notebook/CODE04MOEAnalysize.ipynb) |
 
 - [**03 大模型创新架构**](./03NewArch/)：大模型新架构如 SSM、MMAMA、Linear Transformer、RKWV 在多个方面进行了创新与优化。它通过更高效的并行计算策略，提升了模型训练和推理的速度；采用新的网络结构设计，增强了模型对复杂数据的理解能力；同时引入了更灵活的参数共享机制，在不降低性能的前提下降低了计算资源消耗。此外，新架构还注重与实际应用场景的结合，能够更好地适应不同任务需求，为 AI 的广泛应用提供了更强大的技术支撑。
 

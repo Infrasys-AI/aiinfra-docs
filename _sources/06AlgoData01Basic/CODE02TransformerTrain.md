@@ -1,8 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra  )版权许可-->
 
-# CODE02:从零实现 Transformer(DONE)
+# CODE02: 从零实现 Transformer 训练(DONE)
 
-author by: ZOMI
+> author by: 韩钰, ZOMI
 
 本实验将完全从零开始，手撕最简 Transformer 从零实现《Attention Is All You Need》架构。仅使用 PyTorch 张量操作，不依赖任何高级封装的 Transformer 接口，这样能让我们摆脱框架黑箱的束缚，直观看到每个矩阵运算的细节。通过这个"造轮子"的过程，我们将深入理解 Transformer 的数据流动和核心机制——比如注意力权重如何计算、不同层之间的信息如何传递，为后续学习更复杂的大模型打下坚实基础。
 
@@ -11,6 +11,7 @@ author by: ZOMI
 ## 1. 环境准备与导入
 
 首先，我们导入必要的库。注意，我们只使用 PyTorch 的基础张量操作，不依赖任何高级 Transformer 实现。这种做法的目的是剥离框架封装的细节，直接操作张量来构建模型，让我们能清晰追踪每一步的计算过程和数据形态变化。
+
 
 ```python
 import torch
@@ -21,8 +22,8 @@ import numpy as np
 from copy import deepcopy
 
 # 设置随机种子以确保结果可重现
-torch.manual_seed(42)
-np.random.seed(42)
+torch.manual_seed(142)
+np.random.seed(142)
 ```
 
 ## 2. 基础组件实现
@@ -36,6 +37,7 @@ np.random.seed(42)
 $$\text{Embedding}(i) = W[i, :]$$
 
 其中 $W \in \mathbb{R}^{V \times d_{\text{model}}}$ 是可学习的嵌入矩阵，$V$ 是词汇表大小。
+
 
 ```python
 class Embedding(nn.Module):
@@ -82,6 +84,7 @@ PE_{(pos, 2i+1)} &= \cos\left(\frac{pos}{10000^{2i/d_{\text{model}}}}\right)
 $$
 
 其中 $pos$ 是位置，$i$ 是维度索引。不同频率的三角函数让模型能区分不同尺度的位置差异（低频分量捕捉长距离位置关系，高频分量捕捉短距离关系）。
+
 
 ```python
 class PositionalEncoding(nn.Module):
@@ -145,6 +148,7 @@ $$
 
 公式中除以 $\sqrt{d_k}$（$d_k$ 是 Query 和 Key 的维度）是关键设计：当 $d_k$ 较大时，$QK^T$ 的结果方差会很大，导致 softmax 函数输出过于陡峭（大部分概率集中在极少数位置），梯度难以传播。缩放操作能有效缓解这一问题，让注意力分布更平缓、梯度更稳定。
 
+
 ```python
 def attention(query, key, value, mask=None, dropout=None):
     """
@@ -195,6 +199,7 @@ $$
 $$
 
 通过将 $Q, K, V$ 投影到 $h$ 个低维子空间（每个子空间维度为 $d_k = d_{\text{model}}/h$），并行计算注意力后再拼接，模型能以相近的计算成本捕捉更丰富的关联模式，比单头注意力更高效。
+
 
 ```python
 class MultiHeadAttention(nn.Module):
@@ -265,7 +270,8 @@ $$
 \text{FFN}(x) = \max(0, xW_1 + b_1)W_2 + b_2
 $$
 
-公式中，第一层线性变换将维度从 $d_{\text{model}}$ 扩展到 $d_{ff}$（通常是 $4 \times d_{\text{model}}$），通过增大维度提供更强的特征变换能力；ReLU 激活函数引入非线性，让模型能学习复杂的映射关系；第二层线性变换将维度还原，保证前后层维度兼容。
+公式中，第一层线性变换将维度从 $d_{\text{model}}$ 扩展到 $d_{ff}$（通常是 $4 	imes d_{\text{model}}$），通过增大维度提供更强的特征变换能力；ReLU 激活函数引入非线性，让模型能学习复杂的映射关系；第二层线性变换将维度还原，保证前后层维度兼容。
+
 
 ```python
 class FeedForward(nn.Module):
@@ -306,6 +312,7 @@ $$
 
 需要注意的是，这里的实现是先归一化再经过子层（$x + \text{Sublayer}(\text{Norm}(x))$），与原始论文的顺序（先子层再归一化）略有不同，但实践中效果相近，且更利于训练。
 
+
 ```python
 class SublayerConnection(nn.Module):
     """
@@ -341,6 +348,7 @@ class SublayerConnection(nn.Module):
 ### 3.1 编码器层 (Encoder Layer)
 
 编码器层包含一个多头自注意力机制和一个前馈网络，每个子层都有残差连接和层归一化。自注意力机制让编码器能"理解"输入序列内部的关联（比如句子中词语之间的修饰关系），前馈网络则对这些关联信息进行加工提炼。通过堆叠多个这样的层，模型能从浅到深逐步提取输入序列的抽象特征——底层可能关注局部词汇关联，高层则捕捉全局语义结构。
+
 
 ```python
 class EncoderLayer(nn.Module):
@@ -382,6 +390,7 @@ class EncoderLayer(nn.Module):
 解码器层包含两个多头注意力机制（自注意力和编码器-解码器注意力）和一个前馈网络。与编码器不同，解码器的核心任务是"生成"目标序列，因此需要两种注意力：自注意力让解码器关注已生成的目标序列部分（比如翻译时已生成的前半句话），且通过掩码确保不会提前看到未来的信息；编码器-解码器注意力则让解码器"参考"编码器输出的源序列信息（比如翻译时对照原文），建立源与目标的关联。
 
 ![](../images/06AlgoData01Basic/Practice02TransformerTrain03.png)
+
 
 ```python
 class DecoderLayer(nn.Module):
@@ -431,6 +440,7 @@ class DecoderLayer(nn.Module):
 
 编码器由多个编码器层堆叠而成。输入序列经过嵌入和位置编码后，依次通过所有编码器层，最终输出一个包含全局上下文信息的"记忆"张量（memory）。堆叠层数 $N$（原始论文中为 6）是重要超参数：层数太少，模型难以捕捉复杂模式；层数太多，则可能过拟合且训练成本增加。最终的层归一化确保输出分布稳定，便于解码器使用。
 
+
 ```python
 class Encoder(nn.Module):
     """
@@ -464,6 +474,7 @@ class Encoder(nn.Module):
 ### 4.2 解码器 (Decoder)
 
 解码器由多个解码器层堆叠而成。与编码器类似，解码器通过多层处理逐步优化目标序列的表示，但每一层都同时依赖于已生成的目标序列和编码器输出的 memory。这种设计让解码器能在生成过程中不断"回顾"源序列信息，确保输出与输入的一致性（比如翻译时忠实于原文意思）。
+
 
 ```python
 class Decoder(nn.Module):
@@ -500,6 +511,7 @@ class Decoder(nn.Module):
 ## 5. 完整 Transformer 模型
 
 现在我们将所有组件组合成完整的 Transformer 模型。Transformer 的整体架构遵循"编码-解码"范式：编码器将源序列压缩为上下文向量（memory），解码器则基于 memory 和目标序列前缀生成下一个 token。这种架构的优势在于并行性——编码器和解码器内部的注意力计算可以并行处理整个序列，而不像 RNN 那样必须按顺序计算，极大提升了训练效率。
+
 
 ```python
 class Transformer(nn.Module):
@@ -559,6 +571,7 @@ class Transformer(nn.Module):
 
 生成器将解码器输出投影到词汇表空间，是模型的输出层。对于序列生成任务（如翻译、文本生成），生成器的作用是将解码器输出的隐藏状态转换为每个 token 的概率分布，便于后续采样或计算损失。log_softmax 函数不仅能将输出转换为概率分布，还能与 NLLLoss 配合高效计算交叉熵损失。
 
+
 ```python
 class Generator(nn.Module):
     """
@@ -587,6 +600,7 @@ class Generator(nn.Module):
 
 在序列模型中，掩码用于屏蔽无效信息。`subsequent_mask` 生成的下三角掩码专门用于解码器自注意力，确保在预测第 $i$ 个 token 时，只能看到前 $i-1$ 个已生成的 token，避免"偷看"未来信息，这是 autoregressive（自回归）生成的核心机制。
 
+
 ```python
 def subsequent_mask(size):
     """
@@ -607,6 +621,7 @@ def subsequent_mask(size):
 ### 6.3 模型构建函数
 
 `make_model` 函数封装了模型的完整构建流程，通过参数控制模型规模（层数、维度、头数等）。值得注意的是，参数初始化使用了 Xavier 均匀分布，这种初始化方式能让各层的输入和输出方差尽可能一致，有利于深层网络的训练。
+
 
 ```python
 def make_model(src_vocab, tgt_vocab, N=6, d_model=512, d_ff=2048, h=8, dropout=0.1):
@@ -630,7 +645,7 @@ def make_model(src_vocab, tgt_vocab, N=6, d_model=512, d_ff=2048, h=8, dropout=0
     ff = FeedForward(d_model, d_ff, dropout)
     
     # 创建位置编码
-    position = PositionalEncoding(d_model, dropout)
+    position = PositionalEncoding(d_model, dropout=dropout)
     
     # 创建模型
     model = Transformer(
@@ -655,6 +670,7 @@ def make_model(src_vocab, tgt_vocab, N=6, d_model=512, d_ff=2048, h=8, dropout=0
 
 我们创建一个简单的复制任务来测试模型。复制任务要求模型将输入序列原样输出，虽然简单，但能有效验证 Transformer 的核心能力——捕捉序列的顺序依赖关系。选择这种任务的原因是：它目标明确（输入即目标），能直观反映模型是否学会了序列映射；且序列长度、词汇表大小可控，便于快速调试。
 
+
 ```python
 def data_gen(batch_size, n_batches, seq_len, vocab_size):
     """
@@ -676,15 +692,13 @@ def data_gen(batch_size, n_batches, seq_len, vocab_size):
         # 目标序列与源序列相同（复制任务）
         tgt = src.clone()
 
-        # 设置填充为 0
-        src[:, 0] = 1  # 确保序列开始标记
-
         yield src, tgt
 ```
 
 ### 7.2 训练循环
 
 训练循环实现了模型的迭代优化过程。需要注意的是，目标序列在输入时采用了"左移"（tgt[:, :-1]），而损失计算则基于"右移"的目标（tgt[:, 1:]），这是序列生成任务的标准做法——用第 $i$ 个 token 预测第 $i+1$ 个 token。掩码的应用确保了训练过程与推理过程的一致性（解码器同样无法看到未来信息）。
+
 
 ```python
 def run_epoch(model, data_iter, loss_fn, optimizer):
@@ -705,16 +719,25 @@ def run_epoch(model, data_iter, loss_fn, optimizer):
     n_batches = 0
     
     for src, tgt in data_iter:
-        # 创建掩码：src_mask 屏蔽填充，tgt_mask 屏蔽未来信息
-        src_mask = torch.ones(src.size(0), 1, src.size(1))
-        tgt_mask = subsequent_mask(tgt.size(1)).expand(tgt.size(0), -1, -1)
-        
-        # 前向传播：目标序列左移作为输入（用 tgt[:-1]预测 tgt[1:]）
-        out = model(src, tgt[:, :-1], src_mask, tgt_mask[:, :-1, :-1])
-        
-        # 计算损失：将输出和目标展平为二维（batch*seq_len, vocab）
-        loss = loss_fn(out.contiguous().view(-1, out.size(-1)), 
-                      tgt[:, 1:].contiguous().view(-1))
+        device = next(model.parameters()).device
+        src = src.to(device)
+        tgt = tgt.to(device)
+
+        # 构造 BOS 对齐：tgt_in = [BOS] + tgt[:-1]
+        BOS = torch.zeros(tgt.size(0), 1, dtype=tgt.dtype, device=device)  # 0 作为 BOS/Pad
+        tgt_in = torch.cat([BOS, tgt[:, :-1]], dim=1)
+
+        # 掩码（布尔）并放到同设备
+        src_mask = torch.ones(src.size(0), 1, src.size(1), dtype=torch.bool, device=device)
+        tgt_mask = subsequent_mask(tgt_in.size(1)).to(device)
+
+        # 前向传播
+        hidden = model(src, tgt_in, src_mask, tgt_mask)
+        logits = model.generator(hidden)
+
+        # 计算损失：预测 tgt 的每个位置（不再右移标签）
+        loss = loss_fn(logits.contiguous().view(-1, logits.size(-1)),
+                       tgt.contiguous().view(-1))
         
         # 反向传播与参数更新
         optimizer.zero_grad()  # 清零梯度
@@ -730,6 +753,7 @@ def run_epoch(model, data_iter, loss_fn, optimizer):
 ### 7.3 测试模型
 
 为了快速验证模型，我们使用了较小的超参数（如 d_model=32，N=2），这在保证模型功能完整的同时，大幅缩短了训练时间。测试结果显示模型能完美复制输入序列，说明我们实现的 Transformer 正确捕捉了序列的位置信息和依赖关系——注意力机制成功学会了"关注"输入序列的对应位置，位置编码正确传递了序列顺序，各层组件协同工作实现了预期功能。
+
 
 ```python
 # 设置超参数
@@ -748,14 +772,13 @@ model = make_model(vocab_size, vocab_size, N, d_model, d_ff, h, dropout)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001, betas=(0.9, 0.98), eps=1e-9)
 loss_fn = nn.NLLLoss(ignore_index=0)  # 忽略填充位置的损失
 
-# 生成训练数据
-train_data = data_gen(30, 20, seq_len, vocab_size)
-
-# 训练模型
+# 训练模型（注意：生成器一次性可迭代，需每个 epoch 重新创建）
 print("开始训练...")
-for epoch in range(10):
+for epoch in range(20):
+    train_data = data_gen(30, 100, seq_len, vocab_size)
     loss = run_epoch(model, train_data, loss_fn, optimizer)
-    print(f"Epoch {epoch+1}, Loss: {loss:.4f}")
+    if (epoch + 1) % 2 == 0:
+        print(f"Epoch {epoch+1}, Loss: {loss:.4f}")
 
 print("训练完成!")
 
@@ -763,48 +786,51 @@ print("训练完成!")
 print("\n 测试模型...")
 model.eval()
 with torch.no_grad():  # 推理时关闭梯度计算
+    device = next(model.parameters()).device
     # 创建一个测试样本
-    test_src = torch.randint(1, vocab_size, (1, seq_len))
+    test_src = torch.randint(1, vocab_size, (1, seq_len)).to(device)
     test_tgt = test_src.clone()
-    
-    # 创建掩码
-    src_mask = torch.ones(1, 1, seq_len)
-    tgt_mask = subsequent_mask(seq_len).expand(1, -1, -1)
-    
+
+    # 构造 tgt_in 带 BOS
+    BOS = torch.zeros(1, 1, dtype=test_tgt.dtype, device=device)
+    tgt_in = torch.cat([BOS, test_tgt[:, :-1]], dim=1)
+
+    # 掩码（布尔）
+    src_mask = torch.ones(1, 1, seq_len, dtype=torch.bool, device=device)
+    tgt_mask = subsequent_mask(tgt_in.size(1)).to(device)
+
     # 进行预测
-    prediction = model(test_src, test_tgt[:, :-1], src_mask, tgt_mask[:, :-1, :-1])
-    predicted_ids = prediction.argmax(dim=-1)  # 取概率最大的 token 作为预测结果
-    
-    print("输入序列:", test_src[0].numpy())
-    print("目标序列:", test_tgt[0, 1:].numpy())  # 偏移一位
-    print("预测序列:", predicted_ids[0].numpy())
-    print("匹配程度:", (predicted_ids[0].numpy() == test_tgt[0, 1:].numpy()).mean())
+    hidden = model(test_src, tgt_in, src_mask, tgt_mask)
+    logits = model.generator(hidden)
+    predicted_ids = logits.argmax(dim=-1)
+
+    print("输入序列:", test_src[0].cpu().numpy())
+    print("目标序列:", test_tgt[0].cpu().numpy())
+    print("预测序列:", predicted_ids[0].cpu().numpy())
+    print("匹配程度:", (predicted_ids[0].cpu().numpy() == test_tgt[0].cpu().numpy()).mean())
 ```
 
-执行上述代码，我们得到以下输出：
-
-    ```
     开始训练...
-    Epoch 1, Loss: 2.3942
-    Epoch 2, Loss: 1.7286
-    Epoch 3, Loss: 1.2715
-    Epoch 4, Loss: 0.8723
-    Epoch 5, Loss: 0.6031
-    Epoch 6, Loss: 0.4258
-    Epoch 7, Loss: 0.3067
-    Epoch 8, Loss: 0.2273
-    Epoch 9, Loss: 0.1736
-    Epoch 10, Loss: 0.1357
+    Epoch 2, Loss: 1.8439
+    Epoch 4, Loss: 1.3633
+    Epoch 6, Loss: 0.9743
+    Epoch 8, Loss: 0.5867
+    Epoch 10, Loss: 0.3371
+    Epoch 12, Loss: 0.2234
+    Epoch 14, Loss: 0.1632
+    Epoch 16, Loss: 0.1328
+    Epoch 18, Loss: 0.1105
+    Epoch 20, Loss: 0.0939
     训练完成!
-
-    测试模型...
-    输入序列: [5 8 5 5 8 7 2 7 6 9]
-    目标序列: [5 8 5 5 8 7 2 7 6 9]
-    预测序列: [5 8 5 5 8 7 2 7 6 9]
+    
+     测试模型...
+    输入序列: [ 7  9  4 10  5  7  6  8  1  1]
+    目标序列: [ 7  9  4 10  5  7  6  8  1  1]
+    预测序列: [ 7  9  4 10  5  7  6  8  1  1]
     匹配程度: 1.0
-    ```
 
-实现的 Transformer 模型能够成功学习简单的复制任务，经过 10 个 epoch 的训练，模型损失从 2.39 降至 0.14，表明模型有效学习了输入到输出的映射关系。测试时，模型能够完美复制输入序列，匹配程度达到 100%，验证了我们从零实现的 Transformer 架构的正确性。
+
+实现的 Transformer 模型能够成功学习简单的复制任务，经过 20 个 epoch 的训练，模型损失从 1.8439 降至 0.0939，表明模型有效学习了输入到输出的映射关系。测试时，模型能够完美复制输入序列，匹配程度达到 100%，验证了我们从零实现的 Transformer 架构的正确性。
 
 ## 8. 总结
 

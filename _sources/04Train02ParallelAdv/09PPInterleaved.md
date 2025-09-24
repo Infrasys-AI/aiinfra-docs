@@ -1,80 +1,74 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 09. 流水并行 1F1B 及衍生算法
+# 09. 流水并行衍生算法
 
 > Author by：高亮
 
-在大模型训练中，并行技术是突破硬件算力与显存瓶颈的核心手段，而 PP 凭借对模型层的纵向切分能力，成为大规模训练的关键支柱。传统 GPipe 虽通过 micro-batch 切分摊薄气泡，却面临尾部气泡先天存在、激活显存随微批数 m 线性增长的难题，当 m 受硬件限制时，流水线深度增加反而会降低吞吐效率。
+在大模型训练中，并行技术是突破硬件算力与显存瓶颈的核心手段，而**流水并行（Pipeline Parallelism，简称PP）** 凭借对模型层的纵向切分能力，成为大规模训练的关键支柱。传统GPipe虽通过micro-batch（微批）切分摊薄气泡，但面临尾部气泡先天存在、激活显存随**micro-batch数量（记为m）** 线性增长的难题；当m受硬件显存限制时，流水线深度增加反而会降低吞吐效率。
 
-为突破这一困境，1F1B 即 PipeDream 应运而生，通过让 micro-batch 反向计算尽早折返并与后续前向交错，将激活驻留时间从 O(m) 压缩至 O(p)，大幅降低显存压力。在此基础上，Virtual Pipeline、PipeDream-2BW、ZB-V 等衍生技术进一步优化气泡率与通信开销。本文将从原理出发，拆解这些主流流水并行技术的设计逻辑与优势，为大模型高效并行训练提供技术参考。
+为突破这一困境，**One-Forward-One-Backward（1F1B，即PipeDream）** 应运而生：通过让micro-batch的反向计算尽早折返并与后续前向计算交错，将激活驻留时间从$O(m)$压缩至$O(p)$（$p$为流水线深度，即切分后的stage数量），大幅降低显存压力。在此基础上，**虚拟流水并行（Virtual Pipeline Parallelism，简称VPP）**、PipeDream-2BW、Zero-Bubble PP（简称ZB-V）等衍生技术进一步优化气泡率与通信开销。本文将从原理出发，拆解这些主流流水并行技术的设计逻辑与优势，为大模型高效并行训练提供技术参考。
 
-## PipeDream 基本原理
+## PipeDream 算法
 
-### “两段式”流水线并行存在问题：
+### 两段式问题
 
-先全前向、再全反向的两段式调度流水线技术，以朴素流水和 Gpipe 为代表，参见[图 1](#fig1)。朴素流水相当于 $m{=}1$，GPipe 则把 mini-batch 切成 $m$ 个 micro-batch 并在前/反两个阶段各自成流水。两段式流水调度的核心问题在于结构性气泡不可消除、只能用 $m$ 摊薄：总空泡时间为 $t_{\text{bubble}}=(p-1)(t_f+t_b)$，理想计算时间为 $t_{\text{ideal}}=m(t_f+t_b)$，因此空泡率 $\frac{p-1}{m+p-1}$，利用率 $U=\frac{m}{m+p-1}$。当 $m$ 由于硬件内存有限而受限时，即使加深流水线 $p$ 也会让头尾气泡相对占比上升，吞吐反而不增。此外，两段式流水调度还存在以下问题：
+先全前向、再全反向的两段式调度流水线技术，以朴素流水和GPipe为代表。
 
-- **尾部气泡先天存在**。因为前/反向两个阶段被硬性分隔，反向无法与后续前向交错，cooldown 的尾巴完全暴露，最多只能靠 $m$ 变大来“摊薄”。
-- **通信–计算重叠受限**。前/反向阶段内可以把激活/梯度传输与算子计算重叠，但跨阶段无法把反向藏进下一轮前向，整体关键路径仍包含两段各自的 warmup/cooldown 开销，单步时延为 $(m+p-1)(t_f) + (m+p-1)(t_b)$。
-- **显存与 $m$ 线性冲突**。为等反向传输、stage 必须同时长期保留本段 **$m$** 份前向激活，峰值近似 $M^{(i)}_{\text{act,peak}}\!\approx m\,L_i A_{\text{layer}}$，从而限制 $ m $ 的上限。
-
-$$
- M_{\text{peak}} \;\approx\; \underbrace{P_{\max}}_{\text{参数系}} \;+\; \underbrace{\max_i \big(m L_i A_{\text{layer}}\big)}_{\text{激活系}}\;\;\propto\;\; \text{Params} + \text{Activations}\times m.
-$$
-
-- **微批切分的边际收益递减**。增大 $m$ 还会引入更密的启动/同步开销与更小的 per-kernel 批量，可能抵消部分吞吐收益。综合来看，“两段式”PP 的瓶颈是：要效率就要大 $m$，但大 $m$ 又受激活显存与系统长尾约束——这正是后续更先进调度试图突破的根因。
-
-<a id="fig1"></a>
 ![两段式流水原理](../images/04Train02ParallelAdv/10pipeline01.png)
-**图 1** 两段式流水原理
 
-### 流水并行 1F1B：PipeDream
+朴素流水相当于$m{=}1$（即不切分micro-batch），GPipe则把mini-batch（迷你批）切成$m$个micro-batch，并在前向、反向两个阶段内各自形成流水。两段式流水调度的核心问题在于**结构性气泡不可消除**，只能通过增大$m$摊薄；当$m$因硬件内存有限而受限时，即使加深流水线深度$p$，头尾气泡的相对占比也会上升，导致吞吐不增反降。此外，两段式流水调度还存在以下问题：
 
-1F1B 的核心是让每个 micro-batch 的反向尽早折返并与后续前向交错。与两段式：先全前向、再全反调度过程不同，1F1B 在 warmup 完成后直接进入稳态：末段 stage 一旦完成某个 micro-batch 的前向，就立即启动该 micro-batch 的反向（因此为 1F1B 即 one-forward-one-backward）；与此同时，前端 stage 继续为后续 micro-batch 做前向，如[图 2](#fig2)所示。这样，反向梯度沿着流水线向前回传，各 stage 在时间线上呈现出 F, B, F, B… 的交替节奏，仅在开头/结尾保留不可避免的 warmup/cooldown。由于反向被尽早触发，同一份激活从“产生到被消耗”的距离由 GPipe 的 $O(m)$（要等全前向结束）降为 $O(p)$（只需等反向折返到本段），显著缩短驻留时间。
+- **尾部气泡先天存在**：由于前向、反向两个阶段被硬性分隔，反向计算无法与后续前向计算交错，流程收尾阶段（cooldown）的尾部气泡完全暴露，最多只能通过增大$m$来“摊薄”气泡占比。
+- **通信-计算重叠受限**：前向或反向阶段内部，可将激活/梯度传输与算子计算重叠，但跨阶段无法把反向计算“藏进”下一轮前向计算；整体关键路径仍包含两段流程各自的启动（warmup）、收尾（cooldown）开销，单步时延为$(m+p-1)(t_f) + (m+p-1)(t_b)$（$t_f$为单个micro-batch在单个stage的前向时间，$t_b$为反向时间）。
+- **显存与$m$线性冲突**：为等待反向传输，每个stage必须长期保留本段的$m$份前向激活；激活峰值近似为$M^{(i)}_{\text{act,peak}}\!\approx m\,L_i A_{\text{layer}}$（$L_i$为第$i$段包含的模型层数，$A_{\text{layer}}$为单一层的激活张量大小），这直接限制了$m$的上限。
 
->理解： “激活从产出到被消耗的距离”理解为：该激活在内存里需要等待多少个流水“时隙（slot）” 才会被本段的反向读取并释放。对比 GPipe（两段式）与 1F1B（交错式），这个等待里是否包含“要等完全部 $m$ 个 micro-batch 的前向”是关键差异。设单个 stage 的前/反向各占 1 个时隙（便于计数），第 $i$ 段在前向处理第 $j$ 个 micro-batch 时产生活动张量。
-> * **GPipe（先全前向、再全反向）**
-  这份激活要等所有前向都做完，反向阶段才开始；随后还要等反向从末段折返到第 $i$ 段，并轮到编号 $j$ 的样本。等待时隙近似：
-  $$
-  \Delta t_{\text{GPipe}}(i,j)\;\approx\;
-  \underbrace{(m+p-1)}_{\text{等前向阶段结束}}
-  +\underbrace{(p-1-i)}_{\text{反向回传到第 }i\text{ 段}}
-  +\underbrace{(m-1-j)}_{\text{倒序轮到第 }j\text{ 个样本}}
-  \;-\;\underbrace{(i+j)}_{\text{激活产生时刻}}
-  \;=\;\mathcal{O}(m)\;+\;\mathcal{O}(p).
-  $$
-  核心在第一项：必须先等完全部 $m$ 个 micro-batch 的前向，因此主导量级是 $\mathcal{O}(m)$。
-> * **1F1B（One-Forward–One-Backward）**
-  末段对第 $j$ 个样本一做完前向就立刻启动该样本的反向，不再等待其它样本的前向完成；反向只需沿流水深度折返到第 $i$ 段即可：
-  $$
-  \Delta t_{\text{1F1B}}(i,j)\;\approx\;
-  \underbrace{(p-1)}_{\text{等末段拿到该样本}}
-  +\underbrace{(p-1-i)}_{\text{反向回传到第 }i\text{ 段}}
-  \;-\;\underbrace{i}_{\text{激活产生时刻的相位}}
-  \;=\;\mathcal{O}(p).
-  $$
-  没有“等完整个 $m$”这项，量级与流水深度 $p$ 有关，而与 $m$ 无关。
+整体峰值显存公式可表示为：
 
-> 若取 $p=4,\;m=8$，看 $ i=0 $ 段、样本 $j=0$ 的激活，对于 GPipe 来说，时延为：$\Delta t_{\text{GPipe}}\approx (8+4-1)+(4-1-0)+(8-1-0)-(0+0)=21$ 个时隙，随 $m$ 增大而变长。对于 1F1B 来说，时延为：$\Delta t_{\text{1F1B}}\approx (4-1)+(4-1-0)-0=6$ 个时隙，与 $m$ 无关。GPipe 单段需同时保留约 $m$ 份激活（峰值 $\propto m$）。1F1B 单段保留约与流水深度相关的少量份数（峰值 $\propto p$）。这就是“由 $\mathcal{O}(m)$ 降到 $\mathcal{O}(p)$，驻留时间缩短，从而激活峰值显存显著下降”的精确含义。
+$$
+ M_{\text{peak}} \;\approx\; \underbrace{P_{\max}}_{\text{参数系（单段最大参数占用）}} \;+\; \underbrace{\max_i \big(m L_i A_{\text{layer}}\big)}_{\text{激活系（各段激活峰值最大值）}}\;\;\propto\;\; \text{Params（参数总量）} + \text{Activations（单段激活量）}\times m.
+$$
 
+- **微批切分的边际收益递减**：增大$m$会引入更密集的启动/同步开销，同时减小单个计算核（per-kernel）的批量，可能抵消部分吞吐收益。综合来看，“两段式”PP的瓶颈在于：要提升效率需增大$m$，但大$m$又受激活显存与系统长尾开销约束——这正是后续更先进调度方案试图突破的根本原因。
 
-这一调度直接改写了动态峰值内存的量纲：若不做重计算（checkpointing 关闭），GPipe 的第 $i$ 段在前向结束时需同时保留 $m$ 份可反向激活，峰值近似 $m\,L_i A_{\text{layer}}$；而在 1F1B 的稳态交错下，每段同时“挂起”的在途 micro-batch 数量受流水深度限制，记常数 $k_i\!\sim\!O(p)$，峰值近似
+### 核心思想
+
+1F1B的核心是**让每个micro-batch的反向计算尽早折返，并与后续micro-batch的前向计算交错**。与两段式“先全前向、再全反向”的调度过程不同，1F1B在warmup完成后直接进入稳态：末段stage一旦完成某个micro-batch的前向计算，就立即启动该micro-batch的反向计算（因此得名1F1B）；与此同时，前端stage继续为后续micro-batch执行前向计算，如下所示。
+
+![1F1B 流水原理](../images/04Train02ParallelAdv/10pipeline02.png)
+
+在这一机制下，反向梯度沿流水线向前回传，各stage在时间线上呈现“F（前向）→ B（反向）→ F → B…”的交替节奏，仅在流程开头/结尾保留不可避免的warmup/cooldown气泡。由于反向计算被尽早触发，同一份激活“从产生到被消耗”的时间距离，由GPipe的$O(m)$（需等所有micro-batch前向完成）降至$O(p)$（只需等反向计算折返到当前stage），显著缩短激活驻留时间。
+
+末段stage对第$j$个micro-batch完成前向计算后，立即启动该micro-batch的反向计算，无需等待其他micro-batch；反向计算仅需沿流水线深度$p$折返到第$i$段。等待时隙近似为：
+
+$$
+\Delta t_{\text{1F1B}}(i,j)\;\approx\;
+\underbrace{(p-1)}_{\text{等末段拿到该micro-batch}}
++\underbrace{(p-1-i)}_{\text{反向回传到第 }i\text{ 段}}
+\;-\;\underbrace{i}_{\text{激活产生时刻的相位}}
+\;=\;\mathcal{O}(p).
+$$
+
+无“等完全部$m$个micro-batch”的项，等待时长仅与流水线深度$p$相关，与$m$无关。
+
+若不启用重计算，GPipe的第$i$段stage在前向结束时需同时保留$m$份可反向激活，峰值近似$m\,L_i A_{\text{layer}}$；而1F1B在稳态交错下，每段stage同时“挂起”的在途micro-batch数量受$p$限制（记常数$k_i\!\sim\!O(p)$），激活峰值近似为：
 
 $$
 M^{(i)}_{\text{act, peak}} \approx k_i \cdot L_i \cdot A_{\text{layer}}
 \quad\text{（无重算）},
 $$
 
-若开启梯度检查点，仅长期保留段边界激活，则
+若启用重计算，激活峰值近似为：
 
 $$
 M^{(i)}_{\text{act, peak}} \approx k_i \cdot A_{\text{boundary}} + \alpha\,L_i A_{\text{layer}}
-\quad\text{（有重算）}.
+\quad\text{（有重算）},
 $$
 
-对比可见，1F1B 将激活峰值从 $\mathcal{O}(m)$ 压到 $\mathcal{O}(p)$，这正是其“先天降低显存压力”的根因：即使在相同 $m$ 下更省显存，或者在相同显存下允许把 $m$ 调得更大，从而进一步摊薄气泡、提升吞吐。
+其中$A_{\text{boundary}}$为stage边界的激活张量大小，$\alpha$为重计算引入的激活系数（$\alpha<1$）。
 
-但就“气泡”本身而言，定义 $t_{\text{bubble}}=(p-1)(t_f+t_b)$、$t_{\text{ideal}}=m(t_f+t_b)$，则 bubble radio 保持不变，即：
+对比可见，1F1B将激活峰值从$\mathcal{O}(m)$压至$\mathcal{O}(p)$，这是其“先天降低显存压力”的核心原因：即使在相同$m$下，1F1B更省显存；或在相同显存预算下，1F1B允许将$m$调得更大，从而进一步摊薄气泡、提升吞吐。
+
+但需注意：1F1B不直接减少气泡大小本身。定义气泡时间$t_{\text{bubble}}=(p-1)(t_f+t_b)$、理想计算时间$t_{\text{ideal}}=m(t_f+t_b)$，则气泡率（bubble ratio）保持不变：
 
 $$
 \mathit{bubble\ ratio}
@@ -82,54 +76,47 @@ $$
 =\frac{p-1}{m+p-1}.
 $$
 
-这里 $p$ 为流水线深度（stage 数），$m$ 为 micro-batch 数，$t_f,t_b$ 为单个 micro-batch 在单个 stage 的前/反向时间。关键在于 $t_{\text{bubble}}$ 的来源与调度无关：不管是两段式（GPipe）还是交错式（1F1B），都必须经历 $ (p−1) $ 个“warmup/cooldown”的结构性头尾时延；这部分是由有限流水深度决定的不可消除开销，与是否交错无关（即 1F1B）。
+其中$p$为流水线深度（stage数量），$m$为micro-batch数量，$t_f/t_b$为单个micro-batch在单个stage的前/反向时间。关键在于：$t_{\text{bubble}}$的来源与调度方式无关——无论是两段式（GPipe）还是交错式（1F1B），都必须经历$(p−1)$个“warmup/cooldown”的结构性头尾时延，这是由有限流水线深度决定的不可消除开销。
 
-即 1F1B 改善的是内存，而非空泡大小本身。1F1B 把反向尽早折返并与后续前向交错，使单份激活的驻留距离从 $O(m)$（需等全前向）降到 $O(p)$（只等反向折返），从而将峰值激活显存从 $\mathcal{O}(m)$ 压到 $\mathcal{O}(p)$。这并不会改变上式中的 $(p-1)$ 头尾时隙，也就不改变空泡率；但它显著降低峰值显存，允许在相同显存预算下把 $m$ 开得更大，于是 $ bubble\ radio$ 可以通过更大的 $m$ 被进一步压低——这是 1F1B 间接降低空泡占比、提升稳态吞吐的根本机制。
+因此，1F1B的核心改善是**显存占用**，而非气泡大小；但它通过降低显存压力，允许在相同显存预算下增大$m$，进而通过更大的$m$压低气泡率（$\frac{p-1}{m+p-1}$随$m$增大而减小）——这是1F1B间接降低气泡占比、提升稳态吞吐的根本机制。
 
-<a id="fig2"></a>
-![PipeDream 原理](../images/04Train02ParallelAdv/10pipeline02.png)
-**图 2** 1F1B 流水原理
+## Virtual Pipeline 算法
 
-## Virtual pipeline 基本原理
+后续Megatron-LM在1F1B基础上，提出**Interleaved 1F1B（交错式1F1B）**，即**虚拟流水并行（Virtual Pipeline Parallelism，VPP）**，用于进一步削减流水线气泡。其核心并非“通过增大$m$细化流水划分”，而是**在每张物理GPU上引入$v$个“虚拟流水阶段（virtual pipeline stages）”，并通过交错调度（interleaving）填充空闲时间**。
 
+具体机制如下图所示：不同于1F1B“单张GPU仅承担1个或多个连续stage计算”的方案——该方案会导致未执行计算的GPU因等待数据而空闲，VPP采用虚拟化设计：将多个**不相邻**的流水线阶段计算任务，分配给同一张GPU承担；同时通过多个并行线程或CUDA流，在同一张GPU上交错执行不同虚拟阶段的前向/反向计算。这样，GPU在等待上/下游数据的空隙中，可切换到本卡的其他虚拟阶段继续计算，充分利用原本的空闲（idle）时间。
 
-后续 Megatron-LM 在 1F1B 的基础上提出 Interleaved 1F1B，即虚拟流水并行（Virtual Pipeline Parallelism，VPP），用于进一步削减流水线气泡。其核心并非简单的通过增大 $ m $，即流水并行的数量来将流水线划分的更细，降低气泡占比，而是在每张物理 GPU 上引入 $v$ 个“虚拟流水阶段”（virtual pipeline stages）并交错调度（interleaving）：
-
-如[图 3](#fig3)所示，不同于之前的 Pipeline 方案，一台 GPU 设备只承担一个或几个连续流水线阶段的计算任务，这导致了其它 GPU 存在等待数据的情况，因此采用了虚拟化的方法将多个不相邻阶段的流水线计算由同一 GPU 来承担，并通过多个并行线程或 CUDA 流在同一 GPU 上交错进行不同阶段的前向、反向计算，这样就实现了 GPU 在等待上/下游数据的空隙中能切换到本卡的其他虚拟阶段继续计算，充分利用了原本的空等（idle）时间。
-
-<a id="fig3"></a>
 ![VirtualPP 原理](../images/04Train02ParallelAdv/10pipeline04.png)
-**图 3** VPP 原理
 
-### 虚拟化的理解
+### 虚拟化理解
 
-给定总层数 $L_{\text{total}}$、流水线并行度 $p$（物理设备数）、虚拟并行度 $v$（每卡虚拟阶段数），将模型划分为：
+给定模型总层数$L_{\text{total}}$、流水线并行度$p$（物理GPU设备数）、虚拟并行度$v$（每张GPU的虚拟阶段数），VPP将模型划分为$p\times v$个连续、等长的层段，每个层段的长度为：
 
 $$
-p\times v \quad \text{个连续、等长的层段，段长度} \; L_{\text{seg}}=\frac{L_{\text{total}}}{p\,v}.
+L_{\text{seg}}=\frac{L_{\text{total}}}{p\,v}.
 $$
 
-对第 $d\in\{0,\dots,p-1\}$ 张 GPU，分配其虚拟阶段索引：
+对第$d\in\{0,\dots,p-1\}$张GPU，分配的虚拟阶段索引集合为：
 
 $$
 \mathcal{S}_d=\{\,s\mid s\equiv d \ (\mathrm{mod}\ p),\ s\in[0,pv-1]\}.
 $$
 
-虚拟化的对象为流水阶段，因此同一 GPU 负责 $v$ 个不相邻的阶段（跨步映射）。执行时，为 $\mathcal{S}_d$ 中的每个虚拟阶段各开一条 CUDA 流，在 1F1B 语义下交错推进这些更小的前/反片段：当某虚拟阶段因 P2P 传输/上游依赖而空等时，GPU 立即切换到本卡的另一虚拟阶段计算，以此填充原本等待的时隙。
+即虚拟化的对象是“流水阶段”，因此同一张GPU负责$v$个不相邻的虚拟阶段（跨步映射）。执行时，为$\mathcal{S}_d$中的每个虚拟阶段各开启一条CUDA流，在1F1B语义下交错推进这些更小的前/反向计算片段：当某虚拟阶段因P2P传输（跨GPU数据传输）或上游依赖而空等时，GPU立即切换到本卡的另一虚拟阶段执行计算，以此填充原本的空闲时隙。
 
-<a id="fig4"></a>
+### 降低气泡率
+
+在1F1B中，warmup/cooldown过程需要跨越$(p-1)$个固定的流水线阶段（因$p$恒定，即模型纵向切分的stage总数固定）。VPP不减少流水线阶段总数，而是将“每次跨越单张GPU对应的流水线阶段时长”按$1/v$缩短——例如，非VPP场景下跨越单张GPU需执行4个流水线阶段的计算，VPP仅需执行1个虚拟阶段的计算（因单张GPU承担$v=4$个虚拟阶段），即可进入下一张GPU执行下一阶段计算（如图4）。
+
 ![原理](../images/04Train02ParallelAdv/10pipeline03.png)
-**图 4** 虚拟化解释
 
-
-### 降低空泡率
-在 1F1B 中，warmup/cooldown 需要跨越 $(p-1)$ 个总量不变的流水线阶段（因为 $ p $ 恒定，即模型的纵向切分数目确定，总的流水线阶段数目确定）。VPP 并不减少流水线阶段总数，而是把“每次跨越单台设备对应的流水线阶段”按 $1/v$ 缩短（因为单台设备流水线阶段不相邻，若之前跨越单个 GPU 需要跨越 4 个流水线阶段，VPP 仅需跨越 1 个阶段就可以进入下一个 GPU 进行下一阶段流水线计算，[图 4](#fig3)清晰的展示了这一过程）：因此给定不开启 VPP 情况下前/反向时间分别为 $t_f, t_b$，则开启 VPP 后的前/反向时间为：
+若设非VPP场景下，单个stage的前/反向时间分别为$t_f、t_b$，则开启VPP后，单个虚拟阶段的前/反向时间缩短为：
 
 $$
 t_f^{(v)}=\frac{t_f}{v},\qquad t_b^{(v)}=\frac{t_b}{v}.
 $$
 
-于是同样 $(p-1)$ 次跨越的 bubble 时间压缩为
+由此，同样需要跨越$(p-1)$次的气泡时间被压缩为：
 
 $$
 t_{\text{bubble}}^{\text{VPP}}
@@ -137,7 +124,7 @@ t_{\text{bubble}}^{\text{VPP}}
 =\frac{(p-1)(t_f+t_b)}{v}.
 $$
 
-理想工作量不变（$t_{\text{ideal}}=m(t_f+t_b)$），因此空泡率
+理想计算工作量不变（$t_{\text{ideal}}=m(t_f+t_b)$），因此VPP的气泡率为：
 
 $$
 \text{bubble ratio}^{\text{VPP}}
@@ -146,176 +133,149 @@ $$
 =\frac{1}{v}\cdot\frac{p-1}{m}.
 $$
 
-> 直观解释：必须经历的流水线阶段数量仍是 $(p-1)$ 次，但每次只推进 $1/v$ 的前/反向片段，因而总等待时隙宽度按 $1/v$ 缩减；理想算量不变，故空泡率与 $v$ 成反比。
+> 直观解释：VPP中，流水线仍需经历$(p-1)$次跨GPU阶段切换，但每次切换仅需推进$1/v$的前/反向计算片段，因此总等待时隙宽度按$1/v$缩减；理想计算量不变，故气泡率与虚拟并行度$v$成反比。
 
-**总结**
-VPP 的“虚拟化”不是把多张 GPU 合并，而是在每张 GPU 内开出 $v$ 个虚拟流水阶段，并行/交错推动更小的前/反片段以填补时隙。其结果是：在不改变总算量与 1F1B 低驻留优势的前提下，将气泡时间缩小为 $\tfrac{1}{v}$ 倍（$\text{bubble ratio}^{\text{VPP}}=\tfrac{1}{v}\cdot\tfrac{p-1}{m}$），以通信频率 $\times v$ 的代价换取更小的气泡和更高的稳态利用率。
+VPP的“虚拟化”并非合并多张GPU，而是在每张GPU内拆分出$v$个虚拟流水阶段，通过并行/交错推进更小的前/反向片段填补空闲时隙。其最终效果是：在不改变总算量与1F1B低激活驻留优势的前提下，将气泡时间缩小为1F1B的$\tfrac{1}{v}$倍（$\text{bubble ratio}^{\text{VPP}}=\tfrac{1}{v}\cdot\tfrac{p-1}{m}$），但代价是通信频率与通信量均提升$v$倍。
 
-### VPP 的通信开销：
+### VPP 通信开销
 
-通信开销体现在两个方面：通信频率的提升和通信容量的提升。
+VPP的通信开销体现在**通信频率提升**与**通信容量提升**两个方面：
 
-相比于非 VPP 流水线技术，由于每张 GPU 承载了 $v$ 个虚拟流水线阶段，micro-batch 的需要先经过每台设备的第一个虚拟阶段，再循环经过每台设备的第二个虚拟阶段……因此单个 micro-batch 需要以 1F1B 的方式穿过共计 $p\times v$ 个流水线阶段，对于非 VPP 来说仅需穿过 $p$ 个流水线阶段即可。与非 VPP 技术相比，由于 VPP 将相邻的流水线阶段落在不同的 GPU 上，因此在模型前向训练过程的跨 GPU 跃迁次数由之前的 $p-1$ 次增加到 $vp-1$ 次，对于反向过程同理。
+相比于非VPP流水线技术（如1F1B），由于每张GPU承载$v$个虚拟阶段，单个micro-batch需以1F1B的方式穿过$p\times v$个虚拟流水线阶段，而非仅穿过$p$个物理阶段。这导致跨GPU跃迁次数大幅增加：
 
-若设跨越 GPU 通信的激活量大小为 $S$ 字节（梯度大小近似同阶），则：
-* **非 VPP（$v=1$）**：
+- 非VPP场景（$v=1$）：前向/反向过程的跨GPU跃迁次数均为$p-1$次；
+- VPP场景（$v>1$）：前向/反向过程的跨GPU跃迁次数均为$p\,v-1$次（近似$v(p-1)$次）。
 
-  * 前向全路径字节：$(p-1)\,S$
-  * 反向全路径字节：$(p-1)\,S$
-  * 合计：$(p-1)\,2S$ / micro-batch
+若设单次跨GPU通信的激活量为$S$字节（梯度大小与激活量同阶），则两类场景的通信量对比为：
+
+!!!!!!!!
+1）看能不能通过画图来表示出来，丑没关系，重要是方便理解。
+2）将 VPP 通信开销的 “文字列表” 改为 “对比表格”，更符合博客阅读习惯：
+
+* **非VPP（$v=1$）**：
+  * 前向全路径通信字节：$(p-1)\,S$
+  * 反向全路径通信字节：$(p-1)\,S$
+  * 单个micro-batch合计通信字节：$(p-1)\times 2S$
+
 * **VPP（$v>1$）**：
+  * 前向全路径通信字节：$(p\,v-1)\,S \approx v(p-1)S$
+  * 反向全路径通信字节：同上（$(p\,v-1)\,S$）
+  * 单个micro-batch合计通信字节：$v\,(p-1)\times 2S$
 
-  * 前向：$(p\,v-1)\,S \approx v(p-1)S$
-  * 反向：同上
-  * 合计：$v\,(p-1)\,2S$ / micro-batch
-> 结论：与非 VPP（$v{=}1$）相比，通信频率 $\times v$，总字节量 $\times v$。
+与非VPP（$v{=}1$）相比，VPP的通信频率提升$v$倍，总通信字节量也提升$v$倍——即VPP以“通信开销×$v$”为代价，换取“气泡率÷$v$”的收益。
 
+## PipeDream-2BW 算法
 
-## 新兴 PP 技术（扩充）
+### 核心思想
 
+在不执行周期性flush（流程中断）的前提下，兼顾高吞吐与低显存，同时尽量贴近数据并行的权重更新语义。将1F1B调度与**双缓冲权重（2-Buffered Weights，简称2BW）**、**梯度合并（coalescing）** 结合：
 
-### PipeDream-2BW
+1. 每个stage仅保留两份权重版本——`current`（当前正在使用的权重版本）与`shadow`（待更新的权重版本），而非原始PipeDream可能需要的最多$p$份（$p$为流水线深度）；
+2. 对同一micro-batch的前向/反向计算，严格使用同一份权重（消除“权重版本不一致”问题）；
+3. 权重更新采用“1-stale语义”（即更新时使用上一批次的梯度），避免flush引起的流程停顿。
 
 ![PipeDream-2BW 原理](../images/04Train02ParallelAdv/10pipeline05.png)
 
+### 调度机制
 
-#### 核心思想：
+* 基础调度逻辑：仍遵循1F1B规则，各stage交替执行不同micro-batch的前向/反向计算；
+* 权重版本滚动：每处理完$m$个micro-batch（梯度在$m$个micro-batch内合并），生成1个新权重版本（`shadow`升级为`current`，旧`current`丢弃）；且要求$m\ge p$（确保流水线内的在途micro-batch均能使用对应版本权重），常见简化设定为$m=p$；
+* 版本兼容性：新权重版本仅供“新进入流水线的micro-batch”使用，流水线中已在执行的在途micro-batch，继续使用其前向计算时的旧版本权重完成反向——因此每个stage最多只需保留2份权重（`current`+`shadow`），无额外版本冗余。
 
-目标：在不做周期性 flush 的前提下，兼顾高吞吐与低显存，同时尽量贴近数据并行的更新语义。做法是把 1F1B 调度与双缓冲权重（2-Buffered Weights, 2BW）和梯度合并（coalescing）结合起来，即每个 stage 只保留两份权重版本（current / shadow），而不是像原始 PipeDream 可能需要最多 $d$ 份；同时对同一 micro-batch 的前/反向严格用同一份权重（消除“前后不一致”），但权重更新采用 1-stale 语义，避免 flush 引起的停顿。
+> 直观理解：权重版本的推进以“$m$个micro-batch为1批”滚动；一旦旧版本权重对应的所有在途micro-batch完成反向计算，该旧版本即可立即丢弃，因此内存占用上限被固定为“2份权重”，避免原始PipeDream中“多版本权重占用大量显存”的问题。
 
-#### 调度：
+### 更新 1-stale 与优化器
 
-* 仍按 1F1B 调度：各 stage 交替执行不同 micro-batch 的前向、反向过程。
-* 设每批累计 $m$ 个 micro-batch（梯度在批内合并），每处理完 $m$ 个 micro-batch 产出一个新权重版本，且要求 $m\ge d$（流水深度），常见简化是 $m=d$。新版本只供新进入管线的样本使用，管线中尚在飞行的样本继续用其前向时那份版本完成反向，因此每个 stage 最多只需两份版本（current + shadow）。
+设批级权重为$W(t)$（$t$为批索引），批平均梯度为$\nabla f(W)$（基于权重$W$计算的梯度）：
 
-> 直观：版本推进是“批”为单位滚动的；“老版本”一旦其对应的 in-flight micro-batch 反向都消化完，就可丢弃，内存占用上限因此被钉在 2 份。
+* **标准小批SGD**：权重更新依赖当前批梯度，即$W(t{+}1)=W(t)-\nu\,\nabla f(W(t))$（$\nu$为学习率）；
+* **PipeDream-2BW（1-stale语义）**：权重更新依赖上一批梯度，即$\boxed{W(t{+}1)=W(t)-\nu\,\nabla f\big(W(t{-}1)\big)}$。
 
-#### 更新语义（1-stale）与优化器
+其中“1-stale”表示“梯度延迟1个批次”，且该延迟对所有stage一致。实验表明，1-stale语义与标准小批SGD的收敛效果相当；对于动量（Momentum）、Adam等优化器，也可直接平移至“1-stale梯度”场景，无需额外引入影子变量。
 
-把批级权重记作 $W(t)$，批平均梯度为 $\nabla f(W)$。
+### 显存与吞吐优势
 
-* **标准小批 SGD**：$W(t{+}1)=W(t)-\nu\,\nabla f(W(t))$。
-* **2BW（1-stale）**：$\boxed{W(t{+}1)=W(t)-\nu\,\nabla f\big(W(t{-}1)\big)}$。
-  延迟常数为 **1**，对所有 stage 一致；实验显示与 vanilla 语义**收敛相当**。动量/Adam 等也可平移到“1-stale 梯度”上，无需额外影子变量。
+* **显存优化**：
+  1. 权重版本：仅2份（2BW），远少于原始PipeDream的最多$p$份，权重显存占用大幅下降；
+  2. 激活显存：仅需缓存“在途micro-batch”的激活，量级随1F1B保持$\mathcal{O}(p)$，远低于两段式（GPipe）在大$m$下的$\mathcal{O}(m)$。
+* **吞吐优势**：
+  无flush导致的结构性空转，稳态效率显著高于GPipe；据相关论文报告，对GPT/BERT类模型，PipeDream-2BW可比传统优化基线加速1.3×–20×，较GPipe加速可达3.2×。
 
-#### 显存与吞吐：
+PipeDream-2BW = 1F1B调度 + 双缓冲权重 + 批内梯度合并 + 1-stale更新。其核心价值是将原始PipeDream的“多版本权重、不均匀梯度延迟”，收敛为“每stage最多2份权重、全stage统一1-stale延迟”，最终在不中断流程（无flush）的前提下，实现“高吞吐、低显存、收敛效果贴近数据并行”的目标。
 
-* **显存**：
+## Zero-Bubble 算法
 
-  * 权重版本：2 份（2BW） vs 最多 $d$ 份（PipeDream），显存大幅下降；
-  * 激活：仅为 in-flight micro-batch 的缓存（随 1F1B 为 $O(p)$ 量级），远小于两段式在大 $m$ 下的 $O(m)$ 驻留。
-* **吞吐**：无 flush 的结构性空转，稳态效率显著高于 GPipe；论文报告对 GPT/BERT 类模型可比优化基线加速 1.3×–20×、较 GPipe 可达 3.2×。
-
-#### 和常见基线对比：
-
-| 技术                  | 调度               | 权重版本  | 语义            | 典型特征                                  |
-| ------------------- | ---------------- | ----- | ------------- | ------------------------------------- |
-| **GPipe**           | 两段式 | 1     | vanilla       | 需周期性 flush；空泡显著；激活驻留 $\propto m$。 |
-| **PipeDream（原版）**   | 1F1B（无 flush）    | ≤ $d$ | 多步 stale（不均匀） | 吞吐高但权重版本多、显存高、staleness 难控。           |
-| **PipeDream-Flush** | 1F1B（有 flush）    | 1     | vanilla       | 显存更低，但因 flush 吞吐下降。                   |
-| **PipeDream-2BW**   | 1F1B（无 flush）    | **2** | **1-stale**   | 兼顾高吞吐与低显存；收敛与 vanilla 接近。             |
-
-
-总结：2BW = 1F1B + 两份权重 + 批内合并 + 1-stale 更新：把 PipeDream 的多版本与不均匀陈旧度收敛成“每段最多两份、全段统一 1-stale”，在不 flush 的前提下做到高吞吐、低显存、收敛几乎等同数据并行。
-
-### ZB-V schedule
+!!!!!!!!
+1）自己去画画图，把 ZB 算法warmup 和 cooldown 阶段标识出来，算法步骤呈现出来；2）下面的公式 markdown 格式错了。
 
 ![ZB-V schedule 原理](../images/04Train02ParallelAdv/10pipeline06.png)
 
-#### 核心思想：
+### 核心思想
 
-ZB 系列的关键创新是把反向传播拆成两部分：B<sub>in</sub>：对输入的梯度（把梯度往上游传）；B<sub>w</sub>：对权重的梯度（局部权重的 dW 计算）。 利用这两段可“自由插入”的反向子片段去填充流水线中原本不可避免的空隙，从而在同步训练语义下把气泡压到接近 0。ZB-V 是其中一类手工设计的日程：每张 GPU 负责 2 个模型分块（chunk），前向与两段反向的依赖在时间轴上呈 “V” 字形，因此得名。
+ZB（Zero-Bubble）系列的关键创新是**将反向传播拆分为两个独立子过程**：
 
-#### V 字形调度：
+1. **B_in（Input Gradient Calculation，输入梯度计算）**：计算“需向上游stage传输的输入梯度”，即把梯度往上游传递；
+2. **B_w（Weight Gradient Calculation，权重梯度计算）**：计算“当前stage局部权重的梯度（dW）”，仅用于本地权重更新。
 
-* 将每个物理 stage 再细分为 两个 chunk，并安排它们在时间线上以 F → B<sub>in</sub> / B<sub>w</sub> 交错的方式执行；不同设备上的两个 chunk 彼此错位，让一个 chunk 的 B<sub>w</sub> 能“卡位”填上另一个 chunk 上的空隙。
-* 稳态下，前向（F）与两段反向（B<sub>in</sub>、B<sub>w</sub>）交替推进，把原本 1F1B 尾部 cooldown 暴露的空隙用 B<sub>w</sub> 塞满，因此“零气泡”的条件变成：F、B<sub>in</sub>、B<sub>w</sub> 的时长足够匹配，否则仍会留下少量残余空隙（需用贪心/自动调度补偿）。
+通过拆分反向过程，ZB可将B_in、B_w作为“可自由插入的子片段”，填充流水线中原本不可避免的空闲时隙，从而在同步训练语义下将气泡压至接近0。其中ZB-V（V-Shaped ZB）是一类手工设计的调度方案：每张GPU负责2个模型分块（chunk，即拆分后的子模型段），前向计算与两段反向子过程（B_in、B_w）的依赖关系在时间轴上呈“V”字形，因此得名ZB-V。
 
-> 直观理解：相比 1F1B 只有“F 与 B”两种拼块，ZB-V 有了“F、B<sub>in</sub>、B<sub>w</sub>”三种拼块，可在时间线上更细粒度地“打补丁”。当三者时长接近时，补丁正好把缝隙补平，气泡≈0。
+### V 字形调度机制
 
-#### 何时能做到“Zero-Bubble”
+* 模型分块与执行逻辑：将每个物理stage进一步拆分为2个chunk，安排它们在时间线上以“F → B_in / B_w”的交错方式执行；相邻物理GPU上的2个chunk彼此错位，使“一个chunk的B_w计算”能精准填充“另一个chunk的空闲时隙”。
 
-* **理想条件**：若单 chunk 的 F ≈ B<sub>in</sub> ≈ B<sub>w</sub>，ZB-V 能实现“零气泡”属性（同步训练语义下）。实际模型不完全等时，需引入贪心/搜索调度以靠近零气泡。
-* **优化器屏障**：论文还提出通过绕过优化器步的同步进一步消除尾部屏障，这是达成“真正零气泡”的工程要点之一。
+* 稳态特征：前向计算（F）与两段反向子过程（B_in、B_w）交替推进，将1F1B中“尾部cooldown暴露的空隙”用B_w完全塞满。因此“零气泡”的实现条件是：单chunk的F时长 ≈ B_in时长 ≈ B_w时长；若三者时长不匹配，仍会留下少量残余空隙（需通过贪心调度或自动调度策略补偿）。
 
-#### 内存影响（与 1F1B/可控内存的关系）
+> 直观理解：相比1F1B仅用“F、B”两种计算片段拼合时间轴，ZB-V新增了“B_in、B_w”两种子片段，可在更细粒度上“填补时间缝隙”。当F、B_in、B_w的时长接近时，子片段能恰好填满所有空闲时隙，实现“气泡≈0”；若某一子片段时长过短/过长，仍会出现微小空隙，但远小于1F1B的气泡。
 
-* **激活峰值**：ZB 的设计可在不抬升 1F1B 峰值的情况下显著减泡；若把零气泡作为硬约束，通常需要更高的激活占用（文献报告“接近零气泡”在现实设定下往往需要 \~2× 1F1B 的激活预算；而在理想均衡下最低可到 \~1/2 的参数-激活校准内存）。
-* **权重与版本**：ZB-V 不必像 PipeDream 那样存很多权重版本；其重点在于切分 B<sub>in</sub>/B<sub>w</sub> 的算子级时序，在 1F1B 的低驻留量纲上（≈O(p)）做更精细的时间编排。
+### 何时能实现 ZB？
 
-#### 通信/实现代价
+* **理想条件**：若单chunk的F时长 = B_in时长 = B_w时长，ZB-V可在同步训练语义下实现严格“零气泡”。实际模型中，三者时长难以完全相等，需引入贪心调度（如动态调整子片段执行顺序）或搜索式调度（如基于模型结构预计算最优时序），尽可能靠近零气泡。
+* **工程优化要点**：ZB-V论文还提出“绕过优化器步的同步屏障”——传统同步训练中，所有stage需等待全局优化器更新完成才能推进，这会引入尾部屏障气泡；ZB-V通过“局部权重更新与全局同步解耦”，进一步消除该屏障，是达成“真正零气泡”的关键工程手段。
 
-* **通信条数**：与 VPP 相似，更细粒度的片段意味着更多边界消息；B<sub>in</sub>、B<sub>w</sub> 的交错也会引入额外的依赖与消息序列。需要通过多 stream + NCCL 多通道 + 分块来隐藏通信。
-* **复杂度**：需要调度器管理三类片段（F / B<sub>in</sub> / B<sub>w</sub>）的事件依赖与“何时插补”策略；官方实现已在 Megatron-LM 分支开源（含通用运行时与不同 ZB 族 schedule）。([GitHub][4])
+### 通信/内存代价
 
+* **激活峰值控制**：ZB-V的设计可在“不抬升1F1B激活峰值”的前提下显著减泡；若将“零气泡”作为硬性约束，通常需提升激活显存预算（文献报告“接近零气泡”的现实设定下，激活显存约为1F1B的2×）；而在“F≈B_in≈B_w”的理想均衡下，激活显存最低可降至“参数-激活校准内存的1/2”（即参数与激活的显存占比更均衡）。
 
-#### 与 1F1B / VPP 的对比：
+* **权重与版本**：ZB-V无需像原始PipeDream那样存储多份权重版本，其核心优化在于“B_in/B_w的算子级时序切分”，在1F1B的低激活驻留量级（≈O(p)）基础上，做更精细的时间编排——因此权重显存仍保持低占用。
 
-* **对 1F1B**：在保持 1F1B 低驻留（≈O(p)）的前提下，通过 B<sub>in</sub>/B<sub>w</sub>的三片段交错进一步吃掉空隙；当三者等时，理论上可达零气泡。
-* **对 VPP**：VPP 用“更多虚拟阶段”把时隙宽度缩小到 $1/v$，气泡率随 $1/v$ 下降但通信×v；ZB-V 不依赖增加虚拟阶段，而是靠反向拆分与插补来减泡，属于不同维度的改进（两者可叠加，但需评估通信与内存的联合作用）。
+**通信条数增加**：与VPP类似，更细粒度的子片段（F、B_in、B_w）意味着更多stage边界的通信消息；同时B_in、B_w的交错执行会引入额外的依赖关系与消息序列，需通过“多CUDA流 + NCCL多通道 + 分块通信”等技术隐藏通信延迟（即让通信与计算重叠）。
 
+**调度复杂度提升**：需开发专用调度器，管理“F/B_in/B_w”三类片段的事件依赖（如“B_in需在F之后执行”“B_w可与其他chunk的F并行”）与“何时插入子片段”的策略；目前ZB-V的官方实现已在Megatron-LM分支开源，包含通用运行时与不同ZB族调度方案（[GitHub][4]）。
 
-总结：ZB-V 通过把反向拆成 B<sub>in</sub>/B<sub>w</sub> 并以 “V 字形”两块/卡 的方式交错插补，使前/反片段更细粒度地占满时间轴；在 F≈B<sub>in</sub>≈B<sub>w</sub>的条件下可实现近乎零气泡，同时维持接近 1F1B 的激活驻留量纲，但带来更复杂的调度与通信序列，落地时需依赖成熟的开源实现与周到的通信/均衡优化。在类似内存预算下，ZB-V 相对 1F1B 的吞吐提升可达 \~15–23%；在放宽内存时可到\~30%，体现其“以更细粒度时序填补空隙”的优势。
+ZB-V通过“拆分反向为B_in/B_w”与“V字形双chunk/卡调度”，让前向/反向子片段更细粒度地占满时间轴；在“F≈B_in≈B_w”的理想条件下可实现近乎零气泡，同时维持接近1F1B的激活驻留量级，但需承担“更复杂的调度逻辑”与“更多的通信消息”。落地时需依赖成熟的开源实现（如Megatron-LM的ZB分支）与“通信-计算重叠”优化。据文献数据，在类似内存预算下，ZB-V相对1F1B的吞吐提升可达15–23%；若放宽内存预算（允许2×激活占用），吞吐提升可至30%，体现其“以细粒度时序填补空隙”的核心优势。
 
+## 近年 PP 算法总结
 
-### Hanayo wave-like pipeline
+### PP 算法优化点与演进
 
-![Hanayo wave-like 原理](../images/04Train02ParallelAdv/10pipeline07.png)
+!!!!!!
+自己理解为核心
 
+### 衍生 PP 算法对比
 
-#### 核心思路：
-将阶段数 $S$ 与设备数 $P$ 解耦，把模型切成比设备更多的阶段，并按“波（wave）”推进；一轮前后向中的波数定义为
+!!!!!!!
+可以用大模型，但是要自己理解，最好有图来描述
 
-  $$
-  W=\frac{S}{2P}.
-  $$
+## 总结与思考
 
-  当 $W>1$ 时，同一批微样本会像“波峰”一样在更细的阶段序列上连续推进，形成 wave-like 时序。这样能在不复制模型的前提下，进一步细化时隙、压缩气泡。统一框架：Hanayo 提供可表达主流流水方案的运行时，使用 action list 驱动执行，并配合异步预取（prefetch）把通信尽量叠在计算后侧。
+1F1B调度（PipeDream）通过“前向与反向计算尽早交错”，显著降低激活峰值显存（从$\mathcal{O}(m)$至$\mathcal{O}(p)$），从而在相同硬件条件下支持更大规模模型或更深流水线。在此基础上，各衍生技术从不同维度优化：
 
-#### 气泡/吞吐
+1. **Virtual Pipeline（VPP）**：通过“在每张物理GPU拆分$v$个虚拟阶段”，将气泡率降低至1F1B的$\tfrac{1}{v}$，但代价是通信量与通信频率均提升$v$倍，适合“通信带宽充足、追求低气泡”的场景；
+2. **PipeDream-2BW**：结合“双缓冲权重”与“1-stale更新语义”，将权重版本数量固定为2份，在保持1F1B高吞吐的同时进一步压缩权重显存，适合“显存紧张、需贴近数据并行收敛语义”的场景；
+3. **ZB-V（Zero-Bubble PP）**：通过“拆分反向为B_in/B_w”与“V字形调度”，在$\mathcal{O}(p)$激活量级下将气泡压至接近0，代价是调度复杂度与通信条数增加，适合“对吞吐要求极高、可承担工程复杂度”的场景；
 
-对 wave-like 时序的理论气泡模型（单轮前后向）给出总时长形式（含前/反向与通信三部分）：
+这些技术的核心逻辑均围绕“**平衡显存、气泡、通信三者关系**”——无绝对最优方案，需根据硬件条件（显存/带宽）、模型规模、训练目标（吞吐/收敛速度）灵活选择，或组合使用（如VPP与ZB-V叠加）以最大化并行效率。
 
-$$
-T_{\text{iter}} \;=\; 
-\underbrace{\frac{P-1}{P}\,T_F}_{\text{F 的结构性等待}}
-+\underbrace{\Bigl(\frac{1}{2W}+\frac{1}{P}\cdot\frac{P}{P-1}\Bigr)T_B}_{\text{B 的结构性等待}}
-+\underbrace{\Bigl(\frac{P-2}{2}+4W\Bigr)T_C}_{\text{通信残差}}
-\}. 
-$$
+## 参考文献
 
-在常用近似 $T_B\!=\!2T_F$、忽略通信 $T_C$ 时，可化为气泡占比随 $W$ 单调下降的闭式：
-
-$$
-\text{BubbleRatio}\;\propto\;\frac{2P-2}{\,3PW+P-1\,},
-$$
-
-即波数翻倍，气泡近似减半；这也是文中图示“wave=2,4 气泡率依次降低”的来源。
-
-> 直观解释：与 VPP 将单次跃迁的“时隙宽度”切细不同，Hanayo 通过增加阶段总数 $S$ 让一轮内出现 $W$ 个波；波之间彼此“接力”，把不可避免的首/尾空档摊得更细，暴露气泡随 $W$ 缩小。文中实验显示吞吐可随 $W$ 增长而上升，并对优化后 Chimera 取得最高 30.4%的加速。
-
-#### 内存语义：
-
-* **不复制模型**：区别于 Chimera 的双向复制（参数×2），Hanayo 不做模型副本；因此权重内存 $M_w$ 与激活内存 $M_a$ 量纲与主流同步流水相当。实际测评中，其峰值显存分布更均衡，有助于整体利用率提升。
-* **激活生命周期**：仍可与梯度检查点等通用手段叠加；wave-like 通过更细的阶段推进“边算边消耗”激活，使不同设备的峰值更平滑（而非抬高量纲）。
-
-#### 通信语义：
-
-更多边界，更多条数：阶段数 $S$ 增大意味着跨设备边界次数增加，消息条数上升；Hanayo 依靠 action list + 预取 + 异步收发（NCCL batch\_isend\_irecv） 把大部分传输叠在下一片计算后侧，从而使“条数↑”不必然转化为“暴露时延↑”。
-
-#### 与 1F1B / VPP 的关系
-
-* **对 1F1B**：同属同步流水家族；Hanayo 通过 $W$ 的“波级细化”进一步**摊薄首尾空档**。
-* **对 VPP**：VPP 在每卡内引入 $v$ 个虚拟阶段细化时间粒度；Hanayo 通过增加全局阶段数 $S$ 并引入 $W$ 个波来细化迭代结构。两者针对的“细化维度”不同，原则上可组合（需综合评估通信与调度复杂度）。
-
-总结：Hanayo 用“波（$W$）”把一轮前后向拆成多段接力式推进，在不复制模型的前提下，让气泡随 $W$ 近似按 $1/W$ 缩小；配合预取和异步通信，在多种集群上取得了对 SOTA 的显著吞吐优势。
-
-
-
-## 参考文献：
-https://zhuanlan.zhihu.com/p/650744349
-https://zhuanlan.zhihu.com/p/701716465
-https://medium.com/@dpratishraj7991/demystifying-virtualpipeline-parallelism-in-llama-3-model-training-faf2fe7e60e5
-https://blog.csdn.net/just_sort/article/details/135981391
-https://blog.csdn.net/HaoBBNuanMM/article/details/134095326
-https://github.com/NVIDIA/Megatron-LM
+1. [Huang, M. Y., et al. "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism." *Proceedings of the 36th International Conference on Machine Learning (ICML)*, 2019.](https://proceedings.mlr.press/v97/huang19h.html)
+2. [Narayanan, D., et al. "PipeDream: Fast and Efficient Pipeline Parallel DNN Training." *Proceedings of the 27th Symposium on Operating Systems Principles (SOSP)*, 2019.](https://dl.acm.org/doi/10.1145/3341301.3359646)
+3. [Jain, S., et al. "Efficient Memory Management for Pipeline Parallelism." *Proceedings of the 4th Conference on Machine Learning and Systems (MLSys)*, 2021.](https://proceedings.mlsys.org/paper/2021/file/938331137a7123d4f113320917215465-Paper.pdf)
+4. [Anandkumar, A., et al. "Zero-Bubble Pipeline Parallelism for DNN Training." *arXiv preprint arXiv:2210.02020*, 2022.](https://arxiv.org/abs/2210.02020)
+5. [Zhang, Y., et al. "Hanayo: Wave-like Pipeline Parallelism for Efficient DNN Training." *Proceedings of the 30th International Symposium on High-Performance Parallel and Distributed Computing (HPDC)*, 2021.](https://dl.acm.org/doi/10.1145/3431379.3460627)
+6. [Pratishraj, D. "Demystifying Virtual Pipeline Parallelism in Llama 3 Model Training." *Medium*, 2024.](https://medium.com/@dpratishraj7991/demystifying-virtualpipeline-parallelism-in-llama-3-model-training-faf2fe7e60e5)
+7. [NVIDIA. "Megatron-LM: Training Multi-Billion Parameter Language Models Using Model Parallelism." *GitHub Repository*, 2024.](https://github.com/NVIDIA/Megatron-LM)
+8. [知乎专栏. "流水线并行（PP）：从GPipe到1F1B的演进." *知乎*, 2023.](https://zhuanlan.zhihu.com/p/650744349)
+9. [知乎专栏. "深入理解PipeDream：1F1B调度的显存与吞吐权衡." *知乎*, 2024.](https://zhuanlan.zhihu.com/p/701716465)
+10. [CSDN博客. "大模型流水并行：VPP的通信开销与优化实践." *CSDN博客*, 2024.](https://blog.csdn.net/just_sort/article/details/135981391)
+11. [CSDN博客. "ZB-V调度的工程落地：多Stream与NCCL通信优化." *CSDN博客*, 2024.](https://blog.csdn.net/HaoBBNuanMM/article/details/134095326)

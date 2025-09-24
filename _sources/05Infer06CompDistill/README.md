@@ -21,4 +21,5 @@
 02GKD&MiniLLM
 05Quantization01
 05Quantization02
+bitsandbytesINT8
 ```

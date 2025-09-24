@@ -26,4 +26,6 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+CODE01SimpleRAG
+CODE02RAGFlow
 ```
