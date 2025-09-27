@@ -86,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 25, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 27, 2025"/>
 
 <link
   rel="alternate"
@@ -246,7 +246,7 @@
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">大模型系统概述</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03TTScaling.html">03. Inference Time Scaling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
@@ -324,8 +324,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
-
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
 </ul>
 </details></li>
@@ -380,7 +379,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">上下文并行与长序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">长序列与上下文并行 CP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
@@ -465,6 +464,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
 </ul>
@@ -478,6 +478,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -874,9 +875,48 @@ document.write(`
 <p>本章内容聚焦大模型领域，全面深入地探讨了 Scaling Law 在不同场景如标准、推理时间、并行及扩散等方面的解读，详尽阐述了大模型从训练到推理的全流程，涵盖训练业务流与软硬件栈的各个环节，以及推理业务流的优化策略。同时，剖析了 AI 系统与大模型系统在通用性、资源需求和软件栈变化上的显著区别，并展望了大模型系统的未来发展趋势，包括技术演进、应用场景爆发以及算力底座和生态的持续升级等多方面内容。</p>
 <section id="id2">
 <h2>课程简介<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="01ScalingLaw.html"><span class="std std-doc">01</span></a>、<a class="reference internal" href="02StandardScaling.html"><span class="std std-doc">02</span></a> 是对 Scaling Law 的解读，涉及经典 Scaling Law 在不同场景下的应用，如 Standard Scaling、Inference Time Scaling、Parallel Scaling 和 Diffusion Scaling 等相关研究。</p>
-<p><a class="reference internal" href="03TTScaling.html"><span class="std std-doc">03</span></a>、<a class="reference internal" href="05InferStack.html"><span class="std std-doc">04</span></a> 是大模型训练推理全流程，涵盖了训练业务流与训练软硬件栈，包括并行、加速，数据、模型结构、预训练、后训练，微调，评估等环节，以及推理业务流与推理软硬件栈，像加速、优化、长序列、输出采样、压缩、量化等方面。包括 AI 系统与大模型系统的区别，从通用性、资源需求（计算、网络、存储）以及软件栈变化（芯片使能、框架、分布式并行、三方套件）三个维度进行了阐述。</p>
-<p><a class="reference internal" href="05InferStack.html"><span class="std std-doc">05</span></a> 是大模型系统未来发展趋势，探讨了大模型时代的现状与意义，如 Scaling Law 突破、全球竞争格局、产业价值等，分析了技术演进趋势，包含智能体崛起、多模态深度融合、轻量化与高效架构等，展望了应用场景爆发，如生成式重构、工业、医疗、教育等领域，还提到了算力底座持续升级（分布式智算中心发展）以及生态持续构建升级（国产大模型、国产软硬件栈）等情况。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head text-center"><p>大纲</p></th>
+<th class="head text-left"><p>小结</p></th>
+<th class="head text-left"><p>链接</p></th>
+<th class="head text-center"><p>状态</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-center"><p>概述</p></td>
+<td class="text-left"><p>01. <a class="reference internal" href="01ScalingLaw.html"><span class="std std-doc">Scaling Law 整体解读</span></a></p></td>
+<td class="text-left"><p><a class="reference internal" href="01ScalingLaw.html"><span class="std std-doc">Markdown</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/00Summary/01ScalingLaw.html">文章</a></p></td>
+<td class="text-center"><p>:o:</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>概述</p></td>
+<td class="text-left"><p>02. <a class="reference internal" href="02StandardScaling.html"><span class="std std-doc">Standard Scaling Law</span></a></p></td>
+<td class="text-left"><p><a class="reference internal" href="02StandardScaling.html"><span class="std std-doc">Markdown</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/00Summary/02StandardScaling.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>概述</p></td>
+<td class="text-left"><p>03. <a class="reference internal" href="03TTScaling.html"><span class="std std-doc">Inference Time Scaling Law</span></a></p></td>
+<td class="text-left"><p><a class="reference internal" href="03TTScaling.html"><span class="std std-doc">Markdown</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/00Summary/03TTScaling.html">文章</a></p></td>
+<td class="text-center"><p>:o:</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>概述</p></td>
+<td class="text-left"><p>04. <a class="reference internal" href="04TrainingStack.html"><span class="std std-doc">大模型训练与 AI Infra 的关系分析</span></a></p></td>
+<td class="text-left"><p><a class="reference internal" href="04TrainingStack.html"><span class="std std-doc">Markdown</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/00Summary/04TrainingStack.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
+</tr>
+<tr class="row-even"><td class="text-center"><p>概述</p></td>
+<td class="text-left"><p>05. <a class="reference internal" href="05InferStack.html"><span class="std std-doc">大模型推理与 AI Infra 的关系分析</span></a></p></td>
+<td class="text-left"><p><a class="reference internal" href="05InferStack.html"><span class="std std-doc">Markdown</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/00Summary/05InferStack.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
+</tr>
+<tr class="row-odd"><td class="text-center"><p>概述</p></td>
+<td class="text-left"><p>06. <a class="reference internal" href="06Future.html"><span class="std std-doc">AI Infra 核心逻辑与行业趋势</span></a></p></td>
+<td class="text-left"><p><a class="reference internal" href="06Future.html"><span class="std std-doc">Markdown</span></a>, <a class="reference external" href="https://infrasys-ai.github.io/aiinfra-docs/00Summary/06Future.html">文章</a></p></td>
+<td class="text-center"><p>:white_check_mark:</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="id3">
 <h2>备注<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
@@ -888,7 +928,7 @@ document.write(`
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="03TTScaling.html">03. Inference Time Scaling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
@@ -1000,7 +1040,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 25, 2025.
+  Last updated on Sep 27, 2025.
   <br/>
 </p>
   </div>

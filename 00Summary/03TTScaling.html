@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="03.Inference Time Scaling" />
+<meta property="og:title" content="03. Inference Time Scaling" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="00Summary/03TTScaling.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 视频: 这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！" />
+<meta property="og:description" content="Author by：侯宇博 推理端的 scaling law 更关注 推理延迟、显存、计算复杂度随模型规模和上下文长度变化的规律。其中Inference/test time scaling，其核心思想是在模型推理（Inference）阶段，通过投入更多计算资源以生成更多的输出 token，进而增强模型的逻辑推理（Reasoning）能力。 该方法的基本原理在于，生成单个 token 的过程（..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 视频: 这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！" />
-<meta name="description" content="这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！ 视频: 这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！" />
+<meta property="og:image" content="/_images/social_previews/summary_00Summary_03TTScaling_20af6618.png" />
+<meta property="og:image:alt" content="Author by：侯宇博 推理端的 scaling law 更关注 推理延迟、显存、计算复杂度随模型规模和上下文长度变化的规律。其中Inference/test time scaling，其核心思想是在模型推理（Inference）阶段，通过投入更多计算资源以生成更多的输出 token，进而增强模型的逻辑推理（..." />
+<meta name="description" content="Author by：侯宇博 推理端的 scaling law 更关注 推理延迟、显存、计算复杂度随模型规模和上下文长度变化的规律。其中Inference/test time scaling，其核心思想是在模型推理（Inference）阶段，通过投入更多计算资源以生成更多的输出 token，进而增强模型的逻辑推理（Reasoning）能力。 该方法的基本原理在于，生成单个 token 的过程（..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>03.Inference Time Scaling &#8212; AIInfra AI基础设施</title>
+    <title>03. Inference Time Scaling &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -84,7 +84,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 25, 2025"/>
+    <meta name="docbuild:last-update" content="Sep 27, 2025"/>
 
 <link
   rel="alternate"
@@ -244,7 +244,7 @@
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型系统概述</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">03.Inference Time Scaling</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">03. Inference Time Scaling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
@@ -322,8 +322,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
-
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
 </ul>
 </details></li>
@@ -378,7 +377,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">上下文并行与长序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">长序列与上下文并行 CP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
@@ -463,6 +462,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
 </ul>
@@ -476,6 +476,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -843,7 +844,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>03.Inference Time Scaling</h1>
+    <h1>03. Inference Time Scaling</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -853,7 +854,10 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">优化推理输入：思维链提示</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">优化推理输出：后训练中的Inference Time Scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#agentinference-time-scaling">Agent中的Inference Time Scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">参考资料</a></li>
 </ul>
             </nav>
         </div>
@@ -867,15 +871,34 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="inference-time-scaling">
-<h1>03.Inference Time Scaling<a class="headerlink" href="#inference-time-scaling" title="Link to this heading">#</a></h1>
-<blockquote>
-<div><p>这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！</p>
-</div></blockquote>
+<h1>03. Inference Time Scaling<a class="headerlink" href="#inference-time-scaling" title="Link to this heading">#</a></h1>
+<p>Author by：侯宇博</p>
+<p>推理端的 scaling law 更关注 推理延迟、显存、计算复杂度随模型规模和上下文长度变化的规律。其中Inference/test time scaling，其核心思想是在模型推理（Inference）阶段，通过投入更多计算资源以生成更多的输出 token，进而增强模型的逻辑推理（Reasoning）能力。</p>
+<p>该方法的基本原理在于，生成单个 token 的过程（即一次模型前向传播）所包含的计算量是固定的。对于需要多步逻辑推演的复杂问题，模型无法在单次计算中完成求解。因此，必须通过生成一系列包含中间步骤的文本（即更多的 token），来逐步展开其“思考”过程，从而解决问题。</p>
+<p>那么有哪些方法可以帮助模型产生中间推理步骤呢？</p>
 <section id="id1">
-<h2>视频<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<blockquote>
-<div><p>这个内容还没有，非常希望您参与到这个开源项目中，B 站给 ZOMI 留言哦！</p>
-</div></blockquote>
+<h2>优化推理输入：思维链提示<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>思维链提示（Chain-of-Thought Prompting）通过在少样本示例中展示一系列中间推理步骤，而不仅仅是最终答案，来引导大型语言模型在解决问题时，也自主地生成类似的“思考过程”，从而释放其内在的复杂推理潜力。</p>
+<p><img alt="COT" src="../_images/02TTScaling01.png" /></p>
+<p>然而，思维链提示需要为特定任务精心设计推理示例，这限制了其通用性与易用性。一个自然而然的问题是：能否让模型在没有任何范例的情况下，仅根据问题本身就自动生成思维链？</p>
+</section>
+<section id="id2">
+<h2>优化推理输出：后训练中的Inference Time Scaling<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://arxiv.org/abs/2504.02495">Inference-Time Scaling for Generalist Reward Modeling</a></p>
+</section>
+<section id="agentinference-time-scaling">
+<h2>Agent中的Inference Time Scaling<a class="headerlink" href="#agentinference-time-scaling" title="Link to this heading">#</a></h2>
+<p><a class="reference external" href="https://research.google/blog/deep-researcher-with-test-time-diffusion/">Deep researcher with test-time diffusion</a></p>
+</section>
+<section id="id3">
+<h2>参考资料<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://arxiv.org/abs/2201.11903">Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/2305.20050">Let's Verify Step by Step</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/2408.03314">Scaling LLM Test-Time Compute Optimally can be More Effective than Scaling Model Parameters</a></p></li>
+<li><p><a class="reference external" href="https://arxiv.org/abs/2504.02495">Inference-Time Scaling for Generalist Reward Modeling</a></p></li>
+<li><p><a class="reference external" href="https://research.google/blog/deep-researcher-with-test-time-diffusion/">Deep researcher with test-time diffusion</a></p></li>
+</ul>
 </section>
 </section>
 
@@ -947,7 +970,10 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">优化推理输入：思维链提示</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">优化推理输出：后训练中的Inference Time Scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#agentinference-time-scaling">Agent中的Inference Time Scaling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">参考资料</a></li>
 </ul>
   </nav></div>
 
@@ -981,7 +1007,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 25, 2025.
+  Last updated on Sep 27, 2025.
   <br/>
 </p>
   </div>

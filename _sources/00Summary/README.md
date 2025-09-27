@@ -6,11 +6,14 @@
 
 ## 课程简介
 
-[01](./01ScalingLaw.md)、[02](./02StandardScaling.md) 是对 Scaling Law 的解读，涉及经典 Scaling Law 在不同场景下的应用，如 Standard Scaling、Inference Time Scaling、Parallel Scaling 和 Diffusion Scaling 等相关研究。
-
-[03](./03TTScaling.md)、[04](./05InferStack.md) 是大模型训练推理全流程，涵盖了训练业务流与训练软硬件栈，包括并行、加速，数据、模型结构、预训练、后训练，微调，评估等环节，以及推理业务流与推理软硬件栈，像加速、优化、长序列、输出采样、压缩、量化等方面。包括 AI 系统与大模型系统的区别，从通用性、资源需求（计算、网络、存储）以及软件栈变化（芯片使能、框架、分布式并行、三方套件）三个维度进行了阐述。
-
-[05](./05InferStack.md) 是大模型系统未来发展趋势，探讨了大模型时代的现状与意义，如 Scaling Law 突破、全球竞争格局、产业价值等，分析了技术演进趋势，包含智能体崛起、多模态深度融合、轻量化与高效架构等，展望了应用场景爆发，如生成式重构、工业、医疗、教育等领域，还提到了算力底座持续升级（分布式智算中心发展）以及生态持续构建升级（国产大模型、国产软硬件栈）等情况。
+| 大纲  | 小结       | 链接      | 状态 |
+|:---:|:--- |:--- |:---:|
+| 概述      | 01. [Scaling Law 整体解读](./01ScalingLaw.md) | [Markdown](./01ScalingLaw.md), [文章](https://infrasys-ai.github.io/aiinfra-docs/00Summary/01ScalingLaw.html)  | :o: |
+| 概述      | 02. [Standard Scaling Law](./02StandardScaling.md) | [Markdown](./02StandardScaling.md), [文章](https://infrasys-ai.github.io/aiinfra-docs/00Summary/02StandardScaling.html)  | :white_check_mark: |
+| 概述      | 03. [Inference Time Scaling Law](./03TTScaling.md) | [Markdown](./03TTScaling.md), [文章](https://infrasys-ai.github.io/aiinfra-docs/00Summary/03TTScaling.html)  | :o: |
+| 概述      | 04. [大模型训练与 AI Infra 的关系分析](./04TrainingStack.md) | [Markdown](./04TrainingStack.md), [文章](https://infrasys-ai.github.io/aiinfra-docs/00Summary/04TrainingStack.html)  | :white_check_mark: |
+| 概述      | 05. [大模型推理与 AI Infra 的关系分析](./05InferStack.md) | [Markdown](./05InferStack.md), [文章](https://infrasys-ai.github.io/aiinfra-docs/00Summary/05InferStack.html) | :white_check_mark: |
+| 概述      | 06. [AI Infra 核心逻辑与行业趋势](./06Future.md) | [Markdown](./06Future.md), [文章](https://infrasys-ai.github.io/aiinfra-docs/00Summary/06Future.html)  | :white_check_mark: |
 
 ## 备注
 
