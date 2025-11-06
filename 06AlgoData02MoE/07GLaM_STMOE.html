@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="07.GLaM & ST-MOE 解读" />
+<meta property="og:title" content="GLaM & ST-MOE解读" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData02MoE/07GLaM_STMOE.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: XXXX XXX 本节视频:" />
+<meta property="og:description" content="解读 by: 张晓天 虽然说稀疏专家可以大幅度提升模型容量，同时使得推理的成本不显著增加。但如果专家负载不均衡依然会出现少数几个“强势”专家会学到所有东西，而大部分专家得不到训练，导致模型退化的问题。其次，在训练中发现，损失函数会出现突然的、不可逆的尖峰（loss spikes），导致模型崩溃，需要重启训练，成本极高。 即使预训练模型表现良好，在下游任务上进行 全模型微调 时，性能会急剧下降..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: XXXX XXX 本节视频:" />
-<meta name="description" content="Author by: XXXX XXX 本节视频:" />
+<meta property="og:image:alt" content="解读 by: 张晓天 虽然说稀疏专家可以大幅度提升模型容量，同时使得推理的成本不显著增加。但如果专家负载不均衡依然会出现少数几个“强势”专家会学到所有东西，而大部分专家得不到训练，导致模型退化的问题。其次，在训练中发现，损失函数会出现突然的、不可逆的尖峰（loss spikes），导致模型崩溃，需要重启训练，成本..." />
+<meta name="description" content="解读 by: 张晓天 虽然说稀疏专家可以大幅度提升模型容量，同时使得推理的成本不显著增加。但如果专家负载不均衡依然会出现少数几个“强势”专家会学到所有东西，而大部分专家得不到训练，导致模型退化的问题。其次，在训练中发现，损失函数会出现突然的、不可逆的尖峰（loss spikes），导致模型崩溃，需要重启训练，成本极高。 即使预训练模型表现良好，在下游任务上进行 全模型微调 时，性能会急剧下降..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>07.GLaM &amp; ST-MOE 解读 &#8212; AIInfra AI基础设施</title>
+    <title>GLaM &amp; ST-MOE解读 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -74,6 +74,8 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData02MoE/07GLaM_STMOE';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
@@ -84,7 +86,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 25, 2025"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
 
 <link
   rel="alternate"
@@ -244,7 +246,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03. Inference Time Scaling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
@@ -257,9 +259,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
@@ -276,6 +278,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
@@ -291,14 +294,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -315,24 +318,24 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
-
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
 </ul>
@@ -346,7 +349,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07%E5%A4%A7%E6%A8%A1%E5%9E%8BCKPT%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
@@ -359,12 +362,13 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups：容器资源控制关键(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -378,25 +382,29 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">上下文并行与长序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -410,7 +418,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
-
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -431,10 +438,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.参数高效微调算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.Reparameterization 算法原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -452,9 +459,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">02.大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/07LLM_In_Flash.html">LLM IN FLASH</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
@@ -463,6 +471,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
 </ul>
@@ -473,9 +483,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -483,9 +503,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/bitsandbytesINT8.html">bitsandbytes LLM.int8()源码阅读</a></li>
 </ul>
 </details></li>
@@ -506,14 +529,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
@@ -524,12 +546,12 @@
 <li class="toctree-l2"><a class="reference internal" href="04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05MOEGshard.html">05.GShard MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06MOESwitch.html">06.Switch Transformer 解读</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">GLaM &amp; ST-MOE解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="CODE01MOEInfer.html">Code01: HF实现MOE推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
@@ -537,13 +559,14 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer 回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer 结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">S4模型详解：结构化状态空间模型剖析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">Mixture-of-Recursions, MoR 架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/08RetNet.html">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
@@ -557,7 +580,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -607,7 +632,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B进行RAG代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
 </ul>
 </details></li>
@@ -843,7 +868,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>07.GLaM & ST-MOE 解读</h1>
+    <h1>GLaM & ST-MOE解读</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -853,7 +878,20 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#st-moe">ST-MOE <strong>稀疏专家模型的稳定与迁移</strong></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">稳定预训练的探索：结构上的微调</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">稳定预训练的探索：<strong>训练时加噪声</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#router-z-loss">稳定预训练的探索：<strong>Router Z-Loss</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#glam-gpt-3"><strong>GLaM <strong>超越 GPT-3</strong> 的能效标杆</strong></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">模型结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">路由机制与负载均衡的协同优化</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">本节视频</a></li>
 </ul>
             </nav>
         </div>
@@ -867,11 +905,128 @@ document.write(`
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 <section class="tex2jax_ignore mathjax_ignore" id="glam-st-moe">
-<h1>07.GLaM &amp; ST-MOE 解读<a class="headerlink" href="#glam-st-moe" title="Link to this heading">#</a></h1>
-<p>Author by:  XXXX
-XXX</p>
+<h1>GLaM &amp; ST-MOE解读<a class="headerlink" href="#glam-st-moe" title="Link to this heading">#</a></h1>
+<p>解读 by: 张晓天</p>
+<p>虽然说稀疏专家可以大幅度提升模型容量，同时使得推理的成本不显著增加。但如果专家负载不均衡依然会出现少数几个“强势”专家会学到所有东西，而大部分专家得不到训练，导致模型退化的问题。其次，在训练中发现，损失函数会出现突然的、不可逆的尖峰（loss spikes），导致模型崩溃，需要重启训练，成本极高。</p>
+<p>即使预训练模型表现良好，在下游任务上进行<strong>全模型微调</strong>时，性能会急剧下降。这是因为微调数据量小，容易破坏预训练中学到的精细路由策略，导致模型“遗忘”通用知识。比如在 Switch Transformer里面，作者训练了一个 1.6T 参数量的稀疏模型，但是在 SuperGLUE 等常见基准上进行微调时，其性能却落后于较小的模型。</p>
+<p>虽然 MoE 算法的发展一直在进步，但在大模型领域一直没有可以在性能上媲美<strong>甚至超越顶尖的稠密模型的稀疏参数模型。GLaM 论文提出了一种基于稀疏激活专家混合架构的通用语言模型，通过优化路由机制和负载均衡策略，在保持高性能的同时大幅降低了训练和推理的能耗。例如，GLaM 的训练能耗仅为 GPT-3 的 <strong>1/3</strong>，推理时所需的计算量（FLOPs）也只有 GPT-3 的 <strong>一半</strong>。</strong></p>
+<p>本章节，我们将从ST-MOE和GLaM两篇论文的工作展开，详细的讲解下 MoE 的发展路径。</p>
+<section id="st-moe">
+<h2>ST-MOE <strong>稀疏专家模型的稳定与迁移</strong><a class="headerlink" href="#st-moe" title="Link to this heading">#</a></h2>
 <section id="id1">
-<h2>本节视频<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h3>稳定预训练的探索：结构上的微调<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>稀疏模型通常会受到训练不稳定性的影响。</p>
+<p>ST-MoE 的作者发现，许多来自 <strong>T5</strong> 和 <strong>PaLM</strong> 等先进稠密模型的最佳实践，虽然能提升最终模型性能，但与 MoE 架构结合时，会放大其不稳定性。所以作者引入了一些 Transformer 模型的改进，这些改进会<strong>提高 MoE 模型的质量。</strong></p>
+<p><strong>1. GEGLU</strong></p>
+<p>GEGLU 是前馈神经网络层的一个变体，它使用门控机制（通过 GELU 激活函数）来控制信息流动。其形式通常为 <code class="docutils literal notranslate"><span class="pre">FFN(x)</span> <span class="pre">=</span> <span class="pre">(GELU(xW1)</span> <span class="pre">⊗</span> <span class="pre">(xV))</span> <span class="pre">W2</span></code>。</p>
+<p>这个 <code class="docutils literal notranslate"><span class="pre">⊗</span></code> 是逐元素乘法，起到了门控作用。这种门控机制让模型的前馈层具备了更精细、更强大的非线性变换能力，通常能带来更好的性能。但同时门控机制可能会放大路由器输出的微小差异，导致专家负载急剧变化或梯度异常，从而引发训练损失尖峰。</p>
+<p><strong>2. Root Mean Square 缩放参数</strong></p>
+<p>RMS Norm 是 LayerNorm 的一个简化版本。它只对输入进行<strong>缩放</strong>（基于均方根），而<strong>移除了 LayerNorm 中的重新中心化（减去均值）和偏置项</strong>。在某些情况下，不进行“重新中心化”可能使得激活值的分布在不同专家和不同样本间更具一致性。对于 MoE 模型这种存在动态路由的系统来说，一个更“简单”和“一致”的归一化操作可能更容易稳定训练。</p>
+<p>RMSNorm 的前向计算定义为：</p>
+<div class="math notranslate nohighlight">
+\[
+y = \frac{x}{\text{RMS}(x)} \cdot \gamma
+\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(x\)</span> 是输入向量</p></li>
+<li><p><span class="math notranslate nohighlight">\(y\)</span> 是输出向量</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span> 是可学习的缩放权重参数</p></li>
+<li><p><span class="math notranslate nohighlight">\(\text{RMS}(x)\)</span> 是输入向量的<strong>均方根</strong>：</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+\text{RMS}(x) = \sqrt{\frac{1}{n} \sum_{i=1}^{n} x_i^2 + \epsilon}
+\]</div>
+<ol class="arabic simple">
+<li><p><strong>仅缩放</strong>：仅根据均方根进行缩放，<strong>不减去均值；</strong></p></li>
+<li><p><strong>简化的仿射变换</strong>：通常<strong>只保留</strong>可学习的缩放权重 γ<strong>γ</strong>，<strong>移除了偏置项 β。</strong></p></li>
+</ol>
+<p>ST-MoE 论文发现，<strong>追求极致的性能（质量）往往需要引入更复杂、更强大的组件（如 GEGLU, LayerNorm），但这些组件在复杂的动态系统中也更容易引入不稳定性。而为了追求训练的鲁棒性和稳定性，有时不得不转向更简单、更保守的架构选择，但这通常会以牺牲一部分性能潜力为代价。</strong></p>
+</section>
+<section id="id2">
+<h3>稳定预训练的探索：<strong>训练时加噪声</strong><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>作者还尝试了一些训练时加噪声的方法，比如输入抖动 (Input jitter) 和 Dropout。输入抖动是指给输入随机乘以 [1−10−2,1+10−2] 的随即变量。</p>
+<p>可以发现：输入抖动和 Dropout 都提高了稳定性，但会导致模型质量显着下降。</p>
+<p><img alt="" src="06AlgoData02MoE/images/07MOEGLaM_STMOE_01.png" /></p>
+<p>这是因为，虽然 Dropout 和噪声等防止神经元之间复杂的共适应，但Dropout和噪声的随机性直接与MoE的专家专业化目标是相冲突的。</p>
+<p>我们知道路由器根据输入的表示来为其选择最佳专家。Dropout随机改变了输入的表示，导致同一个输入在不同训练步中呈现给路由器的“面貌”略有不同。输入抖动同样使得牺牲了MoE模型执行<strong>精细路由</strong>的能力。</p>
+</section>
+<section id="router-z-loss">
+<h3>稳定预训练的探索：<strong>Router Z-Loss</strong><a class="headerlink" href="#router-z-loss" title="Link to this heading">#</a></h3>
+<p>Router Z-Loss的成功在于它没有像前两种方法那样“头痛医头、脚痛医脚”或进行盲目正则化，而是<strong>精准地分析了问题根源并设计了对应的损失函数</strong>。</p>
+<p>在训练过程中，Router层的输入（logits）可能会产生绝对值非常大的值。这会导致在计算Softmax <span class="math notranslate nohighlight">\(p = \text{Softmax}(z)\)</span> 时，会出现极大的指数值，容易引发数值溢出或梯度爆炸。其次，当Router的输出非常“自信”（某个logit远大于其他）时，微小的输入变化会导致路由概率的剧烈变化，从而产生巨大的梯度，这就是训练损失曲线出现尖峰（Spike）的主要原因。</p>
+<p>Router Z-Loss 的公式为：</p>
+<div class="math notranslate nohighlight">
+\[
+L_z = \frac{1}{N} \sum_{i=1}^{N} \left( \log \sum_{j=1}^{E} \exp(z_{i,j}) \right)^2
+\]</div>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(N\)</span>: 一个批次中的 token 数量</p></li>
+<li><p><span class="math notranslate nohighlight">\(E\)</span>: 专家数量</p></li>
+<li><p><span class="math notranslate nohighlight">\(z_{i,j}\)</span>: 第 <span class="math notranslate nohighlight">\(i\)</span> 个 token 对于第 <span class="math notranslate nohighlight">\(j\)</span> 个专家的 router logit</p></li>
+<li><p><span class="math notranslate nohighlight">\(\log \sum_{j=1}^{E} \exp(z_{i,j})\)</span>: Log-Sum-Exp (LSE) 函数</p></li>
+</ul>
+<p>Router Z-Loss 直接惩罚 Router 输入向量 <span class="math notranslate nohighlight">\(z\)</span> 的 <strong>Log-Sum-Exp (LSE)</strong> 的平方：</p>
+<ul class="simple">
+<li><p>LSE 是 Softmax 函数计算中的关键组成部分：
+$<span class="math notranslate nohighlight">\(
+\text{Softmax}(z_i)_j = \frac{\exp(z_{i,j})}{\sum_{k=1}^{E} \exp(z_{i,k})} = \frac{\exp(z_{i,j})}{\exp(\text{LSE}(z_i))}
+\)</span>$</p></li>
+<li><p>当 <span class="math notranslate nohighlight">\(z\)</span> 中任何一个分量 <span class="math notranslate nohighlight">\(z_{i,j}\)</span> 的绝对值过大时，LSE 的值会显著增大</p></li>
+<li><p>通过对 LSE 的平方进行惩罚，间接约束了 router logits 的数值范围</p></li>
+</ul>
+<p>通过抑制 LSE 的大小，Router Z-Loss 实现了：</p>
+<ul class="simple">
+<li><p><strong>防止梯度爆炸</strong>：过大的 router logits 会导致 Softmax 输出接近 one-hot 向量，此时梯度变得极不稳定；</p></li>
+<li><p><strong>改善优化稳定性</strong>：保持 Softmax 函数在“ softer” 的区域工作，梯度变化更加平缓；</p></li>
+<li><p><strong>减少训练尖峰</strong>：有效避免了由于 router 梯度突变引起的损失函数剧烈波动。</p></li>
+</ul>
+<p>Router Z-Loss并非一个通用正则项，而是专门针对Router机制在训练中的脆弱性设计的，它通过温和地约束Router的输入logits，从根本上提升了训练的稳定性，从而使得模型能够安全地利用那些高性能但“不稳定”的组件（如GEGLU），最终实现<strong>质量与稳定性的兼得</strong>。</p>
+</section>
+</section>
+<section id="glam-gpt-3">
+<h2><strong>GLaM <strong>超越 GPT-3</strong> 的能效标杆</strong><a class="headerlink" href="#glam-gpt-3" title="Link to this heading">#</a></h2>
+<p>模型性能与模型规模（参数量）呈强正相关，而规模的增长又必然导致计算成本的飙升。这一范式在GPT-3上达到了一个高潮，但其惊人的训练和推理成本也预示着一条不可持续的发展路径。</p>
+<p>谷歌在2021年提出的GLaM模型，其革命性并不在于它创造了另一个“万亿参数”的庞然大物，而在于它成功地将“模型容量”与“计算成本”这两个曾经紧密耦合的概念进行了解耦。</p>
+<section id="id3">
+<h3>模型结构<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>跟 <code class="docutils literal notranslate"><span class="pre">GShard</span></code>类似, 如下图所示, GLaM 总共有64个expert, 门控网络每次从中选择2个expert进行计算. 另外还有几点改动:</p>
+<ol class="arabic simple">
+<li><p>采用来自Transformer-XL的<strong>相对位置偏置</strong>，替代了标准的位置嵌入方法。这使得模型能够更灵活地捕获序列中元素的相对距离关系，提升了其对长序列的建模能力。</p></li>
+<li><p>在非MoE的标准Transformer层中，使用<strong>门控线性单元（GLU）</strong> 与<strong>高斯误差线性单元（GeLU）</strong> 等激活函数，替代了原有的首个线性层与激活结构。</p></li>
+<li><p>GLaM模型训练中权重和计算的切分使用2维的切分算法(From <a class="reference external" href="https://arxiv.org/abs/2105.04663">GSPMD</a>)：</p></li>
+</ol>
+<ul class="simple">
+<li><p>把不同MoE layer上相同位置(具有相同的index值)的专家放到同一个device设备上, 使得不同的MoE layer得到相同的计算图；</p></li>
+<li><p>使用 <code class="docutils literal notranslate"><span class="pre">while_loop</span></code>控制语句wrap重复性的MoE layer；</p></li>
+<li><p>要使得模型效果好, expert要足够大. 如果一个expert足够大时一个expert就对应多个core来分配, 也就是一个expert对应 NE 个device. expert的权重shape为 [E,M,H], 按专家维度 E 和hidden维度 H 来切分; <code class="docutils literal notranslate"><span class="pre">input</span> <span class="pre">activation</span> <span class="pre">tensor</span></code> 的shape大小为 [B,S,M], 按 batch维度 B 和 model维度 M 来进行切分；</p></li>
+<li><p>同时也依赖 <code class="docutils literal notranslate"><span class="pre">GSPMD</span></code>的编译pass过程来决定剩下tensor的切分策略。</p></li>
+</ul>
+<p><img alt="Moe 前世今生" src="06AlgoData02MoE/images/02MOEHistory_10.png" /></p>
+</section>
+<section id="id4">
+<h3>路由机制与负载均衡的协同优化<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>GLaM模型中的每个<strong>MoE层</strong>都配备了一个<strong>门控网络</strong>（Gating Network）。对于输入的每个<strong>token</strong>，这个门控网络会计算其与所有<strong>专家</strong>的匹配度，然后<strong>选择匹配度最高的两个专家</strong>进行处理。该token的最终输出是这两个专家输出的加权组合。这种方式使得模型可以根据输入内容灵活选择不同的计算路径，提供了 <code class="docutils literal notranslate"><span class="pre">E×(E-1)</span></code> 种不同的前馈网络组合，大大增强了模型的表达能力。</p>
+<p>在MoE模型训练中，一个常见的挑战是门控网络可能倾向于持续选择少数几个表现好的专家，导致其他专家得不到充分训练，即所谓的<strong>专家负载不均衡</strong>问题。为了解决这个问题，GLaM在损失函数中引入了一个<strong>辅助的负载均衡损失项</strong>。这个损失项会鼓励门控网络更均匀地分配任务给所有专家，确保大多数专家都能被激活并参与训练，从而充分利用模型的全部容量。</p>
+<p>GLaM在29个自然语言理解和生成任务的广泛评测中，其整体表现<strong>优于GPT-3</strong>。具体来说，它在约80%的零样本任务和约90%的单样本任务上表现持平或更佳。更重要的是，GLaM在达成相同甚至更优性能时，在<strong>训练能耗和推理FLOPs上实现了巨大的优势</strong>（训练能耗降至1/3，推理FLOPs降至1/2）。这强有力地证明了，单纯比较模型的总参数量是片面甚至具有误导性的，真正应该关注的是<strong>单位计算成本所能换取的性能</strong>。</p>
+</section>
+</section>
+<section id="id5">
+<h2>小结<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
+<p>ST-MoE与GLaM的工作，远非仅仅是两个性能卓越的大型语言模型，它们更代表着一条通往更高效、更可持续人工智能未来的清晰路径。</p>
+<p><strong>ST-MoE</strong> 精准地识别并攻克了稀疏模型在训练稳定性和迁移学习中的核心瓶颈。其提出的<strong>路由器Z-Loss</strong>等技术，并非通用正则化，使得万亿参数模型能够被安全、稳定地训练，并高效地迁移至下游任务。这标志着稀疏模型从实验室原型走向实际应用的关键一步。</p>
+<p>GLaM的核心贡献，在于它成功地将 <strong>“模型容量”与“计算成本”这两个曾经紧密耦合的概念进行了解耦</strong>。它通过稀疏激活的混合专家模型架构，以仅激活少量参数处理每个输入的“条件计算”方式，证明了<strong>规模扩张未必等同于能耗的线性飙升</strong>。</p>
+<p>未来模型的竞争，将不再是参数的单纯堆砌，而是转向更精巧的架构设计。静态、固定的计算图或许并非智能的唯一形态。像MoE这样根据输入动态分配计算资源的“条件计算”范式，更能模拟智能系统对资源的灵活调配。在算力成为稀缺资源的今天，主动追求能耗的降低，这对于AI技术的普惠与可持续发展具有深远意义。</p>
+</section>
+<section id="id6">
+<h2>引用<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<p>https://zhuanlan.zhihu.com/p/653796685</p>
+<p>https://www.mltalks.com/posts/847141942/</p>
+<p>https://www.cnblogs.com/ExMan/p/18709928</p>
+</section>
+<section id="id7">
+<h2>本节视频<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
 <html>
 <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=114097265906379&bvid=BV1L59qYqEVw&cid=28667087820&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>
@@ -946,7 +1101,20 @@ XXX</p>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">本节视频</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#st-moe">ST-MOE <strong>稀疏专家模型的稳定与迁移</strong></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">稳定预训练的探索：结构上的微调</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">稳定预训练的探索：<strong>训练时加噪声</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#router-z-loss">稳定预训练的探索：<strong>Router Z-Loss</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#glam-gpt-3"><strong>GLaM <strong>超越 GPT-3</strong> 的能效标杆</strong></a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">模型结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">路由机制与负载均衡的协同优化</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">小结</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">本节视频</a></li>
 </ul>
   </nav></div>
 
@@ -980,7 +1148,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 25, 2025.
+  Last updated on Nov 06, 2025.
   <br/>
 </p>
   </div>

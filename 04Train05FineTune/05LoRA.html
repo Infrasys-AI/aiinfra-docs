@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="04.参数高效微调算法原理" />
+<meta property="og:title" content="04.Reparameterization 算法原理" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="04Train05FineTune/05LoRA.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 李亚鹏!!!!!! 1）一定要注意格式，看这个 PR 的改动；2）合并 LoRA 基本介绍和原理，内容太少了；3）算法解读不够深刻 LoRA 核心原理:!!!!!! 重点解释低秩微调 LoRA ，Low-Rank Adaptation：LoRA 调整的参数主要是 Self-Attention 里的四个权重矩阵 W_q （query)、 W_k （key)、 W_v(va..." />
+<meta property="og:description" content="Author by: 李亚鹏 引言: 在大语言模型（Large Language Model，LLM）的时代，如何高效、低成本地让一个通用的预训练模型适应特定的下游任务，成为了一个核心挑战。全参数微调（Full Fine-tuning）效果虽然出色，但其巨大的计算和存储开销令人望而却步。为此，研究者们提出了一系列参数高效微调（Parameter-Efficient Fine-Tuning，P..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: 李亚鹏!!!!!! 1）一定要注意格式，看这个 PR 的改动；2）合并 LoRA 基本介绍和原理，内容太少了；3）算法解读不够深刻 LoRA 核心原理:!!!!!! 重点解释低秩微调 LoRA ，Low-Rank Adaptation：LoRA 调整的参数主要是 Self-Attention..." />
-<meta name="description" content="Author by: 李亚鹏!!!!!! 1）一定要注意格式，看这个 PR 的改动；2）合并 LoRA 基本介绍和原理，内容太少了；3）算法解读不够深刻 LoRA 核心原理:!!!!!! 重点解释低秩微调 LoRA ，Low-Rank Adaptation：LoRA 调整的参数主要是 Self-Attention 里的四个权重矩阵 W_q （query)、 W_k （key)、 W_v(va..." />
+<meta property="og:image:alt" content="Author by: 李亚鹏 引言: 在大语言模型（Large Language Model，LLM）的时代，如何高效、低成本地让一个通用的预训练模型适应特定的下游任务，成为了一个核心挑战。全参数微调（Full Fine-tuning）效果虽然出色，但其巨大的计算和存储开销令人望而却步。为此，研究者们提出了一系列..." />
+<meta name="description" content="Author by: 李亚鹏 引言: 在大语言模型（Large Language Model，LLM）的时代，如何高效、低成本地让一个通用的预训练模型适应特定的下游任务，成为了一个核心挑战。全参数微调（Full Fine-tuning）效果虽然出色，但其巨大的计算和存储开销令人望而却步。为此，研究者们提出了一系列参数高效微调（Parameter-Efficient Fine-Tuning，P..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>04.参数高效微调算法原理 &#8212; AIInfra AI基础设施</title>
+    <title>04.Reparameterization 算法原理 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -82,11 +82,11 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="05.Selective 微调算法" href="06Selective.html" />
-    <link rel="prev" title="大模型微调基础" href="01Introduction.html" />
+    <link rel="prev" title="01.大模型微调基础" href="01Introduction.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 27, 2025"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
 
 <link
   rel="alternate"
@@ -259,9 +259,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
@@ -278,6 +278,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
@@ -293,14 +294,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -317,8 +318,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
@@ -331,9 +333,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
 </ul>
@@ -347,7 +349,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07%E5%A4%A7%E6%A8%A1%E5%9E%8BCKPT%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
@@ -360,12 +362,13 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups：容器资源控制关键(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -379,25 +382,29 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -411,7 +418,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
-
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -432,10 +438,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型微调 SFT</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">04.参数高效微调算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">04.Reparameterization 算法原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06Selective.html">05.Selective 微调算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -453,9 +459,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">02.大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/07LLM_In_Flash.html">LLM IN FLASH</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
@@ -464,6 +471,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
@@ -475,10 +483,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -486,9 +503,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/bitsandbytesINT8.html">bitsandbytes LLM.int8()源码阅读</a></li>
 </ul>
 </details></li>
@@ -509,14 +529,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
@@ -527,12 +546,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF实现MOE推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
@@ -540,13 +559,14 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer 回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer 结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">S4模型详解：结构化状态空间模型剖析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">Mixture-of-Recursions, MoR 架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/08RetNet.html">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
@@ -560,7 +580,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -610,7 +632,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B进行RAG代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
 </ul>
 </details></li>
@@ -846,7 +868,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>04.参数高效微调算法原理</h1>
+    <h1>04.Reparameterization 算法原理</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -856,18 +878,20 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora">LoRA 核心原理</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">主流 LoRA 算法解读</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qlora">QLoRA 算法原理</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adapterlora">AdapterLoRA 算法原理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adalora">AdaLoRA 算法原理</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dora">DoRA 算法原理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">LoRA+ 算法原理</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#moe-lora">MoE_LoRA 算法原理</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">LoRA 微调应用场景</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">多模态应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">LoRA 微调应用场景</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">多模态应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">参考与引用</a></li>
 </ul>
             </nav>
         </div>
@@ -880,134 +904,379 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="id1">
-<h1>04.参数高效微调算法原理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="reparameterization">
+<h1>04.Reparameterization 算法原理<a class="headerlink" href="#reparameterization" title="Link to this heading">#</a></h1>
 <blockquote>
 <div><p>Author by: 李亚鹏</p>
 </div></blockquote>
-<p>!!!!!!
-1）一定要注意格式，看这个 PR 的改动；2）合并 LoRA 基本介绍和原理，内容太少了；3）算法解读不够深刻</p>
+<section id="id1">
+<h2>引言<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>在大语言模型（Large Language Model，LLM）的时代，如何高效、低成本地让一个通用的预训练模型适应特定的下游任务，成为了一个核心挑战。全参数微调（Full Fine-tuning）效果虽然出色，但其巨大的计算和存储开销令人望而却步。为此，研究者们提出了一系列参数高效微调（Parameter-Efficient Fine-Tuning，PEFT）方法，其中较为流行的是 Prompt Tuning、Adapter-Tuning 方法，然而，这两类方法却有着其固有的缺陷：</p>
+<ul class="simple">
+<li><p>Prompt Tuning：以 Prefix Tuning 为例，这类方法存在两大难题。首先，它们难以优化，其性能与可训练参数数量的关系不稳定，导致调优过程复杂且结果不可预测。其次，一个更根本的缺陷是，这类方法需要占用一部分输入序列长度来放置可训练的提示，这必然会减少模型处理实际任务时可用的上下文长度，从而可能限制其最终的性能表现。</p></li>
+<li><p>Adapter-Tuning：Adapter-Tuning 在每个 transformer 块的前馈神经网络中加入一个可微调的适配器层，引入额外的参数。尽管适配器的参数量很少，但其核心问题在于它们破坏了大模型所依赖的硬件并行计算能力。由于适配器层必须按顺序处理，这在 batchsize 通常为 1 的在线推理场景会存在明显的速度瓶颈。当模型大到需要跨多个 GPU 进行模型并行部署时，这个问题会进一步恶化，因为适配器会增加额外的 GPU 同步通信开销，从而拖慢整体的推理速度。</p></li>
+</ul>
+<p>为了解决这些问题，许多研究者做出了很多的努力。终于，大模型**重参数化（Reparameterization）**微调算法横空出世，这其中，尤其是以 LoRA 为代表的算法，已经成为事实上的主流方案。</p>
+<p><strong>重参数化</strong>，顾名思义，就是“重新表示模型参数的更新方式”。它并不直接优化模型庞大的原始权重，而是通过引入一些辅助参数，以一种更高效、更紧凑的方式来“表示”或“近似”对原始权重的修改。微调时，我们只训练这些少量的辅助参数。推理时，这些辅助参数可以被合并回原始权重中，从而不引入任何额外的计算延迟。这种“训练时高效，推理时无损”的特性，正是重参数化算法的魅力所在。</p>
+<p>本节将首先深入探讨最具影响力的重参数化算法—LoRA 的核心原理，追溯其思想源头，并详细解读其技术实现。随后，我们将一览其主流变体如 QLoRA、AdaLoRA 和 DoRA 等，看它们如何在前人的基础上进行创新与优化。</p>
+</section>
 <section id="lora">
 <h2>LoRA 核心原理<a class="headerlink" href="#lora" title="Link to this heading">#</a></h2>
-<p>!!!!!!
-重点解释低秩微调</p>
-<p><strong>LoRA</strong>，Low-Rank Adaptation：LoRA 调整的参数主要是 Self-Attention 里的四个权重矩阵 <span class="math notranslate nohighlight">\(W_q\)</span>（query)、<span class="math notranslate nohighlight">\(W_k\)</span>（key)、<span class="math notranslate nohighlight">\(W_v(value)\)</span>、<span class="math notranslate nohighlight">\(W_o\)</span> (output)，以及前馈层的 <span class="math notranslate nohighlight">\(W_{up}\)</span> 和 <span class="math notranslate nohighlight">\(W_{down}\)</span> 。</p>
-<p>将权重矩阵记为<em>W</em>，<span class="math notranslate nohighlight">\(d×d \)</span> 维，输入特征为 <span class="math notranslate nohighlight">\(x\)</span>。LoRA 初始化两个矩阵 <span class="math notranslate nohighlight">\(A\)</span> 和 <span class="math notranslate nohighlight">\(B\)</span>，对 <span class="math notranslate nohighlight">\(A\)</span> 使用随机高斯初始化，将 <span class="math notranslate nohighlight">\(B\)</span> 初始化为 0。<span class="math notranslate nohighlight">\(A\)</span> 的维度为 <span class="math notranslate nohighlight">\(r×d\)</span> 维，<em>B</em> 的维度为 <span class="math notranslate nohighlight">\(d×r\)</span> 维。其中 <span class="math notranslate nohighlight">\(r\)</span> 是 rank 秩，远小于 <span class="math notranslate nohighlight">\(d\)</span> 。</p>
-<p><img alt="" src="04Train05FineTune/images%5C04LoRA01.gif" /></p>
-<p>在前向传播的过程中，输出 <span class="math notranslate nohighlight">\(h\)</span> 不再是原始权重矩阵 <span class="math notranslate nohighlight">\(W_0\)</span>，而是加上了 <span class="math notranslate nohighlight">\(BAx\)</span>，并加入参数 <span class="math notranslate nohighlight">\(α\)</span> 缩放 <span class="math notranslate nohighlight">\(\Delta W_x\)</span> ，如下式：</p>
+<p>要理解 LoRA，我们必须先直观地理解什么是“秩”和“低秩”，以及基于低秩概念，前人做的一些相关工作。</p>
+<p>一个矩阵的<strong>秩 (rank,r)</strong>，在数学上被定义为矩阵行（或列）向量中线性无关向量的最大个数。秩代表该矩阵所包含的核心信息的维度，或者说构成这个矩阵所需要的最少的基向量数量，而其它向量均可由这些基本向量来表示。</p>
+<p>对于高秩矩阵来说，其信息量大，内部的行或列向量之间线性无关的程度高，无法用更少的基向量来表示。就像一幅细节极其丰富的高清照片，每个像素都包含着独特的信息。</p>
+<p>对于低秩矩阵来说，其信息冗余度高，核心信息可以用很少的几个基向量来表示。就像一张由简单几何图形（如线条、圆圈）构成的简笔画，虽然画面很大，但其本质只需要几个指令（画一条线、画一个圆）就能描述。</p>
+<p>基于低秩的概念，在 LoRA 之前，Aghajanyan 等人进行了大语言模型微调的相关研究。Aghajanyan 等人首先提出了一个疑问：“为什么几亿参数的模型，用很小的数据集（几千个样本），还能用很简单的梯度下降就能很好地微调？”。</p>
+<p>针对这个问题，Aghajanyan 等人提出了一个观点：“尽管模型参数非常多，分布在一个高维空间中，但真正起到作用的参数往往分布在一个比这个高维空间小的多的子空间中。换句话说，即模型的有效复杂度其实很低，存在一个内在维度空间，微调这个内在维度空间，与全参数空间的微调一样有效。”</p>
+<p>为此，Aghajanyan 等人通过实验进行了验证。他们将模型参数重构为 <span class="math notranslate nohighlight">\(\theta_D=\theta_{D0}+P({\theta_d})\)</span>，其中 <span class="math notranslate nohighlight">\(\theta_{D0}\)</span> 是冻结的原始参数，<span class="math notranslate nohighlight">\(\theta_d\)</span> 是一个低维的子空间，<span class="math notranslate nohighlight">\(P\)</span> 是一个投影矩阵，将 d 维的子空间投影回 D 维的完整空间。他们在实验中，设置了一系列的 d，仅微调 <span class="math notranslate nohighlight">\(\theta_d\)</span> 的参数，以此来寻找某个 <span class="math notranslate nohighlight">\(d_{90}\)</span>，使得微调 <span class="math notranslate nohighlight">\(d_{90}\)</span> 子空间的参数，模型性能即可达到完整微调性能的 90%。也就是说，<span class="math notranslate nohighlight">\(d_{90}\)</span> 就是这个内在维度。</p>
+<p>如下图所示，实验者在 MRPC 和 QQP 数据集上进行多个模型的测评，虚线为模型完整微调 90%的性能。可以明显的看到，所有模型的 <span class="math notranslate nohighlight">\(d_{90}\)</span> 在 <span class="math notranslate nohighlight">\(10^3\)</span> 的数量级上，这表明内在维度远远低于完整维度 <span class="math notranslate nohighlight">\(D\)</span>。</p>
+<p><img alt="图 1" src="../_images/05LoRA01.png" /></p>
+<p><img alt="图 2" src="../_images/05LoRA02.png" /></p>
+<p>此外，该研究还证明：随着预训练步骤增加，内在维度持续下降；越大的模型，其内在维度也越小。这些研究结果无疑都在说明低秩微调的有效性与前景。</p>
+<p><strong>LoRA</strong>（Low-Rank Adaptation）正是受到上述研究启发，提出了其核心思想：内在维度（或者说内在秩）不仅存在于模型权重中（分别对应上文提到的 <span class="math notranslate nohighlight">\(\theta_d\)</span> 和 <span class="math notranslate nohighlight">\(\theta_D\)</span>），也存在于大语言模型在适应下游任务时，其权重矩阵的变化量 <span class="math notranslate nohighlight">\(\Delta W\)</span> 中。</p>
+<p>LoRA 认为，预训练好的模型已经包含了足够丰富的通用知识，我们为特定任务做的微调，本质上只是对这些知识进行微小的、有方向性的调整，而这种调整并不需要改变整个权重矩阵的所有参数。这种调整的内在维度其实很低。</p>
+<p>下面结合公式来阐述 LoRA 的技术原理。LoRA 调整的参数是 transformer 的线性层参数，主要是 Self-Attention 里的四个权重矩阵 <span class="math notranslate nohighlight">\(W_q\)</span>、<span class="math notranslate nohighlight">\(W_k\)</span>、<span class="math notranslate nohighlight">\(W_v\)</span>、<span class="math notranslate nohighlight">\(W_o\)</span> ，以及前馈神经网络层的 <span class="math notranslate nohighlight">\(W_{up}\)</span>、<span class="math notranslate nohighlight">\(W_{down}\)</span>，下图展示了 LoRA 在 transformer 内部的微调位置。</p>
+<p><img alt="图 3" src="../_images/05LoRA03.png" /></p>
+<p>将权重矩阵记为 <span class="math notranslate nohighlight">\(W\)</span>，<span class="math notranslate nohighlight">\(d×d\)</span> 维，输入特征为 <span class="math notranslate nohighlight">\(x\)</span>。LoRA 初始化两个矩阵 <span class="math notranslate nohighlight">\(A\)</span> 和 <span class="math notranslate nohighlight">\(B\)</span>，作为权重矩阵的变化量，对 <span class="math notranslate nohighlight">\(A\)</span> 使用随机高斯初始化，将 <span class="math notranslate nohighlight">\(B\)</span> 初始化为 0。<span class="math notranslate nohighlight">\(A\)</span> 的维度为 <span class="math notranslate nohighlight">\(r×d\)</span> 维，<em>B</em> 的维度为 <span class="math notranslate nohighlight">\(d×r\)</span> 维。其中 <span class="math notranslate nohighlight">\(r\)</span> 是 rank 秩，远小于 <span class="math notranslate nohighlight">\(d\)</span> 。</p>
+<p>在前向传播的过程中，输出 <span class="math notranslate nohighlight">\(h\)</span> 不再是原始权重矩阵 <span class="math notranslate nohighlight">\(W_0\)</span>，而是加上了 <span class="math notranslate nohighlight">\(BAx\)</span>，并加入参数 <span class="math notranslate nohighlight">\(α\)</span> 缩放 <span class="math notranslate nohighlight">\(\Delta Wx\)</span> ，如下式：</p>
 <div class="math notranslate nohighlight">
 \[
 h=W_0x+\alpha\Delta Wx=W_0x+\alpha BAx
 \]</div>
-<p>在参数更新时，LoRA 冻结了 <span class="math notranslate nohighlight">\(W_0\)</span> 权重，只更新 <span class="math notranslate nohighlight">\(B\)</span> 和 <span class="math notranslate nohighlight">\(A\)</span>。微调结束后，保留 <span class="math notranslate nohighlight">\(A\)</span> 和 <span class="math notranslate nohighlight">\(B\)</span> 作为 LoRA 矩阵，推理时用。为了减少推理延迟，可以将 <span class="math notranslate nohighlight">\(BA\)</span> 矩阵与 <span class="math notranslate nohighlight">\(W_0\)</span> 合并。以 query 值的计算为例，使用 LoRA 权重后，计算方式如下：</p>
+<p>在LoRA中，我们想要将乘积<span class="math notranslate nohighlight">\(BA\)</span>初始化为0，以便从预训练的模型开始微调，这意味着权重<span class="math notranslate nohighlight">\(A\)</span>和<span class="math notranslate nohighlight">\(B\)</span>中至少有一个初始化为0。而如果两者都初始化为0，在这种情况下模型学习是无法进行的，因为这将是一个鞍点。因此，LoRA对 <span class="math notranslate nohighlight">\(A\)</span> 中的每个量使用随机高斯分布进行初始化，而将 <span class="math notranslate nohighlight">\(B\)</span> 初始化为 0。</p>
+<p><img alt="图 4" src="../_images/05LoRA04.gif" /></p>
+<p>在参数更新时，LoRA 冻结了 <span class="math notranslate nohighlight">\(W_0\)</span> 权重，只更新 <span class="math notranslate nohighlight">\(B\)</span> 和 <span class="math notranslate nohighlight">\(A\)</span>。由于 <span class="math notranslate nohighlight">\(B\)</span> 和 <span class="math notranslate nohighlight">\(A\)</span> 的低秩特点，这会大大减少参数更新的数量。微调结束后，保留 <span class="math notranslate nohighlight">\(A\)</span> 和 <span class="math notranslate nohighlight">\(B\)</span> 作为 LoRA 矩阵，推理时用。为了减少推理延迟，可以将 <span class="math notranslate nohighlight">\(BA\)</span> 矩阵与 <span class="math notranslate nohighlight">\(W_0\)</span> 合并。以 query 值的计算为例，使用 LoRA 权重后，计算方式如下式：</p>
 <div class="math notranslate nohighlight">
 \[
 query=(W_q+\alpha BA)x
 \]</div>
-<p>LoRA 的高效性主要来源于低秩。通过低秩近似，LoRA 能够捕捉到数据的主要变化方向，并在保证模型表达能力的前提下，通过调整少量参数实现对模型的微调。</p>
-<p>因此，如何为不同任务选择合适的秩 r 是一个关键问题，r 的取值一般为 4 到 64 不等。一般来说简单任务需要的秩不大，而高难度任务需要较高的秩。</p>
-<p>LoRA 不需要在模型中引入新的模块或网络结构，而是直接对现有的线性层进行调整。这使得 LoRA 的参数效率更高，且不增加模型的计算复杂度。与 prompt-base 微调算法相比，LoRA 的低秩矩阵分解能够在更深层次上调整模型的表示能力，而不仅仅是影响输入层或局部区域。</p>
-<ul class="simple">
-<li><p>**训练效率提升：**训练参数量一般低于总体参数的 1%，训练速度可提升数倍至数十倍，显存占用大幅降低，消费级显卡即可微调。</p></li>
-<li><p>**存储节省：**LoRA 模型文件极小，通常仅为几 MB 到几百 MB，便于分发管理。</p></li>
-<li><p>**即插即用：**一个基础模型可搭配多个不同 LoRA 模型文件，实现多种效果。</p></li>
-<li><p>**高质量微调：**性能媲美全量微调，且不易“遗忘”。</p></li>
-</ul>
+<p>在 LoRA 原始论文中，将全量微调（FT）、各种 Adapter-tuning 算法，以及 PreLayer 微调算法（prefix-tuning 的变体算法）和 LoRA 算法进行了实验对比。可以看到，LoRA 不仅在可训练参数量（微调参数量）上达到了最小，更是用近千分之一的微调参数量，接近甚至超越了全量微调的效果，获得了所有微调算法的最佳水平。</p>
+<p><img alt="图 5" src="../_images/05LoRA05.png" /></p>
+<p>此外，LoRA 也有着非常灵活的特性。根据不同的下游任务，基模型可以随时切换微调好的不同的 <span class="math notranslate nohighlight">\(BA\)</span> 矩阵（一个内存开销很小的操作），<span class="math notranslate nohighlight">\(BA\)</span> 矩阵即插即用，带来了使用上的灵活性。</p>
+<p><img alt="图 6" src="../_images/05LoRA06.png" /></p>
+<p>总之，LoRA 的高效性主要来源于低秩分解。通过低秩近似权重变化量，LoRA 能够捕捉到数据的主要变化方向，并在保证模型表达能力的前提下，通过调整少量参数实现对模型的微调。</p>
+<p>另外，如何为不同任务选择合适的秩 <span class="math notranslate nohighlight">\(r\)</span> 是一个关键问题。实践证明，<span class="math notranslate nohighlight">\(r\)</span> 的取值一般为 4 到 64 不等。一般来说简单任务需要的秩不大，而高难度任务需要较高的秩。LoRA 原文对秩 <span class="math notranslate nohighlight">\(r\)</span> 的范围也做了一定的实验探究，实验结果是令人惊讶的，即使 <span class="math notranslate nohighlight">\(r=1\)</span>，微调后模型的能力依旧有着很强的竞争力，这说明了 <span class="math notranslate nohighlight">\(\Delta W\)</span> 可能有着非常小的内在秩，这也再次证明了低秩分解的有效性。</p>
+<p><img alt="图 7" src="../_images/05LoRA07.png" /></p>
+<p>最后，与 Adapter-Tuning 算法相比，LoRA 不需要在模型中引入新的适配器，而是直接对现有的线性层进行调整，这使得 LoRA 的参数效率更高，<span class="math notranslate nohighlight">\(BA\)</span> 矩阵与 <span class="math notranslate nohighlight">\(W_0\)</span> 合并时，更是不存在推理延迟的问题。与 Prompt-Tuning 算法相比，LoRA 的低秩矩阵分解能够在更深层次上调整模型的表示能力，而不仅仅是影响输入层或局部区域，其微调效果在实践中基本达到了最佳水平。</p>
 </section>
 <section id="id2">
 <h2>主流 LoRA 算法解读<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
 <section id="qlora">
 <h3>QLoRA 算法原理<a class="headerlink" href="#qlora" title="Link to this heading">#</a></h3>
-<p>!!!!!!!!!!!
-补充内容</p>
-</section>
-<section id="adapterlora">
-<h3>AdapterLoRA 算法原理<a class="headerlink" href="#adapterlora" title="Link to this heading">#</a></h3>
-<p>LoRA 及其一些变体方法，通常为模型中所有需要修改的权重矩阵分配相同数量的可训练参数（例如相同的秩 r）。因此，调优性能不是最优的。</p>
-<p><strong>AdaLoRA</strong>，Adaptive Budget Allocation LoRA：将有限的参数预算（budget）动态地、不均匀地分配给那些更重要的权重矩阵，从而在总参数量不变或更少的情况下，达到更好的性能。</p>
-<p>基于奇异值分解（Singular Value Decomposition ，SVD）的参数化 ：与 LoRA 不同， AdaLoRA 采用了另一种受 SVD 启发的参数化形式。它将增量 <span class="math notranslate nohighlight">\(\Delta\)</span> 分解为左右正交矩阵 <span class="math notranslate nohighlight">\(P\)</span> 和 <span class="math notranslate nohighlight">\(Q\)</span>，以及奇异值对角矩阵 <span class="math notranslate nohighlight">\(\Lambda\)</span> 。</p>
+<p>QLoRA（Quantized Low-Rank Adaptation）在 LoRA 的基础上引入了量化技术，通过量化模型权重，旨在进一步降低大语言模型微调的计算和内存需求。</p>
+<p><img alt="图 8" src="../_images/05LoRA08.png" /></p>
+<p>QLoRA 主要引入了三个关键技术：4 位 NormalFloat（NF4）量化、双重量化、分页优化器，以此来实现其目标，下面依次进行解读。</p>
+<p><strong>4 位 NormalFloat（NF4）量化</strong>是 QLoRA 的一个核心技术，旨在通过高效压缩大语言模型的权重来减少内存占用，同时尽量保持模型的性能。为了理解这种量化方式，我们首先需要了解量化的基本原理以及传统量化方法的局限性，然后再深入探讨 NF4 量化的创新之处。</p>
+<p>下面是一些常用的浮动精度类型。</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>浮动精度类型</p></th>
+<th class="head"><p>位数</p></th>
+<th class="head"><p>符号位</p></th>
+<th class="head"><p>指数位</p></th>
+<th class="head"><p>尾数位</p></th>
+<th class="head"><p>用途</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>FP32</p></td>
+<td><p>32</p></td>
+<td><p>1</p></td>
+<td><p>8</p></td>
+<td><p>23</p></td>
+<td><p>高精度训练，所有计算</p></td>
+</tr>
+<tr class="row-odd"><td><p>FP16</p></td>
+<td><p>16</p></td>
+<td><p>1</p></td>
+<td><p>5</p></td>
+<td><p>10</p></td>
+<td><p>推理，训练</p></td>
+</tr>
+<tr class="row-even"><td><p>BF16</p></td>
+<td><p>16</p></td>
+<td><p>1</p></td>
+<td><p>8</p></td>
+<td><p>7</p></td>
+<td><p>推理、训练</p></td>
+</tr>
+<tr class="row-odd"><td><p>FP8</p></td>
+<td><p>8</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>3</p></td>
+<td><p>推理，低精度任务</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>量化是将浮动精度的权重（例如 FP32 或 FP16）转换为低精度表示（例如 8 位或 4 位整数）的过程。它的主要目标是减少存储和计算成本，尤其是对于大参数量的神经网络模型而言，量化是减小内存占用和加速推理的重要手段。如下式，展示了传统量化方法如何将 FP32 的权重值量化为 8 位整数（Int8）类型。
+$<span class="math notranslate nohighlight">\(
+\mathbf{X}^{\mathrm{Int}8}=\mathrm{round}\left(\frac{127}{\mathrm{absmax}(\mathbf{X}^{\mathrm{FP3}2})}\mathbf{X}^{\mathrm{FP3}2}\right)=\mathrm{round}(c^{\mathrm{FP3}2}\cdot\mathbf{X}^{\mathrm{FP3}2})
+\)</span><span class="math notranslate nohighlight">\(
+按照该公式，当输入 \)</span>\mathbf{X}^{\mathrm{FP32}}=[2,3,4,1000]<span class="math notranslate nohighlight">\(，则 \)</span>\mathrm{absmax}(\mathbf{X}^{\mathrm{FP3}2})=\max(|2|,|3|,|4|,|1000|)=1000<span class="math notranslate nohighlight">\(，那么 \)</span>c^{\mathrm{FP32}}=\frac{127}{1000}=0.127<span class="math notranslate nohighlight">\(，量化结果 \)</span>\mathbf{X}^{\mathrm{Int}8}=[0,0,1,127]$。其中 round 为四舍五入操作。</p>
+<p>可以发现，这种方法的问题是，如果数据中有特别大的数（一个离群值），它会占据大部分的“量化空间”，导致其他较小的数值无法好好利用这些空间。在示例中，离群值（1000）在量化过程中占用了最大量化范围，而其他较小的值（2, 3, 4）则被压缩成了较小的整数，造成了精度的损失。</p>
+<p>从更深层次进行分析，在我们的例子中，离群值 1000 将整个量化范围从 [-4, 4] 极大地拉伸到了 [-1000, 1000]。为了用 127 个刻度划分这个巨大的范围（将 [-1000, 1000]划分为 128 块，实现到[0,127]的映射），量化的步长（或说精度）被强制设定为一个很大的值（即 1000 / 127 ≈ 7.87）。</p>
+<p>因为这个粗糙的步长被<strong>均匀</strong>地应用在所有数值上，它无法分辨出 2, 3, 4 之间微小的差异，因为这些差异远小于 7.87 这个步长，这导致 2、3、4 被划分到一个区间块内，从而均映射为 0。最终，大部分数值密集区域的细节被这个为了迁就离群值而设定的、粗糙且统一的“标尺”所抹平，导致了严重的信息损失。</p>
+<p>对于标准的 4 位量化，这种问题则更为严重，因为压缩比更高，量化误差也更大。因此，如何在保证量化后低内存占用的同时，减少性能损失，成为了一个关键问题。</p>
+<p>针对上述问题，QLoRA 使用了<strong>NF4 技术</strong>。<strong>NF4</strong>的核心思想是<strong>分位数量化</strong>。它不再使用均匀分布的量化刻度，而是根据数据的真实分布来确定量化刻度的位置。</p>
+<p>NF4 观察到，预训练 LLM 的权重往往<strong>近似</strong>服从一个**标准正态分布 **N(0, 1)。基于这个观察，NF4 的目标是构建一个 4-bit 的数据类型，使得它能最好地表示标准正态分布。具体来说，一个 4-bit 数据类型有 <span class="math notranslate nohighlight">\(2^4=16\)</span> 个可能的值，NF4 的目标就是依据等概率（而非等步长）的原则，选定 x 轴上的 15 个刻度，将整个正态分布划分为等概率的 16 块，每块的期望值（中位数或边界均值）就成为我们的一个量化点。非均匀但高精度的将原始数据范围映射到 NF4 上。</p>
+<p>这样一来，在数据密集的区域（靠近 0 的地方），量化点会非常密集；在数据稀疏的区域（远离 0 的尾部），量化点会变得稀疏。这恰好匹配了权重的分布特性，从而实现了信息论上的最优表示。</p>
+<p><img alt="图 9" src="../_images/05LoRA09.png" /></p>
+<p>为了统一量化标准，针对<strong>标准正态分布</strong>，NF4 设定了一个“码本”，仅在[-1,1]区间上进行等概率分割与数值映射。NF4 将这 16 个量化点规定如下，限定在[-1,1]数据密集区间。因此，参数块在量化前需要进行先归一化操作，将原始参数缩放到[-1,1]区间。</p>
+<p><img alt="图 10" src="../_images/05LoRA10.png" /></p>
+<p>现在我们来看 QLoRA 具体是如何将一个模型的权重量化到 NF4 的。以 BF16 到 4-bit 的量化为例，这个过程是<strong>逐块</strong>进行的。NF4 技术会将权重张量其分成若干个小块，通常一个块的大小是 64 个参数。对每一个块，执行以下操作：</p>
+<p>首先进行归一化。QLoRA 沿用<strong>绝对值最大量化</strong>的方法来做归一化。在当前块中，找到所有权重绝对值的最大值，记为 <span class="math notranslate nohighlight">\(c\)</span>。这个 <span class="math notranslate nohighlight">\(c\)</span> 通常用一个更高精度的格式（FP32）存储起来。将块内的所有权重 <span class="math notranslate nohighlight">\(W\)</span> 都除以这个绝对值最大值 <span class="math notranslate nohighlight">\(c\)</span>，即 <span class="math notranslate nohighlight">\(W_{norm}=W/c\)</span>。这样，归一化后的权重 <span class="math notranslate nohighlight">\(W_{norm}\)</span> 的范围就被缩放到了 [-1, 1] 区间内。</p>
+<p>值得注意的是，每个块都有自己的缩放因子 <span class="math notranslate nohighlight">\(c\)</span>，这使得量化能够自适应地处理模型中不同层、不同部分权重的数值范围差异。</p>
+<p>此外，还有一个关键问题尚待阐明：既然原始权重参数并非严格的标准正态分布（仅近似分布），为什么不进行真正的标准化（即除以标准差 <span class="math notranslate nohighlight">\(\sigma\)</span>），而是采用绝对值最大量化？答案在于<strong>计算效率与效果之间的权衡</strong>。虽然理论上最精确的方法是计算每个块的标准差 <span class="math notranslate nohighlight">\(\sigma\)</span> 并进行标准化，但这对于数百万个权重块来说，计算开销是巨大的。</p>
+<p>而绝对值最大量化提供了一个极为高效的近似方案。对于近似正态的分布，其绝对值最大值 <span class="math notranslate nohighlight">\(c\)</span> 与其标准差 <span class="math notranslate nohighlight">\(\sigma\)</span> 是强相关的。因此，将权重除以 <span class="math notranslate nohighlight">\(c\)</span>，在效果上高度近似于将其除以一个常数倍的 <span class="math notranslate nohighlight">\(\sigma\)</span>。这个操作虽然不能将方差精确地变为 1，但它以极低的计算成本，成功地将所有不同尺度的权重分布“对齐”到了我们预设的统一码本的工作条件（<strong>标准正态分布</strong>）及范围（<strong>[-1,1]</strong>）内。</p>
+<p>接着，对于块内每一个归一化后的权重 <span class="math notranslate nohighlight">\(W_{norm}\)</span>，寻找其最近的量化点。在预先设定好的 16 个 NF4 值中，存储那个最接近的 NF4 值的索引（一个 0 到 15 之间的整数，正好用 4-bit 表示）。</p>
+<p>最终，一个有着 64 个 16-bit 权重参数（64 × 16 bit = 1024 bit）的块，被转换成 64 个 4-bit 索引 (64 × 4 bit = 256 bit，1 个 32-bit 的缩放因子 <span class="math notranslate nohighlight">\(c\)</span>，总计：256 + 32 = 288 bit，从而完成了量化。</p>
+<p>在模型进行前向传播计算时，需要将 4-bit 的权重恢复成近似的原始值。这个<strong>反量化</strong>过程非常简单：首先根据存储的 4-bit 索引（0-15）从 NF4 码本中查找出对应的高精度浮点值（例如，索引为 2，查找到-0.5251），然后将该值乘以对应的缩放因子 <span class="math notranslate nohighlight">\(c\)</span>，即 <span class="math notranslate nohighlight">\(W_{approx}=NF4_{value}×c\)</span> 。</p>
+<p>然而，虽然每个块只有一个缩放因子 <span class="math notranslate nohighlight">\(c\)</span>，但一个巨大的模型（如 65B 参数）会有数百万个这样的块，那么这些缩放因子本身也会占用大量内存，可以达到几百 MB。</p>
+<p>QLoRA 为了进一步压缩内存占用，使用<strong>双重量化</strong>技术，对这些缩放因子 <span class="math notranslate nohighlight">\(c\)</span> 再进行一次量化。具体来说，将第一级的缩放因子 <span class="math notranslate nohighlight">\(c_1\)</span>（FP32）再进行分块（每块 256 个 <span class="math notranslate nohighlight">\(c_1\)</span>），然后对这些块进行第二级量化，得到第二级的缩放因子 <span class="math notranslate nohighlight">\(c_2\)</span>（FP32）和量化后的 <span class="math notranslate nohighlight">\(c_1\)</span>（FP8）。这进一步将每个参数的平均比特数从约 4.5 bit（4+32/64）降低到约 4.127 bit（4+8/64+32/(64×256)），节省了更多内存。</p>
+<p>另外，在微调过程中，Adam 等优化器会为每个可训练参数维护状态，如动量和方差，这会消耗大量 GPU 显存。QLoRA 利用 NVIDIA 统一内存的特性，采用<strong>分页优化器</strong>的技术，将不在当前计算中使用的优化器状态“分页”到 CPU 内存中，在需要时再调回 GPU。这大大降低了训练过程中的显存峰值，防止了显存溢出。</p>
+<p>最后，将上述量化技术与 LoRA 结合。在前向传播时，为了在计算时恢复模型的精度，并与高精度的 LoRA 适配器权重进行数学运算，需要进行双重反量化（doubleDequant）操作。
+$<span class="math notranslate nohighlight">\(
+\mathbf{H}^{\mathrm{BF}16}=\mathbf{X}^{\mathrm{BF}16}\text{doubleDequant}(c_1^{\mathrm{FP}32},c_2^{\mathrm{FP8}},\mathbf{W}^{\mathrm{NF}4})+\mathbf{X}^{\mathrm{BF}16}\mathbf{B}^{\mathrm{BF}16}\mathbf{A}^{\mathrm{BF}16},
+\)</span>$</p>
 <div class="math notranslate nohighlight">
 \[
-W=W^{(0)}+\Delta=W^{(0)}+P\Lambda Q
+\text{doubleDequant}(c_1^{\mathrm{FP32}},c_2^{\mathrm{FP8}},\mathbf{W}^{\mathrm{NF4}})=\mathrm{dequant}(\mathrm{dequant}(c_1^{\mathrm{FP32}},c_2^{\mathrm{FP8}}),\mathbf{W}^{\mathrm{NF4}})=\mathbf{W}^{\mathrm{BF16}}
 \]</div>
-<p>SVD 参数化有两大优势：</p>
+<p>QLoRA 的效果是非常惊人的，它成功的在单个 48GB GPU 上微调了 65B 参数的模型，同时几乎保留了完整的 16 位微调任务性能。</p>
+<p><img alt="图 11" src="../_images/05LoRA11.png" /></p>
+</section>
+<section id="adalora">
+<h3>AdaLoRA 算法原理<a class="headerlink" href="#adalora" title="Link to this heading">#</a></h3>
+<p>在 LoRA 取得巨大成功后，研究者们发现其存在一个固有的局限性：<strong>“一刀切”的资源分配</strong>。标准的 LoRA 为模型中所有被适配的权重矩阵（如 <span class="math notranslate nohighlight">\(W_q\)</span>，<span class="math notranslate nohighlight">\(W_k\)</span>，<span class="math notranslate nohighlight">\(W_v\)</span> 等）分配了完全相同的秩 <span class="math notranslate nohighlight">\(r\)</span>。</p>
+<p>这种均匀分配策略忽略了一个关键事实：在针对特定下游任务进行微调时，不同层、不同模块内的权重矩阵其重要性并非均等。某些矩阵可能需要更丰富的表达能力（更高的秩）来捕捉任务关键信息，而另一些矩阵可能只需微小的调整（更低的秩）即可，甚至保持不变。</p>
+<p>如下图，论文研究者比较了使用相同数量的可训练参数微调特定权重矩阵或层时 LoRA 的性能。图 1a 显示，微调前馈网络（FFN）比自关注模块实现了更好的性能。此外，从图 1b 可以看出，顶层的权重矩阵比底层的权重矩阵更重要。</p>
+<p><img alt="图 12" src="../_images/05LoRA12.png" /></p>
+<p>显然，将宝贵的参数预算平均分配，就像给一个偏科的学生在所有科目上安排完全相同的复习时间一样，效率不高。这不仅可能在关键模块上“投入不足”，导致性能瓶颈，也可能在次要模块上“投入过剩”，造成参数浪费和过拟合风险。</p>
+<p>针对这一问题，**AdaLoRA（Adaptive Budget Allocation for LoRA）**应运而生。其核心思想一针见血：将有限的参数预算（budget）进行智能的、自适应的分配，把更多的可训练参数动态地、不均匀地赋予那些在微调过程中被证明“更重要”的权重矩阵。通过这种精细化的资源调控，AdaLoRA 旨在用更少的总参数量，达到甚至超越标准 LoRA 的性能。</p>
+<p>AdaLoRA 的实现主要依赖三大核心技术：基于 SVD 的参数化、重要性评分机制及剪枝策略，以及动态的全局预算调度器。</p>
+<p>AdaLoRA 整体算法流程如下，接下来我们进行细致的展开。</p>
+<p><img alt="图 13" src="../_images/05LoRA13.png" /></p>
+<p>基于奇异值分解（Singular Value Decomposition ，SVD）的参数化 ：与 LoRA 不同， AdaLoRA 采用了另一种受 SVD 启发的参数化形式。它将增量 <span class="math notranslate nohighlight">\(\Delta W\)</span> 分解为左右正交矩阵 <span class="math notranslate nohighlight">\(P\)</span> 和 <span class="math notranslate nohighlight">\(Q\)</span>，以及奇异值对角矩阵 <span class="math notranslate nohighlight">\(\Lambda\)</span> 。</p>
+<p>LoRA 将权重增量 <span class="math notranslate nohighlight">\(\Delta W\)</span> 分解为两个低秩矩阵的乘积：<span class="math notranslate nohighlight">\(\Delta W = BA\)</span>。这种分解虽然高效，但对于动态调整秩、进行参数剪枝却不够理想。如果要将秩从 <span class="math notranslate nohighlight">\(r\)</span> 降到 <span class="math notranslate nohighlight">\(r-1\)</span>，就需要从 <span class="math notranslate nohighlight">\(B\)</span> 中移除一列，并从 <span class="math notranslate nohighlight">\(A\)</span> 中移除对应的一行，这是一种“结构性”的移除，被剪掉的参数信息完全丢失。</p>
+<p>AdaLoRA 借鉴了<strong>奇异值分解（SVD）</strong> 的思想，采用了另一种参数化形式。它将权重增量 <span class="math notranslate nohighlight">\(\Delta W\)</span> 分解为三个矩阵的乘积：
+$<span class="math notranslate nohighlight">\(
+W=W^{(0)}+\Delta W=W^{(0)}+P\Lambda Q
+\)</span>$</p>
+<p>其中，<span class="math notranslate nohighlight">\(P\)</span> 和 <span class="math notranslate nohighlight">\(Q\)</span> 是<strong>正交矩阵</strong>，代表了权重更新的“方向”；<span class="math notranslate nohighlight">\(\Lambda\)</span> 是一个<strong>对角矩阵</strong>，其对角线上的元素是奇异值，代表了各个方向上的“重要性”或“量级”。在训练中，我们只更新 <span class="math notranslate nohighlight">\(P, \Lambda, Q\)</span>。</p>
+<p>这种 SVD 参数化带来了两大核心优势：</p>
 <ol class="arabic simple">
-<li><p>通过控制对角矩阵 <span class="math notranslate nohighlight">\(Λ\)</span> 中非零元素的个数，就可以直接、精确地控制增量矩阵 <span class="math notranslate nohighlight">\(\Delta\)</span> 的秩。</p></li>
-<li><p>在 LoRA 中，如果要降低秩，就需要移除 B 的一列和 A 的一行，被剪掉的参数完全丢失。而在 AdaLoRA 中，剪枝操作只作用于奇异值，对应的奇异向量 P 和 Q 的部分依然保留并继续训练，使训练更稳定。</p></li>
+<li><p><strong>精确的秩控制</strong>：增量矩阵 <span class="math notranslate nohighlight">\(\Delta W\)</span> 的秩直接由对角矩阵 <span class="math notranslate nohighlight">\(\Lambda\)</span> 中非零奇异值的数量决定。我们只需将不重要的奇异值置为零，就能精确、平滑地降低矩阵的有效秩，操作非常简单。</p></li>
+<li><p><strong>非破坏性剪枝</strong>：在 LoRA 中，被剪掉的参数完全丢失。而在 AdaLoRA 中，剪枝操作只作用于奇异值（将其置为零），但对应的奇异向量（<span class="math notranslate nohighlight">\(P\)</span> 和 <span class="math notranslate nohighlight">\(Q\)</span> 中的行/列）依然保留并参与后续训练。这意味着，如果一个被剪掉的分量在后续训练中被证明是重要的，模型仍然有机会通过梯度更新重新“激活”它（使其奇异值变为非零）。这种机制使得训练过程更加稳定，避免了因误剪关键参数而导致的性能永久性损伤。</p></li>
 </ol>
-<p>AdaLoRA 设计了一套新的重要性评分机制及剪枝策略。</p>
-<p>评分的基本单元是由 <span class="math notranslate nohighlight">\(P_{k,i}\)</span>、<span class="math notranslate nohighlight">\(Q_{k,i}\)</span>、<span class="math notranslate nohighlight">\(\Lambda_{k,i}\)</span> 构成的三元组。一个三元组的重要性 <span class="math notranslate nohighlight">\(S_{k,i}\)</span> 由 <span class="math notranslate nohighlight">\(\Lambda_{k,i}\)</span> 本身的重要性、 <span class="math notranslate nohighlight">\(P_{k,i}\)</span> 中所有参数的平均重要性、<span class="math notranslate nohighlight">\(Q_{k,i}\)</span> 中所有参数的平均重要性构成。（k 代表第 k 个权重矩阵，i 代表第 i 个奇异值分量）</p>
+<p>有了 SVD 这一精细的控制工具，接下来的关键问题就是：如何衡量每个 SVD 分量的<strong>重要性</strong>，以决定哪些 SVD 分量保留，哪些 SVD 分量被剪枝？</p>
+<p>AdaLoRA 的设计非常巧妙。它将剪枝的基本单元定义为由一对奇异向量和一个奇异值构成的“三元组” <span class="math notranslate nohighlight">\(\{P_{k,i}, \Lambda_{k,i}, Q_{k,i}\} \)</span>（其中 <span class="math notranslate nohighlight">\(k\)</span> 代表第 <span class="math notranslate nohighlight">\(k\)</span> 个权重矩阵，<span class="math notranslate nohighlight">\(i\)</span> 代表第 <span class="math notranslate nohighlight">\(i\)</span> 个奇异值分量）。一个三元组的重要性 <span class="math notranslate nohighlight">\(S_{k,i}\)</span> 被定义为：</p>
 <div class="math notranslate nohighlight">
 \[
 S_{k,i}=s(\lambda_{k,i})+\frac{1}{d_1}\sum_{j=1}^{d_1}s(P_{k,ji})+\frac{1}{d_2}\sum_{j=1}^{d_2}s(Q_{k,ij})
 \]</div>
-<p>单个参数的重要性 <span class="math notranslate nohighlight">\(s(w)\)</span> 采用了考虑不确定性的敏感度分数。</p>
-<p>敏感度 <span class="math notranslate nohighlight">\(I(w)\)</span>：定义为“权重与梯度的乘积的绝对值”，即 <span class="math notranslate nohighlight">\(I(w_{ij})=|w_{ij}\nabla_{w_{ij}}\mathcal{L}|\)</span>。</p>
-<p>AdaLoRA 引入了指数移动平均 (EMA) 来平滑敏感度，并计算了不确定性项 <span class="math notranslate nohighlight">\(U^{(t)}\)</span>，来衡量近期敏感度的波动。</p>
-<p>最终的单参数重要性是平滑后的敏感度与不确定性的乘积，这使得那些持续重要且学习尚不稳定的参数获得更高的分数。</p>
-<div class="math notranslate nohighlight">
-\[
-s^{(t)}(w_{ij})=\overline{I}^{(t)}(w_{ij})\cdot\overline{U}^{(t)}(w_{ij})
-\]</div>
-<p>在训练过程中，AdaLoRA 会周期性地根据当前预算 <span class="math notranslate nohighlight">\(b^{(t)}\)</span>  ，计算三元组重要性分数，保留分数最高的 <span class="math notranslate nohighlight">\(b^{(t)}\)</span> 个三元组参数（保持它们的奇异值不变） ，并将其余三元组的奇异值设为零。</p>
-<p>为了让整个训练过程更稳定、高效而设计的策略。 AdaLoRA 定义了总预算（即保留的奇异值总数）<span class="math notranslate nohighlight">\(b^{(t)}\)</span> 如何随训练步数 <span class="math notranslate nohighlight">\(t\)</span> 变化。</p>
-<p>调度策略分为三个阶段：</p>
+<p>这个公式意味着，一个分量的重要性不仅取决于其奇异值 <span class="math notranslate nohighlight">\(\lambda_{k,i}\)</span> 的大小，还综合考虑了其对应的左右奇异向量中所有参数的平均重要性。</p>
+<p>那么，单个参数 <span class="math notranslate nohighlight">\(w\)</span> 的重要性 <span class="math notranslate nohighlight">\(s(w)\)</span> 又该如何计算呢？简单地使用梯度大小或权重大小都存在局限性。AdaLoRA 采用了一种更鲁棒的、考虑不确定性的敏感度分数。</p>
+<ul class="simple">
+<li><p><strong>敏感度 <span class="math notranslate nohighlight">\(I(w)\)</span></strong>：首先，定义参数的敏感度为“权重与梯度的乘积的绝对值”，即 <span class="math notranslate nohighlight">\(I(w_{ij}) = |w_{ij} \cdot \nabla_{w_{ij}}\mathcal{L}|\)</span>。（<span class="math notranslate nohighlight">\(w_{ij}\)</span> 表示权重矩阵第 <span class="math notranslate nohighlight">\(i\)</span> 行第 <span class="math notranslate nohighlight">\(j\)</span> 列的参数）这个值直观地近似了如果将该参数 <span class="math notranslate nohighlight">\(w_{ij}\)</span> 置为零，模型损失 <span class="math notranslate nohighlight">\(\mathcal{L}\)</span> 会发生多大的变化。敏感度越高，参数越重要。</p></li>
+<li><p><strong>平滑与不确定性</strong>：由于单步的梯度充满噪声，直接使用 <span class="math notranslate nohighlight">\(I(w)\)</span> 会很不稳定。因此，AdaLoRA 引入了<strong>指数移动平均（EMA）</strong> 来平滑敏感度 <span class="math notranslate nohighlight">\(\overline{I}^{(t)}\)</span>，得到一个更稳定的长期重要性评估。同时，它还计算了敏感度的<strong>不确定性项</strong> <span class="math notranslate nohighlight">\(\overline{U}^{(t)}\)</span>，用于衡量近期敏感度的波动程度。波动越大，说明模型对该参数的学习还“没稳定下来”，该参数可能仍有潜力。</p></li>
+<li><p><strong>最终分数 <span class="math notranslate nohighlight">\(s(w)\)</span></strong>：最终，单个参数的重要性被定义为平滑后的敏感度与不确定性的乘积：<span class="math notranslate nohighlight">\(s^{(t)}(w_{ij})=\overline{I}^{(t)}(w_{ij})\cdot\overline{U}^{(t)}(w_{ij})\)</span>。这个设计使得那些<strong>持续重要（<span class="math notranslate nohighlight">\(\overline{I}\)</span> 大）且学习尚不稳定（<span class="math notranslate nohighlight">\(\overline{U}\)</span> 大）</strong> 的参数获得最高的分数，从而在剪枝中被优先保留。</p></li>
+</ul>
+<p>在训练过程中，AdaLoRA 会周期性地根据当前预算 <span class="math notranslate nohighlight">\(b^{(t)}\)</span>  ，计算<strong>三元组重要性分数</strong>，保留分数最高的 <span class="math notranslate nohighlight">\(b^{(t)}\)</span> 个三元组参数（保持它们的奇异值不变） ，并将其余三元组的奇异值设为零，仅对非零奇异值的三元组应用梯度更新。</p>
+<p>如果从一开始就用很低的预算进行训练，很多有潜力的参数分量可能在“热身”之前就被错误地剪掉。反之，如果剪枝过程过于突兀，则可能导致训练过程剧烈震荡。为此，AdaLoRA 设计了一个全局预算调度器，优雅地管理整个训练过程中的参数预算。该调度策略分为三个阶段：</p>
 <ol class="arabic simple">
-<li><p><strong>热身阶段</strong> (Warm-up)：训练开始时，设置一个比最终目标预算 <span class="math notranslate nohighlight">\(b^{(T)}\)</span> 更高的初始预算 <span class="math notranslate nohighlight">\(b^{(0)}\)</span>  。这允许模型在初期探索更广阔的参数空间，让更多的奇异值分量参与训练，从而更准确地评估它们的重要性。</p></li>
-<li><p><strong>预算削减阶段</strong> (Budget Pruning)：在热身结束后，采用一个三次函数将预算从 <span class="math notranslate nohighlight">\(b^{(0)}\)</span> 平滑地降低到最终的目标预算 <span class="math notranslate nohighlight">\(b^{(T)}\)</span>。</p></li>
-<li><p><strong>微调阶段</strong> (Fine-tuning)：当预算达到 <span class="math notranslate nohighlight">\(b^{(T)}\)</span> 后，保持预算不变，继续训练模型，直到收敛。</p></li>
+<li><p><strong>热身阶段（Warm-up）</strong>：训练开始时，设置一个比最终目标预算 <span class="math notranslate nohighlight">\(b^{(T)}\)</span> <strong>更高</strong>的初始预算 <span class="math notranslate nohighlight">\(b^{(0)}\)</span>（例如 1.5 倍）。这允许模型在初期探索更广阔的参数空间，让更多的奇异值分量参与训练，从而使后续的重要性评分更加准确可靠。</p></li>
+<li><p><strong>预算削减阶段（Budget Pruning）</strong>：热身结束后，预算 <span class="math notranslate nohighlight">\(b^{(t)}\)</span> 并不会骤降，而是采用一个<strong>三次函数</strong> 在一定步数内从初始预算 <span class="math notranslate nohighlight">\(b^{(0)}\)</span> 平滑地降低到最终的目标预算 <span class="math notranslate nohighlight">\(b^{(T)}\)</span>。这种平滑过渡有效避免了训练的突然震荡。</p></li>
+<li><p><strong>微调阶段（Fine-tuning）</strong>：当预算达到目标 <span class="math notranslate nohighlight">\(b^{(T)}\)</span> 后，预算分配方案基本固定下来，模型将保持此预算不变，继续进行标准的微调训练，直至收敛。</p></li>
 </ol>
+<p>在自然语言生成任务上，AdaLoRA 使用与 LoRA 相同的可训练参数量，实现了在多个 benchmark 上对 LoRA 性能的超越，在实验中证明了理论的有效性。</p>
+<p><img alt="图 14" src="../_images/05LoRA14.png" /></p>
 </section>
 <section id="dora">
 <h3>DoRA 算法原理<a class="headerlink" href="#dora" title="Link to this heading">#</a></h3>
-<p><strong>DoRA</strong>，Weight-Decomposed Low-Rank：DoRA 将预训练的权重分解为量级和方向两部分进行微调，特别是采用 LoRA 进行方向部分的更新，以有效地减少可训练参数的数量，实现了与 FT（Full Fine-tuning）非常相似的学习能力。</p>
-<p>![](images\05LoRA Variants01.png)</p>
-<p>预训练的权重已经包含了适合下游任务的大量知识，所以仅仅对于量级和方向中的某一个进行较大幅度的更新，就已经足够了。</p>
-<p>DoRA 限制 LoRA 只专注于方向 <span class="math notranslate nohighlight">\(V\)</span> 适应，同时允许量级幅度 <span class="math notranslate nohighlight">\(m\)</span> 可调，与原始方法相比简化了任务，在原始方法中，LoRA 需要学习两个幅度的调整。</p>
+<p>虽然 LoRA 及其变体（如 AdaLoRA）在参数高效微调领域取得了巨大成功，但实践中，它们与全参数微调（Full Fine-tuning, FT）之间仍存在一定的差距。<strong>DoRA</strong>(Weight-Decomposed Low-Rank Adaptation) 的提出，正是为了深入探究并弥补这一差距。它没有将性能差距简单归因于参数量不足，而是从一个全新的视角出发，揭示了 LoRA 与 FT 在学习机制上的根本差异。</p>
+<p>DoRA 的作者们首先提出了一个创新的分析方法：<strong>权重分解（Weight Decomposition）</strong>。他们将任意一个权重矩阵 <span class="math notranslate nohighlight">\(W\)</span> 分解为两个核心部分：</p>
+<ol class="arabic simple">
+<li><p><strong>量级 (Magnitude)</strong>：用一个向量 <span class="math notranslate nohighlight">\(m\)</span> 表示，代表权重矩阵中每一列的“强度”或“大小”。计算方式为 <span class="math notranslate nohighlight">\(m=||W||_{c}\)</span>（对矩阵 <span class="math notranslate nohighlight">\(W\)</span> 的每一列求其 L2 范数）</p></li>
+<li><p><strong>方向 (Direction)</strong>：用一个矩阵 <span class="math notranslate nohighlight">\(V\)</span> 表示，代表权重矩阵中每一列的“指向”。计算方式为 <span class="math notranslate nohighlight">\(V=W/||W||_c\)</span>。</p></li>
+</ol>
+<p>通过这种分解，任何权重的更新都可以被看作是其量级和方向的改变。基于此，研究者们对比了在微调过程中，FT 和 LoRA 两种方法的<strong>量级变化量 (ΔM)</strong> 与<strong>方向变化量 (ΔD)</strong> 之间的关系。</p>
+<p>他们的发现是惊人的，并直指 LoRA 的内在局限性：</p>
+<ul class="simple">
+<li><p><strong>LoRA 的学习模式</strong>：如下图（中）所示，LoRA 的ΔM 与ΔD 呈现出<strong>强烈的正相关</strong>。这意味着，当 LoRA 试图大幅改变权重的方向时，其量级也必须随之大幅增加；反之亦然。量级和方向的更新被紧紧地“捆绑”在了一起。</p></li>
+<li><p><strong>FT 的学习模式</strong>：相比之下，FT（图左）则表现出<strong>负相关</strong>。这意味着 FT 可以非常灵活地进行调整：它可以只做微小的方向变动，但进行显著的量级调整；也可以大幅改变方向，而量级基本保持不变。</p></li>
+</ul>
+<p><img alt="图 15" src="../_images/05LoRA15.png" /></p>
+<p>这种<strong>解耦</strong>的能力，正是 FT 学习能力更强的关键所在。预训练模型本身已包含丰富的知识，下游任务的微调往往只需要对这些知识进行精细的“重新组合”和“强度调整”，而非颠覆性的改变。FT 的解耦能力恰好满足了这一需求，而 LoRA 的“捆绑式”更新则限制了其微调的灵活性和精度。</p>
+<p>理解了问题的根源后，DoRA 的解决方案由此提出：在微调中显式地解耦量级和方向的更新，并让 LoRA 专注于其更擅长的部分—方向微调。</p>
+<p><img alt="图 16" src="../_images/05LoRA16.png" /></p>
+<p>DoRA 具体实现如下：</p>
+<ol class="arabic">
+<li><p><strong>初始化</strong>：对于一个预训练权重矩阵 <span class="math notranslate nohighlight">\(W_0\)</span>，首先将其分解为初始的量级 <span class="math notranslate nohighlight">\(m=||W_0||_c\)</span> 和方向 <span class="math notranslate nohighlight">\(V=W/||W||_c\)</span>。</p></li>
+<li><p><strong>参数化更新</strong>：在微调时，DoRA 引入两组独立的可训练参数：</p>
+<p><strong>量级向量 m</strong>：一个与权重矩阵列数相同大小的可训练向量，直接用于学习量级的变化。</p>
+<p><strong>方向更新 ΔV</strong>：沿用 LoRA 的方式，使用两个低秩矩阵 <span class="math notranslate nohighlight">\(B\)</span> 和 <span class="math notranslate nohighlight">\(A\)</span> 来表示方向上的增量，即 <span class="math notranslate nohighlight">\(\Delta V=BA\)</span>。</p>
+</li>
+<li><p><strong>前向传播</strong>：最终微调后的权重 <span class="math notranslate nohighlight">\(W^{'}\)</span> 的计算公式为：</p></li>
+</ol>
 <div class="math notranslate nohighlight">
 \[
 W^{\prime}=\underline{m}\frac{V+\Delta V}{||V+\Delta V||_c}=\underline{m}\frac{W_0+\underline{BA}}{||W_0+\underline{BA}||_c}
 \]</div>
-<p>对于两个微调维度量级变化量ΔM 以及方向变化量ΔD 进行深度的分析：</p>
-<p>在中间步骤中，LoRA 表现出一致的正斜率趋势，这表明方向和量级的变化之间存在正比关系。</p>
-<p>相比之下，全量微调（ Full Fine-tuning，FT）表现出更多样的学习模式，斜率相对为负。FT 和 LoRA 之间的这种区别反映了它们各自的学习能力。LoRA 倾向于按比例增加或减少量级和方向更新，但它缺乏进行更细微调整的细微能力。</p>
-<p>而 DoRA 的行为更符合 FT 的学习模式，能够执行更轻微的方向变化和更显著的量级变化。</p>
-<p>![](./images05LoRA Variants02.png)</p>
-<p>###LoRA++ 算法原理</p>
+<p>其中，下划线部分 <span class="math notranslate nohighlight">\(m\)</span>、<span class="math notranslate nohighlight">\(B\)</span>、<span class="math notranslate nohighlight">\(A\)</span> 是可训练参数。</p>
+<p>通过这种设计，DoRA 成功地将量级更新（由 <span class="math notranslate nohighlight">\(m\)</span> 负责）和方向更新（由 <span class="math notranslate nohighlight">\(BA\)</span> 负责）彻底分开，将复杂的权重更新任务分解为两个更简单的子任务（调整量级和调整方向），使得训练过程更加稳定和高效，并且释放了模型的微调潜力，在众多任务上都取得了超越标准 LoRA 的性能，显著缩小了与全参数微调的差距。</p>
+</section>
+<section id="id3">
+<h3>LoRA+ 算法原理<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>标准的LoRA在参数高效微调领域取得了巨大成功，但其初始实现中一个看似微不足道的细节—为分解后的矩阵<span class="math notranslate nohighlight">\(A\)</span>和<span class="math notranslate nohighlight">\(B\)</span>设置相同的学习率—掩盖了其训练动态中的一个关键低效点。<strong>LoRA+</strong> 的核心贡献，正是通过严谨的理论分析揭示并修正了这一问题，从而在不增加任何计算成本的前提下，解锁了更快的收敛速度和更优的模型性能。</p>
+<p>LoRA将权重矩阵的更新<span class="math notranslate nohighlight">\(\Delta W\)</span>分解为<span class="math notranslate nohighlight">\(BA\)</span>，其中B为<span class="math notranslate nohighlight">\(n×r\)</span>矩阵，A为<span class="math notranslate nohighlight">\(r×n\)</span>矩阵。在反向传播过程中，损失函数<span class="math notranslate nohighlight">\(L\)</span>对这两个矩阵的梯度可以表示为：
+$<span class="math notranslate nohighlight">\(
+\frac{\partial L}{\partial A}=B^T\cdot\left(\frac{\partial L}{\partial(BA)}\right)
+\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[
+\frac{\partial L}{\partial B}=\left(\frac{\partial L}{\partial(BA)}\right)\cdot A^T
+\]</div>
+<p>这里的关键在于矩阵的维度和乘法顺序。让我们更直观地考察梯度的范数或尺度。假设输入<span class="math notranslate nohighlight">\(x\)</span>和梯度<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial BA}\)</span>中的元素大致独立且方差为1。</p>
+<ul class="simple">
+<li><p><strong>对于矩阵B的梯度<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial B}\)</span></strong>：
+<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial B}\)</span>的每一列都是<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial BA}\)</span>与<span class="math notranslate nohighlight">\(A\)</span>的某一列的内积。A的列向量维度为<span class="math notranslate nohighlight">\(r\)</span>。根据随机矩阵理论的直觉，这个内积的结果（即<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial B}\)</span>的单个元素）的尺度大致是<span class="math notranslate nohighlight">\(O(\sqrt{r})\)</span>。</p></li>
+<li><p><strong>对于矩阵A的梯度<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial A}\)</span></strong>：
+<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial A}\)</span>的每一行都是<span class="math notranslate nohighlight">\(B\)</span>的某一行与<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial BA}\)</span>的内积。B的行向量维度为<span class="math notranslate nohighlight">\(n\)</span>。同理，这个内积的结果（即<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial A}\)</span>的单个元素）的尺度大致是<span class="math notranslate nohighlight">\(O(\sqrt{n})\)</span>。</p></li>
+</ul>
+<p>由于在大模型中，模型宽度<span class="math notranslate nohighlight">\(n\)</span>通常远大于LoRA的秩<span class="math notranslate nohighlight">\(r\)</span>（例如 <span class="math notranslate nohighlight">\(n\)</span>=4096, <span class="math notranslate nohighlight">\(r\)</span>=16），这就导致了一个根本性的<strong>梯度尺度不对称性</strong>：
+$<span class="math notranslate nohighlight">\(
+\left\|\frac{\partial L}{\partial A}\right\|\approx O(\sqrt{n})
+\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[
+\left\|\frac{\partial L}{\partial B}\right\|\approx O(\sqrt{r})
+\]</div>
+<p>这意味着，<strong>传递到矩阵A的梯度天然就比传递到矩阵B的梯度在尺度上大得多</strong>。</p>
+<p>当标准LoRA对两者使用相同的学习率<span class="math notranslate nohighlight">\(\eta\)</span>时，更新步长<span class="math notranslate nohighlight">\(\Delta A=\eta\cdot\frac{\partial L}{\partial A}\)</span>和<span class="math notranslate nohighlight">\(\Delta B=\eta\cdot\frac{\partial L}{\partial B}\)</span>的尺度也会存在巨大差异。为了保证训练的整体稳定性（主要是防止<span class="math notranslate nohighlight">\(\Delta A\)</span>过大导致的发散），学习率<span class="math notranslate nohighlight">\(\eta\)</span>必须设置得相对较小，以适应<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial A}\)</span>这个“大梯度”。</p>
+<p>然而，这个对于<span class="math notranslate nohighlight">\(A\)</span>来说“安全”的学习率<span class="math notranslate nohighlight">\(\eta\)</span>，对于<span class="math notranslate nohighlight">\(B\)</span>来说就太小了。<span class="math notranslate nohighlight">\(\Delta B\)</span>的更新步长会变得微不足道，导致矩阵<span class="math notranslate nohighlight">\(B\)</span>的学习过程极其缓慢，几乎陷入停滞。</p>
+<p>LoRA+的解决方案直击问题核心：既然梯度尺度存在不对称性，那么就应该用学习率来抵消这种不对称性，从而让两个矩阵的有效更新步长保持在相似的的尺度上。</p>
+<p>理想的状况是，我们希望权重矩阵的实际变化量<span class="math notranslate nohighlight">\(\| \Delta A \|\)</span> 和 <span class="math notranslate nohighlight">\(\| \Delta B \|\)</span>能够对学习过程做出同等重要的贡献。为了达到这个目的，学习率<span class="math notranslate nohighlight">\(\eta_A\)</span>和<span class="math notranslate nohighlight">\(\eta_B\)</span>需要满足以下关系：
+$<span class="math notranslate nohighlight">\(
+\eta_A \cdot \left\| \frac{\partial L}{\partial A} \right\| \approx \eta_B \cdot \left\| \frac{\partial L}{\partial B} \right\|
+\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[
+\eta_A \cdot O(\sqrt{n}) \approx \eta_B \cdot O(\sqrt{r})
+\]</div>
+<p>由此可得：
+$<span class="math notranslate nohighlight">\(
+\frac{\eta_B}{\eta_A} \approx O\left( \frac{\sqrt{n}}{\sqrt{r}} \right)
+\)</span><span class="math notranslate nohighlight">\(
+由于\)</span>n\gg r<span class="math notranslate nohighlight">\(，这意味着\)</span>\eta_B<span class="math notranslate nohighlight">\(需要远大于\)</span>\eta_A$.</p>
+<p>LoRA+将这一理论洞察转化为一个简单且实用的策略。它没有要求用户去精确计算<span class="math notranslate nohighlight">\(n\)</span>和<span class="math notranslate nohighlight">\(r\)</span>的比值，而是引入了一个固定的、远大于1的比率超参数<span class="math notranslate nohighlight">\(\lambda\)</span>，使得<span class="math notranslate nohighlight">\(\eta_B=\lambda×\eta_A\)</span>，其中<span class="math notranslate nohighlight">\(\eta_A\)</span>为用户调节的基础学习率。</p>
+<p>通过设置一个较大的<span class="math notranslate nohighlight">\(\lambda\)</span>（例如<span class="math notranslate nohighlight">\(\lambda\)</span>=16），<span class="math notranslate nohighlight">\(\eta_B\)</span>被显著放大，从而有效地补偿了<span class="math notranslate nohighlight">\(\frac{\partial L}{\partial B}\)</span>较小的梯度尺度。这使得<span class="math notranslate nohighlight">\(\Delta B\)</span>的更新步长恢复到了一个合理的量级。</p>
+<p><img alt="图 17" src="../_images/05LoRA17.png" /></p>
+<p>这种对学习率的精准校正，带来了两个直接且显著的好处：</p>
+<ol class="arabic simple">
+<li><p><strong>更快的收敛速度</strong>：当<span class="math notranslate nohighlight">\(A\)</span>和<span class="math notranslate nohighlight">\(B\)</span>都以“正确”的步长协同更新时，模型能更直接、更高效地探索最优的低秩子空间，避免了因<span class="math notranslate nohighlight">\(B\)</span>学习缓慢而导致的优化路径迂回。这直接体现为训练收敛速度的大幅提升。如下图，LoRA+（蓝色线条）仅需原始LoRA(黄色线条)大约一半的训练步长，即可达到甚至超过后者的收敛程度。</p></li>
+<li><p><strong>更优的模型性能</strong>：标准LoRA中，由于<span class="math notranslate nohighlight">\(B\)</span>的学习不充分，模型可能未能找到最优的特征提取方式。LoRA+通过“激活”<span class="math notranslate nohighlight">\(B\)</span>的学习过程，使得模型能够学习到对下游任务更具表达能力的低秩表示。一个更优的低秩子空间自然会带来最终模型性能的提升，尤其是在那些需要更强特征自适应能力的复杂任务上。</p></li>
+</ol>
+<p><img alt="图 18" src="../_images/05LoRA18.png" /></p>
+<p>总的来说，LoRA+基于对LoRA反向传播过程中梯度尺度不对称性的深刻理论洞察，为两个角色不同的矩阵分配合理缩放的学习率，从根本上解决了标准LoRA中的矩阵<span class="math notranslate nohighlight">\(B\)</span>学习不足的问题，从而以零额外计算成本的方式，实现了训练效率和模型精度的双重突破。</p>
 </section>
 <section id="moe-lora">
 <h3>MoE_LoRA 算法原理<a class="headerlink" href="#moe-lora" title="Link to this heading">#</a></h3>
+<p>LoRA的模块化特性激发了一个极具吸引力的设想：我们是否能像玩乐高积木一样，将针对不同任务或风格微调好的LoRA模块自由组合，从而创造出全新的、复合的能力？例如，将一个精通“画狗”的LoRA、一个擅长“赛博朋克风格”的LoRA，以及一个专门学习“戴墨镜”概念的LoRA组合起来，可以生成一幅高质量的“戴着墨镜的赛博朋克风格的狗”的图像。</p>
+<p>然而，当研究者们尝试用最直接的方法——<strong>线性算术组合</strong>（即简单地将各专家LoRA权重<span class="math notranslate nohighlight">\(\Delta W\)</span>求和）——来实现这一目标时，很快就遇到了难以逾越的障碍。
+$<span class="math notranslate nohighlight">\(
+\hat{\boldsymbol{W}}=\boldsymbol{W}+\sum_{i=1}^N\Delta\boldsymbol{W}_i,
+\)</span>$
+这种简单组合的背后潜藏着两大根本性问题：</p>
+<ol class="arabic simple">
+<li><p><strong>破坏性干扰</strong>：当N增加到一定数量后，这种方式可能会影响原始权重<span class="math notranslate nohighlight">\(W\)</span>，从而降低模型的生成能力。</p></li>
+<li><p><strong>特征稀释</strong>：为了缓解上述的问题，一个常见的做法是对组合权重进行归一化（例如，保证权重之和为1）。但这又引入了新的问题：随着组合的LoRA数量增多，分配给每个LoRA的权重<span class="math notranslate nohighlight">\(w_i\)</span>就必须相应减小。这就好比一个委员会里专家太多，每个人的发言时间都被压缩，导致其独特的见解无法充分表达。“赛博朋克”的风格感可能会因为权重过低而变得微乎其微，“墨镜”的特征也可能变得模糊不清。</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[
+\hat{\boldsymbol{W}}=\boldsymbol{W}+\sum_{i=1}^Nw_i\cdot\Delta\boldsymbol{W}_i
+\]</div>
+<p>为了绕过这些问题，<strong>基于参考的微调</strong>等方法被提出，但它们通常需要重新进行大规模训练，这不仅成本高昂，更彻底牺牲了LoRA“即插即用”的核心优势。</p>
+<p>因此，一个核心的挑战摆在面前：<strong>如何动态有效地组合多个经过训练的LoRA，同时保留它们所有的个体特征？</strong></p>
+<p>对于这个问题，一个经典解决方案是<strong>Mixture of LoRA Experts (MOLE)</strong> 。MOLE彻底颠覆了为每个LoRA分配一个全局、静态混合权重的“一刀切”思路。它的核心思路来源于论文中的一个关键观察：<strong>一个完整的LoRA并非一个不可分割的整体，其内部不同层级的权重所学习和控制的特征是截然不同的。</strong></p>
+<p><img alt="图 19" src="../_images/05LoRA19.png" /></p>
+<p>基于此，MOLE提出了一种全新的范式：将LoRA组合问题，转化为在模型的<strong>每一层</strong>都召开一次“<strong>多方专家委员会会议</strong>”。在这个会议上，不再使用一个固定的全局权重，而是引入一个<strong>动态的、可学习的门控函数（Gating Function，G）</strong>，它扮演着“智能会议主持人”的角色。这位主持人会根据当前需要解决的具体问题（即模型的输入），在<strong>当前层级</strong>动态地决定应该赋予来自不同LoRA的“层级专家”多大的话语权。另外，MOLE也允许手动去除某个LoRA块（如上图的LoRA <span class="math notranslate nohighlight">\(\gamma\)</span>），<strong>算法不变</strong>的将该LoRA块的权重分配给其它LoRA专家。</p>
+<p>MOLE的架构在Transformer的每个需要适配的层级都进行了对应的设计，下面我们来了解其详细的技术原理。</p>
+<p><img alt="图 20" src="../_images/05LoRA20.png" /></p>
+<p>给定训练好的<span class="math notranslate nohighlight">\(N\)</span>个LoRA专家模块<span class="math notranslate nohighlight">\(\Omega=\{\Delta\theta_i\}_{i=0}^{N-1}\)</span>，对于输入<span class="math notranslate nohighlight">\(x\in\mathbb{R}^{L\times d}\)</span>（<span class="math notranslate nohighlight">\(L\)</span>是序列长度，<span class="math notranslate nohighlight">\(d\)</span>是维度），在一个transformer块内，先后经过其Attention层和FFN层的LoRA模块，计算出对应第<span class="math notranslate nohighlight">\(i\)</span>个专家的LoRA增量<span class="math notranslate nohighlight">\(\boldsymbol{E}_{\Delta\theta_i}\left(\boldsymbol{x}\right)\)</span>。（<span class="math notranslate nohighlight">\(LN\)</span>为layer normalization操作）
+$<span class="math notranslate nohighlight">\(
+\boldsymbol{x}_{\Delta\theta_i}^{^{\prime}}=\boldsymbol{x}+f_{\mathrm{Attn}}\left(\mathrm{LN}(\boldsymbol{x})|\Delta\theta_i\right)
+\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[
+\boldsymbol{E}_{\Delta\theta_i}\left(\boldsymbol{x}\right)=\boldsymbol{x}_{\Delta\theta_i}^{^{\prime}}+f_{\mathrm{FFN}}\left(\mathrm{LN}\left(\boldsymbol{x}_{\Delta\theta_i}^{^{\prime}}\right)|\Delta\theta_i\right)
+\]</div>
+<p>接着对所有LoRA增量进行向量拼接和归一化操作，得到<span class="math notranslate nohighlight">\(\boldsymbol{E}_\Omega\left(\boldsymbol{x}\right)\in\mathbb{R}^\xi\)</span>且<span class="math notranslate nohighlight">\(\xi=N\times L\times d\)</span>。
+$<span class="math notranslate nohighlight">\(
+E_{\Omega}\left(\boldsymbol{x}\right)=\text{Normalization}\left(\boldsymbol{E}_{\Delta\theta_{0}}\left(\boldsymbol{x}\right)\oplus\ldots\oplus\boldsymbol{E}_{\Delta\theta_{N-1}}\left(\boldsymbol{x}\right)\right)
+\)</span>$</p>
+<p>再对<span class="math notranslate nohighlight">\(\boldsymbol{E}_\Omega\left(\boldsymbol{x}\right)\)</span>进行向量平展操作，并用一个<strong>可学习</strong>的**<span class="math notranslate nohighlight">\(\boldsymbol{e}\in\mathbb{R}^{\xi\times N}\)</span>**对其点积，将<span class="math notranslate nohighlight">\(\boldsymbol{E}_\Omega\left(\boldsymbol{x}\right)\)</span>降至<span class="math notranslate nohighlight">\(N\)</span>维。
+$<span class="math notranslate nohighlight">\(
+\varepsilon=\mathrm{Flatten}{\left(\boldsymbol{E}_\Omega\left(\boldsymbol{x}\right)\right)}^\top\cdot\boldsymbol{e},\quad\varepsilon\in\mathbb{R}^N
+\)</span><span class="math notranslate nohighlight">\(
+那么每个LoRA模块的门控值如下，其中温度标量\)</span>\mathrm{T}<span class="math notranslate nohighlight">\(是**可学习**的。
+\)</span><span class="math notranslate nohighlight">\(
+\mathcal{G}(\varepsilon_i)=\frac{\exp\left(\varepsilon_i/\tau\right)}{\sum_{j=1}^N\exp\left(\varepsilon_j/\tau\right)}
+\)</span><span class="math notranslate nohighlight">\(
+将每个LoRA专家的输出与对应的门控值相乘，得到门控函数\)</span>G(·)<span class="math notranslate nohighlight">\(的最终输出:
+\)</span><span class="math notranslate nohighlight">\(
+\tilde{\boldsymbol{E}}_{\Omega}(\boldsymbol{x})=\sum_{i=0}^{N}\mathcal{G}_{i}\left(\varepsilon_{i}\right)\cdot\boldsymbol{E}_{\Delta\theta_{i}}\left(\boldsymbol{x}\right)
+\)</span><span class="math notranslate nohighlight">\(
+最后，将门控制函数的输出（LoRA增量）与预训练网络的输出（\)</span>\boldsymbol{F}_\theta<span class="math notranslate nohighlight">\(）相加，计算出该transformer块的最终输出:
+\)</span><span class="math notranslate nohighlight">\(
+\boldsymbol{O}\left(\boldsymbol{x}\right)=\boldsymbol{F}_\theta\left(\boldsymbol{x}\right)+\tilde{\boldsymbol{E}}_\Omega\left(\boldsymbol{x}\right)
+\)</span><span class="math notranslate nohighlight">\(
+在训练门控网络时，研究者发现了一个新问题：随着训练步数的增加，门控函数的分布概率的平均熵逐渐减小（下图蓝色线条），模型会很快倾向于只给少数几个表现优异的LoRA分配高权重（如下图的LoRA \)</span>\beta$，门控概率为68%），而忽略其他专家，这将丧失组合的多样性。</p>
+<p><img alt="图 21" src="../_images/05LoRA21.png" /></p>
+<p>为了鼓励门控网络分配权重时的平衡性，MOLE引入了一个<strong>门控平衡损失 (Gating Balancing Loss)</strong>，作为整体Loss的补充项。该损失项旨在最小化不同LoRA专家在整个训练批次中被分配到的<strong>平均权重</strong>之间的差异。它像一个惩罚机制，如果某个专家被持续冷落或过度依赖，损失值就会增大，从而迫使模型学会更均衡地利用所有专家的能力。
+$<span class="math notranslate nohighlight">\(
+\mathcal{L}_{\mathrm{balance}}=-\log\left(\prod_{i=0}^N\mathbf{q}^{(i)}\right)
+\)</span>$</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{aligned}\mathbf{q}^{(i)}=\frac{1}{M}\sum_{k=1}^{M}\frac{\exp\left(\varepsilon_i^k/\tau\right)}{\sum_{j=1}^{N}\exp\left(\varepsilon_j^k/\tau\right)}\end{aligned}
+\]</div>
+<p>其中，<span class="math notranslate nohighlight">\(M\)</span>表示含有门控函数的transformer块的数量，N表示LoRA专家的数量。</p>
+<p>在实验中，研究者证明了MoLE的有效性。MoLE在Big-Bench Hard（一个NLP任务）测试集上的表现明显优于NLA（normalized linear arithmetic composition，即上文的归一化线性组合算法）和其它MoELoRA方法（LoRAHub、PEMS）。另外，在其它任务，例如多模态文生图中，MOLE也成功做到了在保留各个LoRA鲜明特征的同时，实现灵活、高质量的动态组合的效果。</p>
+<p>然而，MOLE也并非完美。论文同样指出，当组合的LoRA专家数量变得极大时（例如超过100个），所有MoELoRA组合方法的性能都开始出现下降。这表明，如何高效管理和组合超大规模的专家库，仍然是一个开放的挑战。</p>
+<p><img alt="图 22" src="../_images/05LoRA22.png" /></p>
 </section>
-</section>
-<section id="id3">
-<h2>LoRA 微调应用场景<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 </section>
 <section id="id4">
-<h2>多模态应用<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
-<p>!!!!!!!
-内容太浅了</p>
+<h2>LoRA 微调应用场景<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+</section>
+<section id="id5">
+<h2>多模态应用<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
 <p>现有多模态模型，依赖一个独立的、预训练的视觉模型（如 ViT）来提取图像特征。</p>
 <p>推理时，ViT 和连接器是额外且独立的模块，这增加了计算成本和内存占用。</p>
-<p>工作流程是串行的，LLM 必须等待 ViT 完全处理完图像才能开始工作。</p>
-<p>!!!!!!!!!!!!!
-注意 markdown 的格式，请参考其他 done 的文章
-<img src="images\04LoRA02.png" style="zoom: 67%;" /></p>
+<p>工作流程是串行的，LLM 必须等待 ViT 完全处理完图像才能开始工作。
+<img alt="" src="../_images/04Train05FineTune" /></p>
 <p><strong>VoRA</strong>（Vision as LoRA） 提出了一种颠覆性的解决方案：不再依赖外部视觉专家，而是让 LLM 自己“学会”看图。</p>
 <p>在 LLM 的每一层线性层中，都加入专门用于处理视觉信息的低秩适配器（LoRA）。</p>
 <p>在训练时，冻结 LLM 的原始参数，只训练这些新加入的 LoRA 层和轻量级的图像嵌入层,从而将“视觉”能力，直接集成到 LLM 内部。</p>
 <p>将语言能力（在冻结的 LLM 中）和新学习的视觉能力（在 LoRA 层中）解耦，从而避免了直接训练整个模型时可能出现的训练不稳定或“灾难性遗忘”问题。</p>
-<img src="images\04LoRA03.png" style="zoom: 67%;" />
-</section>
-<section id="id5">
-<h2>总结与思考<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!!!补充</p>
+<p><img alt="" src="../_images/04Train05FineTune" /></p>
 </section>
 <section id="id6">
-<h2>参考与引用<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<h2>总结与思考<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<p>!!!!!!!!!!补充</p>
+</section>
+<section id="id7">
+<h2>参考与引用<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
 <ul class="simple">
+<li><p>Aghajanyan, et al. Intrinsic dimensionality explains the effectiveness of language model fine-tuning，https://arxiv.org/abs/2012.13255</p></li>
+<li><p>LoRA：Low-Rank Adaptation of Large Language Models，https://arxiv.org/abs/2106.09685</p></li>
+<li><p>QLoRA: Efficient finetuning of quantized llms，https://arxiv.org/abs/2305.14314</p></li>
 <li><p>AdaLoRA：Adaptive Budget Allocation For Parameter-Efficient Fine-Tuning， https://arxiv.org/abs/2303.10512</p></li>
 <li><p>DoRA：Weight-Decomposed Low-Rank Adaptation， https://arxiv.org/abs/2402.09353</p></li>
-<li><p>LoRA：Low-Rank Adaptation of Large Language Models，https://arxiv.org/abs/2106.09685</p></li>
+<li><p>LoRA+：Efficient low rank adaptation of large models，https://arxiv.org/abs/2402.12354</p></li>
+<li><p>Mixture of LoRA Experts，https://arxiv.org/abs/2404.13628</p></li>
 <li><p>VoRA：Vision as LoRA， https://arxiv.org/abs/2503.20680</p></li>
 </ul>
 </section>
@@ -1053,7 +1322,7 @@ W^{\prime}=\underline{m}\frac{V+\Delta V}{||V+\Delta V||_c}=\underline{m}\frac{W
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">大模型微调基础</p>
+        <p class="prev-next-title">01.大模型微调基础</p>
       </div>
     </a>
     <a class="right-next"
@@ -1081,18 +1350,20 @@ W^{\prime}=\underline{m}\frac{V+\Delta V}{||V+\Delta V||_c}=\underline{m}\frac{W
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#lora">LoRA 核心原理</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">主流 LoRA 算法解读</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#qlora">QLoRA 算法原理</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adapterlora">AdapterLoRA 算法原理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adalora">AdaLoRA 算法原理</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dora">DoRA 算法原理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">LoRA+ 算法原理</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#moe-lora">MoE_LoRA 算法原理</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">LoRA 微调应用场景</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">多模态应用</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">参考与引用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">LoRA 微调应用场景</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">多模态应用</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">参考与引用</a></li>
 </ul>
   </nav></div>
 
@@ -1126,7 +1397,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 27, 2025.
+  Last updated on Nov 06, 2025.
   <br/>
 </p>
   </div>

@@ -11,12 +11,12 @@
 <meta property="og:type" content="website" />
 <meta property="og:url" content="05Infer06CompDistill/bitsandbytesINT8.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="authored by:汪袁烁 调用的时候发生了什么: 为了更深入的了解INT8量化中的LLM.int8()，以及当我们调用： 之后究竟发生了什么，我摘出了LLM.int8()的源码来简要阅读，本篇适合那些对于LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码： bnb_linear的替换: 更具体的，当 Transformers 在 from_pretrained 里检测..." />
+<meta property="og:description" content="authored by:汪袁烁 调用的时候发生了什么: 为了更深入的了解 INT8 量化中的 LLM.int8()，以及当我们调用： 之后究竟发生了什么，我摘出了 LLM.int8()的源码来简要阅读，本篇适合那些对于 LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码： bnb_linear 的替换: 更具体的，当 Transformers 在 from_pretrain..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="authored by:汪袁烁 调用的时候发生了什么: 为了更深入的了解INT8量化中的LLM.int8()，以及当我们调用： 之后究竟发生了什么，我摘出了LLM.int8()的源码来简要阅读，本篇适合那些对于LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码： bnb_linear的替换: 更..." />
-<meta name="description" content="authored by:汪袁烁 调用的时候发生了什么: 为了更深入的了解INT8量化中的LLM.int8()，以及当我们调用： 之后究竟发生了什么，我摘出了LLM.int8()的源码来简要阅读，本篇适合那些对于LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码： bnb_linear的替换: 更具体的，当 Transformers 在 from_pretrained 里检测..." />
+<meta property="og:image:alt" content="authored by:汪袁烁 调用的时候发生了什么: 为了更深入的了解 INT8 量化中的 LLM.int8()，以及当我们调用： 之后究竟发生了什么，我摘出了 LLM.int8()的源码来简要阅读，本篇适合那些对于 LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码： bnb_linear..." />
+<meta name="description" content="authored by:汪袁烁 调用的时候发生了什么: 为了更深入的了解 INT8 量化中的 LLM.int8()，以及当我们调用： 之后究竟发生了什么，我摘出了 LLM.int8()的源码来简要阅读，本篇适合那些对于 LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码： bnb_linear 的替换: 更具体的，当 Transformers 在 from_pretrain..." />
 <meta name="twitter:card" content="summary_large_image" />
 
     <title>bitsandbytes LLM.int8()源码阅读 &#8212; AIInfra AI基础设施</title>
@@ -80,11 +80,11 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="推理框架架构分析" href="../05Infer07Framework/README.html" />
-    <link rel="prev" title="大模型量化：其他量化" href="05Quantization02.html" />
+    <link rel="prev" title="CODE03: 大模型 Qwen3 蒸馏(DONE)" href="Code03Distiallation.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 25, 2025"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
 
 <link
   rel="alternate"
@@ -244,7 +244,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03. Inference Time Scaling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
@@ -257,9 +257,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
@@ -276,6 +276,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
@@ -291,14 +292,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -315,24 +316,24 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
-
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
 </ul>
@@ -346,7 +347,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07%E5%A4%A7%E6%A8%A1%E5%9E%8BCKPT%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
@@ -359,12 +360,13 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups：容器资源控制关键(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -378,25 +380,29 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">上下文并行与长序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -410,7 +416,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
-
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -431,10 +436,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.参数高效微调算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.Reparameterization 算法原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -452,9 +457,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">02.大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/07LLM_In_Flash.html">LLM IN FLASH</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
@@ -463,6 +469,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
 </ul>
@@ -473,9 +481,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -483,9 +501,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">06.大模型压缩</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">bitsandbytes LLM.int8()源码阅读</a></li>
 </ul>
 </details></li>
@@ -506,14 +527,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
@@ -524,12 +544,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF实现MOE推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
@@ -537,13 +557,14 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer 回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer 结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">S4模型详解：结构化状态空间模型剖析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">Mixture-of-Recursions, MoR 架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/08RetNet.html">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
@@ -557,7 +578,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -607,7 +630,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B进行RAG代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
 </ul>
 </details></li>
@@ -854,16 +877,16 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">调用的时候发生了什么</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bnb-linear">bnb_linear的替换</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bit">生成 8bit线性层参数</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bnb-linear">bnb_linear 的替换</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bit">生成 8bit 线性层参数</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int8params">量化参数的准备 - Int8Params</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int8-vectorwise-quant-kernel">量化的秘密 - int8_vectorwise_quant Kernel实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int8-vectorwise-quant-kernel">量化的秘密 - int8_vectorwise_quant Kernel 实现</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">小结</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">8bit 线性层实现</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear8bitlt">运行时状态的准备 - Linear8bitLt</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel">运行时的秘密 - Kernel实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel">运行时的秘密 - Kernel 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -882,7 +905,7 @@ document.write(`
 <p>authored by:汪袁烁</p>
 <section id="id1">
 <h2>调用的时候发生了什么<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>为了更深入的了解INT8量化中的LLM.int8()，以及当我们调用：</p>
+<p>为了更深入的了解 INT8 量化中的 LLM.int8()，以及当我们调用：</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># 加载 INT8 精度的模型</span>
 <span class="n">model_int8</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
     <span class="n">model_name</span><span class="p">,</span>
@@ -891,14 +914,14 @@ document.write(`
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>之后究竟发生了什么，我摘出了LLM.int8()的源码来简要阅读，本篇适合那些对于LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码：</p>
+<p>之后究竟发生了什么，我摘出了 LLM.int8()的源码来简要阅读，本篇适合那些对于 LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1">#源码准备</span>
 git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandbytes-foundation/bitsandbytes.git
 </pre></div>
 </div>
 </section>
 <section id="bnb-linear">
-<h2>bnb_linear的替换<a class="headerlink" href="#bnb-linear" title="Link to this heading">#</a></h2>
+<h2>bnb_linear 的替换<a class="headerlink" href="#bnb-linear" title="Link to this heading">#</a></h2>
 <p>更具体的，当<code class="docutils literal notranslate"><span class="pre">Transformers</span></code> 在 <code class="docutils literal notranslate"><span class="pre">from_pretrained</span></code> 里检测到 8bit 量化后，会引入 <code class="docutils literal notranslate"><span class="pre">bitsandbytes</span></code> 集成代码，并把模型里的 <code class="docutils literal notranslate"><span class="pre">nn.Linear</span></code> 替换成 <code class="docutils literal notranslate"><span class="pre">bnb</span></code> 的 8bit 线性层：</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># 本段源码的位置：</span>
 <span class="c1"># cd AIInfra/05Infer/06CompDistill/third-party/bitsandbytes/bitsandbytes/utils.py</span>
@@ -979,10 +1002,10 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
 </div>
 </section>
 <section id="bit">
-<h2>生成 8bit线性层参数<a class="headerlink" href="#bit" title="Link to this heading">#</a></h2>
+<h2>生成 8bit 线性层参数<a class="headerlink" href="#bit" title="Link to this heading">#</a></h2>
 <section id="int8params">
 <h3>量化参数的准备 - Int8Params<a class="headerlink" href="#int8params" title="Link to this heading">#</a></h3>
-<p>在完成把模型里的 nn.Linear 自动替换成 bitsandbytes.nn.Linear8bitLt之后，这些 8bit 线性层在上卡/前向时，把权重量化为 INT8，并生成 Int8Params 里的字段（如 CB/SCB/has_fp16_weights）：</p>
+<p>在完成把模型里的 nn.Linear 自动替换成 bitsandbytes.nn.Linear8bitLt 之后，这些 8bit 线性层在上卡/前向时，把权重量化为 INT8，并生成 Int8Params 里的字段（如 CB/SCB/has_fp16_weights）：</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># 要阅读本段源码，你需要先：</span>
 <span class="c1"># cd AIInfra/05Infer/06CompDistill/third-party/bitsandbytes/bitsandbytes/nn/modules.py</span>
 <span class="c1"># 仅保留 CUDA 相关逻辑的精简版 Int8Params</span>
@@ -998,7 +1021,7 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
 
 <span class="k">class</span> <span class="nc">Int8Params</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    这里我只取CUDA了相关的函数：</span>
+<span class="sd">    这里我只取 CUDA 了相关的函数：</span>
 <span class="sd">    - 继承自 torch.nn.Parameter（实际底层是 torch.Tensor 的子类），</span>
 <span class="sd">      用于承载量化后的权重以及量化所需的元数据（比如缩放因子）。</span>
 <span class="sd">    - 设计目标：当参数被移动到 CUDA（例如 .to(&quot;cuda&quot;) 或 .cuda()）时，</span>
@@ -1018,7 +1041,7 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
         <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">data</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 
-        <span class="c1"># 关键：用 Tensor._make_subclass 建立“真正的”Tensor子类实例，</span>
+        <span class="c1"># 关键：用 Tensor._make_subclass 建立“真正的”Tensor 子类实例，</span>
         <span class="c1"># 而不是普通的 Python 对象。这让 autograd/设备迁移等核心机制继续生效。</span>
         <span class="c1"># （_make_subclass/_make_wrapper_subclass 是 PyTorch 提供的底层接口，用于定制 Tensor 子类行为。）:contentReference[oaicite:2]{index=2}</span>
         <span class="n">obj</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="o">.</span><span class="n">_make_subclass</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">)</span>
@@ -1112,11 +1135,11 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">CB</span><span class="p">,</span> <span class="n">SCB</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">bnb</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">int8_vectorwise_quant</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>也是INT8量化的核心代码，当你<code class="docutils literal notranslate"><span class="pre">toCUDA</span></code>的时候，它会自动跳转到自己设计的CUDA内核进行INT8量化</p>
+<p>也是 INT8 量化的核心代码，当你<code class="docutils literal notranslate"><span class="pre">toCUDA</span></code>的时候，它会自动跳转到自己设计的 CUDA 内核进行 INT8 量化</p>
 </section>
 <section id="int8-vectorwise-quant-kernel">
-<h3>量化的秘密 - int8_vectorwise_quant Kernel实现<a class="headerlink" href="#int8-vectorwise-quant-kernel" title="Link to this heading">#</a></h3>
-<p>它中间辗转经过了一系列调用，我们直接定位到这个Kernel的实现：</p>
+<h3>量化的秘密 - int8_vectorwise_quant Kernel 实现<a class="headerlink" href="#int8-vectorwise-quant-kernel" title="Link to this heading">#</a></h3>
+<p>它中间辗转经过了一系列调用，我们直接定位到这个 Kernel 的实现：</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// 模板参数：</span>
 <span class="c1">// T               —— 输入矩阵元素类型（通常是半/单精度，如 __half 或 float）。</span>
 <span class="c1">// THREADS         —— 每个 block 启用的线程数（决定并行度和分条访问步幅）。</span>
@@ -1227,14 +1250,14 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
 <p>因此我们可以了解到大概的流程：
 1.模型加载时，权重仍然是 FP16/FP32 格式
 2.当模型被移动到 CUDA 设备时（通过 device_map=&quot;auto&quot; 或手动 .to(&quot;cuda&quot;)），Int8Params 的 to() 方法会被触发
-3.INT8Params会调用<code class="docutils literal notranslate"><span class="pre">bnb.functional.int8_vectorwise_quant()</span></code> 进行向量级量化。生成量化权重（CB）和缩放因子（SCB），将原始权重数据替换为量化后的 INT8 数据</p>
+3.INT8Params 会调用<code class="docutils literal notranslate"><span class="pre">bnb.functional.int8_vectorwise_quant()</span></code> 进行向量级量化。生成量化权重（CB）和缩放因子（SCB），将原始权重数据替换为量化后的 INT8 数据</p>
 </section>
 </section>
 <section id="id3">
 <h2>8bit 线性层实现<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
 <section id="linear8bitlt">
 <h3>运行时状态的准备 - Linear8bitLt<a class="headerlink" href="#linear8bitlt" title="Link to this heading">#</a></h3>
-<p>在完成Int8Params的准备后，我们还需要准备整个8bit线性层的实现。因为你不仅需要把参数量化成8bit，还需要能保证上层调用的时候能够正常用你的8bit参数进行各种运算。要想真正跑起 <code class="docutils literal notranslate"><span class="pre">LLM.int8()</span></code> 的前向，它还需要一整套“运行时状态 + 流程控制”</p>
+<p>在完成 Int8Params 的准备后，我们还需要准备整个 8bit 线性层的实现。因为你不仅需要把参数量化成 8bit，还需要能保证上层调用的时候能够正常用你的 8bit 参数进行各种运算。要想真正跑起 <code class="docutils literal notranslate"><span class="pre">LLM.int8()</span></code> 的前向，它还需要一整套“运行时状态 + 流程控制”</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># 要阅读本段源码，你需要先：</span>
 <span class="c1"># cd AIInfra/05Infer/06CompDistill/third-party/bitsandbytes/bitsandbytes/nn/modules.py</span>
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -1265,7 +1288,7 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        初始化流程：</span>
 <span class="sd">          - 先按普通 nn.Linear 初始化出权重/偏置张量</span>
-<span class="sd">          - 准备一个 bnb 的“乘法状态对象”(MatmulLtState)，把门限/是否保留FP权重等元数据放进去</span>
+<span class="sd">          - 准备一个 bnb 的“乘法状态对象”(MatmulLtState)，把门限/是否保留 FP 权重等元数据放进去</span>
 <span class="sd">          - 用 Int8Params 包装权重张量：这样在 .to(&quot;cuda&quot;) 时会自动执行量化，生成 CB/SCB</span>
 <span class="sd">          - 注册一个 pre-hook：在 load_state_dict 前，有需要的话先重排权重布局</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1275,11 +1298,11 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">bnb</span><span class="o">.</span><span class="n">MatmulLtState</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
 
-        <span class="c1"># 配置离群阈值/是否保留FP16权重</span>
+        <span class="c1"># 配置离群阈值/是否保留 FP16 权重</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">has_fp16_weights</span> <span class="o">=</span> <span class="n">has_fp16_weights</span>
 
-        <span class="c1"># 当设置了阈值且不保留FP16权重时，启用一个“池化(use_pool)”路径（实现细节：用于管理分解出的稀疏/离群通道）</span>
+        <span class="c1"># 当设置了阈值且不保留 FP16 权重时，启用一个“池化(use_pool)”路径（实现细节：用于管理分解出的稀疏/离群通道）</span>
         <span class="k">if</span> <span class="n">threshold</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_fp16_weights</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">use_pool</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -1319,7 +1342,7 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
         <span class="n">format_name</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="s2">&quot;weight_format&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">has_fp16_weights</span><span class="p">:</span>
-            <span class="c1"># 只有纯 INT8 推理（不保留FP16副本）时才需要专门把 SCB 写入 checkpoint</span>
+            <span class="c1"># 只有纯 INT8 推理（不保留 FP16 副本）时才需要专门把 SCB 写入 checkpoint</span>
             <span class="k">if</span> <span class="n">param_from_weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">destination</span><span class="p">[</span><span class="n">key_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param_from_weight</span> <span class="k">if</span> <span class="n">keep_vars</span> <span class="k">else</span> <span class="n">param_from_weight</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
                 <span class="n">destination</span><span class="p">[</span><span class="n">format_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>  <span class="c1"># 0: row-major</span>
@@ -1423,7 +1446,7 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
 <p>至于这段代码，其实就是在前向传播中，<code class="docutils literal notranslate"><span class="pre">bnb.matmul()</span></code> 会根据是否有离群值（outliers）选择不同的执行路径。</p>
 </section>
 <section id="kernel">
-<h3>运行时的秘密 - Kernel实现<a class="headerlink" href="#kernel" title="Link to this heading">#</a></h3>
+<h3>运行时的秘密 - Kernel 实现<a class="headerlink" href="#kernel" title="Link to this heading">#</a></h3>
 <p>这段代码的前向传播会通过一系列调用，其中我找到了比较关键的部分：</p>
 <div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="c1"># 这段的源码位于：</span>
 <span class="c1"># cd AIInfra/05Infer/06CompDistill/third-party/bitsandbytes/bitsandbytes/autograd/_functions.py</span>
@@ -1444,7 +1467,7 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>显然，它为纯INT8和混合精度提供了两种Kernel。那么为什么要提供两种呢，我不是已经量化成INT8了吗？这是因为 <code class="docutils literal notranslate"><span class="pre">LLM.int8()</span></code> 算法的一个核心设计理念：混合精度分解来处理离群值（outliers）。更具体的在<code class="docutils literal notranslate"><span class="pre">./05Quantization01.md</span></code>里面已经讲述的很清楚了。</p>
+<p>显然，它为纯 INT8 和混合精度提供了两种 Kernel。那么为什么要提供两种呢，我不是已经量化成 INT8 了吗？这是因为 <code class="docutils literal notranslate"><span class="pre">LLM.int8()</span></code> 算法的一个核心设计理念：混合精度分解来处理离群值（outliers）。更具体的在<code class="docutils literal notranslate"><span class="pre">./05Quantization01.md</span></code>里面已经讲述的很清楚了。</p>
 </section>
 </section>
 </section>
@@ -1484,12 +1507,12 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="05Quantization02.html"
+       href="Code03Distiallation.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">大模型量化：其他量化</p>
+        <p class="prev-next-title">CODE03: 大模型 Qwen3 蒸馏(DONE)</p>
       </div>
     </a>
     <a class="right-next"
@@ -1518,16 +1541,16 @@ git<span class="w"> </span>clone<span class="w"> </span>git@github.com:bitsandby
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">调用的时候发生了什么</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bnb-linear">bnb_linear的替换</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bit">生成 8bit线性层参数</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bnb-linear">bnb_linear 的替换</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bit">生成 8bit 线性层参数</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int8params">量化参数的准备 - Int8Params</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int8-vectorwise-quant-kernel">量化的秘密 - int8_vectorwise_quant Kernel实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#int8-vectorwise-quant-kernel">量化的秘密 - int8_vectorwise_quant Kernel 实现</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">小结</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">8bit 线性层实现</a><ul class="visible nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linear8bitlt">运行时状态的准备 - Linear8bitLt</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel">运行时的秘密 - Kernel实现</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel">运行时的秘密 - Kernel 实现</a></li>
 </ul>
 </li>
 </ul>
@@ -1563,7 +1586,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 25, 2025.
+  Last updated on Nov 06, 2025.
   <br/>
 </p>
   </div>

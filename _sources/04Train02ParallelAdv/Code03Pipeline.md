@@ -1,8 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 03: Pipeline 并行实践
+# CODE 03: Pipeline 并行实践(DONE)
 
-Author by: 许灿岷
+> Author by: 许灿岷
 
 本实验旨在深入理解 Pipeline 并行原理。先实现 Gpipe 流水线并分析空泡率现象，后进阶实现 1F1B 和 Interleaved 1F1B 调度策略，优化空泡率现象，并实践混合并行策略。
 
@@ -15,31 +15,27 @@ Author by: 许灿岷
 通过这种方式，每个设备只需加载和处理模型的一部分，从而突破**单卡显存的限制**。
 
 然而，这种拆分也引入了新的挑战：
-
-* **通信开销：** 前向传播和反向传播过程中，相邻阶段之间需要频繁地传递中间结果（激活值和梯度），这会带来额外的通信延迟。
-* **空泡现象（Bubble）：** 由于流水线的“填充”（Fill）和“排空”（Drain）过程，部分设备在某些时刻会处于等待数据的空闲状态，造成计算资源的浪费。
+*   **通信开销：** 前向传播和反向传播过程中，相邻阶段之间需要频繁地传递中间结果（激活值和梯度），这会带来额外的通信延迟。
+*   **空泡现象（Bubble）：** 由于流水线的“填充”（Fill）和“排空”（Drain）过程，部分设备在某些时刻会处于等待数据的空闲状态，造成计算资源的浪费。
 
 **后续优化方向**：
 Gpipe、1F1B、Interleaved 1F1B 等调度策略，本质都是通过调整「前向」和「反向」的执行节奏，来**压缩空泡时间、降低通信影响、更高效利用显存** —— 这些我们将在代码实践中逐一实现和对比。
 
-```python
-#导入一些基本库
 
+```python
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import time
-```
 
-```python
 # 设置随机种子以确保可重复性
-
 torch.manual_seed(42)
 if torch.cuda.is_available():
     torch.cuda.manual_seed_all(42)
+```
 
-#写一些基本的函数（如获取可用设备、计算空泡率、创建模型分段等）
 
+```python
 def get_available_devices(max_devices=4):
     """自动获取可用设备"""
     devices = []
@@ -51,21 +47,23 @@ def get_available_devices(max_devices=4):
     print(f"可用设备列表: {[str(dev) for dev in devices]}")
     return devices
 
+
 def calculate_bubble_rate(strategy_name, num_stages, num_microbatches, interleaving_degree=2):
     """根据策略类型计算正确的空泡率"""
     if num_stages == 1:
         return 0.0
+
     if strategy_name == "Naive":
-        # Naive策略没有流水线并行，空泡率为0
+        # Naive 策略没有流水线并行，空泡率为 0
         return 0.0
     elif strategy_name == "GPipe":
-        # GPipe的空泡率公式
+        # GPipe 的空泡率公式
         return (num_stages - 1) / (num_microbatches + num_stages - 1)
     elif strategy_name == "1F1B":
-        # 1F1B的空泡率公式
+        # 1F1B 的空泡率公式
         return (num_stages - 1) / num_microbatches
     elif strategy_name == "Interleaved 1F1B":
-        # Interleaved 1F1B的空泡率公式
+        # Interleaved 1F1B 的空泡率公式
         return (num_stages - 1) / (num_microbatches * interleaving_degree)
     else:
         return 0.0
@@ -113,11 +111,13 @@ def create_model_parts(input_size=100, output_size=10):
 
 ![](../images/04Train02ParallelAdv/Code03Pipeline01.png)
 
+
 ```python
 class NaivePipelineParallel(nn.Module):
     def __init__(self, module_list, device_ids):
         super().__init__()
         assert len(module_list) == len(device_ids), "模块数量必须与设备数量相同"
+
         self.stages = nn.ModuleList(module_list)
         self.device_ids = device_ids
         self.num_stages = len(device_ids)
@@ -133,7 +133,7 @@ class NaivePipelineParallel(nn.Module):
         for i, (stage, dev) in enumerate(zip(self.stages, self.device_ids)):
             current_output = stage(current_output)
             if i < len(self.stages) - 1:
-                # 移除detach()，保留梯度
+                # 移除 detach()，保留梯度
                 current_output_act = current_output.requires_grad_(True)
                 intermediates.append(current_output_act)
                 current_output = current_output_act.to(self.device_ids[i+1])
@@ -149,11 +149,15 @@ Gpipe(Gradient Pipeline) 是一种基于流水线并行的模型并行策略，�
 
 ![](../images/04Train02ParallelAdv/Code03Pipeline02.png)
 
+
 ```python
+
+
 class GPipeParallel(nn.Module):
     def __init__(self, module_list, device_ids, num_microbatches=4):
         super().__init__()
         assert len(module_list) == len(device_ids), "模块数量必须与设备数量相同"
+
         self.stages = nn.ModuleList(module_list)
         self.device_ids = device_ids
         self.num_stages = len(device_ids)
@@ -164,7 +168,7 @@ class GPipeParallel(nn.Module):
             self.stages[i] = stage.to(dev)
 
     def forward(self, x):
-        """GPipe策略: 先所有微批次前向，再所有微批次反向"""
+        """GPipe 策略: 先所有微批次前向，再所有微批次反向"""
         # 分割输入为微批次
         micro_batches = torch.chunk(x, self.num_microbatches, dim=0)
         activations = [[] for _ in range(self.num_stages)]
@@ -188,7 +192,7 @@ class GPipeParallel(nn.Module):
         return output, activations
 
     def backward(self, loss, activations):
-        """GPipe反向传播 - 修复版本"""
+        """GPipe 反向传播 - 修复版本"""
         # 计算最终损失梯度
         loss.backward()
 
@@ -232,22 +236,24 @@ $$
 
 其中 $S$ 是流水线阶段数，$M$ 是微批次数量。$T_{fill}$ 表示流水线填充时间，$T_{drain}$ 表示流水线排空时间,$T_{total}$ 表示流水线总时间。
 
+
 ```python
 def calculate_bubble_rate(strategy_name, num_stages, num_microbatches, interleaving_degree=2):
     """根据策略类型计算正确的空泡率"""
     if num_stages == 1:
         return 0.0
+
     if strategy_name == "Naive":
-        # Naive策略没有流水线并行，空泡率为0
+        # Naive 策略没有流水线并行，空泡率为 0
         return 0.0
     elif strategy_name == "GPipe":
-        # GPipe的空泡率公式
+        # GPipe 的空泡率公式
         return (num_stages - 1) / (num_microbatches + num_stages - 1)
     elif strategy_name == "1F1B":
-        # 1F1B的空泡率公式
+        # 1F1B 的空泡率公式
         return (num_stages - 1) / num_microbatches
     elif strategy_name == "Interleaved 1F1B":
-        # Interleaved 1F1B的空泡率公式
+        # Interleaved 1F1B 的空泡率公式
         return (num_stages - 1) / (num_microbatches * interleaving_degree)
     else:
         return 0.0
@@ -260,6 +266,7 @@ configurations = [
     (4, 32),  # M = 8S
     (4, 64),  # M = 16S
     (4, 100),  # M = 25S，接近理想
+
     # 【对比组 2】固定 M=2S，观察 S 增大时空泡率如何上升（展示规模代价）
     (8, 16),  # M = 2S
     (16, 32), # M = 2S
@@ -268,7 +275,6 @@ configurations = [
     # 【对比组 3】固定 M=4S，观察不同规模下的表现（推荐工程配置）
     (8, 32),  # M = 4S
     (16, 64), # M = 4S
-
 ]
 
 print("=== 不同配置下的空泡率计算结果 ===")
@@ -276,38 +282,38 @@ for num_stages, num_microbatches in configurations:
     rate = calculate_bubble_rate("GPipe",num_stages, num_microbatches)
     print(f"阶段数: {num_stages:3d}, 微批次: {num_microbatches:3d}, 空泡率: {rate:.3f}")
 ```
-运行结果如下：
-```
-=== 不同配置下的空泡率计算结果 ===
-阶段数:   4, 微批次:   4, 空泡率: 0.429
-阶段数:   4, 微批次:   8, 空泡率: 0.273
-阶段数:   4, 微批次:  16, 空泡率: 0.158
-阶段数:   4, 微批次:  32, 空泡率: 0.086
-阶段数:   4, 微批次:  64, 空泡率: 0.045
-阶段数:   4, 微批次: 100, 空泡率: 0.029
-阶段数:   8, 微批次:  16, 空泡率: 0.304
-阶段数:  16, 微批次:  32, 空泡率: 0.319
-阶段数:  32, 微批次:  64, 空泡率: 0.326
-阶段数:   8, 微批次:  32, 空泡率: 0.179
-阶段数:  16, 微批次:  64, 空泡率: 0.190
-```
+
+    === 不同配置下的空泡率计算结果 ===
+    阶段数:   4, 微批次:   4, 空泡率: 0.429
+    阶段数:   4, 微批次:   8, 空泡率: 0.273
+    阶段数:   4, 微批次:  16, 空泡率: 0.158
+    阶段数:   4, 微批次:  32, 空泡率: 0.086
+    阶段数:   4, 微批次:  64, 空泡率: 0.045
+    阶段数:   4, 微批次: 100, 空泡率: 0.029
+    阶段数:   8, 微批次:  16, 空泡率: 0.304
+    阶段数:  16, 微批次:  32, 空泡率: 0.319
+    阶段数:  32, 微批次:  64, 空泡率: 0.326
+    阶段数:   8, 微批次:  32, 空泡率: 0.179
+    阶段数:  16, 微批次:  64, 空泡率: 0.190
+
 
 从上面代码的运行结果我们可以看出：
-
 - **微批次的影响**：当 $M \gg S$ 时，空泡率趋近于 0（如 $S=4, M=100$，空泡率≈0.029），因此增加微批次是降低空泡率的核心手段。
 - **阶段数的影响**：$S$ 越大，空泡率越高（相同 $M$ 下，$S=16$ 比 $S=4$ 空泡率高约 20%），因此 Pipeline 阶段数需与微批次数量匹配（建议 $M \geq 4S$）。
 
-  ## 5. 1F1B 调度策略实现
+## 5. 1F1B 调度策略实现
 
 1F1B(One-Forward-One-Backward) 调度是一种优化的流水线并行策略，它通过交替执行前向和反向传播来减少内存使用和空泡时间。
 
 ![](../images/04Train02ParallelAdv/Code03Pipeline03.png)
+
 
 ```python
 class OneFOneBPipeline(nn.Module):
     def __init__(self, module_list, device_ids, num_microbatches=4):
         super().__init__()
         assert len(module_list) == len(device_ids), "模块数量必须与设备数量相同"
+
         self.stages = nn.ModuleList(module_list)
         self.device_ids = device_ids
         self.num_stages = len(device_ids)
@@ -318,7 +324,7 @@ class OneFOneBPipeline(nn.Module):
             self.stages[i] = stage.to(dev)
 
     def forward(self, x):
-        """1F1B策略: 交替执行前向和反向传播 - 重新实现"""
+        """1F1B 策略: 交替执行前向和反向传播 - 重新实现"""
         # 分割输入为微批次
         micro_batches = torch.chunk(x, self.num_microbatches, dim=0)
         activations = [[] for _ in range(self.num_stages)]
@@ -326,7 +332,7 @@ class OneFOneBPipeline(nn.Module):
 
         # 1. 前向填充阶段 (Warm-up)
         for i in range(self.num_stages):
-            # 处理前i+1个微批次的前i+1个阶段
+            # 处理前 i+1 个微批次的前 i+1 个阶段
             for j in range(i + 1):
                 if j >= len(micro_batches):
                     break
@@ -346,7 +352,7 @@ class OneFOneBPipeline(nn.Module):
                 if i == self.num_stages - 1:
                     outputs.append(current)
 
-        # 2. 1F1B阶段 (Steady state)
+        # 2. 1F1B 阶段 (Steady state)
         for i in range(self.num_stages, self.num_microbatches):
             # 前向传播
             current = micro_batches[i].to(self.device_ids[0])
@@ -372,7 +378,7 @@ class OneFOneBPipeline(nn.Module):
         return output, activations
 
     def backward(self, loss, activations):
-        """1F1B反向传播 - 修复版本"""
+        """1F1B 反向传播 - 修复版本"""
         # 计算最终损失梯度
         loss.backward()
 
@@ -402,17 +408,19 @@ class OneFOneBPipeline(nn.Module):
 1. **减少内存使用**：不需要存储所有微批次的前向传播中间结果
 2. **降低空泡率**：通过更早开始反向传播，减少设备空闲时间
 
-   ## 6. Interleaved 1F1B 调度策略实现
+## 6. Interleaved 1F1B 调度策略实现
 
 Interleaved 1F1B 调度是一种改进的 1F1B 调度策略，它通过交替执行前向和反向传播，并引入额外的填充和排空步骤来减少空泡率。
 
 ![](../images/04Train02ParallelAdv/Code03Pipeline04.png)
+
 
 ```python
 class InterleavedOneFOneBPipeline(nn.Module):
     def __init__(self, module_list, device_ids, num_microbatches=4, interleaving_degree=2):
         super().__init__()
         assert len(module_list) == len(device_ids), "模块数量必须与设备数量相同"
+
         self.stages = nn.ModuleList(module_list)
         self.device_ids = device_ids
         self.num_stages = len(device_ids)
@@ -424,13 +432,13 @@ class InterleavedOneFOneBPipeline(nn.Module):
             self.stages[i] = stage.to(dev)
 
     def forward(self, x):
-        """Interleaved 1F1B策略: 改进的1F1B，更细粒度的流水线"""
+        """Interleaved 1F1B 策略: 改进的 1F1B，更细粒度的流水线"""
         # 分割输入为微批次
         micro_batches = torch.chunk(x, self.num_microbatches, dim=0)
         activations = [[] for _ in range(self.num_stages)]
         outputs = []
 
-        # 简化的Interleaved实现 - 使用分组处理
+        # 简化的 Interleaved 实现 - 使用分组处理
         group_size = self.interleaving_degree
 
         # 处理每个微批次组
@@ -452,7 +460,7 @@ class InterleavedOneFOneBPipeline(nn.Module):
         return output, activations
 
     def backward(self, loss, activations):
-        """Interleaved 1F1B反向传播 - 修复版本"""
+        """Interleaved 1F1B 反向传播 - 修复版本"""
         # 计算最终损失梯度
         loss.backward()
 
@@ -481,12 +489,12 @@ class InterleavedOneFOneBPipeline(nn.Module):
 
 混合并行结合了数据并行、流水线并行和张量并行，以充分利用多种并行策略的优势。
 
+
 ```python
 import torch
 import torch.nn as nn
 
 # 辅助函数：获取可用 GPU 设备（模拟）
-
 def get_available_devices(max_devices=4):
     devices = []
     for i in range(torch.cuda.device_count()):
@@ -498,7 +506,6 @@ def get_available_devices(max_devices=4):
     return devices
 
 # 示例模型（复用原结构，确保兼容性）
-
 class ExampleModel(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super().__init__()
@@ -506,6 +513,7 @@ class ExampleModel(nn.Module):
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, output_size)
         self.relu = nn.ReLU()
+
     def forward(self, x):
         x = self.relu(self.fc1(x))
         x = self.relu(self.fc2(x))
@@ -513,13 +521,13 @@ class ExampleModel(nn.Module):
         return x
 
 # 混合并行模型：Pipeline + DataParallel
-
 class HybridParallelModel(nn.Module):
     def __init__(self, base_model, device_ids, dp_size=2, pp_size=2):
         super().__init__()
         self.dp_size = dp_size  # 数据并行路数（每个 Pipeline 阶段的复制份数）
         self.pp_size = pp_size  # Pipeline 阶段数（模型分割后的段数）
         self.device_ids = device_ids
+
         # 验证设备数量：总设备数 = 数据并行路数 × Pipeline 阶段数
         assert len(device_ids) == dp_size * pp_size, \
             f"设备数需等于数据并行路数×Pipeline 阶段数（当前：{len(device_ids)} != {dp_size}×{pp_size}）"
@@ -578,12 +586,14 @@ class HybridParallelModel(nn.Module):
             current_x = stage(current_x)  # 每个阶段内部数据并行计算
         return current_x
 
+
 # ========== 主程序：配置与测试 ==========
 
 if __name__ == "__main__":
     # 1. 模型参数配置
     input_size, hidden_size, output_size = 100, 200, 10
     base_model = ExampleModel(input_size, hidden_size, output_size)
+
     # 2. 自动获取设备（模拟）
     available_devices = get_available_devices(max_devices=4)
     device_ids = [dev.index for dev in available_devices if dev.type == 'cuda']
@@ -623,29 +633,30 @@ if __name__ == "__main__":
         current_devices = current_devices[dp_size:]
         print(f"Pipeline 阶段 {i+1} 用设备: {dp_devices}")
 ```
-运行结果如下：
-```
-可用设备: [0, 1, 2, 3]
-配置 → 数据并行路数: 2, Pipeline 阶段数: 2
 
-=== 混合并行测试结果 ===
-输入形状: torch.Size([32, 100]), 输出形状: torch.Size([32, 10])
-并行配置: 数据并行路数=2, Pipeline 阶段数=2
-Pipeline 阶段 1 用设备: [0, 1]
-Pipeline 阶段 2 用设备: [2, 3]
-```
+    可用设备: [0, 1, 2, 3]
+    配置 → 数据并行路数: 2, Pipeline 阶段数: 2
+    
+    === 混合并行测试结果 ===
+    输入形状: torch.Size([32, 100]), 输出形状: torch.Size([32, 10])
+    并行配置: 数据并行路数=2, Pipeline 阶段数=2
+    Pipeline 阶段 1 用设备: [0, 1]
+    Pipeline 阶段 2 用设备: [2, 3]
+
+
 ## 8. 完整实验与性能分析
 
 下面是一个完整的流水线并行实验，包括训练循环和性能分析。
 
+
 ```python
 def get_gpu_memory_usage(device_ids):
-    """获取所有GPU的显存使用情况"""
+    """获取所有 GPU 的显存使用情况"""
     memory_usage = {}
     for device in device_ids:
         if device.type == 'cuda':
-            memory_allocated = torch.cuda.memory_allocated(device) / (1024 ** 3)  # 转换为GB
-            memory_cached = torch.cuda.memory_reserved(device) / (1024 ** 3)  # 转换为GB
+            memory_allocated = torch.cuda.memory_allocated(device) / (1024 ** 3)  # 转换为 GB
+            memory_cached = torch.cuda.memory_reserved(device) / (1024 ** 3)  # 转换为 GB
             memory_usage[str(device)] = {
                 'allocated': memory_allocated,
                 'cached': memory_cached
@@ -662,6 +673,7 @@ def calculate_avg_memory_usage(memory_history):
     """计算平均显存使用量"""
     if not memory_history:
         return 0.0
+
     total_allocated = 0.0
     total_cached = 0.0
     count = 0
@@ -684,12 +696,13 @@ def run_pipeline_experiment(pipeline_class, strategy_name, num_epochs=50, batch_
     device_ids = get_available_devices(max_devices=4)
     num_stages = len(device_ids)
     input_size, output_size = 100, 10
+
     # 清空显存缓存
     for device in device_ids:
         if device.type == 'cuda':
             torch.cuda.empty_cache()
 
-    # 2. 构建Pipeline模型
+    # 2. 构建 Pipeline 模型
     model_parts = create_model_parts(input_size=input_size, output_size=output_size)
     model_parts = model_parts[:num_stages]
 
@@ -785,19 +798,19 @@ def run_pipeline_experiment(pipeline_class, strategy_name, num_epochs=50, batch_
     return losses, bubble_rate, avg_time, avg_allocated, avg_cached
 
 # 更新结果展示函数
-
 def print_results_table(results):
     """打印结果表格 - 添加显存使用列"""
     if not results:
         print("没有成功运行的策略")
         return
+
     print("\n=== 所有策略综合比较 ===")
     # 表头
     print(f"+{'-'*20}+{'-'*12}+{'-'*12}+{'-'*12}+{'-'*12}+{'-'*12}+")
     print(f"| {'策略名称':<18} | {'平均时间':<10} | {'最终损失':<10} | {'空泡率':<10} | {'显存(GB)':<10} | {'缓存(GB)':<10} |")
     print(f"+{'-'*20}+{'-'*12}+{'-'*12}+{'-'*12}+{'-'*12}+{'-'*12}+")
 
-    # 获取Naive策略的结果作为基准
+    # 获取 Naive 策略的结果作为基准
     naive_time = results["Naive"]["avg_time"] if "Naive" in results else 1.0
     num_devices = len(get_available_devices(max_devices=4))
 
@@ -811,8 +824,11 @@ def print_results_table(results):
 
     print(f"+{'-'*20}+{'-'*12}+{'-'*12}+{'-'*12}+{'-'*12}+{'-'*12}+")
 
-# 策略类映射
+```
 
+
+```python
+# 策略类映射
 strategy_classes = {
     "Naive": NaivePipelineParallel,
     "GPipe": GPipeParallel,
@@ -821,13 +837,13 @@ strategy_classes = {
 }
 
 # 运行所有四种流水线策略
-
 results = {}
 
 for strategy_name, strategy_class in strategy_classes.items():
     print(f"\n{'='*60}")
     print(f"正在运行 {strategy_name} 策略...")
     print(f"{'='*60}")
+
     try:
         losses, bubble_rate, avg_time, avg_allocated, avg_cached = run_pipeline_experiment(
             strategy_class,
@@ -851,111 +867,112 @@ for strategy_name, strategy_class in strategy_classes.items():
     print(f"{'='*60}\n")
 
 # 打印综合比较结果
-
 print_results_table(results)
 ```
 
-运行结果如下：
-```
-============================================================
-正在运行 Naive 策略...
-============================================================
+    
+    ============================================================
+    正在运行 Naive 策略...
+    ============================================================
+    
+    === 开始 Naive Pipeline 训练（共 50 轮）===
+    Epoch  10/50, 损失: 2.3016, 时间: 0.0090s, 显存: 0.04GB/0.08GB, LR: 0.001000
+    Epoch  20/50, 损失: 2.3015, 时间: 0.0084s, 显存: 0.04GB/0.08GB, LR: 0.000500
+    Epoch  30/50, 损失: 2.3061, 时间: 0.0083s, 显存: 0.04GB/0.08GB, LR: 0.000500
+    Epoch  40/50, 损失: 2.3025, 时间: 0.0080s, 显存: 0.04GB/0.08GB, LR: 0.000250
+    Epoch  50/50, 损失: 2.3019, 时间: 0.0078s, 显存: 0.04GB/0.08GB, LR: 0.000250
+    
+    === Naive 实验结果 ===
+    设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
+    流水线阶段: 4, 微批次: 32
+    空泡率: 0.000 (0.0%)
+    平均每轮时间: 0.0088s
+    平均显存使用: 0.04GB (分配) / 0.08GB (缓存)
+    最终损失: 2.3019
+    训练结论: 部分收敛
+    ============================================================
+    
+    
+    ============================================================
+    正在运行 GPipe 策略...
+    ============================================================
+    
+    === 开始 GPipe Pipeline 训练（共 50 轮）===
+    Epoch  10/50, 损失: 2.3045, 时间: 0.0510s, 显存: 0.01GB/0.03GB, LR: 0.001000
+    Epoch  20/50, 损失: 2.3078, 时间: 0.0513s, 显存: 0.01GB/0.03GB, LR: 0.000500
+    Epoch  30/50, 损失: 2.3016, 时间: 0.0511s, 显存: 0.01GB/0.03GB, LR: 0.000500
+    Epoch  40/50, 损失: 2.3064, 时间: 0.0512s, 显存: 0.01GB/0.03GB, LR: 0.000250
+    Epoch  50/50, 损失: 2.3032, 时间: 0.0515s, 显存: 0.01GB/0.03GB, LR: 0.000250
+    
+    === GPipe 实验结果 ===
+    设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
+    流水线阶段: 4, 微批次: 32
+    空泡率: 0.086 (8.6%)
+    平均每轮时间: 0.0514s
+    平均显存使用: 0.01GB (分配) / 0.03GB (缓存)
+    最终损失: 2.3032
+    训练结论: 部分收敛
+    ============================================================
+    
+    
+    ============================================================
+    正在运行 1F1B 策略...
+    ============================================================
+    
+    === 开始 1F1B Pipeline 训练（共 50 轮）===
+    Epoch  10/50, 损失: 2.3094, 时间: 0.0570s, 显存: 0.01GB/0.03GB, LR: 0.001000
+    Epoch  20/50, 损失: 2.3015, 时间: 0.0568s, 显存: 0.01GB/0.03GB, LR: 0.000500
+    Epoch  30/50, 损失: 2.3067, 时间: 0.0567s, 显存: 0.01GB/0.03GB, LR: 0.000500
+    Epoch  40/50, 损失: 2.3056, 时间: 0.0572s, 显存: 0.01GB/0.03GB, LR: 0.000250
+    Epoch  50/50, 损失: 2.3039, 时间: 0.0569s, 显存: 0.01GB/0.03GB, LR: 0.000250
+    
+    === 1F1B 实验结果 ===
+    设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
+    流水线阶段: 4, 微批次: 32
+    空泡率: 0.094 (9.4%)
+    平均每轮时间: 0.0572s
+    平均显存使用: 0.01GB (分配) / 0.03GB (缓存)
+    最终损失: 2.3039
+    训练结论: 可能未收敛
+    ============================================================
+    
+    
+    ============================================================
+    正在运行 Interleaved 1F1B 策略...
+    ============================================================
+    
+    === 开始 Interleaved 1F1B Pipeline 训练（共 50 轮）===
+    Epoch  10/50, 损失: 2.3026, 时间: 0.0515s, 显存: 0.01GB/0.03GB, LR: 0.001000
+    Epoch  20/50, 损失: 2.2959, 时间: 0.0517s, 显存: 0.01GB/0.03GB, LR: 0.000500
+    Epoch  30/50, 损失: 2.3065, 时间: 0.0519s, 显存: 0.01GB/0.03GB, LR: 0.000500
+    Epoch  40/50, 损失: 2.3047, 时间: 0.0519s, 显存: 0.01GB/0.03GB, LR: 0.000250
+    Epoch  50/50, 损失: 2.3014, 时间: 0.0516s, 显存: 0.01GB/0.03GB, LR: 0.000250
+    
+    === Interleaved 1F1B 实验结果 ===
+    设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
+    流水线阶段: 4, 微批次: 32
+    空泡率: 0.047 (4.7%)
+    平均每轮时间: 0.0521s
+    平均显存使用: 0.01GB (分配) / 0.03GB (缓存)
+    最终损失: 2.3014
+    训练结论: 部分收敛
+    ============================================================
+    
+    
+    === 所有策略综合比较 ===
+    +--------------------+------------+------------+------------+------------+------------+
+    | 策略名称               | 平均时间       | 最终损失       | 空泡率        | 显存(GB)     | 缓存(GB)     |
+    +--------------------+------------+------------+------------+------------+------------+
+    | Naive              |     0.0088s |     2.3019 |      0.000 |       0.04 |       0.08 |
+    | GPipe              |     0.0514s |     2.3032 |      0.086 |       0.01 |       0.03 |
+    | 1F1B               |     0.0572s |     2.3039 |      0.094 |       0.01 |       0.03 |
+    | Interleaved 1F1B   |     0.0521s |     2.3014 |      0.047 |       0.01 |       0.03 |
+    +--------------------+------------+------------+------------+------------+------------+
 
-=== 开始 Naive Pipeline 训练（共50轮）===
-Epoch  10/50, 损失: 2.3016, 时间: 0.0090s, 显存: 0.04GB/0.08GB, LR: 0.001000
-Epoch  20/50, 损失: 2.3015, 时间: 0.0084s, 显存: 0.04GB/0.08GB, LR: 0.000500
-Epoch  30/50, 损失: 2.3061, 时间: 0.0083s, 显存: 0.04GB/0.08GB, LR: 0.000500
-Epoch  40/50, 损失: 2.3025, 时间: 0.0080s, 显存: 0.04GB/0.08GB, LR: 0.000250
-Epoch  50/50, 损失: 2.3019, 时间: 0.0078s, 显存: 0.04GB/0.08GB, LR: 0.000250
 
-=== Naive 实验结果 ===
-设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
-流水线阶段: 4, 微批次: 32
-空泡率: 0.000 (0.0%)
-平均每轮时间: 0.0088s
-平均显存使用: 0.04GB (分配) / 0.08GB (缓存)
-最终损失: 2.3019
-训练结论: 部分收敛
-============================================================
-
-
-============================================================
-正在运行 GPipe 策略...
-============================================================
-
-=== 开始 GPipe Pipeline 训练（共50轮）===
-Epoch  10/50, 损失: 2.3045, 时间: 0.0510s, 显存: 0.01GB/0.03GB, LR: 0.001000
-Epoch  20/50, 损失: 2.3078, 时间: 0.0513s, 显存: 0.01GB/0.03GB, LR: 0.000500
-Epoch  30/50, 损失: 2.3016, 时间: 0.0511s, 显存: 0.01GB/0.03GB, LR: 0.000500
-Epoch  40/50, 损失: 2.3064, 时间: 0.0512s, 显存: 0.01GB/0.03GB, LR: 0.000250
-Epoch  50/50, 损失: 2.3032, 时间: 0.0515s, 显存: 0.01GB/0.03GB, LR: 0.000250
-
-=== GPipe 实验结果 ===
-设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
-流水线阶段: 4, 微批次: 32
-空泡率: 0.086 (8.6%)
-平均每轮时间: 0.0514s
-平均显存使用: 0.01GB (分配) / 0.03GB (缓存)
-最终损失: 2.3032
-训练结论: 部分收敛
-============================================================
-
-
-============================================================
-正在运行 1F1B 策略...
-============================================================
-
-=== 开始 1F1B Pipeline 训练（共50轮）===
-Epoch  10/50, 损失: 2.3094, 时间: 0.0570s, 显存: 0.01GB/0.03GB, LR: 0.001000
-Epoch  20/50, 损失: 2.3015, 时间: 0.0568s, 显存: 0.01GB/0.03GB, LR: 0.000500
-Epoch  30/50, 损失: 2.3067, 时间: 0.0567s, 显存: 0.01GB/0.03GB, LR: 0.000500
-Epoch  40/50, 损失: 2.3056, 时间: 0.0572s, 显存: 0.01GB/0.03GB, LR: 0.000250
-Epoch  50/50, 损失: 2.3039, 时间: 0.0569s, 显存: 0.01GB/0.03GB, LR: 0.000250
-
-=== 1F1B 实验结果 ===
-设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
-流水线阶段: 4, 微批次: 32
-空泡率: 0.094 (9.4%)
-平均每轮时间: 0.0572s
-平均显存使用: 0.01GB (分配) / 0.03GB (缓存)
-最终损失: 2.3039
-训练结论: 可能未收敛
-============================================================
-
-
-============================================================
-正在运行 Interleaved 1F1B 策略...
-============================================================
-
-=== 开始 Interleaved 1F1B Pipeline 训练（共50轮）===
-Epoch  10/50, 损失: 2.3026, 时间: 0.0515s, 显存: 0.01GB/0.03GB, LR: 0.001000
-Epoch  20/50, 损失: 2.2959, 时间: 0.0517s, 显存: 0.01GB/0.03GB, LR: 0.000500
-Epoch  30/50, 损失: 2.3065, 时间: 0.0519s, 显存: 0.01GB/0.03GB, LR: 0.000500
-Epoch  40/50, 损失: 2.3047, 时间: 0.0519s, 显存: 0.01GB/0.03GB, LR: 0.000250
-Epoch  50/50, 损失: 2.3014, 时间: 0.0516s, 显存: 0.01GB/0.03GB, LR: 0.000250
-
-=== Interleaved 1F1B 实验结果 ===
-设备配置: ['cuda:0', 'cuda:1', 'cuda:2', 'cuda:3']
-流水线阶段: 4, 微批次: 32
-空泡率: 0.047 (4.7%)
-平均每轮时间: 0.0521s
-平均显存使用: 0.01GB (分配) / 0.03GB (缓存)
-最终损失: 2.3014
-训练结论: 部分收敛
-============================================================
-
-
-=== 所有策略综合比较 ===
-+--------------------+------------+------------+------------+------------+------------+
-| 策略名称               | 平均时间       | 最终损失       | 空泡率        | 显存(GB)     | 缓存(GB)     |
-+--------------------+------------+------------+------------+------------+------------+
-| Naive              |     0.0088s |     2.3019 |      0.000 |       0.04 |       0.08 |
-| GPipe              |     0.0514s |     2.3032 |      0.086 |       0.01 |       0.03 |
-| 1F1B               |     0.0572s |     2.3039 |      0.094 |       0.01 |       0.03 |
-| Interleaved 1F1B   |     0.0521s |     2.3014 |      0.047 |       0.01 |       0.03 |
-+--------------------+------------+------------+------------+------------+------------+
-```
 这个完整实验展示了流水线并行的实际应用，包括模型分割、训练循环和空泡率分析。在实际应用中，还需要考虑梯度同步、设备间通信优化等复杂问题。
+
+
 
 ## 总结与思考
 

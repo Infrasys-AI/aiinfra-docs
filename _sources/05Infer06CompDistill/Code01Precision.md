@@ -1,6 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 01: 低精度推理性能对比
+# CODE01: 低精度推理性能对比(DONE)
+
+> Author by: 汪袁烁,ZOMI,焦方正
 
 在大模型部署和应用中，推理效率和精度之间的平衡一直是一个关键挑战。随着模型规模的不断增长（从几亿参数到千亿参数），存储需求和计算开销也随之急剧增加。低精度推理技术通过使用更少的比特数来表示模型参数和计算中间结果，为解决这一问题提供了有效途径。
 
@@ -32,7 +34,7 @@ $$ x_{int} = \text{round}(x_{float} / s + z) $$
 
 ```python
 # 安装必要的库
-!pip install transformers accelerate evaluate datasets bitsandbytes
+!pip install transformers accelerate evaluate datasets bitsandbytes 
 ```
 
 接下来，导入所需的库：
@@ -45,6 +47,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from evaluate import load
 from datasets import load_dataset
 import matplotlib.pyplot as plt
+import re
 
 # 设置随机种子，保证实验可复现
 torch.manual_seed(42)
@@ -57,7 +60,8 @@ np.random.seed(42)
 
 ```python
 # 模型名称
-model_name = "Qwen/Qwen3-4B-Chat"
+#model_name = "Qwen/Qwen3-4B-Chat"
+model_name = "Qwen/Qwen3-4B-Instruct-2507"  # 或者 "Qwen/Qwen3-4B" / "Qwen/Qwen3-4B-Thinking-2507"
 
 # 加载分词器
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -70,9 +74,11 @@ tokenizer.padding_side = "left"
 
 ```python
 # 加载评估数据集
-dataset = load_dataset("lambada")
-# 取前 100 个样本作为测试集（简化实验）
-test_dataset = dataset["test"].select(range(100))
+# dataset = load_dataset("lambada")
+dataset = load_dataset("EleutherAI/lambada_openai")
+
+# 取前 128 个样本作为测试集（简化实验）
+test_dataset = dataset["test"].select(range(128))
 ```
 
 让我们看看数据集中的样本是什么样子的：
@@ -83,65 +89,121 @@ print("样本示例：")
 print(test_dataset[0]["text"])
 ```
 
+    样本示例：
+    In my palm is a clear stone, and inside it is a small ivory statuette. A guardian angel.
+    
+    "Figured if you're going to be out at night getting hit by cars, you might as well have some backup."
+    
+    I look at him, feeling stunned. Like this is some sort of sign. But as I stare at Harlin, his mouth curved in a confident grin, I don't care about signs
+
 ## 4. 评估函数定义
 
 在开始实验前，我们需要定义一个评估函数，用于计算模型在不同精度下的推理时间和准确率。
 
 ```python
-def evaluate_model(model, tokenizer, dataset, max_new_tokens=10):
-    total_time = 0
-    correct = 0
-    total = 0
-    
-    # 创建文本生成管道
-    generator = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        torch_dtype=torch.float16,
-        device=0 if torch.cuda.is_available() else -1
-    )
-    
-    for item in dataset:
-        text = item["text"]
-        
-        # 将文本分割为前缀和目标
-        # Lambada 任务是预测句子的最后一个词
-        words = text.split()
-        prefix = ' '.join(words[:-1])
-        target = words[-1]
-        
-        # 记录开始时间
-        start_time = time.time()
-        
-        # 生成预测
-        result = generator(
-            prefix,
-            max_new_tokens=max_new_tokens,
-            pad_token_id=tokenizer.eos_token_id,
-            do_sample=False
+
+import os, re, time, math
+import numpy as np
+import torch
+from datasets import load_dataset
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import transformer_engine.pytorch as te
+from transformer_engine.common import recipe as te_recipe
+from transformer_engine.common.recipe import Format
+from accelerate.utils import convert_model, has_transformer_engine_layers
+
+def build_samples(ds):
+    samples = []
+    for item in ds:
+        ws = item["text"].split()
+        if len(ws) < 2:
+            continue
+        prefix = " ".join(ws[:-1])
+        target = re.sub(r"[^\w'-]+$", "", ws[-1]).lower()
+        samples.append((prefix, target))
+    return samples
+
+
+def batch_iter(lst, bs):
+    for i in range(0, len(lst), bs):
+        yield lst[i:i+bs]
+
+def norm(w: str) -> str:
+    return re.sub(r"[^\w'-]+$", "", w).lower()
+
+def pad_batch_to_multiple(batch, multiple=8):
+    """把最后一个 batch 补齐到 multiple 的倍数（只在 FP8 路径用）。
+       通过重复最后一个样本来补齐；返回 (padded_batch, valid_len)。"""
+    n = len(batch)
+    if n % multiple == 0:
+        return batch, n
+    need = multiple - (n % multiple)
+    return batch + [batch[-1]] * need, n  # valid_len=n，后处理时只取前 n 个结果
+
+@torch.inference_mode()
+def evaluate_model(model, tokenizer, test_dataset,max_new_tokens=1,
+                   use_te_fp8=False, fp8_recipe=None, batch_size=8):
+    samples = build_samples(test_dataset)
+    model.eval()
+    total_t, correct, total = 0.0, 0, 0
+
+    for batch in batch_iter(samples, batch_size):
+        # —— 若走 FP8，为避免解码阶段 S=1 导致 B×S 不是 8 的倍数，这里把最后批次凑齐到 8 —— 
+        valid_len = len(batch)
+        if use_te_fp8 and fp8_recipe is not None:
+            batch, valid_len = pad_batch_to_multiple(batch, multiple=8)
+
+        prefixes = [p for p, _ in batch]
+        targets  = [t for _, t in batch]
+
+        # pad 到 16 的倍数，满足线性层最后一维/前导维的对齐要求
+        inputs = tokenizer(
+            prefixes,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            pad_to_multiple_of=16,
         )
-        
-        # 计算推理时间
-        end_time = time.time()
-        total_time += (end_time - start_time)
-        
-        # 提取生成的文本
-        generated_text = result[0]["generated_text"][len(prefix):].strip()
-        
-        # 检查是否预测正确
-        if target in generated_text.split():
-            correct += 1
-        total += 1
-        
-        # 每 10 个样本打印一次进度
-        if total % 10 == 0:
-            print(f"完成 {total}/{len(dataset)} 个样本")
-    
-    accuracy = correct / total
-    avg_time_per_sample = total_time / total
-    
-    return total_time, avg_time_per_sample, accuracy
+        inputs = {k: v.to(model.device) for k, v in inputs.items()}
+
+        if torch.cuda.is_available(): torch.cuda.synchronize()
+        t0 = time.perf_counter()
+
+        if use_te_fp8 and fp8_recipe is not None:
+            with te.fp8_autocast(enabled=True, fp8_recipe=fp8_recipe):
+                out_ids = model.generate(
+                    **inputs,
+                    max_new_tokens=max_new_tokens,
+                    do_sample=False,
+                    pad_token_id=tokenizer.eos_token_id,
+                )
+        else:
+            out_ids = model.generate(
+                **inputs,
+                max_new_tokens=max_new_tokens,
+                do_sample=False,
+                pad_token_id=tokenizer.eos_token_id,
+            )
+
+        if torch.cuda.is_available(): torch.cuda.synchronize()
+        total_t += (time.perf_counter() - t0)
+
+        # 只评前 valid_len 个（如果我们为对齐补了样本，其余不要计入指标）
+        out_texts = tokenizer.batch_decode(out_ids, skip_special_tokens=True)[:valid_len]
+        targets   = targets[:valid_len]
+
+        for pred_text, tgt in zip(out_texts, targets):
+            m = re.match(r"\s*([A-Za-z]+(?:['-][A-Za-z]+)?)", pred_text)
+            pred = norm(m.group(1)) if m else ""
+            correct += int(pred == tgt)
+            total   += 1
+
+    avg = (total_t / total) if total else 0.0
+    acc = (correct / total) if total else 0.0
+    return total_t, avg, acc
+
+
+
 ```
 
 ## 5. FP16 精度实验
@@ -150,10 +212,11 @@ def evaluate_model(model, tokenizer, dataset, max_new_tokens=10):
 
 ```python
 # 加载 FP16 精度的模型
+# 可以先在命令行 export HF_HUB_DISABLE_XET=1 有效预防 504 超时
 model_fp16 = AutoModelForCausalLM.from_pretrained(
     model_name,
     torch_dtype=torch.float16,  # 指定为 FP16 精度
-    device_map="auto"  # 自动分配设备
+    device_map={"": "cuda:0"}  # 自动分配设备
 )
 
 # 评估 FP16 模型
@@ -161,7 +224,8 @@ print("开始评估 FP16 模型...")
 total_time_fp16, avg_time_fp16, acc_fp16 = evaluate_model(
     model_fp16, 
     tokenizer, 
-    test_dataset
+    test_dataset,
+    max_new_tokens=1   
 )
 
 # 打印结果
@@ -170,9 +234,23 @@ print(f"FP16 - 总推理时间: {total_time_fp16:.2f}秒, "
       f"准确率: {acc_fp16:.4f}")
 ```
 
+    `torch_dtype` is deprecated! Use `dtype` instead!
+    
+    Loading checkpoint shards:   0%|                                                                                           | 0/3 [00:00<?, ?it/s]
+    Loading checkpoint shards:  33%|███████████████████████████▋                                                       | 1/3 [00:00<00:00,  2.19it/s]
+    Loading checkpoint shards:  67%|███████████████████████████████████████████████████████▎                           | 2/3 [00:00<00:00,  2.00it/s]
+    Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████| 3/3 [00:01<00:00,  2.97it/s]
+    The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+
+
+    开始评估 FP16 模型...
+    FP16 - 总推理时间: 0.83秒, 平均每个样本: 0.0065秒, 准确率: 0.0312
+
 FP16 之所以被广泛用作基线，是因为它在精度损失相对较小的情况下，能显著提升推理速度并减少内存占用。对于大多数模型，从 FP32 转为 FP16 不会导致明显的精度下降，但能带来约 2 倍的性能提升。
 
 ## 6. INT8 精度实验
+
+### 快速开始
 
 接下来，我们尝试 INT8 精度。INT8 使用 8 位整数表示数据，相比 FP16 能再减少一半的存储空间，即仅为 FP32 的 1/4。
 
@@ -189,7 +267,8 @@ print("开始评估 INT8 模型...")
 total_time_int8, avg_time_int8, acc_int8 = evaluate_model(
     model_int8, 
     tokenizer, 
-    test_dataset
+    test_dataset,
+    max_new_tokens=1   
 )
 
 # 打印结果
@@ -198,47 +277,122 @@ print(f"INT8 - 总推理时间: {total_time_int8:.2f}秒, "
       f"准确率: {acc_int8:.4f}")
 ```
 
+    The `load_in_4bit` and `load_in_8bit` arguments are deprecated and will be removed in the future versions. Please, pass a `BitsAndBytesConfig` object in `quantization_config` argument instead.
+    
+    Loading checkpoint shards:   0%|                                                                                           | 0/3 [00:00<?, ?it/s]
+    Loading checkpoint shards:  33%|███████████████████████████▋                                                       | 1/3 [00:01<00:02,  1.44s/it]
+    Loading checkpoint shards:  67%|███████████████████████████████████████████████████████▎                           | 2/3 [00:03<00:01,  1.54s/it]
+    Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████| 3/3 [00:03<00:00,  1.03s/it]
+
+
+    开始评估 INT8 模型...
+    INT8 - 总推理时间: 2.55秒, 平均每个样本: 0.0199秒, 准确率: 0.0312
+
+### 理论分析 - LLM.int8()
+
+快速实验的部分到这里就结束了，可是这些简短的代码后面采用的技术却值得我们深究。其实刚才我们使用的就是之前介绍的[LLM.int8()](https://arxiv.org/pdf/2208.07339)量化技术。它提出了**向量级（vector-wise）量化** + **异常值（outliers）混合精度路径**
+
 INT8 量化是目前应用最广泛的低精度技术之一，因为它在精度和性能之间取得了很好的平衡。其核心原理是将浮点范围映射到整数范围，通常使用最小-最大量化方法：
 
 $$ x_{int8} = \text{clip}(\text{round}(x_{float} / s + 127), 0, 255) $$
 
-其中 $s$ 是缩放因子，计算方式为：$s = \frac{\text{max}(|x_{float}|)}{127}$
+其中 $s$ 是缩放因子，计算方式为：$s = \frac{\text{max}(|x_{float}|)}{127}$。
+
+### 源码阅读 - LLM.int8()
+
+为了更形象的了解LLM.int8()，我找出了其中[源码](https://github.com/bitsandbytes-foundation/bitsandbytes)的部分。由于需要解读的内容比较多，我单独放在了`./LLM.int8()源码阅读`下。
 
 ## 7. FP8 精度实验
 
 FP8 是一种较新的低精度浮点格式，相比 FP16 进一步减少了位数，但保留了浮点数的动态范围优势。
+更具体的，在使用FP8量化前，我们应该先将模型转换成Transformer Engine（TE）的形式以来支持FP8（E4M3 / E5M2）的算子，并且由于H100（Hopper）硬件对 BF16 有很好的支持。可以有接近FP16的速度并且更加稳定，因此我们推荐先将模型转为BF16格式
 
 ```python
-# 使用 bitsandbytes 库实现 FP8 量化
-from bitsandbytes import quantization
+import torch
+import types
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from accelerate.utils import convert_model, contextual_fp8_autocast, has_transformer_engine_layers
+from transformer_engine.common import recipe as te_recipe
+from transformer_engine.common.recipe import Format
+from accelerate import Accelerator
+from accelerate.utils import has_transformer_engine_layers
+accelerator = Accelerator()  
 
-# 首先加载 FP16 模型
-model_fp8 = AutoModelForCausalLM.from_pretrained(
+model_bf16 = AutoModelForCausalLM.from_pretrained(
     model_name,
-    torch_dtype=torch.float16,
-    device_map="auto"
+    torch_dtype=torch.bfloat16,
+    device_map={"": "cuda:0"}
 )
 
-# 应用 FP8 量化
-quantization.quantize_model(model_fp8, bits=8, quant_type="fp8")
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-# 评估 FP8 模型
-print("开始评估 FP8 模型...")
-total_time_fp8, avg_time_fp8, acc_fp8 = evaluate_model(
-    model_fp8, 
-    tokenizer, 
-    test_dataset
+
+with torch.no_grad():  
+    convert_model(
+        model_bf16,
+        to_transformer_engine=True,
+        _convert_linear=True,
+        _convert_ln=True,
+    )
+
+
+model_te = model_bf16
+
+
+assert has_transformer_engine_layers(model_te), "TE 层替换失败"
+
+
+# 2) 定义 FP8 配方（HYBRID=前向E4M3，反向E5M2；纯推理时只会用到前向E4M3）
+fp8_recipe = te_recipe.DelayedScaling(
+    fp8_format=Format.HYBRID,
+    amax_history_len=16,
+    amax_compute_algo="max",
 )
 
-# 打印结果
-print(f"FP8 - 总推理时间: {total_time_fp8:.2f}秒, "
-      f"平均每个样本: {avg_time_fp8:.4f}秒, "
-      f"准确率: {acc_fp8:.4f}")
+# 3) 用 Accelerate 的 FP8 上下文包一层 forward
+#    注：默认 eval() 时会禁用 FP8，为推理生效需 use_during_eval=True
+wrapped_forward = contextual_fp8_autocast(
+    model_te.forward,
+    fp8_recipe=fp8_recipe,
+    use_during_eval=True   
+)
+
+model_te.forward = types.MethodType(wrapped_forward, model_te)
+
+model_te.eval()
+
+def generate_one(prompt, max_new_tokens=64):
+    inputs = tokenizer(prompt, return_tensors="pt").to(model_te.device)
+    with torch.inference_mode():
+        # 这里 forward 已被 FP8 autocast 包裹，无需再写 with te.fp8_autocast(...)
+        out = model_te.generate(**inputs, max_new_tokens=max_new_tokens)
+    return tokenizer.decode(out[0], skip_special_tokens=True)
+
+total_time_fp8, avg_time_fp8, acc_fp8 = evaluate_model(model_te, tokenizer, test_dataset, max_new_tokens=1,use_te_fp8=True, fp8_recipe=fp8_recipe, batch_size=8)
+print(f"FP8 - 总推理时间: {total_time_fp8:.2f}s, 平均每样本: {avg_time_fp8:.4f}s, 准确率: {acc_fp8:.4f}")
+
 ```
+
+    
+    Loading checkpoint shards:   0%|                                                                                           | 0/3 [00:00<?, ?it/s]
+    Loading checkpoint shards:  33%|███████████████████████████▋                                                       | 1/3 [00:00<00:00,  2.45it/s]
+    Loading checkpoint shards:  67%|███████████████████████████████████████████████████████▎                           | 2/3 [00:00<00:00,  2.11it/s]
+    Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00,  3.18it/s]
+
+
+    FP8 - 总推理时间: 0.85s, 平均每样本: 0.0067s, 准确率: 0.0312
 
 FP8 有两种主要格式：E4M3（4 位指数，3 位尾数）和 E5M2（5 位指数，2 位尾数）。E4M3 提供更高的精度但范围较小，而 E5M2 则相反。在实际应用中，会根据具体场景选择合适的格式。
 
 相比 INT8，FP8 在表示非常大和非常小的数值时更有优势，这使得它在某些场景下能保持比 INT8 更高的精度。
+
+```python
+fp8_recipe = te_recipe.DelayedScaling(
+    margin=0, interval=1, fp8_format=Format.HYBRID, amax_history_len=16, amax_compute_algo="max"
+)
+```
+
+比如这里，设 Format.HYBRID，那么 forward 用 E4M3，backward 用 E5M2（以适应梯度阶段对动态范围更大的需求），如果你设 fp8_format = Format.E4M3，那么forward 和 backward中的所有 FP8 张量／算子都用 E4M3 格式。
 
 ## 8. FP6 精度实验
 
@@ -249,7 +403,7 @@ FP6 是一种更激进的低精度格式，使用 6 位表示浮点数。由于�
 model_fp6 = AutoModelForCausalLM.from_pretrained(
     model_name,
     torch_dtype=torch.float16,
-    device_map="auto"
+    device_map={"": 2}
 )
 
 # 实现 FP6 量化（简化版）
@@ -280,6 +434,16 @@ print(f"FP6 - 总推理时间: {total_time_fp6:.2f}秒, "
       f"准确率: {acc_fp6:.4f}")
 ```
 
+    
+    Loading checkpoint shards:   0%|                                                                                           | 0/3 [00:00<?, ?it/s]
+    Loading checkpoint shards:  33%|███████████████████████████▋                                                       | 1/3 [00:00<00:00,  2.43it/s]
+    Loading checkpoint shards:  67%|███████████████████████████████████████████████████████▎                           | 2/3 [00:00<00:00,  2.10it/s]
+    Loading checkpoint shards: 100%|███████████████████████████████████████████████████████████████████████████████████| 3/3 [00:00<00:00,  3.16it/s]
+
+
+    开始评估 FP6 模型...
+    FP6 - 总推理时间: 0.63秒, 平均每个样本: 0.0049秒, 准确率: 0.0312
+
 注意：上面的 FP6 量化是一个简化实现。在实际应用中，FP6 的实现会更复杂，通常采用 E2M3（2 位指数，3 位尾数）的格式。由于 FP6 的表示能力有限，它通常只用于对精度要求不高的场景，或者作为研究探索。
 
 ## 9. 实验结果对比
@@ -307,31 +471,43 @@ results_df = pd.DataFrame(results)
 print(results_df)
 ```
 
+      Precision  Total Time (s)  Avg Time per Sample (s)  Accuracy  \
+    0      FP16        0.830089                 0.006485   0.03125   
+    1       FP8        0.852010                 0.006656   0.03125   
+    2       FP6        0.630452                 0.004925   0.03125   
+    3      INT8        2.547618                 0.019903   0.03125   
+    
+       Speedup vs FP16  Accuracy Drop  
+    0         1.000000            0.0  
+    1         0.974271            0.0  
+    2         1.316658            0.0  
+    3         0.325829            0.0  
+
 让我们可视化这些结果，以便更直观地比较不同精度的表现：
 
 ```python
-# 设置中文字体
-plt.rcParams["font.family"] = ["SimHei", "WenQuanYi Micro Hei", "Heiti TC"]
-
 # 创建对比图表
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
 
 # 速度对比
 ax1.bar(results["Precision"], results["Speedup vs FP16"], color=['blue', 'green', 'red', 'purple'])
-ax1.set_title('不同精度相对 FP16 的速度提升倍数')
-ax1.set_ylabel('速度提升倍数')
+# 准确率
+ax1.set_title('Speedup vs. FP16 Across Precisions')
+ax1.set_ylabel('')
 ax1.grid(axis='y', linestyle='--', alpha=0.7)
 
 # 精度对比
 ax2.bar(results["Precision"], results["Accuracy"], color=['blue', 'green', 'red', 'purple'])
-ax2.set_title('不同精度下的模型准确率')
-ax2.set_ylabel('准确率')
+ax2.set_title('Model Accuracy Across Different Precisions​​')
+ax2.set_ylabel('Accuracy')
 ax2.set_ylim(0, 1.0)  # 准确率范围在 0-1 之间
 ax2.grid(axis='y', linestyle='--', alpha=0.7)
 
 plt.tight_layout()
 plt.show()
 ```
+
+![png](../images/05Infer06CompDistill/output_26_0.png)
 
 从实验结果中，我们可以观察到以下几点：
 

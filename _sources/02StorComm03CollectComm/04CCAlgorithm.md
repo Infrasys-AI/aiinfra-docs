@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 05.AI 对集合通信算法诉求
+# 04.AI 对集合通信算法诉求
 
 Author by: 
 

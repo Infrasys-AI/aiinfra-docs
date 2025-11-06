@@ -1,12 +1,12 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 容器镜像文件系统(DONE)
+# 03. 容器镜像文件系统(DONE)
 
-Author by: 张柯帆
-
-> 注：以下讨论基于 Linux
+> Author by: 张柯帆
 
 在深入探讨了实现“隔离”的 Namespace 和实现“限制”的 Cgroups 之后，我们终于触及了构成现代容器技术的第三根、也是最后一根关键支柱：**文件系统**。如果说 Namespace 和 Cgroups 定义了容器进程的**运行时边界**，那么一个高效、分层的文件系统则定义了容器的**静态构建块**，也就是我们所熟知的“镜像”。
+
+> 注：以下讨论基于 Linux
 
 ## 1. Union File Systems
 
@@ -156,6 +156,6 @@ AUFS 需维护复杂的层间映射关系，内核内存消耗较大；而 Overl
 
 ## 参考与引用
 
-https://docker-docs.uclv.cu/storage/storagedriver/aufs-driver/（Docker AUFS 驱动官方文档）
-https://blog.csdn.net/luckyapple1028/article/details/77916194（OverlayFS 技术细节解析）
-https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt（Linux 内核 OverlayFS 官方文档）
+- https://docker-docs.uclv.cu/storage/storagedriver/aufs-driver/（Docker AUFS 驱动官方文档）
+- https://blog.csdn.net/luckyapple1028/article/details/77916194（OverlayFS 技术细节解析）
+- https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt（Linux 内核 OverlayFS 官方文档）

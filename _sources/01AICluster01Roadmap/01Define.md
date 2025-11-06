@@ -193,7 +193,7 @@ AI 计算中心专注于 AI 训练和推理任务，使用混合精度计算（F
 <iframe src="https://player.bilibili.com/player.html?isOutside=true&aid=114750084095236&bvid=BV1s5KfzzEbo&cid=30712332864&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
 </html>
 
-## 6. 引用与参考
+## 引用与参考
 
 - https://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E6%9C%BA%E9%9B%86%E7%BE%A4
 - https://www.news.cn/tech/20250218/0c42a29782c34054b4e7d46861ea54bc/c.html

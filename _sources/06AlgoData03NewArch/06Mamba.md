@@ -2,31 +2,113 @@
 
 # Mamba 与选择性状态空间模型：一项全面的技术综述
 
-## 摘要
+> Author by: 张嘉瑶
 
-Mamba 架构作为序列建模领域的一项重要进展，受到了广泛关注。它基于状态空间模型(SSM)构建，通过引入创新的选择性状态空间(S6)机制，实现了对输入序列的动态内容感知处理。这一核心特性使得 Mamba 能够有效过滤无关信息，专注于关键数据，从而在保持对长序列线性计算复杂度的同时，展现出与 Transformer 相当甚至更优的性能。Mamba 的设计充分考虑了现代硬件的特性，采用了包括并行扫描、核融合和梯度重算在内的高效算法，显著提升了训练和推理速度。与传统 SSM 相比，Mamba 的选择性机制克服了其在处理离散信息密集型数据(如文本)时的局限性；与 Transformer 相比，Mamba 在处理超长序列时展现出显著的效率优势。Mamba 生态系统不断发展，催生了 Mamba-ND(用于处理多维数据)、ReMamba(增强长上下文理解能力)和 Mamba-2(基于状态空间对偶性进一步提升性能)等重要变体。此外，关于 Mamba"隐藏注意力"机制和"状态空间对偶性"等高级理论概念的研究，也为理解其工作原理和与其他主流架构(如 Transformer)的关系提供了新的视角。Mamba 已在自然语言处理、音频、基因组学、计算机视觉等多个领域展示了其强大的应用潜力和卓越性能，预示着其在未来人工智能序列建模中将扮演越来越重要的角色。
 
-## 1. 引言：Mamba 在序列建模领域的崛起
+## S4的成功与内在局限
 
-### 1.1. 序列建模的演进格局
+S4及其变体在多个长序列基准测试（如Long Range Arena）上取得了当时最先进的性能，首次证明了结构化SSM在这一领域能够超越Transformer。它成功地确立了SSM作为一种兼具卷积和循环双重优势的强大序列建模新范式。
 
-序列建模一直是机器学习的核心课题，旨在理解和生成各种序列数据，如文本、语音、时间序列等。近年来，Transformer 架构凭借其强大的自注意力机制，在诸多序列建模任务中取得了主导地位 $^{1}$。然而，Transformer 的核心优势自注意力机制也带来了其固有的局限性：计算复杂度随序列长度二次方增长 $^{5}$。这使得 Transformer 在处理日益增长的超长序列(例如，百万级 token)时，面临着巨大的计算和内存挑战。为了解决这一瓶颈，研究界一直在积极探索具有亚二次方时间复杂度的替代架构 $^{9}$。
+这种双重性并非偶然的数学技巧，而是由DPLR结构所赋予的根本属性。DPLR是连接SSM两种计算视图的桥梁：它使得模型在训练时可以被看作一个可并行的卷积层，在推理时又可以被看作一个轻量级的循环单元。这优雅地解决了长期以来困扰序列模型设计的核心矛盾——RNN的推理效率与CNN/Transformer的训练效率之间的权衡。DPLR是S4最深刻的架构贡献，也为Mamba的诞生奠定了基础。
 
-### 1.2. 状态空间模型(SSM)作为基础
+内在局限：
+* 输入无关性： 这是S4最根本的局限。系统的核心矩阵 $(\overline{A}, \overline{B}, \overline{C})$ 以及由此产生的卷积核 $\overline{K}$，在模型训练完成后就被固定下来。它们的值不随输入序列的内容而改变。这意味着S4本质上是一个**线性时不变** **Linear Time-Invariant**系统。这种特性使其难以处理需要根据内容进行判断的任务，例如，从一段文本中有选择地复制某个特定信息，或者在处理信息时主动忽略无关的干扰项。
+* 硬件效率问题： S4对FFT和特殊的柯西矩阵快速算法的依赖，在实践中可能成为性能瓶颈。这些算法在GPU上的实现并非总是最优化的，可能导致硬件利用率不高。
 
-状态空间模型(SSM)为动态系统分析提供了一个强大的框架，其核心思想是通过潜在状态的演化来捕捉系统的时间动态，这些状态进而决定了观测值 $^{11}$。SSM 通过将历史信息压缩到一个固定大小的状态中来对序列进行建模 $^{6}$。系统的演化由其当前状态和新的观测共同决定，就是对过去信息的有效压缩 $^{6}$。传统的 SSM 学习方法包括最大似然估计，而在深下，则常采用基于变分自编码器等方法来处理潜变量 $^{11}$。SSM 在历史上已有应用，度学习领域重新受到关注，并被视为一种有潜力的序列建模方法 $^{11}$。
 
-### 1.3. Mamba 简介：范式转换？
+如下图的选择性复制任务中，我们希望复制输入的**部分内容**并按顺序输出：
 
-Mamba 是一种新兴的基于 SSM 的架构，它在处理序列数据，尤其是长序列时，展现出与 Transformer 相当甚至更优的性能，同时其计算复杂度与序列长度呈线性关系 $^{6}$。Mamba 的核心承诺是：在实现与 Transformer 同等性能水平的同时，具备线性的扩展能力和更快的推理速度 $^{6}$。Mamba 架构由 Albert Gu 和 Tri Dao 在其论文《Mamba:Linear-Time Sequence Modeling with Selective State Spaces》中提出 $^{16}$。该论文的官方 arXiv ID 为 2312.00752，提交于 2023 with Selective State Spaces
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/S4_Bad_Behavior1.gif" alt="img" />
+</div>
 
-with Selective State Spaces Mamba 的出现并非凭空产生，而是先前研究成果与创新思想巧妙结合的产物。它建立在结构化状态空间模型(如 S4)的基础之上 $^{2}$，但通过引入关键的"选择机制"(selection mechanism)$^{2}$，成功克服了先前 SSM 在处理离散的、信息密集的模态(如文本)时所面临的挑战 $^{9}$。这表明 Mamba 不仅仅是对现有技术的渐进式改进，更通过解决先前 SSM 的核心弱点实现了一次质的飞跃。这种成功的融合预示着，未来序列建模领域的突破可能更多地来自于对现有概念的巧妙组合与精炼，而非完全从零开始构建全新的架构。
+然而，由于（循环/卷积）SSM 具有线性时不变性，因此它在此任务中表现不佳。正如我们之前所见，对于 SSM 生成的每个 token，矩阵A 、B和C都是相同的。
 
-## 2. 解构 Mamba：架构与核心机制
+因此，SSM 无法进行内容感知推理，因为它会根据固定的 A、B 和 C 矩阵，平等地对待每个 token。无法做到选择性复制提示词。
 
-### 2.1. Mamba 模块：架构概览
 
-与 Transformer 由堆叠的 Transformer 模块构成类似，Mamba 模型也是由一系列堆叠的 Mamba 模块组成 $^{6}$。Mamba 通过将先前 SSM 架构的设计与 Transformer 中的 MLP 模块相结合，形成了一个单一、内聚的 SSM 模块，从而简化了以往深度序列模型的架构 $^{2}$。这种设计取代了 Transformer 中复杂的自注意力机制和 MLP 模块 $^{2}$。
+SSM表现不佳的第二个任务是感应头，其目标是重现输入中发现的模式：
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/S4_Bad_Behavior2.gif" alt="img" />
+</div>
+
+在上面的例子中，我们本质上是在进行一次性提示，试图“教”模型在每个“问： ”之后给出“答：”的答案。然而，由于SSM具有时不变性，它无法从历史记录中选择要调用的先前标记。
+
+让我们通过关注矩阵B来说明这一点。无论输入x是什么，矩阵B都保持不变，因此与x无关：
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba1.jpg" alt="img" />
+</div>
+
+同样，无论输入如何， A和C也保持不变。这证明了我们迄今为止所见的 SSM 的静态特性。
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba2.jpg" alt="img" />
+</div>
+
+相比之下，这些任务对于 Transformer 来说相对容易，因为它们会根据输入序列动态地改变注意力。它们可以选择性地“查看”或“关注”序列的不同部分。SSM 在这些任务上的糟糕表现说明了时间不变 SSM 的根本问题，矩阵A 、B和C的静态性质导致了内容感知问题。
+
+
+S4的这些局限性并非孤立的缺陷，它们之间存在着紧密的因果联系，并共同指向了下一代模型（即Mamba）所必须进行的创新方向。首先，最核心的概念缺陷是输入无关性。一个无法根据其处理内容来调整自身行为的模型，其能力必然是受限的。这是Mamba必须解决的“为什么”的问题。解决方案显而易见：让系统矩阵（如 $B, C$ 和步长 $\Delta$）成为输入的函数，从而构建一个时变系统。然而，这一改动直接破坏了SSM与静态卷积之间的等价性。一个时变系统无法用一个固定的卷积核来表示，这迫使模型回归到循环计算的范式。但标准的循环计算无法并行训练，这又会引入新的瓶颈。因此，最终的、也是最关键的创新，必须是一个硬件感知的、可并行的循环计算算法（即并行扫描），它既能高效地训练一个输入依赖的SSM，又能解决S4遗留的硬件效率问题，同时赋予模型至关重要的选择性能力。这条逻辑链清晰地将S4的问题直接映射到了Mamba的解决方案。
+
+## Mamba范式——选择性状态空间的黎明
+
+Mamba架构的出现，可以被视为对S4局限性的一次直接而精彩的回应。它通过引入选择性机制、硬件感知的并行算法和简化的整体架构，将SSM的能力提升到了一个新的高度。
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba3.jpg" alt="img" />
+</div>
+
+如上图所示，SSM通过将历史记录压缩成一个较小的状态，从而实现了高效的计算。这个方法能够减少计算开销，因为它不需要保存整个历史数据。然而，与Transformer通过注意力机制处理整个历史记录的方式相比，SSM的表达能力相对较弱。
+Mamba的目标则是结合两者的优点。它通过保持较小的状态，同时也能实现与Transformer类似的强大功能，既保持了高效性，又能处理复杂的序列数据。
+
+### 超越静态卷积核：从时不变性到输入依赖性的哲学转变
+
+S4是一个线性时不变（LTI）系统，而Mamba是一个线性时变（LTV）系统。这一转变是两者最核心的区别。Mamba引入了**选择性**的核心思想，即模型应具备根据输入内容动态地增强或忽略信息的能力。为了实现这一点，Mamba将SSM的关键参数——步长 $\Delta$、输入矩阵 $B$ 和输出矩阵 $C$——设计为当前输入词元 $x_t$ 的函数。这意味着在序列的每一个时间步，SSM都会使用一套“定制”的参数。这种机制允许模型在每个时间步动态地调整其状态转换和信息流，从而实现对上下文的精细控制。
+
+
+为了选择性地压缩信息，我们需要参数依赖于输入。为此，我们首先在训练期间探索 SSM 中输入和输出的维度：
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba4.jpg" alt="img" />
+</div>
+
+在结构化状态空间模型 (S4) 中，矩阵A 、B和C与输入无关，因为它们的维度N和D是静态的且不会改变。
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba5.jpg" alt="img" />
+</div>
+
+相反，Mamba 通过合并输入的序列长度和批量大小，使矩阵B和C，甚至步长∆依赖于输入：
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba6.jpg" alt="img" />
+</div>
+
+这意味着对于每个输入标记，我们现在有不同的B和C矩阵，从而解决了内容感知问题！
+
+> 注意：矩阵A保持不变，因为我们希望状态本身保持静态，但其受影响的方式（通过B和C ）是动态的。
+
+由于它们现在依赖于输入，因此它们会选择性地选择在隐藏状态下保留什么以及忽略什么。
+
+较小的步长∆会导致忽略特定的单词，而是更多地使用先前的上下文，而较大的步长∆会更多地关注输入单词而不是上下文：
+
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba7.jpg" alt="img" />
+</div>
+
+
+综上所述为了选择性保留信息，Mamba做了以下改动：
+* $\Delta$（步长）：它控制着模型在“记忆”和“遗忘”之间的平衡。一个较大的 $\Delta$ 会使得离散化的状态矩阵 $\overline{A}$ 的范数变小，从而更多地“遗忘”之前的状态 $x_{t-1}$，并更多地关注当前输入 $u_t$。相反，一个较小的 $\Delta$ 会让模型更多地保持和沿用旧的状态。通过动态调整 $\Delta$，模型可以决定在遇到关键信息时“重置”状态，或在处理连续信息时“维持”状态。
+* $B$ 和 $C$（输入/输出投影）： 这两个矩阵由输入 $x_t$ 动态生成。这使得模型可以有选择性地决定将输入的哪些信息写入状态 $x_t$（由 $B$ 控制），以及从状态中读取哪些信息作为输出 $y_t$（由 $C$ 控制）。
+* $A$（状态矩阵）： 为了保持系统的稳定性和结构性，核心的状态矩阵 $A$ 在Mamba中仍然是固定的（非输入依赖的），但其在离散化后的有效作用会受到输入依赖的 $\Delta$ 的动态调制。
+
+Mamba的这种选择机制，实际上是一种以连续动态系统语言实现的“注意力”。传统注意力机制通过计算离散的softmax权重来聚合信息，而Mamba则通过由 $\Delta, B, C$ 共同调制的SSM状态的连续演化来控制信息在时间维度上的流动。当模型需要关注当前输入时，它可以通过一个大的 $\Delta$ 来“刷新”其内部状态；当需要回顾历史时，它可以通过小的 $\Delta$ 来维持状态。$B$ 和 $C$ 的投影则类似于注意力机制中的 Query, Key, Value 投影，决定了写入和读取信息的具体内容。因此，Mamba并非完全摒弃了注意力的核心思想（选择性），而是以一种更高效、更结构化的SSM框架重新实现了它。
+
+### 架构深潜：Mamba模块
+
+Mamba的整体架构块（Mamba Block）在设计上追求简洁与高效。它将核心的选择性SSM（SSM）与一个带有门控机制的类MLP结构相结合。输入信号 $x$ 首先经过一个线性投影，然后被分成两路：一路进入SSM进行序列状态的演化，另一路进入一个带有SiLU（Swish）激活函数的门控MLP。最后，SSM的输出与门控MLP的另一路输出相乘，形成最终的模块输出。这种结构比标准的Transformer块更简单，因为它移除了多头注意力机制和块内复杂的层归一化（Layer Normalization）操作。
 
 在机器学习的骨干网络中，通常包含两个基本操作：token 间的信息通信(Communication)和 token 内的计算(Computation)$^{6}$。Mamba 采用 SSM 进行通信(取代了注意力机制)，并保留了类似 MLP 的投影进行计算 $^{6}$。一个典型的 Mamba 模块通常包括：一个输入线性投影层、一个一维卷积层(Conv1D)、SiLU 激活函数、选择性状态空间模型(S6)核心以及一个输出投影层。此外，通常还带有一个残差连接和一个门控机制(通过与另一个经过 SiLU 和线性投影处理的分支进行逐元素相乘实现)
 
@@ -34,248 +116,134 @@ Mamba 模型具有多个接口级别，但其核心是封装了选择性 SSM 的
 
 下图展示了一个 Mamba 模块的概念框图：
 
-**图 1：Mamba 模块概念框图 $^{6}$**
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/MambaBlock.png" alt="img" />
+</div>
 
-### 2.2. 选择性状态空间模型(S6)：Mamba 的核心
 
-S6 机制是 Mamba 架构的灵魂所在，它赋予了模型根据输入内容动态调整其行为的能力。
 
-#### 2.2.1. 连续时间公式(A,B,C,D 矩阵)
 
-SSM 将一维输入序列 u(t)映射到一个 N 维潜在状态 h(t),然后再投影回一维输出序列 y(t)$^{12}$。其核心方程组通常表示为：
+### 硬件感知算法：为GPU性能融合内核操作
 
-●状态演化方程：$h^{\prime}(t)=A h(t)+B x(t)^6$  
-●输出生成方程：$y(t)=C h(t)+D x(t)^6$  
+使Mamba的动态选择性在实践中可行的，是其在算法层面的关键创新。由于参数是输入依赖的，S4所依赖的静态卷积技巧不再适用，模型必须依赖循环计算。然而，朴素的循环计算在GPU这类并行硬件上效率极低，因为它无法利用大规模并行处理单元。
 
-其中，x(t)是输入，h(t)是隐藏状态，y(t)是输出。各个矩阵的直观解释如下 $^{6}$：  
-• A(状态转移矩阵)：描述当前状态如何转变为下一状态，即"如何随时间遗忘状态中不太相关的部分？"  
-● B(输入映射矩阵)：将新的输入映射到状态中，即"新输入中应该记住哪些部分？"  
-● C(状态到输出映射矩阵)：将状态映射到 SSM 的输出，即"如何利用当前状态做出好的下一个预测？"  
-●D(直接输入到输出/跳跃连接矩阵)：描述新输入如何直接传递到输出，即"如何在预测中直接使用新输入？"
+如图所示，每个状态都是前一个状态（乘以A ）加上当前输入（乘以B ）之和。这称为扫描操作，可以使用 for 循环轻松计算。相比之下，并行化似乎是不可能的，因为每个状态的计算都只能在已知前一个状态的前提下进行。
 
-#### 2.2.2. 离散化与 $\Delta$(Delta)的作用
 
-由于现实世界的输入通常是离散的，连续时间方程需要通过离散化过程转换为离散时间形式 $^{6}$。Mamba 采用特定的离散化规则(例如零阶保持，Zero-Order Hold-ZOH)将连续参数($\Delta$,A,B)转换为离散参数 $\left(A^{-},B^{-}\right)6$。离散后的状态更新方程可表示为：$h_t=A^{-}h_{t-1}+B^{-}x_t^{12}$。在离散化过程中引入了一个至关重要的可学习参数 $\Delta$(Delta)，它代表步长或"停留时间"(lingertime)$^{6}$。$\Delta$ 控制着模型对当前 token 的关注程度：较大的 $\Delta$ 意味着对当前 token 给予更多关注，而较小的 $\Delta$ 则意味着快速跳过该 token$^{6}$。这使得不同的 SSM 层能够在不同的时间尺度上运作 $^{20}$。
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/MambaRNN.gif" alt="img" />
+</div>
 
-#### 2.2.3. 选择机制：输入依赖的参数化
 
-Mamba 的核心创新在于其"选择机制"，即让 SSM 的参数(特别是通过 B,C 和 $\Delta$ 参数 $A^{-},B^{-},C^{-}$)成为输入 x 的函数 $^{2}$。这使得 Mamba 能够根据当前 token 的内容选择性地传播或遗忘信息，从而解决了传统 SSM(使用固定的 A,B 矩阵)在处理离散和信息密集的模态(如文本)时的不足 $^{6}$。
+Mamba的解决方案是设计了一种**并行扫描**算法。该算法在数学上与顺序的循环计算完全等价，但其计算结构被重塑，使其能够高效地在现代硬件上并行执行。它将一个看似顺序的计算链分解为多个可以并行处理的块，然后在块之间进行少量的顺序聚合。
 
-具体来说，矩阵 B,C 以及离散化参数 $\Delta$ 都变成了时间依赖的(即输入 $xt$ 状态转移矩阵 A 本身通常保持结构化(例如，源自 HiPPO 矩阵)，但其离散化形式 A 会通过依赖于输入的 $\Delta$ 而间接变得输入依赖 $^{25}$。这种输入依赖性是通过对输入 x 进行线性投影来实现的 $^{20}$。例如，选择机制可以包含围绕 B,C 和 $\Delta$ 参数的线性层 $^{20}$。
 
-选择机制带来了诸多益处 $^{2}$：  
-- 动态适应不同的输入，以处理各种序列建模任务。  
-- 重置状态以清除不相关的历史信息。  
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/MambaGPU.png" alt="img" />
+</div>
 
-选择性机制可以被理解为一种动态的门控系统。B,C 和 $\Delta$ 的输入依赖特性个复杂的门控机制：B 决定了当前输入的多少信息被"写入"状态，C 决定了状态的多少信息被"读取"到输出，而△则控制着对当前输入的"时间尺度"或"关注度"。这与 LSTMs/GRUs 中的门控机制有相似之处 $^{20}$，但被巧妙地集成到了 SSM 框种动态门控使得 Mamba 能够克服传统 LTI SSM 的"上下文盲点"，实现基于内容的推理 $^{9}$。这揭示了一个重要的设计原则：有效的序列模型需要能够根据内容动态调节信息流的机制，而 Mamba 在 SSM 范式内高效地实现了这一点。
+但GPU的一个缺点是其容量较小但效率极高的 SRAM 与容量较大但效率略低的 DRAM 之间的传输 (IO) 速度有限。频繁在 SRAM 和 DRAM 之间复制信息会成为瓶颈。
 
-参数 $\Delta$ 在 Mamba 中扮演着双重角色。它不仅仅是一个离散化步长，其输入依赖性 $^{6}$ 使其成为选择机制的核心组成部分。它允许模型学习对一个 token"关注"多久，从而有效地控制当前输入 $xt$ 对隐藏状态 $ht$ 的影响，以及通过 A 控制 $ht$ 本身的演化。较大的 $\Delta$ 会强调当前输入 $xt$ 和近期历史，而较小的 $\Delta$ 则会强调更长期的状态动态或直接跳过当前 token。这种对每个 token 的自适应时间尺度进行学习的细粒度时间控制能力，对于处理复杂序列至关重要，并可能启发其他架构中类似的机制。
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/GPUBottleNeck.png" alt="img" />
+</div>
 
-## 3. 效率引擎：Mamba 的性能优势
 
-### 3.1. 线性时间复杂度与可扩展性
+而Mamba算法是“硬件感知”的。Mamba试图将离散化、循环更新和输出投影等多个计算步骤**融合** **fuse**到单个GPU内核中。这样做可以最大限度地减少数据在GPU不同层级内存（高带宽内存HBM与片上高速SRAM）之间的读写次数。通过避免在每一步都将完整的中间状态 $x_t$ 写回全局内存，Mamba极大地提升了计算速度并降低了内存占用，从而实现了卓越的硬件利用率。
 
-Mamba 在训练和推理过程中均能实现随序列长度线性扩展(O(L)的时间复杂度)，这与 Transformer 在训练时 O(L2)的二次方复杂度和自回归生成时每个 token O(L)的复杂度形成了鲜明对比 $^{6}$。这一特性使得 Mamba 能够处理 Transformer 因计算量过大而难以应对的超长序列(例如，百万级 token)$^{6}$。
 
-Mamba 的推理速度非常快，据称比同等规模的 Transformer 吞吐量高出 5 倍归推理每一步仅需常数时间，因为它不像 Transformer 那样需要缓存先前的大量元素 $^{13}$。此外，Mamba 的内存使用在训练期间也随序列长度线性增长，并且在推理期间状态大小是固定的(O(1)的空间复杂度)$^{6}$。
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/MambaGPUPro.gif" alt="img" />
+</div>
 
-### 3.2. 硬件感知并行扫描算法
+我们可以通过可视化 Mamba 的基础架构来查看 DRAM 和 SRAM 分配的具体实例：
 
-选择机制使得 Mamba 的 SSM 参数具有输入依赖性，这打破了传统 SSM 所依赖的时间不变性，而时间不变性是传统 SSM 能够使用高效卷积进行并行训练的基础 $^{6}$。题，模型将退化为缓慢的循环计算。
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Mamba8.png" alt="img" />
+</div>
 
-Mamba 通过采用一种针对现代 GPU 优化的硬件感知并行算法(扫描操作)挑战 $^{1}$。该扫描算法包含三个关键组成部分 $^{25}$：  
-●并行关联扫描(Parallel Associative Scan)：利用了循环更新本质上是一种"扫描"操作的特性。并行扫描算法可以在并行硬件上以 O(LlogL)甚至更快的速度计算这些操作，从而显著加速原本具有序列依赖性的计算过程 $^{25}$。其关键在于优化向量和矩阵的组织方式，以最大限度地减少内存拷贝并实现并行化 $^{20}$。  
-●核融合(KernelFusion)：这项技术旨在优化 GPU 的内存访问。它避免了在全局 GPU 内存(HBM)中物化大型中间状态(如离散化的 A,B 矩阵或隐藏状态 h)。取而代之的是，多个操作被融合成一个单一的计算核。连续参数从 HBM 和扫描操作在高速的片上 SRAM 中执行，最终只有输出结果被写回 HBM 地减少了 I/O 瓶颈，提升了 GPU 利用率。  
-●梯度重算(Recomputation of Gradients)：由于核融合避免了在 HBM 中存储中间隐藏状态，而这些状态在反向传播计算梯度时是必需的，因此 Mamba 选择在反向传播过程中按需重新计算这些中间状态 $^{25}$。实践证明，这种重算比从 HBM 存储和读取大型中间状态更为高效。
+这里，以下内容融合成一个内核：
 
-Mamba 的高效率是算法设计与硬件感知协同优化的结果。其线性扩展能力不仅仅源于 SSM 的数学形式，更关键的是其选择性 SSM 的实现方式。由于选择性而失去的卷积形式所带来的并行优势，通过一种为 GPU 内存层级结构(SRAM 与 HBM)精心设计的复杂扫描算法得以恢复 $^{2}$。选择性提高了模型的建模能力，但破坏了卷积的便利性；而硬件感知的扫描操作则恢复了并行训练的效率。这种相互作用至关重要。这突显了现代机器学习领域的一个趋势：要达到峰值性能，算法不仅需要在理论上高效，还必须针对目标硬件架构进行细致优化。FlashAttention 是体现这一趋势的另一个典型例子 $^{1}$。
+* 离散化步骤，步长为$∆$
 
-## 4. Mamba 的定位：比较与区别
+* 选择性扫描算法
 
-### 4.1. Mamba vs.传统/S4 SSM
+* 用C进行乘法
 
-传统的 SSM(如 S4 模型)是线性时不变(LTI)系统，意味着它们的 A,B,C,D 参数在所有时间步上都是固定的 $^{2}$。这使得它们可以被高效地计算为卷积操作 $^{6}$。
+硬件感知算法的最后一部分是重新计算。
 
-然而，LTI SSM 的一个主要弱点是它们无法执行基于内容的推理或根据输入进行调整，这使得它们在处理信息密集、离散的模态(如文本)时效果不佳 $^{9}$。由于缺乏选择性，它们可能会丢弃必要的信息 $^{6}$。LTI 模型无法选择性地忽略信息；从卷积的角度来看，一个非常长的卷积核会聚合整个序列的所有信息，这可能引入大量噪声 $^{30}$。
+中间状态不会被保存，但对于反向传播计算梯度来说却是必需的。因此，作者在反向传播过程中重新计算了这些中间状态。
 
-Mamba 的选择机制(输入依赖的 B,C,△)使其能够克服这一局限，通过动态过滤和关注相关信息来提升性能 $^{2}$。Mamba 被认为是 S4 的一个坚实改进，通过综合性任务的对比，突显了传统 SSM 的缺点 $^{10}$。
+尽管这看起来效率不高，但比从相对较慢的 DRAM 读取所有中间状态的成本要低得多。
 
-### 4.2. Mamba vs. Transformer
+现在，我们已经介绍了其架构的所有组件，该架构使用文章中的下图进行描述：
 
-Transformer 因其自注意力机制而非常有效，该机制允许 token 与所有其他 token 而理论上能够完美回忆上下文信息 $^{1}$。然而，这也导致了 O(N2)的计算复杂度 $^{6}$。将过去的全部信息存储在其 KV 缓存中 $^{6}$。
 
-Mamba 则旨在以线性扩展的方式实现与 Transformer 相当的性能。它更像将历史信息压缩到一个固定大小的状态中 $^{6}$。
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/MambaArch.png" alt="img" />
+</div>
 
-在效率方面，Mamba 的推理速度明显更快(高达 5 倍吞吐量)，并且随序列长度线性扩展，而 Transformer 则随着序列长度的增加而呈二次方减慢 $^{6}$。性能上，Mamba 在多种模态上均达到 SOTA 水平，例如 Mamba-3B 模型优于同等规模的 Transformer，并能与两倍规模的 Transformer 相媲美。
 
-关于长程依赖的处理：Mamba 的选择性状态允许它通过过滤不相关信息来潜在地处理非常长的依赖关系 $^{2}$。然而，一些资料表明，与 Transformer 的注意力机制相比，Mamba 的 MLP 模块在捕获长程依赖方面可能不那么有效 $^{31}$，并且其固定大小的状态与 Transformer 理论上无限的 KV 缓存相比，固有地限制了内存容量 $^{1}$。这一点是持续研究和改进的方向(例如 ReMamba)。
+这种算法与硬件的协同设计是Mamba成功的核心。选择性SSM的理论模型若没有并行扫描算法的支持，将因无法高效训练而变得不切实际；而并行扫描算法若没有选择性SSM这一应用场景，也只是一个通用的计算技巧。这标志着AI研究的一个新前沿：算法创新与系统级工程优化必须紧密结合、同步进行。未来的架构突破可能越来越需要跨越机器学习理论、计算机体系结构和系统编程等多个领域的深度专业知识。
 
-在信息流和上下文处理方面，Transformer 将上下文用作具有高保真度的短期记忆；Mamba 则将上下文压缩到其状态中 $^{6}$。Transformer 通常在外部过滤上下文(如 RAG 技术)，而 Mamba 则在内部早期进行过滤。
 
-下表总结了 Mamba 与 Transformer 在关键架构和性能上的差异：
+凭借选择性机制和硬件感知算法，Mamba成功地解决了序列建模领域长期存在的“循环-并行”权衡：
+* 训练时： Mamba利用并行扫描算法，使其本质上是循环的结构能够以接近线性的时间复杂度（$O(L \cdot D \cdot N)$）和极高的硬件利用率进行训练，效率媲美Transformer。
+* 推理时： Mamba可以切换回其原始的、高效的顺序循环模式。每生成一个新词元，只需进行一次 $O(D \cdot N)$ 的状态更新，计算和内存成本均为常数 $O(1)$，使其在自回归生成任务中速度极快且内存占用极低。
 
-**表 1：Mamba 与 Transformer-关键架构与性能差异**
+## 架构对比分析
 
-| 特性 | Mamba | Transformer |
-|------|-------|------------|
-| 核心机制 | 选择性状态空间模型(SSM) | 自注意力机制(Self-Attention) |
-| 序列长度扩展(训练) | 线性(O(L))$^{6}$ | 二次方(O(L2))$^{6}$ |
-| 序列长度扩展(推理) | 线性(O(L))，每 token 常数时间 $^{13}$ | 每 token O(L)(自回归)$^{6}$ |
-| 内存使用(状态/缓存) | 固定大小状态(O(1)空间) | KV 缓存，随序列长度线性增长(O(L))$^{6}$ |
-| 上下文处理 | 内部选择性压缩到状态 | 外部检索增强作为高保真短期记忆 $^{6}$ |
-| 主要优势 | 长序列效率高，推理速度快 $^{6}$ | 强大的上下文理解与回忆能力，成熟的生态系统 $^{6}$ |
-| 主要挑战 | 固定状态的内存容量限制，长上下文理解的细微差别 $^{10}$ | 长序列的二次方计算瓶颈 |
+S4可以被视为一个里程碑式的“概念验证”，它首次证明了结构化SSM作为高效长序列模型的可行性，并建立了其卷积/循环的双重计算模式。而Mamba则是其“精炼的继任者”，它精准地解决了S4的根本缺陷（输入无关性）和实践瓶颈（硬件利用率）。
 
-传统的 RNN 高效但表达能力不足(遗忘过多信息)。Transformer 表达能力强但效率低下(二次方成本)。Mamba 凭借其选择性状态，试图在这一"效率与表达能力"的帕累托前沿上找到一个更优的点 $^{6}$。它旨在保留 Transformer 的大部分效能，同时显著提高效率。选择机制是提升其相对于传统 SSMs/RNNs 表达能力的关键，而硬件感知的扫描算法则是保持其相对于 Transformer 效率的关键。Mamba 代表了一种特定的策略(选择性状态压缩)来应对序列建模中的这一基本权衡。其他架构可能会探索不同的策略。
+从S4到Mamba的进化，核心是从一个线性时不变（LTI）系统到一个线性时变（LTV）系统的飞跃。这一飞跃之所以能够成功，关键在于Mamba通过算法与硬件的协同设计（并行扫描），使得这个更强大、更灵活的时变模型在计算上依然是可行的。
 
-## 5. Mamba 生态系统：演进与特化
 
-Mamba 架构并非一成不变，而是一个不断发展的家族。多个变体被提出，以解决特定问题或扩展其应用范围。
+### Mamba vs. Transformer：复杂度、性能与归纳偏置的正面对决
 
-### 5.1. Mamba-ND：征服多维数据
+Mamba与Transformer在多个维度上展现了根本性的差异，这些差异可以通过下表进行系统性地总结和分析。
 
-最初的 Mamba 主要关注一维序列(如文本)$^{5}$。将其扩展到多维数据(如图像、视频、科学数据)并非易事，因为 Mamba 需要特定的数据排序，这与可并行计算的卷积或自注意力机制不同 $^{5}$。
 
-Mamba-ND 通过沿着不同维度交替地"展开"输入数据(遵循固定的行主序)来扩展 Mamba$^{5}$。例如，对于二维数据，可能采用 H+H-W+W-的顺序；对于三维数据，则采用 H+H-W+W-T+T-的顺序 $^{32}$。其架构将一维 SSM 层作为黑箱进行堆叠，并在层与层之间交替序列顺序，而无需对一维 SSM 层本身进行复杂修改 $^{5}$。令人惊讶的是，这种相对简单的设计(交替固定顺序)在性能上优于更复杂的多方向策略 $^{5}$。
+| 特征 | RNN/LSTM | Transformer (Attention) | S4 (结构化SSM) | Mamba (选择性SSM) |
+|------|----------|-------------------------|----------------|------------------|
+| **训练复杂度** | $O(L\cdot D^{2})$ (顺序) | $O(L^{2}\cdot D)$ (平方) | $\tilde{O}(L(D+N\log N))$ (近线性) | $O(L\cdot D\cdot N)$ (近线性) |
+| **自回归推理** | $O(D^{2})$ (每步恒定) | $O(L\cdot D)$ (上下文线性) | $O(D\cdot N)$ (每步恒定) | $O(D\cdot N)$ (每步恒定) |
+| **训练并行性** | 否 (顺序依赖) | 是 (完全并行) | 是 (通过卷积/FFT) | 是 (通过并行扫描) |
+| **长距离依赖处理** | 差 (梯度消失) | 优 (直接路径) | 优 (HiPPO结构) | 优 (HiPPO+选择性) |
+| **输入依赖动态** | 是 (非线性门控) | 是 (自注意力) | 否 (线性时不变) | 是 (选择性参数) |
+| **推理内存占用** | 恒定 | $O(L\cdot D)$ (KV缓存) | 恒定 | 恒定 |
 
-在性能方面，Mamba-ND 在 ImageNet-1K 图像分类、HMDB-51/UCF-101 ERA5 天气预报和 BTCV3D 分割等任务上，通常以更少的参数量取得了与 Transformer 相当甚至更优的性能 $^{5}$。例如，在 ImageNet 上，其准确率比 ViT 高 1.5%，少了 20.7%$^{14}$。
 
-Mamba-ND 的成功表明，在将一维序列模型扩展到 N 维时，巧妙而简单的数据处理路径可能比在核心层内进行过于复杂的架构更改更为有效。这为模型设计提供了一个宝贵的经验：有时最优雅的解决方案并非最复杂的。数据表示/排序与固定处理模块之间的交互可以产生强大的结果。
+从上表中可以清晰地看到，Mamba在多个关键指标上实现了对以往架构的超越。复杂度： Mamba在训练时实现了与序列长度 $L$ 的线性扩展（$O(L)$），彻底摆脱了Transformer的平方复杂度（$O(L^2)$）瓶颈。在推理时，它恢复了RNN的优势，每步计算成本为常数，而Transformer则需要随着上下文的增长消耗更多的计算和内存（KV缓存）。性能： 线性扩展的能力使得Mamba能够轻松处理百万级长度的序列，这是标准Transformer架构望尘莫及的。归纳偏置： 如前所述，Transformer作为关系型模型，而Mamba作为动态系统模型，后者可能更适合对连续信号进行建模。此外，Mamba没有固定的上下文窗口限制，其状态可以理论上无限地传递信息。该表格直观地展示了Mamba如何集两家之长：它既拥有Transformer和CNN的训练并行性，又具备RNN的推理高效性，最终在“训练并行性”和“恒定推理成本”两个关键特性上都取得了肯定的答案。
 
-### 5.2. ReMamba：增强长上下文理解
 
-尽管 Mamba 对长序列处理效率很高，但经验证据表明，与 Transformer 相比，其理解超长上下文的能力可能有限 $^{24}$。类似 RNN 的特性和固定大小的状态可能导致远距离信息的退化 $^{24}$。ReMamba 旨在通过一个两阶段的重前传(re-forward)过程来增强 Mamba 的长上下文理解能力，且额外的推理成本极小 $^{24}$。其技术包括 $^{24}$：  
-- 阶段一(选择性压缩)：使用前馈网络(FFN)判断 Mamba 最后一层隐藏状态的重要性，选择重要的状态，并对其进行压缩(例如，基于与最后一个隐藏状态的余弦相似度进行 top-K 选择)，然后用这些压缩表示替换原始 token 嵌入的一部分。  
-- 阶段二(选择性适应)：在对压缩序列进行第二次前传时，将重要性得分整合到 Mamba 的选择机制中。对于不太重要(现已被压缩)的片段，会调整其 $\Delta$ 值以减少它们的影响。  
+### 经验证据：基准测试表现回顾
 
-ReMamba 在 LongBench 和 L-Eval 等长上下文基准测试中提升了 Mamba 的性能，使其更接近 Transformer 的水平 $^{24}$。ReMamba 的方法实质上是在 Mamba 的隐式状态压缩之上叠加了一层可学习的、显式的内存管理策略。通过识别并重新优先处理第一次传递中的重要信息，它试图减轻固定大小循环状态在处理超长序列时固有的信息丢失问题。固定状态特性导致 Mamba 可能出现长上下文信息退化，而 ReMamba 的带有压缩和适应的重前传机制通过刷新和重新加权上下文来直接解决这个问题。这为改进其他固定状态循环模型提供了一条潜在路径：采用带有学习的上下文选择和适应的多遍处理。
+在实际的基准测试中，Mamba的表现印证了其架构设计的优越性。在语言建模任务上，Mamba不仅在性能上能够匹配甚至超越同等规模的Transformer模型，而且实现了更高的训练和推理吞吐量。在处理基因组学、音频和时间序列等典型的长序列数据模态时，Mamba展现出了压倒性的优势，成为这些领域的首选架构之一。
 
-### 5.3. Mamba-2：状态空间对偶性带来的新飞跃
+从在 HG38 人类基因组数据集上的预训练结果来看，Mamba 在处理基因组学任务时的核心优势可归纳为以下两点，分别对应左图和右图的实验结论：
+* 参数规模扩展性更优：小参数量下仍能高效提升性能
+* 长序列处理能力更强：上下文长度增加时性能不衰减（甚至提升）
 
-Mamba-2 的基础是 Dao 和 Gu 提出的"Transformer 即 SSM：通过结构化状态空间对偶性的广义模型和高效算法”(SSD)框架 $^{8}$。该框架揭示了 SSM 与注意力变体之间深层的理论联系。
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/MambaDNA.jpg" alt="img" />
+</div>
 
-Mamba-2 采用了简化的架构和一个经过优化的选择性 SSM 核心层，据称比 Mamba-1 快 2-8 倍，同时在性能上仍能与 Transformer 竞争 $^{34}$。源于 SSD 理论的架构更改包括：将所有数据依赖的投影移至模块块的开头并行发生，内部 SSM 层采用 SSD 如，在 HybriDNA(使用 Mamba-2 模块)中，SSD 层将 A 矩阵简化为 A=al 高效率 $^{38}$。
 
-性能方面，在 Chinchilla 缩放定律的比较中，Mamba-2 在困惑度和实际运行时间上均优于 Mamba-1 和 Transformer++$^{8}$。Hugging Face 的实现细节包括 $^{34}$：支持 torch_forward(无需编译更快)和 cuda_kernels_forward(原始核函数，预填充较慢)；不使用位置编码，但使用 attention_mask；引入 n_groups 参数(例如 Mamba-2 codestral 中为 8)，直观上类似于注意力机制中的 KV 头数量。
+这对基因组学任务至关重要：人类基因组序列极长（总长约 30 亿碱基对），且许多关键生物学信息（如长程基因调控、跨片段突变关联）隐藏在长序列中。传统基线模型（如 Transformer 类）因自注意力机制的计算复杂度随序列长度平方增长，在处理长基因组片段时易出现性能瓶颈（如信息稀释、计算过载）；而 Mamba 的选择机制能高效聚焦长序列中的关键信息（如特定碱基模式、基因片段关联），更适配基因组学对 “长序列语义理解” 的核心需求。
 
-下表概述了 Mamba 的主要变体：
 
-**表 2：Mamba 变体概述(Mamba-ND,ReMamba,Mamba-2)**
 
-| 变体 | 核心创新 | 目标问题 | 主要架构变化 | 关键性能亮点 |
-|------|----------|----------|--------------|--------------|
-| Mamba(基线) | 选择性状态空间(S6)，硬件感知并行扫描 | 长序列建模效率与性能 | 输入依赖的 SSM 参数，高效扫描算法 | 线性扩展，比 Transformer 更快推理 $^{6}$ |
-| Mamba-ND | 多维数据交替展开 | 将 Mamba 扩展到图像、视频等多维数据 | 堆叠 1D-SSM 并交替序列顺序 $^{14}$ | 在 ImageNet，ERA5 等多维基准上以更少参数取得 SOTA 或有竞争力的性能 $^{5}$ |
-| ReMamba | 两阶段重前传(选择性压缩与适应) | 改善 Mamba 的超长上下文理解能力 | 识别并压缩重要上下文，在重前传中调整选择机制 $^{24}$ | 提升在 LongBench，L-Eval 等长上下文基准上的表现 $^{24}$ |
-| Mamba-2 | 基于状态空间对偶性(SSD)的架构优化 | 进一步提升 Mamba 的速度和性能 | 简化的选择性 SSM 核心层，数据依赖投影并行化，SSD 原理应用 $^{8}$ | 比 Mamba-1 快 2-8 倍，帕累托优于 Mamba-1 和 Transformer++$^{8}$ |
-
-Mamba 架构并非一成不变，而是一个不断演进的家族。这些变体分别解决了 Mamba 的特定局限或扩展了其能力范围，展示了 Mamba 作为一个持续发展的研究方向，而非单一的终点解决方案。
-
-## 6. 揭示深层联系：高级理论洞察
-
-对 Mamba 的研究不仅停留在架构和性能层面，还深入到其与现有主流模型(尤其是 Transformer)的理论联系。
-
-### 6.1. Mamba 模型的隐藏注意力
-
-Ali、Zimerman 和 Wolf 的研究(arXiv:2403.01590)提出，尽管 Mamba 没有像 Transformer 那样显式的注意力机制，但其选择性 SSM 层可以被视为一种注意力驱动的模型 $^{29}$。这种观点是通过使用一个"数据控制线性算子"(data-control linear operator)对 Mamba 的计算进行重新表述，从而揭示了 Mamba 层内部的"隐藏注意力矩阵"(hidden attention matrices)$^{29}$。这里的核心思想是，如果一个线性算子 Y=aX 中的 a 是输入 X 的函数，那么这个算子就是数据依赖的，可以被视为一种注意力形式 $^{42}$。据称，Mamba 模型产生的"注意力矩阵"数量比 Transformer 多三个数量级 $^{29}$。
-
-这一视角的意义重大 $^{29}$：  
-- 可解释性/可理解性：它允许将 Transformer 领域中成熟的基于注意力的可解释性技术(如注意力分配、归因方法)应用于 Mamba 模型，而 Mamba 传统上缺乏此类工具。  
-- 调试与信任：更好地理解信息流有助于调试 Mamba 模型，并增强其在需要可解释性的敏感领域中的应用。  
-- 理论比较：为比较 Mamba 和 Transformer 的内部机制及表示提供了一个直接的框架。  
-
-后续研究 $^{41}$ 对这种隐式自注意力的概念进行了改进，旨在将 Mamba 模块的更多组件(如 Conv1D、门控机制)纳入考虑，而不仅仅是 S6 层，以获得更准确的类注意力表示。
-
-"隐藏注意力"的研究表明，注意力的核心功能基于内容动态加权和混合信息-可以通过其他机制隐式实现，而不仅限于显式的自注意力模块。Mamba 的选择性 SSM 通过其输入依赖的操作，在功能上达到了类似的效果。Mamba 的输入依赖参数(B,C,△)创建了数据依赖的线性算子，这些算子有效地起到了类似注意力矩阵的作用，决定了信息如何混合。这可能导致对神经网络中"注意力"的更广义理解，即关注功能等效性而非特定的架构模式。这也为解释以前被认为比 Transformer 更"黑箱"的模型开辟了新途径。
-
-
-
-### 6.2. 状态空间对偶性（SSD）：连接 Transformer
-
-Dao 和 Gu 在其论文《Transformer 即 SSM：通过结构化状态空间对偶性的广义模型和高效算法》中提出了 **状态空间对偶性（SSD）** 理论框架，揭示了状态空间模型（SSM，如 Mamba）与 Transformer 的自注意力机制之间的深层数学联系 \[^{8}\]。这种联系通过结构化矩阵（特别是**半可分矩阵**）的抽象建立：序列模型可被统一视为矩阵变换或张量收缩操作。在此框架下，SSM 生成的序列混合矩阵本质上是**结构化、半可分的** \[^{43}\]。
-
-#### **SSD 的核心理论贡献**
-1. **数学等价性**：  
-   SSD 证明 SSM 的循环计算与自注意力的加权求和可通过**半可分矩阵分解**相互表达。SSM 的离散状态更新方程 \( h_t = \overline{A}h_{t-1} + \overline{B}x_t \) 可重写为隐式注意力形式：  
-   \[
-   y_t = C \left( \sum_{k=1}^{t} \left( \prod_{j=k+1}^{t} \overline{A}_j \right) \overline{B}_k x_k \right)
-   \]
-   其中 \(\prod_{j=k+1}^{t} \overline{A}_j\) 构成一个下三角半可分矩阵，其秩由状态维度 \(N\) 决定。这等价于自注意力中通过 \(QK^T\) 生成的稀疏注意力模式 \[^{8, 43}\]。
-
-2. **计算统一性**：  
-   SSD 表明 SSM 和注意力机制均可通过**块状矩阵乘法**高效实现。SSM 的扫描操作（原需 \(O(L \log L)\) 复杂度）可转化为 \(O(LN^2)\) 的批处理矩阵乘法（\(L\) 为序列长，\(N\) 为状态维度），与现代硬件高度契合 \[^{43}\]。
-
-#### **SSD 对 Mamba-2 的架构革新**
-SSD 理论直接驱动了 Mamba-2 的设计优化 \[^{8, 34}\]：  
-1. **数据依赖投影的并行化**：  
-   将输入相关的参数投影（生成 \(B, C, \Delta\) 的线性层）移至模块入口处**并行计算**，而非嵌入循环步骤。此举消除了顺序依赖，提升 GPU 利用率 \[^{34}\]。  
-2. **简化的 SSD 层**：  
-   采用 SSD 推导的简化状态转移矩阵 \(A = \alpha I\)（标量对角矩阵），大幅降低离散化计算开销。例如，在 HybriDNA 模型中，SSD 层将矩阵乘法缩减为逐元素运算 \[^{38}\]。  
-3. **分组机制（`n_groups`）**：  
-   引入类似注意力中 KV 头的分组策略（如 Mamba-2 codestral 设 8 组），允许不同状态子空间独立建模多样化模式 \[^{34}\]。  
-
-**性能提升**：上述优化使 Mamba-2 的 SSM 核心比 Mamba-1 **快 2–8 倍**，同时在语言建模任务（如 Chinchilla 缩放测试）中保持更优的困惑度-时间帕累托前沿 \[^{8, 34}\]。
-
-#### **SSD 的广义意义**
-1. **跨架构技术迁移**：  
-   SSD 为 Transformer 的优化技术（如 FlashAttention）迁移至 SSM 提供理论基础，反之亦然 \[^{8}\]。例如，Mamba-2 的核融合技术受 FlashAttention 的 SRAM 内存管理启发 \[^{1}\]。  
-2. **混合模型设计**：  
-   对偶性催生新型架构（如 **TransMamba** \[^{4}\]），在浅层用 Mamba 高效压缩长序列，深层用注意力精调局部交互，兼顾效率与表达能力 \[^{3}\]。  
-3. **理论新视角**：  
-   SSD 将序列建模统一为**结构化矩阵逼近问题**，为稀疏注意力、循环网络等提供新的分析工具 \[^{43}\]。  
-
-> **总结**：SSD 不仅解释 Mamba 与 Transformer 的隐性关联，更推动算法-硬件协同设计。Mamba-2 的成功印证：揭示架构间的深层数学对偶性，能解锁突破性的工程优化 \[^{8}\]。
-
-### Works cited
-1.	RankMamba, Benchmarking Mamba's Document Ranking Performance in the Era of Transformers - arXiv, accessed May 21, 2025, https://arxiv.org/html/2403.18276v1
-2.	An Introduction to the Mamba LLM Architecture: A New Paradigm in Machine Learning, accessed May 21, 2025, https://www.datacamp.com/tutorial/introduction-to-the-mamba-llm-architecture
-3.	A hybrid model based on transformer and Mamba for enhanced sequence modeling - PMC, accessed May 21, 2025, https://pmc.ncbi.nlm.nih.gov/articles/PMC11968869/
-4.	TransMamba: Flexibly Switching between Transformer and Mamba - arXiv, accessed May 21, 2025, https://arxiv.org/html/2503.24067v1
-5.	Mamba-ND: Selective State Space Modeling for Multi-Dimensional Data - arXiv, accessed May 21, 2025, https://arxiv.org/html/2402.05892v4
-6.	Mamba Explained - The Gradient, accessed May 21, 2025, https://thegradient.pub/mamba-explained/
-7.	The Mamba Architecture: Superior to Transformers in LLMs - Jon Krohn, accessed May 21, 2025, https://www.jonkrohn.com/posts/2024/2/16/the-mamba-architecture-superior-to-transformers-in-llms
-8.	Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality - OpenReview, accessed May 21, 2025, https://openreview.net/pdf/54bf495d93336f1f195f264c1b6c2805169b3492.pdf
-9.	arxiv.org, accessed May 21, 2025, https://arxiv.org/abs/2312.00752
-10.	Mamba: Linear-Time Sequence Modeling with Selective State Spaces - OpenReview, accessed May 21, 2025, https://openreview.net/forum?id=tEYskw1VY2
-11.	arxiv.org, accessed May 21, 2025, https://arxiv.org/abs/2412.11211
-12.	Mamba Models a possible replacement for Transformers? - SciPy Proceedings, accessed May 21, 2025, https://proceedings.scipy.org/articles/XHDR4700
-13.	Mamba: Linear-Time Sequence Modeling with Selective State Spaces - arXiv, accessed May 21, 2025, https://arxiv.org/pdf/2312.00752
-14.	Mamba-ND: Selective State Space Modeling for Multi-Dimensional Data - arXiv, accessed May 21, 2025, https://arxiv.org/html/2402.05892v1
-15.	Princeton and CMU Push AI Boundaries with the Mamba Sequence Model - HackerNoon, accessed May 21, 2025, https://hackernoon.com/princeton-and-cmu-push-ai-boundaries-with-the-mamba-sequence-model
-16.	Mamba - Hugging Face, accessed May 21, 2025, https://huggingface.co/docs/transformers/en/model_doc/mamba
-17.	PeaBrane/mamba-tiny: Simple, minimal implementation of the Mamba SSM in one pytorch file. Using logcumsumexp (Heisen sequence). - GitHub, accessed May 21, 2025, https://github.com/PeaBrane/mamba-tiny
-18.	Mamba: Linear-Time Sequence Modeling with Selective State Spaces - DISCO, accessed May 21, 2025, https://disco.ethz.ch/courses/fs24/seminar/talks/19_03_Mamba.pdf
-19.	QMamba: Quantum Selective State Space Models for Text Generation - SciTePress, accessed May 21, 2025, https://www.scitepress.org/Papers/2025/133783/133783.pdf
-20.	Mamba: Linear-Time Sequence Modeling with Selective State Spaces - Arxiv Dives, accessed May 21, 2025, https://www.oxen.ai/blog/mamba-linear-time-sequence-modeling-with-selective-state-spaces-arxiv-dives
-21.	arXiv:2502.15612v2 [cs.CL] 24 Feb 2025, accessed May 21, 2025, https://arxiv.org/pdf/2502.15612?
-22.	Figure 1: The Mamba block architecture is constructed based on SSM's... - ResearchGate, accessed May 21, 2025, https://www.researchgate.net/figure/The-Mamba-block-architecture-is-constructed-based-on-SSMs-mathematical-formulation-in_fig1_383792530
-23.	state-spaces/mamba: Mamba SSM architecture - GitHub, accessed May 21, 2025, https://github.com/state-spaces/mamba
-24.	openreview.net, accessed May 21, 2025, https://openreview.net/pdf?id=RMjyNzYv2K
-25.	Here Comes Mamba: The Selective State Space Model | Towards Data Science, accessed May 21, 2025, https://towardsdatascience.com/here-comes-mamba-the-selective-state-space-model-435e5d17a451/
-26.	Here Comes Mamba: The Selective State Space Model | Towards ..., accessed May 21, 2025, https://towardsdatascience.com/here-comes-mamba-the-selective-state-space-model-435e5d17a451
-27.	Drama: Mamba-Enabled Model-Based Reinforcement Learning Is Sample and Parameter Efficient | OpenReview, accessed May 21, 2025, https://openreview.net/forum?id=7XIkRgYjK3
-28.	(PDF) Bio2Token: All-atom tokenization of any biomolecular structure with Mamba, accessed May 21, 2025, https://www.researchgate.net/publication/385291570_Bio2Token_All-atom_tokenization_of_any_biomolecular_structure_with_Mamba
-29.	The Hidden Attention of Mamba Models - arXiv, accessed May 21, 2025, https://arxiv.org/html/2403.01590v2
-30.	Mamba's Performance in DNA, Audio, and Speed Benchmarks | HackerNoon, accessed May 21, 2025, https://hackernoon.com/mambas-performance-in-dna-audio-and-speed-benchmarks
-31.	Decoding Mamba's Potential: Strengths, Weaknesses, and Where It ..., accessed May 21, 2025, https://dataroots.io/blog/analyzing-mambas-potential-strengths-weaknesses-and-where-it-shines
-32.	arxiv.org, accessed May 21, 2025, https://arxiv.org/abs/2402.05892
-33.	[2408.15496] ReMamba: Equip Mamba with Effective Long-Sequence Modeling - arXiv, accessed May 21, 2025, https://arxiv.org/abs/2408.15496
-34.	Mamba 2 - Hugging Face, accessed May 21, 2025, https://huggingface.co/docs/transformers/model_doc/mamba2
-35.	Transformers are SSMs: Generalized Models and Efficient Algorithms Through Structured State Space Duality - ResearchGate, accessed May 21, 2025, https://www.researchgate.net/publication/381109265_Transformers_are_SSMs_Generalized_Models_and_Efficient_Algorithms_Through_Structured_State_Space_Duality
-36.	Daily Papers - Hugging Face, accessed May 21, 2025, https://huggingface.co/papers?q=State%20Space%20Models%20(SSMs)
-37.	Mamba 2 - Hugging Face, accessed May 21, 2025, https://huggingface.co/docs/transformers/v4.49.0/en/model_doc/mamba2
-38.	HybriDNA: A Hybrid Transformer-Mamba2 Long-Range DNA Language Model, accessed May 21, 2025, https://www.researchgate.net/publication/389090976_HybriDNA_A_Hybrid_Transformer-Mamba2_Long-Range_DNA_Language_Model
-39.	Mamba - Hugging Face, accessed May 21, 2025, https://huggingface.co/docs/transformers/model_doc/mamba
-40.	arxiv.org, accessed May 21, 2025, https://arxiv.org/html/2403.01590v1
-41.	Explaining Modern Gated-Linear RNNs via A Unified Implicit Attention Formulation - arXiv, accessed May 21, 2025, https://arxiv.org/html/2405.16504v2
-42.	A Unified Implicit Attention Formulation for Gated-Linear Recurrent Sequence Models - arXiv, accessed May 21, 2025, https://arxiv.org/html/2405.16504v1
-43.	ICML 2024: Paper Review #1 - G-Research, accessed May 21, 2025, https://www.gresearch.com/news/icml-2024-paper-review-1/
-44.	HYBRIDNA: A HYBRID TRANSFORMER-MAMBA2 LONG-RANGE DNA LANGUAGE MODEL - OpenReview, accessed May 21, 2025, https://openreview.net/pdf/1c165390594cbfbc23fd1739192494ffee9a2d2c.pdf
-45.	Wave-U-Mamba: An End-To-End Framework For High-Quality And Efficient Speech Super Resolution - arXiv, accessed May 21, 2025, https://arxiv.org/html/2409.09337v3
-46.	Wave-U-Mamba: An End-To-End Framework For High-Quality And Efficient Speech Super Resolution - arXiv, accessed May 21, 2025, https://arxiv.org/html/2409.09337v2
-47.	Vision Mamba: Efficient Visual Representation Learning with Bidirectional State Space Model - Hugging Face, accessed May 21, 2025, https://huggingface.co/blog/mikelabs/vision-mamba-efficient-visual-representation-learn
-48.	walking-shadow/Official_Remote_Sensing_Mamba: Official code of Remote Sensing Mamba - GitHub, accessed May 21, 2025, https://github.com/walking-shadow/Official_Remote_Sensing_Mamba
-49.	Samba: Simple Hybrid State Space Models for Efficient Unlimited Context Language Modeling - arXiv, accessed May 21, 2025, https://arxiv.org/html/2406.07522v1
-50.	DEMYSTIFYING THE TOKEN DYNAMICS OF DEEP SELECTIVE STATE SPACE MODELS - OpenReview, accessed May 21, 2025, https://openreview.net/pdf/5b044a47c58e6589d287df715519c764795be225.pdf
-51.	[2411.15638] Learning state and proposal dynamics in state-space models using differentiable particle filters and neural networks - arXiv, accessed May 21, 2025, https://arxiv.org/abs/2411.15638
-52.	Meta-Black-Box-Optimization through Offline Q-function Learning - ResearchGate, accessed May 21, 2025, https://www.researchgate.net/publication/391462077_Meta-Black-Box-Optimization_through_Offline_Q-function_Learning
+### 参考文献
+
+
+1. Gu, Albert, and Tri Dao. "Mamba: Linear-time sequence modeling with selective state spaces." arXiv preprint arXiv:2312.00752 (2023).
+
+2. Gu, Albert, et al. "Combining recurrent, convolutional, and continuous-time models with linear state space layers." Advances in neural information processing systems 34 (2021): 572-585.
+
+3. Gu, Albert, et al. "Hippo: Recurrent memory with optimal polynomial projections." Advances in neural information processing systems 33 (2020): 1474-1487.
+
+4. Voelker, Aaron, Ivana Kajić, and Chris Eliasmith. "Legendre memory units: Continuous-time representation in recurrent neural networks." Advances in neural information processing systems 32 (2019).
+
+5. Gu, Albert, Karan Goel, and Christopher Ré. "Efficiently modeling long sequences with structured state spaces." arXiv preprint arXiv:2111.00396 (2021).
+
+6. Grootendorst, M. (2023, October 29). A visual guide to Mamba and state space models. Maarten Grootendorst's Newsletter. https://newsletter.maartengrootendorst.com/p/a-visual-guide-to-mamba-and-state

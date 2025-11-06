@@ -27,6 +27,8 @@ xxx
 :maxdepth: 1
 
 01ContinousBatching
+01ContinuousBatching
+05FCFSScheduling
 Code01ContinousBatching
 Code02PDDispatch
 ```

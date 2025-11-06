@@ -222,11 +222,11 @@ def train_tiny_moe_steps_with_profile(
     moe.train()
     for t in range(steps_train):
         x = torch.randn(bsz, input_dim, device=device)
-        # y是来自于target_proj的真值GT
+        # y 是来自于 target_proj 的真值 GT
         y = target_proj(x).detach()
-        # y_hat 是来自于moe forward的结果
+        # y_hat 是来自于 moe forward 的结果
         y_hat, aux = moe(x)
-        # 我们的任务是拟合moe->target_proj
+        # 我们的任务是拟合 moe->target_proj
         task_loss = mse(y_hat, y)
         total_loss = task_loss + aux_alpha * aux
         opt.zero_grad(set_to_none=True)
@@ -243,7 +243,7 @@ def train_tiny_moe_steps_with_profile(
     if device.type == "cuda":
         activities.append(ProfilerActivity.CUDA)
     
-    # 少量 step 的长任务：跳过1步、预热1步、记录3步
+    # 少量 step 的长任务：跳过 1 步、预热 1 步、记录 3 步
     sched = schedule(wait=1, warmup=1, active=3, repeat=1)
     
     with profile(
@@ -324,7 +324,7 @@ train_tiny_moe_steps_with_profile(steps_train=10000, lr=5e-4, aux_alpha=1e-2,
     [eval] sample values: [-0.6959002   0.4292616  -0.51817816 -0.2706415   0.5345163 ]
 
 
-下面对第一次实验（只统计 moe_forward，而没有拆分）的profile 结果做一些初步分析，先获得一个整体的认知：
+下面对第一次实验（只统计 moe_forward，而没有拆分）的 profile 结果做一些初步分析，先获得一个整体的认知：
 
 ![](../images/06AlgoData02MoE/Practice01SignalMOE07.png)
 
@@ -333,13 +333,13 @@ train_tiny_moe_steps_with_profile(steps_train=10000, lr=5e-4, aux_alpha=1e-2,
 moe_forward 出现了两次：
 - 第一个 moe_forward（Self CPU = 0，但 CUDA = 35.59ms）对应的是 GPU 内核实际执行时间。
 - 第二个 moe_forward（CPU total 36.866ms）是 CPU 调用这一大段 forward 逻辑的时间。
-可以看到 GPU 计算部分（35.59ms）占了绝对大头，剩余部分是一些 cpu 操作，包括launch kernel + 索引操作 + 内存管理。说明 forward 确实大部分算力在 GPU 上。
+可以看到 GPU 计算部分（35.59ms）占了绝对大头，剩余部分是一些 cpu 操作，包括 launch kernel + 索引操作 + 内存管理。说明 forward 确实大部分算力在 GPU 上。
 
 **具体算子耗时分析**
 
 [aten:addmm](https://docs.pytorch.org/docs/2.8/generated/torch.addmm.html)占据了 GPU 时间的 75%，addmm 指的是：$$out = \beta input + \alpha (mat1 @ mat2)$$
 
-而aten::index 和 aten::nonzero分别占据了 CPU 13ms 和 8ms，对应着 Moe 的布尔掩码和索引操作，该操作可以认为是我们算子内 cpu 上的瓶颈之一。
+而 aten::index 和 aten::nonzero 分别占据了 CPU 13ms 和 8ms，对应着 Moe 的布尔掩码和索引操作，该操作可以认为是我们算子内 cpu 上的瓶颈之一。
 
 ---
 
@@ -347,21 +347,21 @@ moe_forward 出现了两次：
 
 ![](../images/06AlgoData02MoE/Practice01SignalMOE08.png)
 
-- GPU Total 为啥会超过 100%，真的是overlap的问题吗？
+- GPU Total 为啥会超过 100%，真的是 overlap 的问题吗？
 
-在 PyTorch 中大部分 CUDA 操作都是异步的。以 MoE.forward 为例，CPU 会快速地依次将门控计算、Top-K选择、各专家前向等**内核(kernel)**任务派发给 GPU，然后立即返回继续后面的逻辑，而不会同步等待每个GPU计算完成。这意味着：
-1. CPU 活动时间很短（主要是launch kernel的开销），
-2. GPU 活动时间包括了执行每个CUDA核函数的完整时长。
+在 PyTorch 中大部分 CUDA 操作都是异步的。以 MoE.forward 为例，CPU 会快速地依次将门控计算、Top-K 选择、各专家前向等**内核(kernel)**任务派发给 GPU，然后立即返回继续后面的逻辑，而不会同步等待每个 GPU 计算完成。这意味着：
+1. CPU 活动时间很短（主要是 launch kernel 的开销），
+2. GPU 活动时间包括了执行每个 CUDA 核函数的完整时长。
 
-由于 CPU 没有阻塞等待，所以当 MoE.forward 函数在CPU上结束时，GPU 可能仍在忙于运行最后几个 kernel。Profiler 在计算GPU Total时，会把所有这些 GPU kernel 的运行时间累加起来，因此该值往往大于 CPU 执行该函数的总时间。因此看到 GPU Total 超过100%并不意味着实际利用率超过100%，而是并行/重叠执行的统计结果。简单来说：多个 GPU 操作时间叠加引起数值上超过了串行时间。 
+由于 CPU 没有阻塞等待，所以当 MoE.forward 函数在 CPU 上结束时，GPU 可能仍在忙于运行最后几个 kernel。Profiler 在计算 GPU Total 时，会把所有这些 GPU kernel 的运行时间累加起来，因此该值往往大于 CPU 执行该函数的总时间。因此看到 GPU Total 超过 100%并不意味着实际利用率超过 100%，而是并行/重叠执行的统计结果。简单来说：多个 GPU 操作时间叠加引起数值上超过了串行时间。 
 
 推荐阅读：[Pytorch 框架入门](https://www.zhihu.com/question/352525266/answer/3395318281)
 
 - 进入 moe_forward 内部进一步的细分的计时？
 
 我们进一步将前向过程划分成三块：
-- with profiler.record_function("MoE_Routing"):  # 阶段1: 路由计算
-- with profiler.record_function("MoE_AuxLoss"):  # 阶段2: 计算负载均衡损失
+- with profiler.record_function("MoE_Routing"):  # 阶段 1: 路由计算
+- with profiler.record_function("MoE_AuxLoss"):  # 阶段 2: 计算负载均衡损失
 - with profiler.record_function("MoE_Experts"):  # 专家计算阶段
 
 可以看到，其实只有 expert 计算是核心大头，即使划分成三段，其他两段根本没有排上进前十。
@@ -389,11 +389,11 @@ with profile(activities=[ProfilerActivity.CPU], record_shapes=True) as prof:
 
 **为什么有两个 moe_forward？**
 
-其中一次记录了CPU时间（没有对应的CUDA时间，因为CPU部分本身不执行CUDA计算），另一次记录了GPU上的CUDA执行时间（该函数发出的CUDA内核执行耗时）。这种现象在包含异步GPU调用的函数中很常见：CPU很快启动GPU任务然后等待，GPU实际执行耗时较长，Profiler将两者分开显示。
+其中一次记录了 CPU 时间（没有对应的 CUDA 时间，因为 CPU 部分本身不执行 CUDA 计算），另一次记录了 GPU 上的 CUDA 执行时间（该函数发出的 CUDA 内核执行耗时）。这种现象在包含异步 GPU 调用的函数中很常见：CPU 很快启动 GPU 任务然后等待，GPU 实际执行耗时较长，Profiler 将两者分开显示。
 
 **ProfilerStep*是什么？**
 
-ProfilerStep* 是 PyTorch Profiler 自动插入的步骤标识。每当你在 profiling 中调用 prof.step()（或者使用调度器按迭代自动分段）时，Profiler会把这一整步包裹在一个名为“ProfilerStep#X”的记录中 ￼ ￼（在汇总显示中通常带星号表示汇总统计）。也就是说，每个 ProfilerStep 代表一次小批次（mini-batch）的模型执行周期 ￼。它出现是为了帮助将不同迭代的操作分段，方便在时间线视图中区分各个 step。在Profiler的表格输出中，ProfilerStep* 一行汇总了每步的总耗时（包括该步中所有CPU和GPU操作）以及调用次数等信息。如果不需要，可以忽略这一行——它并非模型中的实际操作，只是Profiler用于标记迭代步骤的虚拟事件而已。由于使用Profiler进行多步分析时每步都会生成这个记录，所以它总是出现。
+ProfilerStep* 是 PyTorch Profiler 自动插入的步骤标识。每当你在 profiling 中调用 prof.step()（或者使用调度器按迭代自动分段）时，Profiler 会把这一整步包裹在一个名为“ProfilerStep#X”的记录中 ￼ ￼（在汇总显示中通常带星号表示汇总统计）。也就是说，每个 ProfilerStep 代表一次小批次（mini-batch）的模型执行周期 ￼。它出现是为了帮助将不同迭代的操作分段，方便在时间线视图中区分各个 step。在 Profiler 的表格输出中，ProfilerStep* 一行汇总了每步的总耗时（包括该步中所有 CPU 和 GPU 操作）以及调用次数等信息。如果不需要，可以忽略这一行——它并非模型中的实际操作，只是 Profiler 用于标记迭代步骤的虚拟事件而已。由于使用 Profiler 进行多步分析时每步都会生成这个记录，所以它总是出现。
 
 **Schedule 参数概念**
 
@@ -403,7 +403,7 @@ ProfilerStep* 是 PyTorch Profiler 自动插入的步骤标识。每当你在 pr
 - active：随后实际记录的步骤数，在这段期间分析器正式记录性能数据。
 - repeat：重复上述 wait–warmup–active 周期的次数上限。
 
-具体到代码中的 schedule(wait=1, warmup=1, active=3, repeat=1)，它表示分析器将跳过第1步迭代，预热第2步迭代，记录接下来的3步迭代的数据。一共构成一个 1+1+3=5 步长的分析周期 ￼。其中 repeat=1 意味着这样的分析周期只执行一次（循环重复一次） ￼。换言之，在完成这 5 个步骤的采样后，分析器就会停止收集数据并输出分析结果，不会再开始第二轮循环。
+具体到代码中的 schedule(wait=1, warmup=1, active=3, repeat=1)，它表示分析器将跳过第 1 步迭代，预热第 2 步迭代，记录接下来的 3 步迭代的数据。一共构成一个 1+1+3=5 步长的分析周期 ￼。其中 repeat=1 意味着这样的分析周期只执行一次（循环重复一次） ￼。换言之，在完成这 5 个步骤的采样后，分析器就会停止收集数据并输出分析结果，不会再开始第二轮循环。
 
 如果将 repeat 设为更大的值，分析器会按照相同模式多次循环。例如，设 repeat=2 则表示在完成第一轮 wait–warmup–active 周期后，会再次执行一轮相同的周期，然后才停止记录 ￼。但对于 repeat=1 的情况，分析器只进行一轮指定的步骤采样，不进行额外重复。这样可以精确控制分析持续的迭代次数，方便针对少量步骤的长任务进行性能分析。
 

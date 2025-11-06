@@ -35,8 +35,10 @@
 
 01DSZero
 01DeepSpeedIntro
+02DeepSpeedZero
 08PPGpipe
 09PPInterleaved
+10PPCode
 Code01ZeRO
 Code02Megatron
 Code03Pipeline

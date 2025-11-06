@@ -1,0 +1,1263 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData03NewArch/08RetNet.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author by: 张嘉瑶 RetNet 的架构论点：破解序列建模的“不可能三角”: 大型语言模型（LLM）领域长期被一个核心的架构“不可能三角”（The Impossible Trilemma）所困扰。这个三难困境（Trilemma）指出，一个理想的序列模型架构难以同时实现三个关键特性： 高效的训练并行性 (Training Parallelism)：充分利用现代硬件（如 GPU）的大规..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/_images/social_previews/summary_06AlgoData03NewArch_08RetNet_fb29eae7.png" />
+<meta property="og:image:alt" content="Author by: 张嘉瑶 RetNet 的架构论点：破解序列建模的“不可能三角”: 大型语言模型（LLM）领域长期被一个核心的架构“不可能三角”（The Impossible Trilemma）所困扰。这个三难困境（Trilemma）指出，一个理想的序列模型架构难以同时实现三个关键特性： 高效的训练并行性 (..." />
+<meta name="description" content="Author by: 张嘉瑶 RetNet 的架构论点：破解序列建模的“不可能三角”: 大型语言模型（LLM）领域长期被一个核心的架构“不可能三角”（The Impossible Trilemma）所困扰。这个三难困境（Trilemma）指出，一个理想的序列模型架构难以同时实现三个关键特性： 高效的训练并行性 (Training Parallelism)：充分利用现代硬件（如 GPU）的大规..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合 &#8212; AIInfra AI基础设施</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=17a93d66" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData03NewArch/08RetNet';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="未来之路：Transformer瓶颈突破方向" href="09MoR.html" />
+    <link rel="prev" title="Mamba-2架构:从选择性状态空间到结构化对偶性" href="07MambaV2.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03. Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">02.L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">01.服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">02.AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">03.AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">04.液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">05.AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">06.AI 集群供配电系统</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">05.NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">06.NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">07.NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">08.XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">10.十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">04.集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">01.HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">01.AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/01Introduction.html">01.AI 集群网络基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/02HPCDeepDive.html">02.HPC 网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/03AIDeepDive.html">03.AI 集群网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/04AINetwork.html">04.AI 集群网络基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/05PlaneDivision.html">05.AI 集群网络平面划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/06Summary.html">06.万卡集群组网思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/08HCCLIntro.html">08.华为 HCCL 架构介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/07MLA.html">07.内存优化：MLA 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/08Checkpoint.html">08.内存优化：梯度检查点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/09HybridPrecision.html">09.混合精度：FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/10Domino.html">10.通算融合：DS Domino 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/11FLUX.html">11.通算融合：FLUX 计算通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code01FlashAtten.html">CODE 01: Flash Attention 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/01Introduction.html">概述</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/02RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/03PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/04GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/05DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/06GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/07RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.Reparameterization 算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">02.大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/07LLM_In_Flash.html">LLM IN FLASH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code04KTransformer.html">CODE 04: KTransformers 核心实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/bitsandbytesINT8.html">bitsandbytes LLM.int8()源码阅读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">01.Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">02.大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">01.MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型创新架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="01Review.html">01.Transformer 回顾与挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03RWKVIntro.html">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05SSM.html">S4模型详解：结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02CLIP.html">图文对齐基础 CLIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2014.html">01.2012-2014 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2015.html">02.2015 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2016.html">03.2016 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2017.html">04.2017 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2018.html">05.2018 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2019.html">06.2019 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2020.html">07.2020 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2021.html">08.2021 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2022.html">09.2022 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2023.html">10.2023 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2024.html">11.2024 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/History.html">12.历史 AI 大事件</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/06AlgoData03NewArch/08RetNet.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F06AlgoData03NewArch/08RetNet.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData03NewArch/08RetNet.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">RetNet 的架构论点：破解序列建模的“不可能三角”</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retention-mechanism">留存机制 (Retention Mechanism) 的数学基础</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retnet-multi-computation-paradigms">RetNet 的三种计算范式 (Multi-Computation Paradigms)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel-fusion">硬件加速与核函数融合 (Kernel Fusion) 分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">架构的横向对比分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">实现、应用与未来方向</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">参考文献</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="retnet">
+<h1>RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合<a class="headerlink" href="#retnet" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>Author by: 张嘉瑶</p>
+</div></blockquote>
+<section id="id1">
+<h2>RetNet 的架构论点：破解序列建模的“不可能三角”<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>大型语言模型（LLM）领域长期被一个核心的架构“不可能三角”（The Impossible Trilemma）所困扰。这个三难困境（Trilemma）指出，一个理想的序列模型架构难以同时实现三个关键特性：</p>
+<ol class="arabic simple">
+<li><p>高效的训练并行性 (Training Parallelism)：充分利用现代硬件（如 GPU）的大规模并行计算能力进行快速训练。</p></li>
+<li><p>低成本的推理 (Low-Cost Inference)：在生成序列时，每个步骤的计算和内存复杂度应尽可能低，理想情况下为 <span class="math notranslate nohighlight">\(O(1)\)</span>。</p></li>
+<li><p>强大的模型性能 (Strong Performance)：在各种任务和基准上，至少能媲美甚至超越现有SOTA（State-of-the-Art）架构（即 Transformer）的性能和扩展性。</p></li>
+</ol>
+<p>现有的主流架构往往只能满足其中的两项：</p>
+<p>Transformer：通过其自注意力机制（Self-Attention），实现了卓越的训练并行性（1）和强大的性能（3）。但其推理效率低下：由于需要维护一个不断增长的键值缓存（Key-Value Cache），其每一步推理的计算复杂度为 <span class="math notranslate nohighlight">\(O(N)\)</span>，内存复杂度为 <span class="math notranslate nohighlight">\(O(N^2)\)</span> 或 <span class="math notranslate nohighlight">\(O(N)\)</span>（取决于缓存策略），导致部署成本高昂。</p>
+<p>循环神经网络 (RNN / LSTM)：通过其循环状态（Recurrent State），实现了 <span class="math notranslate nohighlight">\(O(1)\)</span> 的低成本推理（2）。但其固有的顺序依赖性使其难以在训练期间进行并行化（1），并且受限于梯度消失等问题，其长距离依赖建模能力和整体性能（3）远逊于 Transformer。</p>
+<p>Retentive Network（RetNet） 正是为解决这一根本矛盾而提出的。它被设计为 Transformer 的潜在“继任者” ，其核心论点是：通过一种新的“留存机制”（Retention Mechanism），可以在一个统一的框架内同时实现上述所有三个目标。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/retnet2.jpg" alt="img" />
+  <figcaption><strong>RetNet实现了“不可能三角”，它同时实现了训练并行性、良好性能和低推理成本。</strong></figcaption>
+</div>
+<p>从架构上看，RetNet 延续了 Transformer 的宏观设计，由 <span class="math notranslate nohighlight">\(L\)</span> 个相同的块（Block）堆叠而成 11。每个块包含两个核心子层（Sub-layer）：</p>
+<ol class="arabic simple">
+<li><p>多尺度留存 (Multi-Scale Retention, MSR)：这是 RetNet 的核心创新，用以替代 Transformer 的多头注意力（Multi-Head Attention）。</p></li>
+<li><p>前馈网络 (Feed-Forward Network, FFN)：通常采用标准的 FFN 结构（如 SwiGLU），与 Transformer 中的 FFN 模块类似。</p></li>
+</ol>
+<p>与 Transformer 一样，RetNet 在每个子层周围都应用了层归一化（Layer Normalization）和残差连接（Residual Connections）。这种设计的背后，隐藏着对行业需求的深刻洞察。三难困境不仅是一个技术挑战，更是一个严峻的经济挑战。随着模型规模和应用需求的增长，AI 推理（Inference）的成本已成为企业部署 LLM 时的主要障碍和“被忽视的成本挑战”。Transformer 的 <span class="math notranslate nohighlight">\(O(N)\)</span> 推理复杂性导致其运营支出（OpEx）居高不下。RetNet 声称通过 <span class="math notranslate nohighlight">\(O(1)\)</span> 的推理复杂度直接解决了这一经济痛点，旨在从根本上降低 AI 服务的总拥有成本（TCO）。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/retnet1.jpg" alt="img" />
+  <figcaption><strong>RetNet与Transformer相比，实现了低成本推理（即GPU内存、吞吐量和延迟方面）、训练并行性以及良好的缩放曲线。推理成本的结果是以8k作为输入长度来报告的。</strong></figcaption>
+</div>
+</section>
+<section id="retention-mechanism">
+<h2>留存机制 (Retention Mechanism) 的数学基础<a class="headerlink" href="#retention-mechanism" title="Link to this heading">#</a></h2>
+<p>RetNet 的精妙之处在于其核心机制——留存（Retention）——的数学构造。与“并行优先”的 Transformer 不同，RetNet 的并行形式是从一个循环（Recurrent）形式推导出来的，从而在两者之间建立了数学上的等价性 。</p>
+<p><strong>理论推导：从循环到并行的对偶性</strong></p>
+<p>留存机制的推导始于一个标准的 RNN 状态转移方程 ：</p>
+<div class="math notranslate nohighlight">
+\[\mathbf{s}_n = A \mathbf{s}_{n-1} + K^\intercal_n \mathbf{v}_n\]</div>
+<div class="math notranslate nohighlight">
+\[\mathbf{o}_n = Q_n \mathbf{s}_n = \sum_{m=1}^{n} Q_n A^{n-m} K^\intercal_m \mathbf{v}_m\]</div>
+<p>其中，<span class="math notranslate nohighlight">\(\mathbf{s}_n\)</span> 是 <span class="math notranslate nohighlight">\(n\)</span> 时刻的循环状态，<span class="math notranslate nohighlight">\(\mathbf{o}_n\)</span> 是输出。<span class="math notranslate nohighlight">\(Q_n, K_n, \mathbf{v}_n\)</span> 是输入 <span class="math notranslate nohighlight">\(X_n\)</span> 经过不同投影（Projection）得到的值。关键的转变发生在对状态转移矩阵 <span class="math notranslate nohighlight">\(A\)</span> 的处理上。通过引入一个对角化的、旋转的状态矩阵 <span class="math notranslate nohighlight">\(A = \Lambda(\gamma e^{i\theta}) \Lambda^{-1}\)</span>，并将其简化为标量衰减因子 <span class="math notranslate nohighlight">\(\gamma\)</span> 和旋转项 <span class="math notranslate nohighlight">\(e^{i\theta}\)</span>，上述求和公式可以被重写为:</p>
+<blockquote>
+<div><p>精彩亮点： RetNet用位置矩阵替代了原始Transformer中的softmax。</p>
+</div></blockquote>
+<div class="math notranslate nohighlight">
+\[\mathbf{o}_n = \sum_{m=1}^{n} \gamma^{n-m} (Q_n e^{in\theta})(K_m e^{-im\theta})^\dagger \mathbf{v}_m\]</div>
+<p>这个基于求和的公式可以进一步被重构为一个并行的矩阵运算形式，即留存机制的并行表示 (Parallel Representation) ：</p>
+<div class="math notranslate nohighlight">
+\[\text{Retention}(X) = (Q K^\intercal \odot D) V\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(Q = (X W_Q) \odot \bar{\Theta}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(K = (X W_K) \odot \Theta\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(V = X W_V\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\Theta_n = e^{in\theta}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(D\)</span> 是一个结合了因果掩码（Causal Masking）和指数衰减的矩阵，其元素 <span class="math notranslate nohighlight">\(D_{nm} = \gamma^{n-m}\)</span> (当 <span class="math notranslate nohighlight">\(n \ge m\)</span> 时) 或 0 (当 <span class="math notranslate nohighlight">\(n &lt; m\)</span> 时)。</p></li>
+</ul>
+<p><strong>核心组件 1：指数衰减 (<span class="math notranslate nohighlight">\(\gamma\)</span>) 与多尺度留存 (MSR)</strong></p>
+<p><span class="math notranslate nohighlight">\(\gamma\)</span>（Gamma）是留存机制的灵魂。它是一个固定的指数衰减超参数，取代了 Transformer 中依赖数据的、计算昂贵的 <span class="math notranslate nohighlight">\(\text{softmax}\)</span> 函数。</p>
+<p>“多尺度”（Multi-Scale）的含义是，在 MSR 模块中，每个“头”（Head）被分配了一个不同且固定的 <span class="math notranslate nohighlight">\(\gamma\)</span> 值。这种设计源于一个深刻的洞察：与标准注意力机制（Attention）让模型学习关注不同距离的上下文不同，RetNet 通过 <span class="math notranslate nohighlight">\(\gamma\)</span> 植入了一种硬编码的归纳偏置（Inductive Bias）。</p>
+<p>模型被架构性地强制分配不同的记忆尺度：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span> 值接近 1 的头（慢衰减），被迫专注于长程依赖（长期记忆）。</p></li>
+<li><p><span class="math notranslate nohighlight">\(\gamma\)</span> 值较小的头（快衰减），被迫专注于局部上下文（短期记忆）。</p></li>
+</ul>
+<p>这种设计降低了模型的优化负担，但也可能牺牲了一定的灵活性。在实践中，<span class="math notranslate nohighlight">\(\gamma\)</span> 的值按如下公式设定：</p>
+<div class="math notranslate nohighlight">
+\[\gamma = 1 - 2^{-5-\text{arange}(0, h)} \in R^h\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(h\)</span> 是头的数量。</p>
+<p><strong>核心组件 2：位置编码 (<span class="math notranslate nohighlight">\(\Theta\)</span>) 与门控机制 (Gating)</strong></p>
+<p>位置编码：在并行表示中，<span class="math notranslate nohighlight">\(\Theta_n = e^{in\theta}\)</span> 项被逐元素地应用于 <span class="math notranslate nohighlight">\(Q\)</span> 和 <span class="math notranslate nohighlight">\(K\)</span> 矩阵。这本质上是一种旋转位置编码（Rotary Position Embedding, RoPE）的变体。RetNet 的论文也指出，这种推导与 xPos（一种相对位置编码）的思想是一致的。</p>
+<p>门控机制：MSR 模块的输出 <span class="math notranslate nohighlight">\(Y\)</span>（经过 GroupNorm）会通过一个门控机制来增强非线性表达能力。该机制由一个 <span class="math notranslate nohighlight">\(\text{swish}\)</span> 激活函数和一个额外的线性投影 <span class="math notranslate nohighlight">\(W_G\)</span> 控制：</p>
+<div class="math notranslate nohighlight">
+\[\text{MSR}(X) = (\text{swish}(X W_G) \odot Y) W_O\]</div>
+<p>消融实验（Ablation studies）证实，<span class="math notranslate nohighlight">\(\text{swish}\)</span> 门控和 GroupNorm 对于 RetNet 取得高性能至关重要。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/retnet4.jpg" alt="img" />
+  <figcaption><strong>消融实验</strong></figcaption>
+</div>
+<p><strong>机制对比：Retention vs. Self-Attention</strong></p>
+<p>RetNet 的设计巧妙地融合了位置和衰减。在 Transformer 中，位置编码（如 RoPE）和注意力得分（<span class="math notranslate nohighlight">\(\text{softmax}\)</span>）是两个独立计算的组件。而在 RetNet 中，留存机制本身就是一种位置感知的衰减机制。它内置了两种相对位置偏置：</p>
+<ol class="arabic simple">
+<li><p>旋转偏置 (<span class="math notranslate nohighlight">\(\Theta\)</span>)：通过绝对位置 <span class="math notranslate nohighlight">\(n\)</span> 的旋转来编码相对位置信息。</p></li>
+<li><p>衰减偏置 (<span class="math notranslate nohighlight">\(D\)</span>)：通过相对距离 <span class="math notranslate nohighlight">\(n-m\)</span> 来显式地施加指数衰减。</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[Transformer Attention :\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^{\top}}{\sqrt{d_{k}}}\right)V\]</div>
+<div class="math notranslate nohighlight">
+\[RetNet Retention (Parallel): \text{Retention}(X) = (Q K^\intercal \odot D) V\]</div>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/retnet5.jpg" alt="img" />
+  <figcaption><strong>左侧为 Transformer 计算，右侧为 RetNet 计算。</strong></figcaption>
+</div>
+<p>RetNet 的核心是用一个逐元素的 Hadamard 乘积 <span class="math notranslate nohighlight">\((\odot D)\)</span> 替换了 <span class="math notranslate nohighlight">\(\text{softmax}(\cdot)\)</span> 及其缩放因子。
+这一改动带来了深远的影响：</p>
+<ul class="simple">
+<li><p>数学对偶性：<span class="math notranslate nohighlight">\(\text{softmax}\)</span> 是一个非线性操作，它破坏了计算的序列可分解性。通过移除 <span class="math notranslate nohighlight">\(\text{softmax}\)</span>，RetNet 实现了并行形式和循环形式之间的严格数学等价。</p></li>
+<li><p>性能考量：尽管有观点担心“一切都线性化”可能会损害模型的表达能力，但 RetNet 的实证结果表明，MSR、门控机制和 FFN 层的结合，足以补偿 <span class="math notranslate nohighlight">\(\text{softmax}\)</span> 的缺失，并在 2B 以上参数规模的模型上开始超越 Transformer。</p></li>
+</ul>
+</section>
+<section id="retnet-multi-computation-paradigms">
+<h2>RetNet 的三种计算范式 (Multi-Computation Paradigms)<a class="headerlink" href="#retnet-multi-computation-paradigms" title="Link to this heading">#</a></h2>
+<p>RetNet 架构的基石在于其能够在三个不同的计算范式之间自由切换，而共享同一套模型权重 。这三种范式分别针对训练、推理和长序列训练进行了优化，完美地解决了“不可能三角”的三个角。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/retnet6.jpg" alt="img" />
+  <figcaption><strong>留存率三种计算范式的伪代码</strong></figcaption>
+</div>
+<p><strong>范式 1：并行表示 (Parallel Representation)</strong></p>
+<ul class="simple">
+<li><p>公式 4: <span class="math notranslate nohighlight">\(\text{Retention}(X) = (Q K^\intercal \odot D) V\)</span></p></li>
+<li><p>目的：高效训练。</p></li>
+<li><p>分析：此范式专为 GPU 并行计算设计。它将所有计算转换为大规模矩阵乘法（MatMul）和逐元素操作（Element-wise），这是现代深度学习框架中优化最充分的操作。尽管 <span class="math notranslate nohighlight">\(D\)</span> 矩阵的计算和存储（<span class="math notranslate nohighlight">\(O(N^2)\)</span>）使其在理论上仍是二次复杂度，但它省去了 <span class="math notranslate nohighlight">\(\text{softmax}\)</span> 的复杂计算和 I/O 开销，因此在实际训练中依然高效。</p></li>
+<li><p>解决：三难困境中的“训练并行性”。</p></li>
+</ul>
+<p><strong>范式 2：循环表示 (Recurrent Representation)</strong></p>
+<ul class="simple">
+<li><p>公式: 对于第 <span class="math notranslate nohighlight">\(n\)</span> 个时间步：
+$<span class="math notranslate nohighlight">\(\mathbf{S}_n = \gamma \mathbf{S}_{n-1} + K_n^\intercal V_n \)</span><span class="math notranslate nohighlight">\( \)</span><span class="math notranslate nohighlight">\( \text{Retention}(X_n) = Q_n \mathbf{S}_n\)</span>$</p></li>
+<li><p>目的：低成本推理。</p></li>
+<li><p>分析：这是 RetNet 的“杀手锏”特性。在自回归生成（Autoregressive Inference）任务中，模型只需计算当前时间步 <span class="math notranslate nohighlight">\(n\)</span>。</p>
+<ol class="arabic simple">
+<li><p>状态 <span class="math notranslate nohighlight">\(\mathbf{S}_n\)</span> 是一个固定大小的矩阵（其维度仅与 <span class="math notranslate nohighlight">\(d_{\text{model}}\)</span> 相关，与序列长度 <span class="math notranslate nohighlight">\(N\)</span> 无关）。</p></li>
+<li><p>每一步的计算仅涉及一次小规模的矩阵-向量乘法和一次加法。</p></li>
+</ol>
+</li>
+<li><p>复杂度：<span class="math notranslate nohighlight">\(O(1)\)</span> 的计算和内存复杂度。</p></li>
+<li><p>对比：Transformer 的推理是 <span class="math notranslate nohighlight">\(O(N)\)</span>，因为注意力必须作用于全部的 KV 缓存。这意味着 Transformer 的推理延迟随序列长度线性增长，而 RetNet 的推理延迟是与序列长度无关的常数。</p></li>
+<li><p>解决：三难困境中的“低推理成本”。</p></li>
+</ul>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/retnet3.jpg" alt="img" />
+  <figcaption><strong>RetNet 用于推理的循环计算</strong></figcaption>
+</div>
+<p>RetNet 最根本的创新在于，范式 1（并行）和范式 2（循环）在数学上是完全等价的 。它们是计算同一个函数的两种不同方式。这使得“并行训练，循环部署” (Train-Parallel, Deploy-Recurrent) 策略成为可能 。模型可以在 GPU 集群上利用并行范式进行高效训练，然后（无需任何修改或重新训练）直接转换为超高效的循环范式，用于边缘设备或服务器的低成本部署。这在理论上完美地解决了 Transformer/RNN 的核心悖论。</p>
+<p><strong>范式 3：分块循环表示 (Chunkwise Recurrent Representation)</strong></p>
+<ul class="simple">
+<li><p>机制：一种混合（Hybrid）计算模式，旨在平衡并行计算速度和内存消耗。</p></li>
+</ul>
+<ol class="arabic simple">
+<li><p>序列被划分为固定长度 <span class="math notranslate nohighlight">\(B\)</span> 的“块”（Chunks）。</p></li>
+<li><p>块内计算 (Intra-chunk)：在每个块内部，使用并行表示（范式 1）进行快速计算</p></li>
+<li><p>块间计算 (Inter-chunk)：在块与块之间，使用循环表示（范式 2）来传递一个压缩的循环状态 <span class="math notranslate nohighlight">\(R_i\)</span>。</p></li>
+</ol>
+<ul class="simple">
+<li><p>目的：高效的长序列训练。</p></li>
+<li><p>分析：这是针对训练阶段的工程优化。范式 1 的 <span class="math notranslate nohighlight">\(O(N^2)\)</span> 内存对于极长的序列（例如 <span class="math notranslate nohighlight">\(N &gt; 16k\)</span>）是不可接受的。范式 2 的 <span class="math notranslate nohighlight">\(O(N)\)</span> 顺序计算对于训练来说又太慢。分块循环范式通过 <span class="math notranslate nohighlight">\(O(N \cdot B)\)</span> 的计算复杂度，在块大小 <span class="math notranslate nohighlight">\(B\)</span>（例如 512）为常数的情况下，实现了线性 <span class="math notranslate nohighlight">\(O(N)\)</span> 的训练复杂度。</p></li>
+<li><p>解决：在保持并行训练优势的同时，实现对超长序列的高效建模</p></li>
+</ul>
+</section>
+<section id="kernel-fusion">
+<h2>硬件加速与核函数融合 (Kernel Fusion) 分析<a class="headerlink" href="#kernel-fusion" title="Link to this heading">#</a></h2>
+<p>对 RetNet 的性能分析必须始于一个关键事实：原始 RetNet 论文中的惊人基准测试（Benchmarks）是使用“vanilla PyTorch code”实现的。作者明确指出，诸如“核函数融合或类 FlashAttention 的加速”是“未来的工作”。</p>
+<p>尽管如此，RetNet（无融合）依然取得了：</p>
+<ul class="simple">
+<li><p>推理：在 7B 模型和 8k 序列长度下，比标准 Transformer 快 8.4 倍，节省 70% 显存。</p></li>
+<li><p>训练：即使与高度优化的 FlashAttention v1 相比，RetNet 仍在训练速度和显存占用上显示出“优势”。</p></li>
+</ul>
+<p>这一发现至关重要。它表明 RetNet 的性能提升首先来源于其算法设计（移除 <span class="math notranslate nohighlight">\(\text{softmax}\)</span>，启用 <span class="math notranslate nohighlight">\(O(1)\)</span> 推理）。这种算法增益是独立于、且可以叠加于硬件级优化的。在应用任何底层优化技巧之前，RetNet 架构本身就比 Transformer 更高效。</p>
+<p>要理解 RetNet 如何“融合”，必须先理解 FlashAttention 2  的优化原理。Attention 和 Retention 这类操作都是内存带宽受限 (Memory-Bound) 的，而非计算受限 (Compute-Bound) 。计算单元（ALU）的等待时间远远超过其计算时间，瓶颈在于数据在不同层级显存（HBM 和 SRAM）之间的读写（I/O）。</p>
+<p>FlashAttention 2 的核心优化包括：</p>
+<ul class="simple">
+<li><p>核函数融合 (Kernel Fusion)：将多个操作（如 MatMul <span class="math notranslate nohighlight">\(\rightarrow\)</span> Softmax <span class="math notranslate nohighlight">\(\rightarrow\)</span> Dropout <span class="math notranslate nohighlight">\(\rightarrow\)</span> MatMul）合并到一个 GPU 核函数中，大幅减少对 HBM（高带宽显存）的读写次数。</p></li>
+<li><p>Tiling 与重计算：将 <span class="math notranslate nohighlight">\(N \times N\)</span> 的注意力矩阵切片（Tiling）为适合 GPU 内部高速缓存（SRAM）的小块，并在 SRAM 中进行计算，通过重计算（Recomputation）来避免将这个巨大的中间矩阵写回 HBM。</p></li>
+</ul>
+<p>“RetNet 融合 FlashAttention 2” 是一个概念性的目标，而非字面上的实现。RetNet 不能 直接使用 FlashAttention 2 的代码库。像 FlashAttention 这样的库具有“严格的约束”并“绑定到固定配置”。RetNet 的算法（无 <span class="math notranslate nohighlight">\(\text{softmax}\)</span>，但有 <span class="math notranslate nohighlight">\(\odot D\)</span>）和“非典型输入维度”使其与 FlashAttention 2 不兼容。</p>
+<p>因此，业界采用了更先进的策略来实现 RetNet 的硬件加速：</p>
+<ul class="simple">
+<li><p>方案 1：专用融合库 (如 fla-org/flash-linear-attention)像 fla 这样的库 应运而生，它们专为线性注意力变体（包括 RetNet, Mamba, RWKV 等）提供硬件加速。这些库使用 Triton（一种比 CUDA 更灵活的 GPU 编程语言）来编写新的、定制化的融合核函数。它们将 FlashAttention 的I/O 感知原理应用到了 RetNet 的特定算法上。</p></li>
+<li><p>方案 2：通用融合框架 (如 AttentionEngine)最新的研究认识到，为每一种新架构（RetNet, Mamba 等）手写优化核函数是不可持续的。AttentionEngine 提出了一个解决方案：一个抽象的框架，它将所有注意力机制（包括 Retention）分解为两个基本操作：“相关性评分”（Relevance Scoring）和“聚合”（Aggregation）。</p></li>
+</ul>
+<p>该框架随后可以自动为任何新机制（包括 RetNet 的并行、循环和分块范式）生成优化的、融合的核函数，并能妥善处理其“非典型维度” 。</p>
+<p>综上所述，受益于 FlashAttention 2 所开创的 I/O 感知融合原理。RetNet（以及 Mamba）的出现，正在推动 AI 硬件生态系统从手写的、单一的核函数（如 FlashAttention 2），转向更通用的、基于编译器的优化框架（如 AttentionEngine），以适应后 Transformer 时代架构的多样性。</p>
+</section>
+<section id="id2">
+<h2>架构的横向对比分析<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>RetNet 的价值需要通过与 Transformer 和其他竞争者（如 Mamba）的直接对比来体现。</p>
+<p><strong>RetNet vs. Transformer (定量性能)</strong></p>
+<p>原始论文提供了详尽的定量对比，证明了 RetNet 在解决三难困境方面的有效性。以下表格总结了其与标准 Transformer 及 FlashAttention v1 优化版 Transformer 的性能对比。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/retnet7.jpg" alt="img" />
+</div>
+<p>RetNet vs. Mamba (机制深度对比)</p>
+<p>Mamba 是 RetNet 之外最受瞩目的 Transformer 挑战者。两者都利用了 RNN 的思想，但实现路径截然不同。</p>
+<p>Mamba (选择性状态空间模型 - SSSM):</p>
+<ul class="simple">
+<li><p>机制：Mamba 的核心是一个 RNN 状态转移：<span class="math notranslate nohighlight">\(h_t = A h_{t-1} + B x_t\)</span> 和 <span class="math notranslate nohighlight">\(y_t = C h_t\)</span>。</p></li>
+<li><p>核心创新：选择性 (Selectivity) 。与 <span class="math notranslate nohighlight">\(A, B, C\)</span> 固定的传统 SSM 不同，Mamba 的 <span class="math notranslate nohighlight">\(A, B, C\)</span> 矩阵（以及离散化步长 <span class="math notranslate nohighlight">\(\Delta\)</span>）是输入依赖 (Input-dependent) 的。这意味着 Mamba 可以根据当前 <span class="math notranslate nohighlight">\(x_t\)</span> 的内容，动态决定要从 <span class="math notranslate nohighlight">\(h_{t-1}\)</span> 中保留什么、要从 <span class="math notranslate nohighlight">\(x_t\)</span> 中吸收什么。</p></li>
+<li><p>训练：Mamba 无法像 RetNet 那样推导出简单的并行矩阵形式。它依赖于一种硬件感知的并行扫描 (Parallel Scan / Prefix Sum) 算法，以并行方式计算其顺序状态。</p></li>
+</ul>
+<p>RetNet (门控线性 RNN):</p>
+<ul class="simple">
+<li><p>机制：如前所述，是一个线性 RNN：<span class="math notranslate nohighlight">\(S_n = \gamma S_{n-1} + K_n^\intercal V_n\)</span> 39。</p></li>
+<li><p>核心创新：固定的多尺度衰减。<span class="math notranslate nohighlight">\(\gamma\)</span> 是按头固定的，不依赖于输入。所有的数据依赖性都来自 <span class="math notranslate nohighlight">\(Q, K, V\)</span> 投影和外部的 Swish 门控。</p></li>
+</ul>
+<p>核心差异：静态 vs. 动态状态转移这是 RetNet 和 Mamba 之间最根本的区别。</p>
+<ul class="simple">
+<li><p>Mamba 拥有一个动态的状态转移。它可以智能地“选择”何时遗忘、何时记忆，使其在需要复杂内容感知的任务（如“选择性复制”）上表现出色。</p></li>
+<li><p>RetNet 拥有一个静态的状态转移（衰减率 <span class="math notranslate nohighlight">\(\gamma\)</span> 是固定的）。它的记忆衰减是预设的，而非动态学习的。这使其数学形式更简洁，并行/循环的对偶性更优雅，但可能在灵活性上不及 Mamba。</p></li>
+</ul>
+<p>尽管机制不同，但 RetNet 和 Mamba 的成功共同指向了一个清晰的趋势：算法与硬件的协同设计（Hardware Co-Design）。无论是 RetNet 对融合核函数的需求，还是 Mamba 对并行扫描的依赖，都证明了新一代架构的成功不再仅仅是算法的成功，而是算法与底层硬件实现紧密耦合的胜利。</p>
+</section>
+<section id="id3">
+<h2>实现、应用与未来方向<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>Microsoft TorchScale RetNet 的官方实现包含在 Microsoft 的 torchscale 库中 。研究人员可以通过 RetNetConfig 定义模型参数，并使用 RetNetDecoder 实例化模型。Hugging Face 兼容性 对于 RetNet 的广泛采用而言，syncdoth/RetNet  等社区项目至关重要。这些项目提供了与 Hugging Face transformers 生态系统完全兼容的实现。</p>
+<p>这意味着 RetNet 模型可以：</p>
+<ol class="arabic simple">
+<li><p>使用 Hugging Face 的 Trainer API 进行训练。</p></li>
+<li><p>通过 save_pretrained 和 from_pretrained 进行保存和加载。</p></li>
+<li><p>使用标准的 .generate() 方法进行文本生成。</p></li>
+</ol>
+<p>这种兼容性极大地降低了研究人员和开发者尝试、微调和部署 RetNet 的门槛，是连接研究和实践的关键桥梁。</p>
+<p>Frenos 公司的白皮书提供了一个 RetNet 在现实世界中应用的绝佳案例。网络安全（如威胁检测）需要对极长的事件日志序列（Streaming Data）进行实时分析。Transformer 在处理此类任务时，它架构的“处理时间呈二次方 (<span class="math notranslate nohighlight">\(O(N^2)\)</span>) 增长” ，使其无法满足实时性要求。而Frenos 的研究发现，“无论序列长度如何，RetNet 模型都表现出恒定的处理时间，凸显了其效率和优势” 。这个案例是对 RetNet 范式 2（循环表示） 的一次强有力的实践验证。对于任何需要处理流式数据、无限上下文（Infinite Context）或受资源限制的场景（如 IoT、实时监控），RetNet 的 <span class="math notranslate nohighlight">\(O(1)\)</span> 恒定推理成本是 Transformer 架构无法比拟的根本性优势。</p>
+<p>RetNet（保留网络）为解决序列建模中的“三难困境”提供了一个非常有前景的解决方案。它的核心创新在于“留存机制”和其数学上的对偶性，使得模型可以在训练时完全并行处理，而在推理时则转化为一种计算和内存效率都非常高（<span class="math notranslate nohighlight">\(O(1)\)</span>）的形式。</p>
+<p>RetNet 提供了三种不同的计算模式：并行计算、循环计算和分块循环计算，这三种模式分别解决了训练时的并行性、推理时的低成本和处理长序列训练的挑战。并且，它在硬件使用方面非常高效，虽然它没有直接使用类似 FlashAttention 2 这样的技术，但它推动了硬件加速领域向更通用的融合框架（比如 AttentionEngine）发展，以适应各种架构的需求。</p>
+<p>与另一种模型 Mamba 比较，RetNet 的机制相对简单，它采用固定衰减的静态状态转移，而 Mamba 则使用更灵活的动态机制。未来，正如业内所提到的，评估标准和基准数据集的统一是非常重要的，这有助于公平地比较 RetNet、Mamba 和其他 Transformer 替代方案在不同任务中的表现，从而决定谁能成为 Transformer 的真正继任者。</p>
+</section>
+<section id="id4">
+<h2>参考文献<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Sun, Y., Dong, L., Huang, S., Ma, S., Xia, Y., Xue, J., Wang, J., &amp; Wei, F. (2023). Retentive Network: A Successor to Transformer for Large Language Models.</p></li>
+<li><p>Team, Z. (n.d.). RETNET: Challenging the Inference Cost of Transformer Based Language Models. Zontal.io.</p></li>
+<li><p>Sun, Y., Dong, L., Huang, S., Ma, S., Xia, Y., Xue, J., Wang, J., &amp; Wei, F. (2022). Retentive Network: A Successor to Transformer for Large Language Models.</p></li>
+<li><p>Khowaja, S. A. (n.d.). RetNet (The Transformer Killer) Demystified. Medium.</p></li>
+<li><p>SabrePC Blog. (n.d.). RNNs vs LSTM vs Transformers. SabrePC.com.</p></li>
+<li><p>(2023, August 2). RetNet to Reduce LLM Inference Cost[Video]. YouTube.</p></li>
+<li><p>AI Fusion Labs. (2023, August 15). Retentive networks (RetNet) explained: The much-awaited transformer's killer is here.</p></li>
+</ol>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData03NewArch"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="07MambaV2.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Mamba-2架构:从选择性状态空间到结构化对偶性</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="09MoR.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">未来之路：Transformer瓶颈突破方向</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">RetNet 的架构论点：破解序列建模的“不可能三角”</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retention-mechanism">留存机制 (Retention Mechanism) 的数学基础</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#retnet-multi-computation-paradigms">RetNet 的三种计算范式 (Multi-Computation Paradigms)</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kernel-fusion">硬件加速与核函数融合 (Kernel Fusion) 分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">架构的横向对比分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">实现、应用与未来方向</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">参考文献</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ZOMI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Nov 06, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

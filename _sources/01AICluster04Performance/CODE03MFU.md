@@ -1,6 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 03: MFU 模型利用率评估
+# CODE 03: MFU 模型利用率评估(DONE)
+
+> Author by: 周浩杰
 
 模型算力利用率（Model FLOPs Utilization, MFU）是评估 AI 模型训练效率的关键指标，它衡量了模型在实际训练中对硬件计算能力的利用程度。
 
@@ -84,6 +86,7 @@ $$ \text{FLOPs}_{\text{moe-total}} = 72L Bs h^2 + 6L Bs^2 h + 16L Bs h^2 \times 
 
 ## 4. FLOPs 计算函数
 
+
 ```python
 def compute_dense_flops(L, h, B, s, V, include_backward=True):
     """
@@ -150,6 +153,7 @@ def compute_moe_flops(L, h, B, s, V, E_total, E_active=2, include_backward=True)
 
 让我们通过具体数值来计算 DeepSeek 和 Qwen3 的 FLOPs。
 
+
 ```python
 # DeepSeek-7B 参数配置
 L_deepseek = 30    # 层数
@@ -190,7 +194,16 @@ print(f"DeepSeek-MoE FLOPs 节省: {saving_deepseek * 100:.2f}%")
 print(f"Qwen3-MoE FLOPs 节省: {saving_qwen * 100:.2f}%")
 ```
 
+    DeepSeek 稠密模型 FLOPs/迭代: 80.14 TFLOPs
+    Qwen3 稠密模型 FLOPs/迭代: 165.47 TFLOPs
+    DeepSeek-MoE 模型 FLOPs/迭代: 84.27 TFLOPs
+    Qwen3-MoE 模型 FLOPs/迭代: 174.06 TFLOPs
+    DeepSeek-MoE FLOPs 节省: -5.15%
+    Qwen3-MoE FLOPs 节省: -5.20%
+
+
 ## 5. MFU 计算完整实现
+
 
 ```python
 def calculate_mfu_comprehensive(model_config, batch_size, seq_length, iteration_time, device_flops, is_moe=False):
@@ -240,6 +253,7 @@ def calculate_mfu_comprehensive(model_config, batch_size, seq_length, iteration_
 ```
 
 让我们通过具体数值来分析不同架构的 MFU 差异。
+
 
 ```python
 # 设备峰值算力（假设 A100 GPU）
@@ -291,7 +305,28 @@ for key, value in breakdown_moe.items():
         print(f"{key}: {value}")
 ```
 
+    DeepSeek 模型 MFU 分析:
+    稠密架构 MFU: 51.37%
+    MoE 架构 MFU: 90.03%
+    MFU 提升: 75.25%
+    
+     详细计算分解（稠密）:
+    total_flops: 80.14 TFLOPs
+    iteration_time: 0.5
+    actual_flops_per_sec: 160.29 TFLOPs
+    device_flops: 312.00 TFLOPs
+    mfu: 0.5137441650215384
+    
+     详细计算分解（MoE）:
+    total_flops: 84.27 TFLOPs
+    iteration_time: 0.3
+    actual_flops_per_sec: 280.90 TFLOPs
+    device_flops: 312.00 TFLOPs
+    mfu: 0.9003342401641026
+
+
 不同条件下的 MFU 分析
+
 
 ```python
 def analyze_mfu_variations(model_config, device_flops, is_moe=False):

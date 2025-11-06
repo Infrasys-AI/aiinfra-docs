@@ -45,7 +45,6 @@
 03Embeding
 04Attention
 05GQAMLA
-06LongSeq
 07Parameter
 CODE01MiniTranformer
 CODE02TransformerTrain

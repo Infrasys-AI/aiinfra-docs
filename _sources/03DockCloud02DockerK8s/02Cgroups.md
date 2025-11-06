@@ -1,16 +1,16 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 02. Cgroups：容器资源控制关键(DONE)
+# 02. Cgroups 容器资源控制(DONE)
 
-Author by: 张柯帆，ZOMI
-
-> 注：以下讨论基于 Linux 操作系统环境
+> Author by: 张柯帆，ZOMI
 
 在上一篇关于容器隔离的文章中，我们详细介绍了实现“视图隔离”的核心技术——Namespace。其原理是通过修改进程的系统视图，让进程只能“看到”操作系统的部分资源，但这种视图层面的隔离终究是“障眼法”：对宿主机而言，这些“隔离进程”与其他进程并无本质区别，仍可能无限制抢占 CPU、内存等物理资源。若某一容器耗尽宿主机资源，会直接影响其他容器甚至宿主机本身，因此必须通过技术手段限制容器的资源使用——Linux 内核提供的**Cgroups**，正是解决这一问题的关键。
 
 ![虚拟机和容器的架构对比](../images/03DockCloud02DockerK8s/01Container01.png)
 
 观察上图可发现：虚拟机方案通过**Hypervisor**组件模拟硬件，在虚拟化过程中间接实现了资源限制；而容器引擎（Container Engine）没有类似 Hypervisor 的硬件模拟能力，因此需依赖 Cgroups 完成资源管控。接下来，我们将从 Cgroups 的定义、版本、核心概念、使用方式等维度，全面解析其如何为容器提供资源隔离能力。
+
+> 注：以下讨论基于 Linux
 
 ## 1. 什么是 Cgroups
 

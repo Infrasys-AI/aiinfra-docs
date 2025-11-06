@@ -26,6 +26,8 @@ xxx
 ```{toctree}
 :maxdepth: 1
 
+01SamplingBasics
+04ParallelSampling
 Code01Speculative
 Code02MinP
 Code03Affect

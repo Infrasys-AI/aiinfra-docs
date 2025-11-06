@@ -1,0 +1,1338 @@
+
+<!DOCTYPE html>
+
+
+<html lang="cn" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta property="og:title" content="早期视频理解发展" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html" />
+<meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
+<meta property="og:description" content="Author by: 李志峰 1. 视频理解简介: 视频理解（Video Understanding）旨在让计算机像人类一样 “看懂” 视频内容——不仅能识别视频中的孤立元素（如物体、人物、场景），还能理解元素间的动态关系、时序逻辑、行为意图及高层语义（如事件、故事线、情感倾向）。 简单来说，人类看一段视频能轻松知道 “谁在什么地方、做了什么、为什么这么做、接下来可能发生什么”，而视频理解的..." />
+<meta property="og:image:width" content="1146" />
+<meta property="og:image:height" content="600" />
+<meta property="og:image" content="/None" />
+<meta property="og:image:alt" content="Author by: 李志峰 1. 视频理解简介: 视频理解（Video Understanding）旨在让计算机像人类一样 “看懂” 视频内容——不仅能识别视频中的孤立元素（如物体、人物、场景），还能理解元素间的动态关系、时序逻辑、行为意图及高层语义（如事件、故事线、情感倾向）。 简单来说，人类看一段视频能轻松..." />
+<meta name="description" content="Author by: 李志峰 1. 视频理解简介: 视频理解（Video Understanding）旨在让计算机像人类一样 “看懂” 视频内容——不仅能识别视频中的孤立元素（如物体、人物、场景），还能理解元素间的动态关系、时序逻辑、行为意图及高层语义（如事件、故事线、情感倾向）。 简单来说，人类看一段视频能轻松知道 “谁在什么地方、做了什么、为什么这么做、接下来可能发生什么”，而视频理解的..." />
+<meta name="twitter:card" content="summary_large_image" />
+
+    <title>早期视频理解发展 &#8212; AIInfra AI基础设施</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=3ee479438cf8b5e0d341" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=e15ddae3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-examples.css?v=e236af4b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/readthedocs-doc-embed.css" />
+    <link rel="stylesheet" type="text/css" href="https://assets.readthedocs.org/static/css/badge_only.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/tabs.css?v=a5c4661c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=17a93d66" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=3ee479438cf8b5e0d341"></script>
+
+    <script src="../_static/documentation_options.js?v=aabdd393"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/rtd-data.js"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment';</script>
+    <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="icon" href="../_static/logo-square.svg"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述" href="02VideoUnderstandingWithMLLMs.html" />
+    <link rel="prev" title="视频大模型" href="README.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="cn"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
+
+<link
+  rel="alternate"
+  type="application/atom+xml"
+  href="../reference/blog/atom.xml"
+  title="Blog"
+/>
+
+
+
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search..."
+         aria-label="Search..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo-wide.svg" class="logo__image only-light" alt="AIInfra AI基础设施 - Home"/>
+    <script>document.write(`<img src="../_static/logo-wide.svg" class="logo__image only-dark" alt="AIInfra AI基础设施 - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Infrasys-AI/AIInfra" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://www.youtube.com/@ZOMI666" title="Youtube" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-youtube fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Youtube</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://space.bilibili.com/517221395" title="Blibili" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-bilibili fa-lg" aria-hidden="true"></i></span>
+            <span class="sr-only">Blibili</span></a>
+        </li>
+</ul></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        <p aria-level="2" class="caption" role="heading"><span class="caption-text">===  大模型系统概述 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03. Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 一. AI 计算集群 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../01AICluster/README.html">AI 计算集群概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster02L0L1Base/README.html">02.L0/L1 AI 集群基建</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/01Server.html">01.服务器节点初探</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/02AirCool.html">02.AI 服务器风冷实践与思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/03LiquidBase.html">03.AI 服务器液冷技术发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/04LiquidCool.html">04.液冷挑战与实践思考</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/05ServerRack.html">05.AI 机柜深度认识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster02L0L1Base/06Power.html">06.AI 集群供配电系统</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/05Details.html">05.NV Blackwell 深度解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/06Network.html">06.NV GB200 网络演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/07Cluster.html">07.NV GB200 集群互联方案</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/08XAI.html">08.XAI 十万卡集群解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/10Thought.html">10.十万卡 AI 集群思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster04Performance/README.html">04.集群性能分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/01HPCModeling.html">01.HPC 总算力计算标准</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 二. 通信与存储 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../02StorComm/README.html">通信与存储概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm01Roadmap/README.html">01.AI 集群组网之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/01Introduction.html">01.AI 集群网络基础知识</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/02HPCDeepDive.html">02.HPC 网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/03AIDeepDive.html">03.AI 集群网络洞察</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/04AINetwork.html">04.AI 集群网络基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/05PlaneDivision.html">05.AI 集群网络平面划分</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm01Roadmap/06Summary.html">06.万卡集群组网思考</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm04CommLibrary/README.html">集合通信库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/01MPIIntro.html">MPI 通信与通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/02XCCL.html">XCCL 通信库</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/04NCCLIntro.html">NCCL 基本介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/05NCCLAPI.html">NCCL API 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm04CommLibrary/08HCCLIntro.html">08.华为 HCCL 架构介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 三. 集群容器与云原生 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../03DockCloud/README.html">集群容器与云原生概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud01Roadmap/README.html">AI 云原生</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/05K8sRuntime.html">K8S 运行时</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/06K8sMonitor.html">Kubernetes 容器监控与日志</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 四. 大模型训练 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/06RingAttn.html">06.序列优化：Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/07MLA.html">07.内存优化：MLA 优化算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/08Checkpoint.html">08.内存优化：梯度检查点</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/09HybridPrecision.html">09.混合精度：FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/10Domino.html">10.通算融合：DS Domino 优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/11FLUX.html">11.通算融合：FLUX 计算通信</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code01FlashAtten.html">CODE 01: Flash Attention 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/01Introduction.html">概述</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/02RLHF.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/03PPO_DPO.html">PPO（Proximal Policy Optimization）</a></li>
+
+
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/04GRPO.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/05DAPO.html">DAPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/06GSPO.html">GSPO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/07RLVR.html">RLVR（Reinforcement Learning with Verifiable Rewards）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code01InstructGPT.html">CODE 01: 经典 InstructGPT 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code02DPOPPO.html">CODE 02: DPO 与 PPO 在 LLM 对比</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train04PostTrainRL/Code03GRPO.html">CODE 03: LLM + GRPO 实践</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.Reparameterization 算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../04Train06VerifValid/README.html">大模型验证评估</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/01Introduction.html">大模型验证评估的发展历程与趋势综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train06VerifValid/Code01OpenCompass.html">CODE 01: OpenCompass 评估实践</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 五. 大模型推理 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../05Infer/README.html">大模型推理概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer01Foundation/README.html">大模型推理基本概念</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/02InferEngine.html">大模型推理框架概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">02.大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/07LLM_In_Flash.html">LLM IN FLASH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code04KTransformer.html">CODE 04: KTransformers 核心实现</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer04LongInfer/README.html">长序列推理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/01LongLoRA.html">LongLoRA 介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/02RingAttention.html">Ring Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Introduction.html">大模型输出基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/bitsandbytesINT8.html">bitsandbytes LLM.int8()源码阅读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer07Framework/README.html">推理框架架构分析</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer07Framework/Ktransformers.html">Ktransformers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer08DeepSeek/README.html">DeepSeek 推理优化</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 六. 大模型算法与数据 ===</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../06AlgoData/README.html">大模型算法与数据概述</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData01Basic/README.html">Transformer 架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/01Transformer.html">01.Transformer 结构介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/02Tokenizer.html">02.大模型 Tokenizer 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData02MoE/README.html">MoE 混合专家</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/01MOEIntroducion.html">01.MoE 算法架构(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/02MOEHistory.html">02.MOE 前世今生(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/03MOECreate.html">03.MOE 奠基论文(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer 回顾与挑战</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">S4模型详解：结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/08RetNet.html">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/README.html">图文生成与理解</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/02CLIP.html">图文对齐基础 CLIP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/03DALLE.html">DALLE: 零样本文本到图像生成</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/04SD.html">Stable Diffusion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">视频大模型</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData06AudioGenerat/01Introduce.html">语音模型基础</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData07DataEngineer/README.html">数据工程</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/01DataOverview.html">01.数据工程概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataPreprocessing.html">预训练数据预处理</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/02DataSources.html">02.数据准备：数据源</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03DataCuration.html">概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/03PreProcess.html">03.数据准备：预处理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/05Pretraining.html">05.数据处理：预训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTraining.html">07.数据处理：后训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/07PostTrainingDataPrepraing.html">后训练数据集概述</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08Prompt.html">08.数据处理：Prompt 工程</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/08PromptEngineering.html">概述</a></li>
+
+
+
+
+
+
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData07DataEngineer/09Example01.html">09.案例：LLM 数据工程</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData08Special/README.html">DeepSeek</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData08Special/README_%E5%89%AF%E6%9C%AC.html">ChatGPT 解读</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData09VectorDB/README.html">向量数据库</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">=== 七. 大模型应用 ===</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../07Application/README.html">大模型热点技术剖析</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application00Others/README.html">大模型热点</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application01Sample/README.html">AI 智能体</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application02AIAgent/README.html">AI Agent 技术与实践</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application02AIAgent/03MCPandA2A.html">MCP 与 A2A 原理</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application04AutoDrive/README.html">自动驾驶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application05Embodied/README.html">具身智能</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application06Remmcon/README.html">生成式推荐</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application07Safe/README.html">AI 安全</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application08History/README.html">AI 过去十年</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2014.html">01.2012-2014 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2015.html">02.2015 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2016.html">03.2016 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2017.html">04.2017 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2018.html">05.2018 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2019.html">06.2019 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2020.html">07.2020 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2021.html">08.2021 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2022.html">09.2022 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2023.html">10.2023 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/2024.html">11.2024 AI 大事件</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application08History/History.html">12.历史 AI 大事件</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../07Application10NewModel/README.html">新算法解读</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/blob/master/06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.md?plain=1" target="_blank"
+   class="btn btn-sm btn-source-file-button dropdown-item"
+   title="Show source"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-code"></i>
+  </span>
+<span class="btn__text-container">Show source</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/Infrasys-AI/AIInfra/issues/new?title=Issue%20on%20page%20%2F06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>早期视频理解发展</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> 本节目录 Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1. 视频理解简介</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 手工提特征做视频理解</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.1 手工提特征视频理解关键算法</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.2 手工提特征视频理解总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3. 深度学习视频理解阶段</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.1 双流阶段代表性工作：双流网络</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.1.1 双流网络背景</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.1.2 双流网络核心思想及核心架构</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.1.3 双流网络与其他网络效果对比</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.1.4 双流网络发展</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.1.5 双流网络总结与思考</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.1.6 双流网络问题</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-cnn-i3d">3.2 3D CNN 阶段代表性工作：I3D</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#i3d">3.2.1 I3D 背景</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">3.2.2 I3D 核心思想及核心架构</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">3.2.3 I3D 与其他网络效果对比</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">3.2.4 I3D 后续发展</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">3.2.6 I3D 总结与思考</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">3.2.5 I3D 问题</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#video-transformer-timesformer">3.3 video transformer 的代表工作：Timesformer</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#timesformer">3.3.1 Timesformer 背景</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">3.3.3 Timesformer 核心思想及核心架构</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">3.3.4 TimeSformer 与其他网络效果对比</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">3.3.5 TimeSformer 后续发展</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">3.3.6 TimeSformer 总结与思考</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">3.3.7 TimeSformer 问题</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">3.4 深度学习视频理解总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">参考与引用</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+<!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
+<section class="tex2jax_ignore mathjax_ignore" id="id1">
+<h1>早期视频理解发展<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>Author by: 李志峰</p>
+</div></blockquote>
+<section id="id2">
+<h2>1. 视频理解简介<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>视频理解（Video Understanding）旨在让计算机像人类一样 “看懂” 视频内容——不仅能识别视频中的孤立元素（如物体、人物、场景），还能理解元素间的动态关系、时序逻辑、行为意图及高层语义（如事件、故事线、情感倾向）。<br />
+简单来说，人类看一段视频能轻松知道 “谁在什么地方、做了什么、为什么这么做、接下来可能发生什么”，而视频理解的目标就是让机器具备这种综合解析能力，是连接 “视频数据” 与 “有价值信息” 的关键技术桥梁。<br />
+如何利用好视频数据，如果做好视频理解，可能是通向更强人工智能的必经之路。<br />
+视频理解发展至今可大致分为为手工提特征方法时期（2010 年以前）、深度学习方法时期（2010 年后）。</p>
+</section>
+<section id="id3">
+<h2>2. 手工提特征做视频理解<a class="headerlink" href="#id3" title="Link to this heading">#</a></h2>
+<p>在 20 世纪末 21 世纪初，研究者们主要依靠手工设计的特征提取方法来捕捉视频中的关键信息，其中较为常用的技术包括尺度不变特征变换（SIFT，Scale - Invariant Feature Transform）、加速稳健特征（SURF，Speeded - Up Robust Features）、方向梯度直方图（HOG，Histogram of Oriented Gradients）等。本文侧重于深度学习时代的视频理解，手工提特征只希望读者对发展历程有了解，因此这里只做简单介绍，感兴趣读者可以阅读参考文献中的原始论文。</p>
+<section id="id4">
+<h3>2.1 手工提特征视频理解关键算法<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>尺度不变特征变换</strong>
+SIFT 算法由 David Lowe 在 1999 年提出，并于 2004 年完善总结 。该算法能够从图像中提取出具有尺度不变性的特征点，并为每个特征点分配一个唯一的描述子。这些描述子对旋转、尺度变化、亮度变化等具有不变性，并能在一定程度上保持对视角变换和仿射变换的不变性。在视频处理中，通过对视频序列中的每一帧图像独立应用 SIFT 算法进行特征点检测和描述，能够捕捉视频中内容的变化。例如在视频目标跟踪任务中，利用 SIFT 特征匹配能够实现稳定的目标跟踪，即使目标物体发生形变或遮挡，也能通过特征点的匹配来持续追踪目标。</p></li>
+<li><p><strong>加速稳健特征</strong>
+SURF 算法是 2006 年由 Herbert Bay 等人提出的一种快速且鲁棒的特征提取算法。它以 SIFT 算法为基础，通过使用 Hessian 矩阵来检测特征点，大大提高了特征提取的速度。SURF 算法使用积分图像来加速计算，使其计算量显著小于 SIFT 算法，同时在特征提取的准确性上与 SIFT 相当。在视频分析中，SURF 常用于运动检测和图像匹配。例如在视频监控系统中，可以利用 SURF 算法快速检测出视频帧中的运动目标，并通过特征匹配来判断目标是否为之前出现过的物体。​</p></li>
+<li><p><strong>方向梯度直方图</strong>
+HOG 特征检测是一种基于局部梯度方向直方图统计来描述图像局部结构特征的方法。其基本步骤包括计算图像的梯度幅值和方向，将图像划分为规则的网格并对每个网格计算梯度直方图，以及将相邻网格的直方图归一化以增强鲁棒性和减少光照变化的影响。HOG 特征对形状和边缘信息敏感，在目标检测和行为识别等任务中有着广泛应用。在行人检测领域，HOG 特征能够准确地定位行人的身体轮廓，即使在复杂背景下也能保持较高的检测精度；在行为识别中，通过分析目标在不同时间段内的梯度变化，构建具有时间序列特征的描述子，可用于识别和分类不同的行为模式，如奔跑、跳跃、打斗等。</p></li>
+</ol>
+</section>
+<section id="id5">
+<h3>2.2 手工提特征视频理解总结<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>手工提特征的方法在早期视频理解中发挥了重要作用，为后续的研究奠定了基础。它们能够在一定程度上捕捉视频中的关键信息，实现一些基本的视频分析任务。但这些方法也存在明显的局限性。一方面，它们对复杂场景和变化的适应性较差。例如，当视频中的物体发生快速运动、遮挡、光照变化剧烈时，手工设计的特征往往难以准确描述物体的特征，导致检测和识别的准确率下降。另一方面，手工提特征方法需要大量的人工设计和调试，特征的选择和设计依赖于研究者的经验和先验知识，通用性和扩展性不足，难以应对不断变化的视频内容和多样化的应用需求 。随着视频数据量的不断增加和应用场景的日益复杂，手工提特征阶段的局限性愈发凸显，促使研究者们寻找更强大、更智能的方法来推动视频理解技术的发展，这也为深度学习阶段的到来埋下了伏笔。</p>
+</section>
+</section>
+<section id="id6">
+<h2>3. 深度学习视频理解阶段<a class="headerlink" href="#id6" title="Link to this heading">#</a></h2>
+<p>随着计算机技术的飞速发展和大数据时代的来临，深度学习逐渐兴起，为视频理解领域带来了前所未有的突破与革新。深度学习模型能够自动从大量数据中学习特征，大大减少了对人工设计特征的依赖，显著提升了视频理解的能力和效果。深度学习时代视频理解大致可分为双流阶段、3D CNN 阶段、video transformer 阶段，接下来介绍每个阶段中较有代表性的工作。</p>
+<section id="id7">
+<h3>3.1 双流阶段代表性工作：双流网络<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<section id="id8">
+<h4>3.1.1 双流网络背景<a class="headerlink" href="#id8" title="Link to this heading">#</a></h4>
+<p>在 2012 年 Alexnet 在 Imagenet 断崖式领先之后，就有一些研究者尝试将 CNN 用在视频理解领域。
+其中一种思路是先用 2d 提取每一帧图像信息，后面接一个 LSTM 来获取时序信息，但效果并不理想，很快被抛弃了。
+另一种思路把多帧图片的某个维度做共享或拼接，然后直接用一个 2D 网络去做视频理解，代表性工作是 DeepVideo（CVPR 2014），这篇工作提出了 100 万个视频的视频数据集 Sports-1M，时长几十秒到几分钟，视频帧超 10 亿，直到现在都还在使用。但由于 DeepVideo 没有很好利用运动信息，所以即使在 Sports-1M 这么大的数据集上预训练，效果也不理想。在 UCF-101 上精度只有 65.4%，比之前最好的手工提特征方法 IDT 差了近 20 个点（UCF-101 是当时非常流行的一个较小的视频分类数据集）。DeepVideo 之后人们认识到运动信息对视频理解的重要性，提出了<strong>双流网络（Two - Stream Network）</strong>（NeurIPS2014），将深度学习做视频理解提到跟之前最好方法接近的水平（UCF-101 精度 88%），双流网络也因此被誉为深度学习视频理解开山之作，从这篇工作之后视频理解的研究才开始以深度学习为主。</p>
+</section>
+<section id="id9">
+<h4>3.1.2 双流网络核心思想及核心架构<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<p>双流网络作者把视频分为空间部分和时间部分，空间部分描述视频中的场景和物体信息，时间部分描述视频中的物体是如何运动的，根据这种拆分，作者提出了下图的双流网络框架。</p>
+<p><img alt="" src="../_images/02001.png" /></p>
+<p>两个网络分别学习空间特征和运动特征，互不打扰。</p>
+<ul class="simple">
+<li><p>空间网络部分相当于一个图像分类，基本就是一个 Alexnet，由一些 conv、fc 层、softmax 组成。</p></li>
+<li><p>时间网络部分输入是<strong>光流（Optical Flow）</strong>。光流可以简单理解为视频中每个像素点在相邻两帧之间的 “运动轨迹” 和 “运动速度”。作者将多个光流图叠加在一起来获取运动信息。空间流和时间流网络结构几乎是一样的，唯一区别就是输入不一样。前者输入的是静止的视频帧，输入 channel=3；后者输入是 L 张光流图的叠加，输入 channnel=2×L（一般取 L=10）。
+随后，将两个特征合并。作者实现了两种特征合并方式：</p></li>
+<li><p>late fusion 融合：两个 logist 加权平均得到最终分类结果（比如两个 softmax 向量取平均，再做一个 argmax 操作）。</p></li>
+<li><p>将 softmax 分数作为特征再训练一个 SVM 分类器。</p></li>
+</ul>
+</section>
+<section id="id10">
+<h4>3.1.3 双流网络与其他网络效果对比<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<p>以下是双流网络与其他当时主流方法的效果对比：
+<img alt="" src="../_images/02002.png" />
+在 UCF-101 上已经追平了手工最好的方法，HMDB-5L 是一个当时也较为流行的任务很难的数据集，也已经很接近最高最平，最重要的是远远超过了之前神经网络做视频理解的方法。</p>
+</section>
+<section id="id11">
+<h4>3.1.4 双流网络发展<a class="headerlink" href="#id11" title="Link to this heading">#</a></h4>
+<p>由于双流网络优秀的表现，许多研究者也在其基础上进一步研究了许多工作。比如融入了 LSTM 来提升长视频理解能力的 Two-Stream+LSTM(CVPR 2015)、改进了双流网络简单加权平均的 Two-Stream+Early Fusion(CVPR 2016)、将光流按轨迹叠加特征来提升效果的 TDD(CVPR 2015)、将长视频拆分再合并特征的 TSN（ECCV 2016）（这篇 TSN 强烈建议做视频理解的读一读，这里篇幅关系就不展开了）、在 TSN 基础上融入各种不同全局编码的 DOVF、TLE(CVPR 2017)、Action VLAD 等。</p>
+</section>
+<section id="id12">
+<h4>3.1.5 双流网络总结与思考<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
+<p>这里引用亚马逊朱毅老师对双流网络的评价：“双流网络的贡献，不单单是使用了这么一个额外的时间流，它主要告诉了我们一个另外的道理，就是当你发现神经网络不能解决什么问题的时候，有可能仅仅靠魔改模型，或者仅仅改一下这个目标函数，是没办法很好的解决这个问题的。那我们不如给这个模型提供一些这种先验信息。他学不到，那我们就帮他学习。这样呢，往往能大幅度简化这个任务。论文引用这么高，也不光是说他在视频分类里的应用。因其影响力横跨很多领域。当大家发现一个神经网络解决不了问题的时候，大家就会想到双流网络，然后去尝试使用别的数据，尝试使用别的模型，来做这种多流网络，解决问题呢，效果往往非常好。因为这些网络是可以互补的。而这也从侧面验证了数据的重要性。另外一个点就是可以将双流网络想像成是一个多模态学习的先例。RGB 图像和光流图像其实就属于不同的模态。从多模态学习的角度来看，双流网络，或者说利用光流有可能在视频理解，或者表征学习方面再次发光发热。”</p>
+</section>
+<section id="id13">
+<h4>3.1.6 双流网络问题<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<p>虽然双流网络及其改进在当时效果出类拔萃，却有个很致命的问题：依赖光流。
+光流抽取非常耗时，导致准备训练数据需要很久时间去抽取光流，而且推理时抽取光流也很难做到实时；同时，由于光流的密集表示，导致其存储空间太大，因此后续研究者尝试改进光流或是直接舍弃光流投奔 3D 网络的怀抱。
+当然，现在的研究者发现，在新的网络结构如 3D CNN 结构或 Video transformer 中加入光流还可以继续提高性能，所以光流虽成本很高，但在提升效果方面依旧是一个很好的特征。</p>
+</section>
+</section>
+<section id="d-cnn-i3d">
+<h3>3.2 3D CNN 阶段代表性工作：I3D<a class="headerlink" href="#d-cnn-i3d" title="Link to this heading">#</a></h3>
+<section id="i3d">
+<h4>3.2.1 I3D 背景<a class="headerlink" href="#i3d" title="Link to this heading">#</a></h4>
+<p>由于上述光流的成本以及存储问题，研究者开始考虑直接用网络从视频中提取运动信息。
+那么既然视频比图像多了一个时间维度，而我们用 2D 的 CNN 处理图像效果很好，那把 2D 的 CNN 升一个维度到 3D 的 CNN 去处理视频理解是一个很自然的想法，一次卷积多帧，就能让网络学习时间维度信息和运动信息。这种思路在双流网络之前就有过，C3D(ICCV 2015)是较早实现这个想法的工作，但 C3D 效果还有差距（C3D (1 net)+linear SVM 在 UCF-101 精度只有 82.3）。后来的研究者经过改进，提出了<strong>I3D(CVPR 2017)：Two-Stream+3D ConvNet</strong>，把 UCF-101 刷到了 98%，HMDB-51 刷到 80%（UCF-101 已经接近 100%,而 HMDB-51 数据集任务较难，80%基本也到顶了，这两个当时爆火的数据集被 I3D 直接刷爆了，之后这两个数据集上有监督学习基本没有进一步做下去的必要了），开启 3D CNN 做视频理解的时代。</p>
+</section>
+<section id="id14">
+<h4>3.2.2 I3D 核心思想及核心架构<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<p>I3D 工作核心贡献：</p>
+<ol class="arabic simple">
+<li><p><strong>提出了新的数据集</strong>：I3D 作者认为图像处理任务在当时发展那么好有个很重要的原因是 ImageNet 这个足够大的数据集给视觉研究者们提供各种特征做预训练，但视频领域当时并没有与 Imagenet 匹配的足够优秀的视频大规模数据集，因此提出了新的视频分类数据集 Kinetics，该数据集优点有：</p></li>
+</ol>
+<ul class="simple">
+<li><p>类别均衡、规模合适：初始的 kinetics 有 400 个类，每个类都超过 400 个视频片段。</p></li>
+<li><p>多样性好：每段视频都来自独一无二的 YouTube 视频。有些视频数据集的视频，都是一个长视频中截取的，比如 UCF101。</p></li>
+<li><p>标注精准：每个 clips 都是视频中精准抽出 10s 左右的段落，所以整个数据集都标注的非常精准。</p></li>
+<li><p>难度适中：如果数据集的视频都过于难或者过于简单，就失去其意义了，也没人会用。</p></li>
+</ul>
+<ol class="arabic simple" start="2">
+<li><p><strong>提出了一个新的模型 I3D 即 Inflated 3D ConvNet</strong>：Inflated 是扩大膨胀的意思，这里是指把一个 2D 模型膨胀到一个 3D 模型，比如对于一个 2D 的 Resnet 来说，遇到 <code class="docutils literal notranslate"><span class="pre">3×3</span></code> 的卷积核就变成了 <code class="docutils literal notranslate"><span class="pre">3×3×3</span></code>的卷积核， 遇到一个 2D 的 Pooling 层，就变成 3d 的 Pooling 层。其他层数、整体架构等均保持不变。这样就可以把 CV 领域较为成熟的 2D 网络结构如 VGG,Resnet 等经过 Inflated 直接使用，不需要针对视频重新设计网络结构，减少了验证结构所需的大量消融实验工作（实际上直到 22 年的 Video Swing Transformer 依旧在做 Inflated 这种操作，把一个 2D 的 swin transformer 网络 inflated 到 3D）。</p></li>
+<li><p><strong>Bootstrapping：预训练的 2D 模型初始化 3D 网络，及代码实现</strong>：对于 2D 网络上预训练的参数，如何迁移到 3D 网络，将某一帧复制多次成为类似 video 时，通过 3DCNN 输出也是和 2DCNN 一致的。具体做法是沿着时间维度重复 2D 滤波器权重 N 次，并且通过除以 N 进行归一化。
+同时，I3D 作者直接拿 2D 预训练网络进行通过 Bootstraping 进行 3D 初始化，所以做很深的模型也不需要太多的视频数据从头训练。
+4.<strong>提出了创新的 I3D 架构</strong>：I3D 通过 Inflated 将 Inception-V1 扩展到 3d，并结合了光流来提升效果。I3D 架构与此前主流架构对比：
+<img alt="" src="../_images/02003.png" /></p></li>
+</ol>
+<ul class="simple">
+<li><p>CNN+LSTM：即 CNN 抽取关键帧特征，LSTM 进行时序建模
+具体来说，就是先抽取视频中的关键帧得到 K 张图，然后将这 K 张图输入 CNN 网络得到图片特征。再将这些特征全部输入 LSTM 网络，进行各个时间戳上图片特征的融合，得到整个视频的融合特征。最后将 LSTM 最终时刻的特征接一个 FC 层得到分类结果。</p></li>
+<li><p>3D Conv：将视频帧（分割好的一个个的视频段，每段含有 K 张图片）直接输入 3D 的 CNN 网络进行时空学习。
+此时卷积核必须是 3 维的（比如每个卷积核都是 3×3×3，加入了时间维度），网络不光学习空间信息，还需要学习时序信息（运动信息）。最后 3D Conv 输出的特征也是接一个全连接层得到分类结果。因为多了一个维度，模型的参数量很大，不太好训练，而且效果也不好。
+Two stream（late fusion）`：如果不想用 LSTM 进行时序建模，也不想用 3D 网络直接进行时空学习，那么还可以使用光流来得到时序信息（运动信息）。</p></li>
+<li><p>双流网络整体还是 2D 网络结构，但额外引入一个时间流网络。通过巧妙的利用光流来提供的物体运动信息，而不用神经网络自己去隐式地学习运动特征，大大提高了模型的性能。
+3D Fused Two stream（early fusion）`:双流网络的改进。作者认为双流网络中，两个网络的输出只是进行简单的加权平均来处理，效果还不够。所以将其替换为一个较小的 3D 网络，进一步融合特征。实验证明这种先进行 2D 卷积网络训练，再进行 3D 卷积网络融合的效果更好。</p></li>
+<li><p>Two stream 3D ConvNet：I3D 是 3D 网络和双流网络的结合。因为单纯的使用 3D 网络，模型效果还是不好，加上光流之后，可以大大提高模型性能。所以可以说 I3D=Two stream+3D Conv。另外两个分支网络都已经是 3D 网络了，也就不需要另外加一个 3D 网络进行融合，直接加权平均得到最终的结果就行。
+其中 I3D 的详细架构如下：
+<img alt="" src="../_images/02004.png" /></p></li>
+<li><p>左侧是 Inflated Inception-V1 结构，就是卷积核都加了一个维度（<code class="docutils literal notranslate"><span class="pre">K*K</span></code> —&gt; <code class="docutils literal notranslate"><span class="pre">K*K*K</span></code>，上图蓝色框）。池化层也加了一个维度，但时间维度不进行下采样。比如池化是<code class="docutils literal notranslate"><span class="pre">3*3</span></code>—&gt;<code class="docutils literal notranslate"><span class="pre">1*3*3</span></code>而非<code class="docutils literal notranslate"><span class="pre">3*3*3</span></code>，对应的 stride 是<code class="docutils literal notranslate"><span class="pre">2*2</span></code>—&gt;<code class="docutils literal notranslate"><span class="pre">1*2*2*</span></code>，而非<code class="docutils literal notranslate"><span class="pre">2*2*2*</span></code>。不过在后面几个阶段进行了时间维度的下采样（后三个池化层）</p></li>
+<li><p>右图是 Inception Module，和之前 2D 结构一样，只是卷积核变为了 3D。</p></li>
+</ul>
+<blockquote>
+<div><p>2016 年—2017 年，很多视频工作的消融表明，使用 Inception-V1 的效果比 ResNet 更好。但是 ResNet 统治力是在是太强了，一年后《Non-local Neural Networks》用 ResNet 实现了 I3D 模型，并且加入了 self-attention。后续大家一般提到 I3D，都是指其 ResNet 实现的版本。<br />
+最近几年的工作也表明，2D 卷积网络扩张到 3D 时。池化层的时间维度最好不要进行下采样。比如输入是 64 帧，输出也是 64 帧，这个对应的实际只有 2 秒左右，已经很短了。</p>
+</div></blockquote>
+</section>
+<section id="id15">
+<h4>3.2.3 I3D 与其他网络效果对比<a class="headerlink" href="#id15" title="Link to this heading">#</a></h4>
+<p><img alt="" src="../_images/02005.png" /></p>
+<ul class="simple">
+<li><p>I3D 作者对比了单独的空间流 I3D 和单独的时间流网络 I3D、完整的 I3D；以及这三种模型只在 Kinetics 400 数据集上进行预训练的效果。后面三个模型的效果也不差，说明只用视频数据集进行预训练效果就已经很好了。</p></li>
+<li><p>后续的这种扩展 3D 模型，可以不再需要使用 ImageNet 上预训练的模型，直接从头训练就可以了。</p></li>
+</ul>
+</section>
+<section id="id16">
+<h4>3.2.4 I3D 后续发展<a class="headerlink" href="#id16" title="Link to this heading">#</a></h4>
+<p>在 I3D 之后，除了极少其他思路的工作，3D CNN 基本霸占了从 2017 到 2020 年的视频理解领域，出现了许多优秀的工作。主要有：改进 I3D backbone 的 R3D(resnet)、MFNex(ResNext)、STC(SENet);将纯 3D CNN 改为 2D+3D 来降低模型复杂度并提高性能的 S3D、ECO、P3D；将 3D CNN 拆分为 2D 空间卷积+1D 时间卷积来降低过拟合和训练难度的 R(2+1)D(CVPR 2018)（这个思想到后面的 vision transformer 时代依旧有很多工作使用）；融入自注意力，使模型精度更高，且可以建模更长的时间序列的 non-local(CVPR 2018)；舍弃光流改用 2 个快慢结合网络分别学习静态信息和运动信息的 SlowFast(ICCV 2019);使用 anto ml 方式搜索网络的 X3D。X3D 参数量特别小并且效果非常好，基本上很难再有人能打得过它了，研究者们开始寻求其他出路，纷纷把目光投向 vision transformer。</p>
+</section>
+<section id="id17">
+<h4>3.2.6 I3D 总结与思考<a class="headerlink" href="#id17" title="Link to this heading">#</a></h4>
+<p>I3D 的网络结构以及其提出的 Kinetecs 数据集给当时的视频理解带来了全新的 2 个思路：</p>
+<ul class="simple">
+<li><p>如果没有好的训练数据，可以使用 ImageNet 上预训练的模型按本文的方式扩张到 3D 网络，这样不用设计 3D 网络结构，而且使用了预训练模型的参数进行初始化，效果一般都很好（Inflating+Bootstrapping）；</p></li>
+<li><p>如果你想从头设计一个 3D 网络，那么可以使用 Kinetics 400 数据集进行预训练，不需要依赖于 ImageNet 预训练的模型参数。
+在 I3D 之前 3D CNN 效果并不理想，但 I3D 认识着不是 3D CNN 的问题，从数据、3D 网络的获取方式等角度出发，解决了之前 3D CNN 的问题，对我们的研究学习也有启发，当局者迷旁观者清，把视角打开，或许会有意外收获。</p></li>
+</ul>
+</section>
+<section id="id18">
+<h4>3.2.5 I3D 问题<a class="headerlink" href="#id18" title="Link to this heading">#</a></h4>
+<p>I3D 的问题，也是 3D CNN 的根本问题，就是 CNN 本身的缺陷。</p>
+<ul class="simple">
+<li><p>卷积有很强的归纳偏置（例如局部连接性和平移不变性）。对于一些比较小的训练集来说，这毫无疑问是有效的，但数据集够大时，这些会限制模型的表达能力。</p></li>
+<li><p>卷积核是专门设计用来捕捉局部的时空信息，并不能够对感受野之外的依赖进行建模。虽然将卷积进行堆叠，会扩大感受野，但是这种策略，仍然会限制长期依赖的建模。</p></li>
+<li><p>当应用于高清的长视频时，训练深度 CNN 网络非常耗费计算资源。</p></li>
+</ul>
+<p>而这些问题也限制着视频理解的发展，直到 ViT(ICLR 2021)的出现，终于有了转机。</p>
+</section>
+</section>
+<section id="video-transformer-timesformer">
+<h3>3.3 video transformer 的代表工作：Timesformer<a class="headerlink" href="#video-transformer-timesformer" title="Link to this heading">#</a></h3>
+<section id="timesformer">
+<h4>3.3.1 Timesformer 背景<a class="headerlink" href="#timesformer" title="Link to this heading">#</a></h4>
+<p>上述提到的卷积的问题，transformer 能很好的解决。</p>
+<ul class="simple">
+<li><p>卷积的归纳偏执问题，Transformer 的归纳偏置更少，能够表达的范围更广，也更适用于非常大的数据集。</p></li>
+<li><p>卷积对全局信息理解较差的问题，自注意力机制通过直接比较在所有时空位置上的特征，可以被用来捕捉局部和全局的长范围内的依赖。</p></li>
+<li><p>卷积的高清长视频资源消耗问题，Transformer 训练和推导要比 CNN 更快。使用相同的计算资源可以训练更强的网络。
+因此，transformer 能提高视频理解的上限，随着 transformer 在 nlp 领域常年霸榜并且 ViT 在图像领域大杀四方，研究者开始考虑做 video transformer，将自注意力机制从图像的空间维度（2D）扩展到视频的时空维度（3D）。TimeSformer 算是这方面工作最早的一篇。</p></li>
+</ul>
+</section>
+<section id="id19">
+<h4>3.3.3 Timesformer 核心思想及核心架构<a class="headerlink" href="#id19" title="Link to this heading">#</a></h4>
+<p>限制 vision transformer 发展的很大一个原因就是网络结构较大，因此训练较多的数据时显存容易塞不下，而多了一个时间维度的 video transformer 这个限制更严重，因此需要对网络进行拆分。Timesformer 作者团队首先讨论了 5 种结构：
+<img alt="" src="../_images/02006.png" /></p>
+<ol class="arabic simple">
+<li><p><strong>空间注意力机制(S)</strong>：只在单帧图像上计算空间自注意力+残差连接，然后接一个 MLP+残差连接得到最后的结果，就类似 ViT 本身的做法，相当于一个 baseline。</p></li>
+<li><p><strong>（共同）时空注意力(ST)</strong>：在视频的三个维度上都使用自注意力。</p>
+<ul class="simple">
+<li><p>暴力的计算所有视频帧中的所有图像块的自注意力，剩下的操作和上面一样。</p></li>
+<li><p>这种方式基本显存都塞不下（本来 ViT 就快塞不下了，视频使用更多的视频帧，更是塞不下）。</p></li>
+</ul>
+</li>
+<li><p><strong>拆分的时空自注意力(T+S)</strong>：直接计算 3D 的时空自注意力显存不够，借鉴 R(2+1)D 的方法，将其拆分为 Temporal Self Attention+Spatial Self Attention。先计算不同帧中同一位置图像块的自注意力，再计算同一帧中的所有图像块的自注意力，这种方式大大降低了计算复杂度。</p></li>
+<li><p><strong>局部-全局注意力机制(L+G)</strong>：直接计算序列太长，所以考虑先计算局部的自注意力，再在全局计算自注意力，类似 Swin-Transformer。<br />
+具体来说，先利用所有帧中，相邻的 H/2 和 W/2 的图像块计算局部的注意力。然后在空间上，使用 2 个图像块的步长，在整个序列中计算自注意力机制，这个可以看做全局的时空注意力更快的近似。</p></li>
+<li><p><strong>轴向自注意力(T+W+H)</strong>：分别沿着时间维度、width 维度和 height 维度计算自注意力。</p></li>
+</ol>
+<p>作者团队对 5 种注意力进行了可视化，更形象：
+<img alt="" src="../_images/02007.png" /></p>
+<ol class="arabic simple">
+<li><p><strong>空间注意力机制(S)</strong>：上图以第 t 帧 blue patch 为基准点时，Space Attention 只计算这一帧内其他 patches 和基准点的 self attention，而完全看不到其它帧的信息。</p></li>
+<li><p><strong>（共同）时空注意力(ST)</strong>：基准点和所有帧的所有 patches 都计算自注意力。</p></li>
+<li><p><strong>拆分的时空自注意力(T+S)</strong>：先做时间上的自注意力，也就是计算不同帧中同一位置的 self attention。然后计算同一帧上所有 patches 的 self attention。</p></li>
+<li><p><strong>局部-全局注意力机制(L+G)</strong>：先计算图中蓝色快和黄色/红色块的局部自注意力，再计算全局自注意力（此时是进行稀疏的计算，所以只计算蓝色块和紫色块的自注意力）。</p></li>
+<li><p><strong>轴向自注意力(T+W+H)</strong>：先做时间轴（绿色块）的自注意力，再分别作横轴（黄色块）和纵轴（紫色块）上的自注意力。<br />
+最终作者在 Kinetics-400 和 Something-Something-V2 数据集上，试验了这几种结构的精度。拆分时空注意力（ divided space-time attention）效果最好。
+<img alt="" src="../_images/02008.png" /></p></li>
+</ol>
+<blockquote>
+<div><p>K-400 是一个比较偏静态图像的，所以单纯的 Space Attention 效果也不错，但是换成 SSv2 数据集，这样做效果非常差。</p>
+</div></blockquote>
+</section>
+<section id="id20">
+<h4>3.3.4 TimeSformer 与其他网络效果对比<a class="headerlink" href="#id20" title="Link to this heading">#</a></h4>
+<p><img alt="" src="../_images/02007.png" /></p>
+<ul class="simple">
+<li><p>左图是 TimeSformer、I3D、SlowFast 三种模型在 K400 数据集上的精度对比。其实 SlowFast 使用 Resnet101 的精度达到了 78.9，是比 TimeSformer 高的，但 TimeSformer 确实训练（微调）时间和推理速度都更短。</p></li>
+<li><p>右图是为了使工作更有说服力，作者团队做了更大尺寸的 TimeSformer-L 模型，并在 ImageNet-21K 上进行训练，终于把 K400 刷到 80.7 了。作为第一篇把 ViT 用到视频理解上的论文，这效果已经不错了。
+此外，TimeSformer 的可扩展性，使得它可以在更长的视频片段上训练更大的模型（当时的 3D CNN 最多只能够处理几秒钟的片段，而 TimeSformer 甚至可以在数分钟的片段上进行训练），为将来的 AI 系统理解更复杂的人类行为做下了铺垫。</p></li>
+</ul>
+</section>
+<section id="id21">
+<h4>3.3.5 TimeSformer 后续发展<a class="headerlink" href="#id21" title="Link to this heading">#</a></h4>
+<p>TimeSformer 开启了 video transformer 之后，短短几个月时间陆续出现了很多思路类似的拆分自注意力的优秀工作。包括 Amazon 提出的能够通过叠加注意力来聚集时空信息，效率更高性能更好的 VidTr(ICCV 2021)、Facebook 的使用了多尺度和 Longformer，效果更好 MViT(ICCV 2021)、通过时空管采样等方式提取视频时空标记，采用编码器分解等策略平衡效率与性能的 ViViT(ICCV 2021)、加入 “时间窗口移位” 机制，增强长时依赖捕捉的 Video Swin Transformer(CVPR 2022)等。</p>
+</section>
+<section id="id22">
+<h4>3.3.6 TimeSformer 总结与思考<a class="headerlink" href="#id22" title="Link to this heading">#</a></h4>
+<p>TimeSformer 以及其后的许多 video transformer 做了很多拆分注意力方面的工作来减少计算量和显存，让强大的 transformer 能用在视频理解领域。时至今日的动辄百亿千亿参数量的 LLM 仍存在模型过大不容易训练和部署的限制，TimeSformer 给我们提供了一种思路。祝融绝顶万馀层，策杖攀萝步步登。</p>
+</section>
+<section id="id23">
+<h4>3.3.7 TimeSformer 问题<a class="headerlink" href="#id23" title="Link to this heading">#</a></h4>
+<p>Transformer 模型通常需要大量标注数据才能充分发挥其潜力，Timesformer 也不例外。作者团队自己做了不同数据比例的消融实验。</p>
+<ul class="simple">
+<li><p>因为这个模型需要非常大的数据才能够训练，作者有尝试自己从头训练，但是都失败了，因此在论文中报告的所有结果，都使用了 ImageNet 进行预训练。</p></li>
+<li><p>为了研究数据集的规模的影响，使用了两个数据集，实验中，分四组，分别使用 25%，50%，75%和 100%的数据。结果是 TimeSformer 当数据比较少的时候表现不太好，数据多的时候表现好（这个结论和 ViT 中是一样的，即训练 transformer 需要更大的数据量才能达到媲美 CNN 的效果）。
+<img alt="" src="../_images/02010.png" /><br />
+另外，模型本身的庞大使其难以在算力较小设备上应用时至今日都是许多 video transformer 的问题。</p></li>
+</ul>
+</section>
+</section>
+<section id="id24">
+<h3>3.4 深度学习视频理解总结<a class="headerlink" href="#id24" title="Link to this heading">#</a></h3>
+<p>深度学习阶段的模型在视频理解任务中展现出诸多优势。它们能够自动学习到更具代表性和判别性的特征，避免了手工提特征方法中人工设计的局限性，对复杂场景和多样化的视频内容具有更强的适应性。通过在大规模数据集上的训练，深度学习模型的泛化能力得到显著提升，能够在不同的应用场景中表现出较好的性能。然而，这些模型也存在一些局限性。一方面，深度学习模型通常需要大量的标注数据进行训练，而获取高质量的标注视频数据往往需要耗费大量的人力、物力和时间。例如在构建一个用于视频行为分析的数据集时，需要专业人员逐帧标注视频中的行为类别，这是一个非常繁琐且容易出错的过程。另一方面，深度学习模型的计算复杂度较高，对硬件设备要求苛刻，在实际应用中，尤其是在一些资源受限的边缘设备上，模型的部署和运行面临挑战。例如在智能摄像头中部署视频理解模型，由于摄像头的计算资源有限，难以运行大规模的深度学习模型，需要对模型进行压缩和优化 。此外，深度学习模型的可解释性较差，模型内部的决策过程难以理解，这在一些对安全性和可靠性要求较高的应用场景中，如自动驾驶、安防监控等，可能会带来潜在的风险。</p>
+</section>
+</section>
+<section id="id25">
+<h2>参考与引用<a class="headerlink" href="#id25" title="Link to this heading">#</a></h2>
+<p>https://www.cs.ubc.ca/~lowe/papers/ijcv04.pdf
+https://www.sciencedirect.com/science/article/abs/pii/S1077314207001555
+https://link.zhihu.com/?target=https%3A//hal.inria.fr/file/index/docid/548512/filename/hog_cvpr2005.pdf
+https://arxiv.org/pdf/1406.2199
+https://www.bilibili.com/video/BV1mq4y1x7RU
+https://arxiv.org/pdf/1705.07750
+https://www.bilibili.com/video/BV1tY4y1p7hq
+https://zhuanlan.zhihu.com/p/639250632
+https://arxiv.org/pdf/2102.05095
+https://www.bilibili.com/video/BV11Y411P7ep
+https://blog.csdn.net/qq_56591814/article/details/128151883</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./06AlgoData05VideoGenerat"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+<div class="section ablog__blog_comments">
+  
+  
+</div>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="README.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">视频大模型</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="02VideoUnderstandingWithMLLMs.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> 本节目录 Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">1. 视频理解简介</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2. 手工提特征做视频理解</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">2.1 手工提特征视频理解关键算法</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">2.2 手工提特征视频理解总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3. 深度学习视频理解阶段</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.1 双流阶段代表性工作：双流网络</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">3.1.1 双流网络背景</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">3.1.2 双流网络核心思想及核心架构</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">3.1.3 双流网络与其他网络效果对比</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">3.1.4 双流网络发展</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">3.1.5 双流网络总结与思考</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">3.1.6 双流网络问题</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-cnn-i3d">3.2 3D CNN 阶段代表性工作：I3D</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#i3d">3.2.1 I3D 背景</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">3.2.2 I3D 核心思想及核心架构</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">3.2.3 I3D 与其他网络效果对比</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">3.2.4 I3D 后续发展</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">3.2.6 I3D 总结与思考</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">3.2.5 I3D 问题</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#video-transformer-timesformer">3.3 video transformer 的代表工作：Timesformer</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#timesformer">3.3.1 Timesformer 背景</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">3.3.3 Timesformer 核心思想及核心架构</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">3.3.4 TimeSformer 与其他网络效果对比</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">3.3.5 TimeSformer 后续发展</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">3.3.6 TimeSformer 总结与思考</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id23">3.3.7 TimeSformer 问题</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id24">3.4 深度学习视频理解总结</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id25">参考与引用</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By ZOMI
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2025.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    <p class="last-updated">
+  Last updated on Nov 06, 2025.
+  <br/>
+</p>
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=3ee479438cf8b5e0d341"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=3ee479438cf8b5e0d341"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE06:实现 Embedding 词嵌入(DONE)
+# 手把手实现核心机制 Embedding 词嵌入(DONE)
 
 Author by：ZOMI
 
@@ -20,6 +20,7 @@ Author by：ZOMI
 
 首先，需要导入必要的库：
 
+
 ```python
 import torch
 import torch.nn as nn
@@ -32,6 +33,7 @@ from collections import defaultdict, Counter
 ## 2. 实现中英文分词器
 
 在进行嵌入之前，需要一个支持中英文的分词器。这里基于之前实现的 BPE 算法：
+
 
 ```python
 class BPE:
@@ -47,16 +49,22 @@ class BPE:
         
     def preprocess(self, text):
         """预处理文本，分离中英文和特殊字符"""
+        
+        # 分割文本为 tokens，保留中文、英文单词和特殊字符
         tokens = self.pattern.split(text)
         tokens = [t for t in tokens if t and t.strip() != '']
         
         processed = []
+        
         for token in tokens:
             if re.match(r'[\u4e00-\u9fff]+', token):  # 中文
+                # 中文按字符分割，用空格连接
                 processed.append(' '.join(list(token)))
             elif re.match(r'[a-zA-Z0-9]+', token):  # 英文/数字
+                # 英文按字符分割，添加词尾标记，用空格连接
                 processed.append(' '.join(list(token)) + ' </w>')
             else:  # 特殊字符
+                # 特殊字符直接作为一个 token
                 processed.append(token)
         
         return ' '.join(processed)
@@ -64,42 +72,57 @@ class BPE:
     def get_pairs(self, word):
         """获取词内部的相邻字符对"""
         pairs = set()
+        
         prev_char = word[0]
         for char in word[1:]:
             pairs.add((prev_char, char))
             prev_char = char
+        
         return pairs
     
     def train(self, corpus):
         """训练 BPE 模型"""
+        
+        # ---------------------------------------------------------------------------------------
+        # Section 1: Preprocess the corpus
         # 预处理语料
         processed_corpus = [self.preprocess(text) for text in corpus]
         
         # 统计每个词的出现次数
         word_counts = Counter(processed_corpus)
         
-        # 初始化词汇表：所有单个字符，加上特殊标记
-        vocab = {self.unk_token: 0, self.pad_token: 1, 
-                self.bos_token: 2, self.eos_token: 3}
-        next_id = 4
+        # 初始化词汇表：所有单个字符
+        vocab = defaultdict(int)
         
-        # 收集所有独特字符
-        chars = set()
-        for word in processed_corpus:
-            for char in word.split():
-                chars.add(char)
+        for word, count in word_counts.items():
+            chars = word.split()
+            for char in chars:
+                vocab[char] += count
         
-        # 添加字符到词汇表
-        for char in chars:
-            if char not in vocab:
-                vocab[char] = next_id
-                next_id += 1
+        self.vocab = dict(vocab)
         
+        # *** 修复：添加特殊 token 到词汇表 ***
+        special_tokens = [self.unk_token, self.pad_token, self.bos_token, self.eos_token]
+        for token in special_tokens:
+            if token not in self.vocab:
+                self.vocab[token] = 0
+        
+        # *** 修复：计算需要合并的次数 ***
+        initial_vocab_size = len(self.vocab)
+        self.num_merges = max(0, self.vocab_size - initial_vocab_size)
+        
+        print(f"初始词汇表大小: {initial_vocab_size}")
+        print(f"目标词汇表大小: {self.vocab_size}")
+        print(f"需要进行 {self.num_merges} 次合并\n")
+        # ---------------------------------------------------------------------------------------
+
+        # ---------------------------------------------------------------------------------------
+        # Section 2: Merge the pairs
         # 开始合并过程
-        current_vocab_size = len(vocab)
-        while current_vocab_size < self.vocab_size:
+        for i in range(self.num_merges):
             # 统计所有相邻字符对的出现次数
             pairs = defaultdict(int)
+            
             for word, count in word_counts.items():
                 chars = word.split()
                 if len(chars) < 2:
@@ -112,74 +135,58 @@ class BPE:
             
             # 找到出现次数最多的字符对
             best_pair = max(pairs, key=pairs.get)
+            self.merges[best_pair] = i  # 记录合并顺序
             
             # 合并最佳字符对
-            new_token = ''.join(best_pair)
-            if new_token in vocab:
-                current_vocab_size = len(vocab)
-                continue
-                
-            vocab[new_token] = next_id
-            next_id += 1
-            self.merges[best_pair] = new_token
+            new_vocab_entry = ''.join(best_pair)
+            self.vocab[new_vocab_entry] = pairs[best_pair]
             
             # 更新词表
-            word_counts = self._merge_pair(word_counts, best_pair, new_token)
-            current_vocab_size = len(vocab)
+            word_counts = self._merge_pair(word_counts, best_pair, new_vocab_entry)
             
-            if current_vocab_size % 100 == 0:
-                print(f"当前词汇表大小: {current_vocab_size}/{self.vocab_size}")
+            if (i + 1) % 10 == 0:
+                print(f"完成第 {i + 1}/{self.num_merges} 次合并，当前词汇表大小: {len(self.vocab)}")
         
-        self.vocab = vocab
-        print(f"BPE 训练完成，最终词汇表大小: {len(self.vocab)}")
+        print(f"\nBPE 训练完成，总合并次数: {len(self.merges)}，最终词汇表大小: {len(self.vocab)}")
+        # ---------------------------------------------------------------------------------------
     
-    def _merge_pair(self, word_counts, pair, new_token):
+    def _merge_pair(self, word_counts, pair, new_entry):
         """将词表中的指定字符对合并为新的条目"""
+        
         merged_word_counts = defaultdict(int)
         bigram = re.escape(' '.join(pair))
+        
+        # 确保只匹配整个词中的这对字符
         pattern = re.compile(r'(?<!\S)' + bigram + r'(?!\S)')
         
         for word, count in word_counts.items():
-            merged_word = pattern.sub(new_token, word)
+            # 替换所有出现的字符对
+            merged_word = pattern.sub(new_entry, word)
             merged_word_counts[merged_word] += count
         
         return merged_word_counts
     
     def tokenize(self, text):
-        """将文本转换为 token 列表"""
-        if not self.vocab:
+        """使用训练好的 BPE 模型对文本进行分词"""
+        if not self.merges:
             raise ValueError("BPE 模型尚未训练，请先调用 train 方法")
         
-        # 预处理文本
+        # 预处理文本，得到空格分隔的 tokens
         processed = self.preprocess(text)
-        words = processed.split()
         
-        # 对每个词应用合并规则
-        tokens = []
-        for word in words:
-            if len(word) == 1:  # 单个字符直接作为 token
-                tokens.append(word)
-                continue
-            
-            # 初始化字符列表
-            chars = list(word)
-            # 应用所有合并规则
-            for (a, b), new_token in self.merges.items():
-                i = 0
-                while i < len(chars) - 1:
-                    if chars[i] == a and chars[i+1] == b:
-                        # 合并这两个字符
-                        chars = chars[:i] + [new_token] + chars[i+2:]
-                    else:
-                        i += 1
-            
-            tokens.extend(chars)
+        # 按空格分割，得到初始的 token 列表
+        tokens = processed.split()
         
-        # 后处理：移除词尾标记中的空格
-        tokens = [token.replace(' </w>', '</w>') for token in tokens]
-
-        # 添加首尾标记
-        tokens = [self.bos_token] + tokens + [self.eos_token]
+        # 应用所有合并规则（按学习顺序）
+        for (a, b), _ in sorted(self.merges.items(), key=lambda x: x[1]):
+            i = 0
+            while i < len(tokens) - 1:
+                if tokens[i] == a and tokens[i+1] == b:
+                    # 合并这两个相邻的 token
+                    tokens = tokens[:i] + [a + b] + tokens[i+2:]
+                else:
+                    i += 1
+        
         return tokens
     
     def convert_tokens_to_ids(self, tokens):
@@ -211,6 +218,7 @@ class BPE:
 ## 3. 词嵌入（Word Embedding）
 
 词嵌入是将离散的 token ID 转换为连续的向量表示，是所有 Transformer 模型的基础组件：
+
 
 ```python
 class WordEmbedding(nn.Module):
@@ -245,6 +253,7 @@ class WordEmbedding(nn.Module):
 ### 3.1 绝对位置嵌入（APE）
 
 绝对位置嵌入是 Transformer 原论文中使用的位置编码方式，直接将位置信息编码为固定或可学习的向量：
+
 
 ```python
 class AbsolutePositionEmbedding(nn.Module):
@@ -302,6 +311,7 @@ class AbsolutePositionEmbedding(nn.Module):
 
 相对位置嵌入考虑的是 tokens 之间的相对距离，而不是绝对位置。这在许多场景下更符合直觉：
 
+
 ```python
 class RelativePositionEmbedding(nn.Module):
     def __init__(self, embedding_dim, max_relative_position=100):
@@ -337,9 +347,13 @@ class RelativePositionEmbedding(nn.Module):
         # 获取相对位置嵌入
         relative_pos_emb = self.relative_embedding(relative_pos_ids)  # [seq_len, seq_len, embedding_dim]
         
-        # 计算相对位置注意力偏置
-        # [batch_size, seq_len, seq_len]
-        attention_bias = torch.matmul(x, relative_pos_emb.transpose(1, 2))
+        # *** 修复：使用 einsum 计算注意力偏置 ***
+        # 对于每个 query 位置 i 和 key 位置 j，
+        # 计算 x[b, i, :] 与 relative_pos_emb[i, j, :] 的点积
+        # x: [batch_size, seq_len, embedding_dim]
+        # relative_pos_emb: [seq_len, seq_len, embedding_dim]
+        # attention_bias: [batch_size, seq_len, seq_len]
+        attention_bias = torch.einsum('bqd,qkd->bqk', x, relative_pos_emb)
         
         return attention_bias
 ```
@@ -355,6 +369,7 @@ class RelativePositionEmbedding(nn.Module):
 旋转位置嵌入（RoPE）是一种较新的位置编码方式，通过旋转操作将位置信息融入到词向量中，在许多大模型中表现出色：
 
 ![](../images/06AlgoData01Basic/Practice06Embedding02.png)
+
 
 ```python
 class RotaryPositionEmbedding(nn.Module):
@@ -421,6 +436,7 @@ RoPE 的核心原理：
 
 现在将词嵌入和三种位置嵌入组合起来，形成完整的嵌入模块：
 
+
 ```python
 class TransformerEmbedding(nn.Module):
     def __init__(self, vocab_size, embedding_dim, max_seq_len, 
@@ -484,6 +500,7 @@ class TransformerEmbedding(nn.Module):
 ## 5. 测试 Embedding
 
 让用中英文文本测试实现的 Embedding：
+
 
 ```python
 # 1. 准备训练数据（中英文混合）
@@ -561,27 +578,42 @@ rope_output, _ = rope_embedding(input_ids)
 print(f"RoPE 输出形状: {rope_output.shape}")  # 应为 [2, 20, 128]
 ```
 
-运行上述测试代码，会得到类似以下的输出：
+    初始词汇表大小: 89
+    目标词汇表大小: 500
+    需要进行 411 次合并
+    
+    完成第 10/411 次合并，当前词汇表大小: 99
+    完成第 20/411 次合并，当前词汇表大小: 109
+    完成第 30/411 次合并，当前词汇表大小: 119
+    完成第 40/411 次合并，当前词汇表大小: 129
+    完成第 50/411 次合并，当前词汇表大小: 139
+    完成第 60/411 次合并，当前词汇表大小: 149
+    完成第 70/411 次合并，当前词汇表大小: 159
+    完成第 80/411 次合并，当前词汇表大小: 169
+    完成第 90/411 次合并，当前词汇表大小: 179
+    完成第 100/411 次合并，当前词汇表大小: 189
+    完成第 110/411 次合并，当前词汇表大小: 199
+    完成第 120/411 次合并，当前词汇表大小: 209
+    完成第 130/411 次合并，当前词汇表大小: 219
+    完成第 140/411 次合并，当前词汇表大小: 229
+    完成第 150/411 次合并，当前词汇表大小: 239
+    完成第 160/411 次合并，当前词汇表大小: 249
+    完成第 170/411 次合并，当前词汇表大小: 259
+    完成第 180/411 次合并，当前词汇表大小: 269
+    
+    BPE 训练完成，总合并次数: 180，最终词汇表大小: 269
+    测试绝对位置嵌入（APE）:
+    APE 输出形状: torch.Size([2, 20, 128])
+    
+     测试相对位置嵌入（RPE）:
+    RPE 输出形状: torch.Size([2, 20, 128])
+    RPE 注意力偏置形状: torch.Size([2, 20, 20])
+    
+     测试旋转位置嵌入（RoPE）:
+    RoPE 输出形状: torch.Size([2, 20, 128])
 
-```
-当前词汇表大小: 100/500
-当前词汇表大小: 200/500
-当前词汇表大小: 300/500
-当前词汇表大小: 400/500
-当前词汇表大小: 500/500
-BPE 训练完成，最终词汇表大小: 500
-测试绝对位置嵌入（APE）:
-APE 输出形状: torch.Size([2, 20, 128])
 
-测试相对位置嵌入（RPE）:
-RPE 输出形状: torch.Size([2, 20, 128])
-RPE 注意力偏置形状: torch.Size([2, 20, 20])
-
-测试旋转位置嵌入（RoPE）:
-RoPE 输出形状: torch.Size([2, 20, 128])
-```
-
-结果表明 BPE 分词器成功训练并构建了包含 500 个 token 的词汇表，三种位置嵌入机制都能正常工作，并输出预期形状的张量。APE 和 RoPE 直接修改词嵌入向量，而 RPE 则生成额外的注意力偏置。
+结果表明 BPE 分词器成功训练并构建了包含 269 个 token 的词汇表，三种位置嵌入机制都能正常工作，并输出预期形状的张量。APE 和 RoPE 直接修改词嵌入向量，而 RPE 则生成额外的注意力偏置。
 
 ## 6. 总结与思考
 

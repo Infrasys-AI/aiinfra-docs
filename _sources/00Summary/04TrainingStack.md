@@ -199,7 +199,7 @@ AI Infra 是 “硬件 - 系统软件 - 工具链” 的多层架构，每一层
 
 对研究者与工程师而言，理解二者协同逻辑，是把握 AI 技术方向的关键。唯有持续推动 AI Infra 创新与生态建设——如突破光子计算瓶颈、完善跨平台标准化、构建全球算力协同网络，才能充分释放大模型潜力，推动 AI 从 “技术突破” 走向 “产业普惠”。
 
-## 参考文献
+## 参考与引用
 
 1. Shoeybi, M., et al. (2021). Megatron-LM: Training multi-billion parameter language models using model parallelism. *arXiv preprint arXiv:1909.08053*.
 2. Rajbhandari, S., et al. (2020). ZeRO: Memory optimization towards training trillion parameter models. *arXiv preprint arXiv:1910.02054*.

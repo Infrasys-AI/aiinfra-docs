@@ -2,7 +2,7 @@
 
 # 04.NVIDIA Blackwell 演进(DONE)
 
-author by: 韩昊知，ZOMI
+> Author by: 韩昊知，ZOMI
 
 NVIDIA Blackwell 架构正引领 AI 计算进入新纪元。本节将深入解析其整体架构的演进历程以及多样化的产品形态，展示从单芯片到大规模系统部署的完整生态。
 
@@ -10,7 +10,7 @@ NVIDIA Blackwell 架构正引领 AI 计算进入新纪元。本节将深入解�
 
 如图 1 所示，作为 NVIDIA 最新的计算平台，Blackwell 架构产品家族拥有从基础芯片到大规模系统部署的完整生态。其产品形态丰富多样，涵盖了从单一芯片到模组、再到计算托盘（Compute Tray），直至整个机柜，由此衍生出众多新型号和专业名词。接下来，我们将通过详细介绍 Blackwell 架构的产品家族，来剖析其真正的含义，以及这些产品背后所代表的最新 AI 发展方向与产品演进趋势。
 
-![图 1：Blackwell 架构产品家族](./images_src/04Evolution01.png)
+![图 1：Blackwell 架构产品家族](../images/01AICluster03SuperPod/04Evolution01.png)
 
 本节内容主要分为三部分：GPU 产品介绍、HGX 产品介绍和 NVLink 与 SuperPOD 产品介绍。
 
@@ -18,7 +18,7 @@ NVIDIA Blackwell 架构正引领 AI 计算进入新纪元。本节将深入解�
 
 图 2 展示了 NVIDIA 主要 GPU 产品及其关键技术规格的对比，涵盖了从 Ampere 架构的 A100 到最新 Blackwell 架构的 B 系列产品。
 
-![图 2：历代 GPU 架构关键技术规格比较](./images_src/04Evolution02.png)
+![图 2：历代 GPU 架构关键技术规格比较](../images/01AICluster03SuperPod/04Evolution02.png)
 
 首先，我们可以从**架构演进**的角度来看。
 
@@ -54,7 +54,7 @@ NVLink 带宽衡量了 GPU 之间以及 GPU 与 CPU 之间的数据传输速度�
 
 下面则引出一个问题：DGX B200 是否适用于大模型推理任务呢？
 
-![图 3：DGX B200 性能提升](./images_src/04Evolution03.png)
+![图 3：DGX B200 性能提升](../images/01AICluster03SuperPod/04Evolution03.png)
 
 如上图所示，在训练场景下，DGX B200 相较于 DGX H100 展现出约三倍的性能提升；而在推理场景下，其性能提升更是高达 15 倍以上。这一数据强烈暗示 DGX B200 在大模型推理任务中具备显著优势。
 
@@ -78,7 +78,7 @@ DGX（Deep GPU Xceleration）是 NVIDIA 直接提供的一整套开箱即用的�
 
 图 4 详尽地展示了 NVIDIA 不同代次 HGX 平台产品的关键技术规格对比，涵盖了从 Ampere 架构的 HGX A100 到最新 Blackwell 架构的 HGX B100 和 HGX B200。
 
-![图 4：HGX](./images_src/04Evolution04.png)
+![图 4：HGX](../images/01AICluster03SuperPod/04Evolution04.png)
 
 核心指标方面，图中详细对比了以下几个关键性能参数：
 
@@ -114,7 +114,7 @@ GB200 NVL72 是 NVIDIA Grace Blackwell 超级芯片的创新集成，采用先�
 
 图 5 全面介绍了 Hopper 架构（GH200 NVL 32, GH200 SuperPod）和 Blackwell 架构（GB200 NVL72, GB200 SuperPod）的主要产品及其关键性能指标。
 
-![图 5：NVL&SuperPod](./images_src/04Evolution05.png)
+![图 5：NVL&SuperPod](../images/01AICluster03SuperPod/04Evolution05.png)
 
 1. **内存与带宽**：HBM 总大小从 GH200 SuperPod 的 24.5TB（LPDDR5X 为 123TB）大幅跃升至 GB200 SuperPod 的 110TB，显存带宽也从 Hopper 的 4.8TB/s 提升到 Blackwell 的 8TB/s。这表明新架构为超大规模 AI 模型提供了更广阔的内存空间和更快的数据存取速度。
 

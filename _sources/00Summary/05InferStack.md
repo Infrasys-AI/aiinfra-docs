@@ -359,7 +359,7 @@ Token Parallel 则针对**长序列推理瓶颈**：传统单卡处理长序列�
 
 过去，CUDA 生态构建了 NVIDIA 的壁垒；未来，异构兼容、端云智能协同等推理将成为 AI Infra 的核心方向。对于开发者而言，理解推理全流程的每个环节需要 AI Infra 哪一层支撑，是把握 AI 趋势的关键。大模型的价值最终要通过推理落地实现，而 AI Infra 正是让这一价值的重要引擎。
 
-## 参考文献
+## 参考与引用
 
 - [1] OpenAI. *AI and Compute*. 2018. https://openai.com/research/ai-and-compute
 - [2] Narayanan, D., et al. *Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM*. SC 2021. https://arxiv.org/abs/2104.04473

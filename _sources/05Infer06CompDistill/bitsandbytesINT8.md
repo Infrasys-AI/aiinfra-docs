@@ -3,7 +3,7 @@
 authored by:汪袁烁
 
 ## 调用的时候发生了什么
-为了更深入的了解INT8量化中的LLM.int8()，以及当我们调用：
+为了更深入的了解 INT8 量化中的 LLM.int8()，以及当我们调用：
 ```py
 # 加载 INT8 精度的模型
 model_int8 = AutoModelForCausalLM.from_pretrained(
@@ -12,13 +12,13 @@ model_int8 = AutoModelForCausalLM.from_pretrained(
     device_map="auto"
 )
 ```
-之后究竟发生了什么，我摘出了LLM.int8()的源码来简要阅读，本篇适合那些对于LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码：
+之后究竟发生了什么，我摘出了 LLM.int8()的源码来简要阅读，本篇适合那些对于 LLM.int8()量化想有更深入了解的同学。首先我们先准备一下源码：
 
 ```bash
 #源码准备
 git clone git@github.com:bitsandbytes-foundation/bitsandbytes.git
 ```
-## bnb_linear的替换
+## bnb_linear 的替换
 
 更具体的，当`Transformers` 在 `from_pretrained` 里检测到 8bit 量化后，会引入 `bitsandbytes` 集成代码，并把模型里的 `nn.Linear` 替换成 `bnb` 的 8bit 线性层：
 
@@ -100,10 +100,10 @@ def replace_linear(
 
 ```
 
-## 生成 8bit线性层参数
+## 生成 8bit 线性层参数
 
 ### 量化参数的准备 - Int8Params
-在完成把模型里的 nn.Linear 自动替换成 bitsandbytes.nn.Linear8bitLt之后，这些 8bit 线性层在上卡/前向时，把权重量化为 INT8，并生成 Int8Params 里的字段（如 CB/SCB/has_fp16_weights）：
+在完成把模型里的 nn.Linear 自动替换成 bitsandbytes.nn.Linear8bitLt 之后，这些 8bit 线性层在上卡/前向时，把权重量化为 INT8，并生成 Int8Params 里的字段（如 CB/SCB/has_fp16_weights）：
 ```py
 # 要阅读本段源码，你需要先：
 # cd AIInfra/05Infer/06CompDistill/third-party/bitsandbytes/bitsandbytes/nn/modules.py
@@ -120,7 +120,7 @@ device = torch.device
 
 class Int8Params(torch.nn.Parameter):
     """
-    这里我只取CUDA了相关的函数：
+    这里我只取 CUDA 了相关的函数：
     - 继承自 torch.nn.Parameter（实际底层是 torch.Tensor 的子类），
       用于承载量化后的权重以及量化所需的元数据（比如缩放因子）。
     - 设计目标：当参数被移动到 CUDA（例如 .to("cuda") 或 .cuda()）时，
@@ -140,7 +140,7 @@ class Int8Params(torch.nn.Parameter):
         if data is None:
             data = torch.empty(0)
 
-        # 关键：用 Tensor._make_subclass 建立“真正的”Tensor子类实例，
+        # 关键：用 Tensor._make_subclass 建立“真正的”Tensor 子类实例，
         # 而不是普通的 Python 对象。这让 autograd/设备迁移等核心机制继续生效。
         # （_make_subclass/_make_wrapper_subclass 是 PyTorch 提供的底层接口，用于定制 Tensor 子类行为。）:contentReference[oaicite:2]{index=2}
         obj = torch.Tensor._make_subclass(cls, data, requires_grad)
@@ -233,11 +233,11 @@ class Int8Params(torch.nn.Parameter):
 ```py
 CB, SCB, _ = bnb.functional.int8_vectorwise_quant(B)
 ```
-也是INT8量化的核心代码，当你`toCUDA`的时候，它会自动跳转到自己设计的CUDA内核进行INT8量化
+也是 INT8 量化的核心代码，当你`toCUDA`的时候，它会自动跳转到自己设计的 CUDA 内核进行 INT8 量化
 
 
-### 量化的秘密 - int8_vectorwise_quant Kernel实现
-它中间辗转经过了一系列调用，我们直接定位到这个Kernel的实现：
+### 量化的秘密 - int8_vectorwise_quant Kernel 实现
+它中间辗转经过了一系列调用，我们直接定位到这个 Kernel 的实现：
 ```cpp
 // 模板参数：
 // T               —— 输入矩阵元素类型（通常是半/单精度，如 __half 或 float）。
@@ -349,13 +349,13 @@ void kInt8VectorQuant(T* __restrict__ A,      // [rows, cols] 行主存放的输
 因此我们可以了解到大概的流程：
 1.模型加载时，权重仍然是 FP16/FP32 格式
 2.当模型被移动到 CUDA 设备时（通过 device_map="auto" 或手动 .to("cuda")），Int8Params 的 to() 方法会被触发 
-3.INT8Params会调用`bnb.functional.int8_vectorwise_quant()` 进行向量级量化。生成量化权重（CB）和缩放因子（SCB），将原始权重数据替换为量化后的 INT8 数据
+3.INT8Params 会调用`bnb.functional.int8_vectorwise_quant()` 进行向量级量化。生成量化权重（CB）和缩放因子（SCB），将原始权重数据替换为量化后的 INT8 数据
 
 ## 8bit 线性层实现
 
 ### 运行时状态的准备 - Linear8bitLt
 
-在完成Int8Params的准备后，我们还需要准备整个8bit线性层的实现。因为你不仅需要把参数量化成8bit，还需要能保证上层调用的时候能够正常用你的8bit参数进行各种运算。要想真正跑起 `LLM.int8()` 的前向，它还需要一整套“运行时状态 + 流程控制”
+在完成 Int8Params 的准备后，我们还需要准备整个 8bit 线性层的实现。因为你不仅需要把参数量化成 8bit，还需要能保证上层调用的时候能够正常用你的 8bit 参数进行各种运算。要想真正跑起 `LLM.int8()` 的前向，它还需要一整套“运行时状态 + 流程控制”
 ```py
 # 要阅读本段源码，你需要先：
 # cd AIInfra/05Infer/06CompDistill/third-party/bitsandbytes/bitsandbytes/nn/modules.py
@@ -387,7 +387,7 @@ class Linear8bitLt(nn.Linear):
         """
         初始化流程：
           - 先按普通 nn.Linear 初始化出权重/偏置张量
-          - 准备一个 bnb 的“乘法状态对象”(MatmulLtState)，把门限/是否保留FP权重等元数据放进去
+          - 准备一个 bnb 的“乘法状态对象”(MatmulLtState)，把门限/是否保留 FP 权重等元数据放进去
           - 用 Int8Params 包装权重张量：这样在 .to("cuda") 时会自动执行量化，生成 CB/SCB
           - 注册一个 pre-hook：在 load_state_dict 前，有需要的话先重排权重布局
         """
@@ -397,11 +397,11 @@ class Linear8bitLt(nn.Linear):
         self.state = bnb.MatmulLtState()
         self.index = index
 
-        # 配置离群阈值/是否保留FP16权重
+        # 配置离群阈值/是否保留 FP16 权重
         self.state.threshold = threshold
         self.state.has_fp16_weights = has_fp16_weights
 
-        # 当设置了阈值且不保留FP16权重时，启用一个“池化(use_pool)”路径（实现细节：用于管理分解出的稀疏/离群通道）
+        # 当设置了阈值且不保留 FP16 权重时，启用一个“池化(use_pool)”路径（实现细节：用于管理分解出的稀疏/离群通道）
         if threshold > 0.0 and not has_fp16_weights:
             self.state.use_pool = True
 
@@ -441,7 +441,7 @@ class Linear8bitLt(nn.Linear):
         format_name = prefix + "weight_format"
 
         if not self.state.has_fp16_weights:
-            # 只有纯 INT8 推理（不保留FP16副本）时才需要专门把 SCB 写入 checkpoint
+            # 只有纯 INT8 推理（不保留 FP16 副本）时才需要专门把 SCB 写入 checkpoint
             if param_from_weight is not None:
                 destination[key_name] = param_from_weight if keep_vars else param_from_weight.detach()
                 destination[format_name] = torch.tensor(0, dtype=torch.uint8)  # 0: row-major
@@ -544,7 +544,7 @@ class Linear8bitLt(nn.Linear):
 ```
 至于这段代码，其实就是在前向传播中，`bnb.matmul()` 会根据是否有离群值（outliers）选择不同的执行路径。
 
-### 运行时的秘密 - Kernel实现
+### 运行时的秘密 - Kernel 实现
 
 这段代码的前向传播会通过一系列调用，其中我找到了比较关键的部分：
 ```py
@@ -566,4 +566,4 @@ output = torch.ops.bitsandbytes.int8_scaled_mm.default(
     CA, state.CB, SCA, state.SCB, bias=bias, dtype=A.dtype
 )
 ```
-显然，它为纯INT8和混合精度提供了两种Kernel。那么为什么要提供两种呢，我不是已经量化成INT8了吗？这是因为 `LLM.int8()` 算法的一个核心设计理念：混合精度分解来处理离群值（outliers）。更具体的在`./05Quantization01.md`里面已经讲述的很清楚了。
+显然，它为纯 INT8 和混合精度提供了两种 Kernel。那么为什么要提供两种呢，我不是已经量化成 INT8 了吗？这是因为 `LLM.int8()` 算法的一个核心设计理念：混合精度分解来处理离群值（outliers）。更具体的在`./05Quantization01.md`里面已经讲述的很清楚了。

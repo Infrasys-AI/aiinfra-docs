@@ -1,130 +1,154 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# KV Cache 原理
+# 01.KV Cache 原理分析(DONE)
 
-Author by: 张艺蓉
+> Author by: 张艺蓉
 
-随着 LLM 的发展，模型生成的 token 长度不断增加，注意力阶段计算成为推理性能瓶颈。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免在自回归生成过程中重复计算，从而显著提升推理效率。
+随着 LLM 的发展，模型生成的 Token 长度不断增加，**注意力计算成为推理性能核心瓶颈**。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免自回归生成过程中重复计算历史 Token 的注意力分数，从而显著降低推理延迟、提升吞吐量。
 
-本节旨在对 KV Cache 技术进行全面的梳理。我们将从大模型推理的基本流程出发，解释其计算瓶颈与 KV Cache 的设计动机。在此基础上，介绍 KV Cache 的原理，及其具体实现。最后，我们将对 KV Cache 的显存开销进行定量分析。
+本节旨在对 KV Cache 技术进行全面梳理。我们将从大模型推理的基本流程出发，解析其计算瓶颈与 KV Cache 的设计动机；在此基础上，深入阐述 KV Cache 的核心原理与具体实现方案；最后通过定量分析，明确 KV Cache 的显存开销特征及长序列场景下的挑战。
 
-## 大模型推理过程
+## 2. 大模型推理流程
 
-### 大模型推理回顾
+### 2.1 推理阶段划分
 
-我们先简要回顾一下大模型推理的过程。模型依据所有已知的历史 Token 序列 $[t_1, t_2,...,t_n]$，来预测下一个最可能的 Token $t_{n+1}$，输出的 token 会与输入 tokens 拼接在一起，然后作为下一次推理的输入 $[t_1, t_2,...,t_n,t_{n+1}]$，这样不断重复直到遇到终止符。
+大模型推理的核心是**自回归生成**：模型依据历史 Token 序列 $[t_1, t_2,...,t_n]$ 预测下一个最可能的 Token $t_{n+1}$，生成的 Token 会与输入序列拼接，作为下一轮推理的输入 $[t_1, t_2,...,t_n,t_{n+1}]$，重复该过程直至遇到终止符或达到最大长度。
 
 ![大模型两阶段示意图](../images/05Infer02InferSpeedUp/01KVCache04.jpg)
-为实现高效推理，这个过程在实践中被划分为两个阶段：
 
-1. Prefill 阶段（Prompt phase）：Prefill 阶段的目标是一次性地、并行地处理用户输入的全部 Prompt，计算出用于预测第一个新 Token 的初始状态。
-2. Decode 阶段（Token generation phase）：在 Prefill 阶段完成后，模型进入逐个 Token 的生成阶段。在每一步中，模型都将上一步生成的 Token 加入到历史序列中，并以此为基础预测下一个 Token，直到生成结束符或达到最大长度。
+为实现高效推理，该过程被划分为两个核心阶段，二者在计算方式、并行度上存在显著差异：
 
-!!!!!!!!!!!!!!增加图更清楚 PD 两个阶段
+1. Prefill 阶段（Prompt 处理阶段）：一次性并行处理用户输入的全部 Prompt，计算所有 Token 的 K、V 向量及初始注意力状态，为第一个新 Token 生成提供基础。
+2. Decode 阶段（Token 生成阶段）：逐一生成新 Token，每一步仅输入上一轮生成的单个 Token，利用历史缓存的 KV 向量计算注意力，避免重复处理已有的历史序列。
 
-### 大模型推理计算分析
+### 2.2 推理计算瓶颈分析
 
-在了解了大模型的推理过程之后，现在来看在没有 KV Cache 的优化下，推理过程需要进行哪些计算。
-我们先来看单个 token 自回归推理的计算流程，它会依次经过以下核心模块：
+在未启用 KV Cache 时，推理过程的核心计算流程如下（以单个 Token 自回归为例），各模块依次执行：
 
-1. Embedding 层: 将输入的 Token 转换为其对应的词向量（Embedding Vector）。
-2. QKV 计算: 词向量通过与三个不同的权重矩阵（$W_q$，$W_k$，$W_v$）相乘，生成该 Token 的 Query、Key 和 Value 向量。
-3. 因果注意力计算 (Causal Attention): 在计算每个时间步的注意力时，只关注当前时间步及之前的内容
-4. 前馈神经网络 (FFN): 注意力计算的输出会进一步通过一个前馈神经网络，得到该层最终的输出。这个输出将作为下一层的输入，或在最后一层用于预测下一个 Token。
+1. Embedding 层：将输入 Token 映射为固定维度的词向量（Embedding Vector）。
+2. QKV 计算：词向量与权重矩阵 $W_q$、$W_k$、$W_v$ 相乘，生成 Query（查询）、Key（键）、Value（值）向量。
+3. Causal Attention 层：计算当前 Token 与所有历史 Token 的注意力分数，且仅允许关注“当前及之前”的 Token（通过掩码屏蔽未来位置）。
+4. FFN 层：注意力输出经 FFN 变换后，作为当前层输出（或用于最终 Token 预测）。
 
-整个过程的核心计算是注意力计算，其基础公式如下：
+整个过程的核心是**注意力计算**，其基础公式为：
 
 $$
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d}}\right)V
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 $$
 
-其中，$Q$ (Query), $K$ (Key), $V$ (Value) 矩阵由输入序列 $X$ 与对应的权重矩阵 $W_Q$, $W_K$, $W_V$ 相乘得到：
+其中，$Q$、$K$、$V$ 矩阵由输入序列 $X$ 与对应权重矩阵相乘得到：
 
 $$
 Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 $$
 
-为了方便描述，我们在之后的公式 he 中忽略 scale 项 $\sqrt{d}$。假设我们输入的 prompt 是 h，最终的输出是 hello。
+$\sqrt{d_k}$ 为缩放因子（$d_k$ 为 Key 向量维度），用于缓解注意力分数过大导致的 softmax 梯度消失问题，后续公式中为简化表述暂不体现。
 
-因为这里计算的是 casual attention，根据定义，第 t 个 token 的公式表示如下：
+由于因果注意力的约束，第 $t$ 个 Token 的注意力计算仅依赖前 $t$ 个 Token 的 K、V 向量，公式可展开为：
+
 $$
-Att_t = \text{softmax}\left( \frac{q_t K_t^T}{\sqrt{d_k}} \right) V_t \quad \text{其中 } K_t = \begin{pmatrix} k_1 \\ \vdots \\ k_t \end{pmatrix}, V_t = \begin{pmatrix} v_1 \\ \vdots \\ v_t \end{pmatrix}
-$$
-
-为了方便理解，在之后的步骤中，我们会将上述公式展开，用 $softmaxed$ 表示 softmax 对矩阵计算后的结果，来直观表示每一步的 attention 计算。
-
-第一步输入"h"的时候，attention 计算如下（图中 $\theta$ 代表 softmax 计算后的结果）：
-
-![without cache 计算示意图 1](../images/05Infer02InferSpeedUp/01KVCache05.jpg)
-
-如上图所示，计算公式如下：
-$$
-\text{Att}_1 = \text{softmaxed}(q_1 k_1^T) \cdot v_1
+Att_t = \text{softmax}\left( q_t K_t^T \right) V_t \quad \text{其中 } K_t = \begin{pmatrix} k_1 \\ \vdots \\ k_t \end{pmatrix}, V_t = \begin{pmatrix} v_1 \\ \vdots \\ v_t \end{pmatrix}
 $$
 
-最终计算出了 token "e"，然后下一步我们输入"e",这个时候的 attention 计算变成了：
+为直观展示计算过程，下文用 $\text{softmaxed}(·)$ 表示 softmax 运算后的结果。
 
-![without cache 计算示意图 2](../images/05Infer02InferSpeedUp/01KVCache06.jpg)
+#### 无 KV Cache 时计算冗余
 
-其计算公式为：
-$$
-\text{Att}_2 = \text{softmaxed}(q_2 k_1^T) \cdot v_1 + \text{softmaxed}(q_2 k_2^T) \cdot v_2
-$$
+以生成序列“hello”为例，分步拆解无 KV Cache 时的注意力计算：
 
-然后我们计算出了 token"l",我们下一步输入"l",这个时候 attention 计算为:
+1. 输入“h”（$t_1$），生成“e”（$t_2$）：
 
-![without cache 计算示意图 3](../images/05Infer02InferSpeedUp/01KVCache01.jpg)
+   ![without cache 计算示意图 1](../images/05Infer02InferSpeedUp/01KVCache05.jpg)
 
-其计算公式如下：
-$$
-\text{Att}_3 = \text{softmaxed}(q_3 k_1^T) \cdot v_1 + \text{softmaxed}(q_3 k_2^T) \cdot v_2 + \text{softmaxed}(q_3 k_3^T) \cdot v_3
-$$
+   计算公式：$\text{Att}_1 = \text{softmaxed}(q_1 k_1^T) \cdot v_1$
 
-通过上述步骤可以看到，每一次计算当前 token 的 attention 都需要之前所有 token 的 K/V,为了能够计算这些 k/v 值,当我们不采取任何优化措施时，我们需要将之前的 token 也作为输入，这样才能够计算得到我们需要的 attention。
+2. 输入“he”（$t_1, t_2$），生成“l”（$t_3$）：
 
-我们可以看到这种计算模式导致总计算复杂度与生成序列长度 $T$ 的平方成正比 $O(T^2)$，这样的复杂度是不能忍受的。
+   ![without cache 计算示意图 2](../images/05Infer02InferSpeedUp/01KVCache06.jpg)
 
-## KV Cache 基本原理
+   计算公式：$\text{Att}_2 = \text{softmaxed}(q_2 k_1^T) \cdot v_1 + \text{softmaxed}(q_2 k_2^T) \cdot v_2$
 
-!!!!!!! KV Cache 的原理可以参考这个增加更多的图例 https://zhuanlan.zhihu.com/p/662498827
+3. 输入“hel”（$t_1, t_2, t_3$），生成“l”（$t_4$）：
 
-因为有了上一节的分析，我们知道了每个 token decode 阶段具体需要用到哪些东西，由于大模型的推理是 Masked Self-Attention 每个 token 只能够看到其之前的 token 信息，因此当我们输入第 $t$ 个 token 的时候，$K_t$，$V_t$ 计算之后就是确定的，之后计算新的 attention 的时候，前面计算的 key 和 value 值并不会改变，我们自然想到直接将之前计算出的 key 和 value 向量缓存。
+   ![without cache 计算示意图 3](../images/05Infer02InferSpeedUp/01KVCache01.jpg)
 
-我们以第 3 个 token 为例，当我们缓存了之前的 K 与 V 之后，$\text{Att}_t$ 计算只与当前的 $Q_t$ 有关，因此，只需要将当前的 token 输入，那么 attention 矩阵计算变成了如下的流程：
+   计算公式：$\text{Att}_3 = \text{softmaxed}(q_3 k_1^T) \cdot v_1 + \text{softmaxed}(q_3 k_2^T) \cdot v_2 + \text{softmaxed}(q_3 k_3^T) \cdot v_3$
+
+可见，无 KV Cache 时，每一步生成新 Token 都需**重新输入全部历史序列**，重复计算所有历史 Token 的 K、V 向量及注意力分数。这导致总计算复杂度与生成序列长度 $T$ 呈**平方关系**（$O(T^2)$）——当序列长度达到 1k、10k 时，计算量会呈指数级增长，推理延迟急剧升高，完全无法满足实际应用需求。
+
+## 3. KV Cache 核心原理
+
+### 3.1 设计核心前提
+
+KV Cache 的优化逻辑源于一个关键观察：**因果注意力中，历史 Token 的 K、V 向量是“静态不变”的**。
+
+在自回归生成过程中，第 $t$ 个 Token 的 K、V 向量仅由其自身的词向量和模型权重决定，与后续生成的 Token 无关。一旦计算完成，这些 K、V 向量在后续所有步骤中都不会改变，可被永久复用。
+
+基于这一前提，自然的优化思路是：**将历史 Token 的 K、V 向量缓存至显存，后续生成新 Token 时，仅需计算当前 Token 的 Q 向量，直接与缓存的 K、V 矩阵进行注意力计算**，无需重复处理历史序列。
+
+### 3.2 优化后计算流程
+
+仍以生成“hello”的第三步（输入“hel”生成“l”）为例，启用 KV Cache 后的计算流程如下：
 
 ![with cache 计算示意图](../images/05Infer02InferSpeedUp/01KVCache02.jpg)
 
-我们可以清楚的看到与没有 KV Cache 相比,我们只需要输入当前的 token,然后利用缓存的 KV 就可以完成 KV 的计算。
+此时，注意力计算仅需两步：
 
-下图直观的展示了是否使用 KV Cache 的计算对比。当我们不使用 KV Cache 的时候，在每一步生成 token 的过程中，都需要将之前所有的 token 作为模型输入，才能计算出之前所有 token 的 K/V 值；当我们使用 KV Cache 时，因为已经将之前所有 token 的 K/V 进行缓存，所以只需要将当前的 token 传入模型计算即可，大大降低了推理时的计算量。
+1. 计算当前 Token（$t_3$）的 Q 向量 $q_3$；
+2. 直接调用缓存的历史 K 矩阵（$k_1, k_2$）和 V 矩阵（$v_1, v_2$），与 $q_3$ 计算注意力分数，再叠加当前 Token 的 $k_3$、$v_3$ 结果。
+
+计算公式简化为：
+
+$$
+\text{Att}_3 = \text{softmaxed}(q_3 [\text{Cache}_K^T, k_3^T]) \cdot [\text{Cache}_V^T, v_3^T]^T
+$$
+
+其中 $\text{Cache}_K = [k_1, k_2]^T$、$\text{Cache}_V = [v_1, v_2]^T$ 为缓存的历史 K、V 矩阵。
+
+### 3.3 有无 Cache 对比
+
+下图直观展示了 KV Cache 的优化效果：
 
 ![with cache 与 withoutcache 计算对比图](../images/05Infer02InferSpeedUp/01KVCache07.jpg)
 
-而从上述图解和公式中，也可以清晰的看到为什么没有 Q Cache。因为之前 token 的 Q 在之后 token 的 attention 计算中根本不会用到。
+- 无 KV Cache：每步需输入全部历史序列，重复计算所有 K、V 向量，计算量随序列长度平方增长；
+- 有 KV Cache：仅需输入当前 Token，复用历史 K、V 缓存，计算量随序列长度线性增长（$O(T)$），大幅降低推理开销。
 
-最后做一下总结，KV Cache 的目的就是缓存之前 token 的 K 和 V 向量，避免重复计算，以降低推理开销，其在大模型推理过程中的总流程如下：
+### 3.4 为何无需缓存 Q 向量
+
+一个关键疑问是：为何仅缓存 K、V 而非 Q？核心原因是**Q 向量的“使用场景唯一性”**：
+
+- K、V 向量的作用是“提供历史信息”，所有后续 Token 的注意力计算都需要调用；
+- Q 向量的作用是“查询历史信息”，仅用于当前 Token 的注意力计算，后续 Token 生成时无需复用（每个 Token 的 Q 向量都是独立的）。
+
+缓存 Q 向量不仅无法降低计算量，还会额外占用显存，因此 KV Cache 仅聚焦于 K、V 矩阵的缓存。
+
+### 3.5 完整工作流程
+
+KV Cache 在大模型推理中的完整流程如下：
 
 ![KV Cache 流程](../images/05Infer02InferSpeedUp/01KVCache03.jpg)
 
-在 prefill 阶段开始保存初始的 KV Cache，之后在 decode 阶段每一次计算都将最新的使用保存的 KV Cache 与当前 token 最新的计算出的 KV 进行拼接，进行 self-attention 的计算。
+1. Prefill 阶段：并行处理输入 Prompt 的所有 Token，计算每个 Token 的 K、V 向量，缓存至显存，同时完成初始注意力计算，生成第一个新 Token；
+2. Decode 阶段：
+   - 输入上一轮生成的单个 Token，计算其 Q、K、V 向量；
+   - 将新 Token 的 K、V 向量拼接至缓存的 KV 矩阵中，更新 Cache；
+   - 用新 Token 的 Q 向量与更新后的 KV 矩阵计算注意力分数，经 FFN 后生成下一个 Token；
+3. 重复 Decode 阶段，直至生成终止符或达到最大序列长度。
 
-## KV Cache 具体实现
+## 4. KV Cache 实现方案
 
-了解了 KV Cache 的原理之后，其实现变的非常简单，本质上就是在上一次缓存的 Key 和 Value 上做 concat。
+KV Cache 的核心实现逻辑是“缓存历史 K、V 向量 + 新向量拼接更新”，随着大模型框架的发展，实现方式从早期的手动拼接演进为标准化的 Cache 类封装，灵活性和扩展性显著提升。
 
-### 早期 KV Cache 实现
+### 4.1 早期手动拼接实现
 
-!!!!!!! 给具体的代码加上中文注释哦
-
-我们以 huggingface 的 Transformer 库的 gpt2 的实现为例[transformers/src/transformers/models/gpt2/modeling_gpt2.py](https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py)来看具体实现过程。
-
-早期 KV Cache 的实现如下：
+以 Hugging Face Transformers 库中 GPT-2 的早期实现为例，KV Cache 通过元组（Tuple）存储，手动进行张量拼接更新：
 
 ```python
 # 检查是否存在上一轮的缓存 (layer_past)
 if layer_past is not None:
         past_key, past_value = layer_past
-        # 将之前的 key 和当前计算出的 key 拼接
+        # 将之前的 key 和当前计算出的 key 拼接（维度：-2 对应序列长度维度）
         key = torch.cat((past_key, key), dim=-2)
         # 将之前的 value 和当前计算出的 value 拼接
         value = torch.cat((past_value, value), dim=-2)
@@ -136,30 +160,26 @@ if layer_past is not None:
         present = None
 ```
 
-在每层中，每个头的 Key 向量和 Value 向量存储在内存中。使用`layer_past`变量进行存储，其维度为`[n, 2, b, h, s, d]`，每个维度的含义如下：
+#### 缓存数据结构说明
 
-- 第一维 num_layers：以每一个堆叠的 Block 为单位，例如堆叠 12 层，则一共有 12 组 Key、Value 信息。
-- 第二维 2：代表 Key 和 Value 这两个信息对象，索引 0 是 Key 向量，索引 1 是 Value 向量。
-- 第三维 batch_size：代表 batch_size，和输入需要推理的文本条数相等，如果输入是一条文本，则 b=1。
-- 第四维 num_heads：代表注意力头的数量，例如每层有 12 个头，则 h=12。
-- 第五维 seq_len：代表截止到当前 token 为止的文本长度，在每一个历史 token 位置上该 token 在每一层每个头下的 Key，Value 信息。
-- 第六维 d：代表 Key、Value 向量的映射维度，若 token 总的映射维度为 768，注意力头数为 12，则 d=768/12=64。
+早期实现中，`layer_past` 存储每层每个注意力头的 K、V 向量，维度为 `[2, batch_size, num_heads, seq_len, head_dim]`，各维度含义如下：
 
-### 通过 Cache 类实现
+- 第一维（2）：固定存储 Key（索引 0）和 Value（索引 1）；
+- 第二维（batch_size）：推理批次大小（如同时处理 16 条请求则为 16）；
+- 第三维（num_heads）：注意力头数量（如 GPT-2 每层 12 个头）；
+- 第四维（seq_len）：当前缓存的序列长度（Prompt 长度 + 已生成 Token 数）；
+- 第五维（head_dim）：单个注意力头的向量维度（如 GPT-2 总隐藏层维度 768，12 个头则为 64）。
 
-这种直接在模型代码中通过元组（Tuple）传递之前 KV 缓存并手动`torch.cat`的方式，虽然直观，但存在几个严重的问题：
+### 4.2 标准 Cache 类实现
 
-1. 代码冗余：每一个支持 KV Cache 的模型都需要在自己的 Attention 模块中重复编写几乎完全相同的逻辑，一旦需要修改缓存逻辑，需要在不同的文件中进行修改。
-2. 扩展性不足：随着大模型技术的发展，出现了多种不同的 KV Cache 策略，比如`SinkCache`，通过抛弃过去的 tokens，允许模型生成超出其上下文呢的长度。
+早期手动拼接方案存在明显缺陷：代码冗余（每个模型需重复实现拼接逻辑）、扩展性差（无法适配复杂缓存策略）。为此，Transformers 库引入了 `Cache` API（[transformers/src/transformers/cache_utils.py](https://github.com/huggingface/transformers/blob/main/src/transformers/cache_utils.py)），将 KV 缓存封装为专用类，统一管理存储、更新、重排等逻辑。
 
-为了解决上述问题，huggingface transformers 库引入了`Cache` API（[transformers/src/transformers/cache_utils.py ]）(https://github.com/huggingface/transformers/blob/main/src/transformers/cache_utils.py)，将 KV 缓存封装在一个专用的`Cache`对象中，这个对象不仅负责存储数据，还负责管理自身的更新逻辑。
-
-`Cache`类主要成员与函数如下：
+#### Cache 类核心接口
 
 ```python
 class Cache:
     """
-    所有缓存类的基类、抽象类。具体的数据结构由各个子类实现。
+    所有缓存类的基类（抽象类），具体逻辑由子类实现
     """
     is_compileable = False
 
@@ -174,103 +194,143 @@ class Cache:
         cache_kwargs: Optional[dict[str, Any]] = None,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         """
-        更新缓存的核心方法。用新的 key_states 和 value_states 来更新指定层 (layer_idx) 的缓存。
-        返回:一个包含更新后、完整的 key 和 value 状态的元组。
+        核心更新方法：将新计算的 K/V 向量更新到指定层缓存
+        参数：
+            key_states/value_states：当前 Token 的 K/V 向量
+            layer_idx：当前层索引（如第 3 层 Transformer 块）
+            cache_kwargs：额外参数（如 cache_position 指定拼接位置）
+        返回：更新后的完整 K/V 向量
         """
         raise NotImplementedError("Make sure to implement `update` in a subclass.")
 
     def get_seq_length(self, layer_idx: Optional[int] = 0) -> int:
-        """返回缓存中状态的序列长度。可以任选传入一个层索引。"""
+        """返回指定层缓存的序列长度"""
 
     def get_max_cache_shape(self) -> Optional[int]:
-        """返回缓存对象的最大序列长度（即最大容量）。"""
+        """返回缓存的最大容量（支持的最大序列长度）"""
         
     def get_usable_length(self, new_seq_length: int, layer_idx: Optional[int] = 0) -> int:
-        """给定新输入的序列长度，返回缓存的可用长度。"""
+        """根据新输入序列长度，返回当前缓存的可用长度（适配滑动窗口等策略）"""
 
     def reorder_cache(self, beam_idx: torch.LongTensor):
-        """为集束搜索（beam search）重排缓存，根据给定的选定束索引。"""
+        """为束搜索（Beam Search）重排缓存：根据选定的束索引调整 K/V 顺序"""
 ```
 
-现在模型代码处理 KV Cache 的操作更加简单，只需要调用`update()`函数即可，具体的拼接逻辑由`Cache`类完成，如下所示：
+#### 模型集成方式
+
+现在模型仅需调用 `Cache` 类的 `update` 方法即可完成缓存管理，无需关注底层拼接逻辑，代码简洁且可复用：
 
 ```python
 # 检查是否存在缓存对象 (past_key_value)
 if past_key_value is not None:
     if isinstance(past_key_value, EncoderDecoderCache):
-        if is_cross_attention: # 如果是交叉注意力层，则从容器中取出交叉注意力的缓存
+        if is_cross_attention: # 交叉注意力层：取出对应的交叉注意力缓存
             past_key_value = past_key_value.cross_attention_cache
-        else: # 否则取出普通的自注意力缓存
+        else: # 自注意力层：取出自注意力缓存
             past_key_value = past_key_value.self_attention_cache
-    # 准备传递给 update 方法的额外参数，如 cache_position 用于更精细的内存操作
+    # 缓存更新参数（cache_position 标记新 Token 的序列位置）
     cache_kwargs = {"cache_position": cache_position}
-    # 调用缓存对象的 update 方法，将当前计算出的 key 和 value 更新到缓存中
-    # 该方法会返回拼接后完整的 key_states 和 value_states
+    # 调用 update 方法更新缓存，返回完整 K/V 向量
     key_states, value_states = past_key_value.update(
         key_states, value_states, self.layer_idx, cache_kwargs=cache_kwargs
     )
 ```
 
-关于如何开启/关闭 KV Cache，transformers 库的`generate`方法通过`use_cache`参数来指定是否开启 KV Cache。
+#### 启用/关闭方式
 
-## KV Cache 显存分析
+Transformers 库的 `generate` 方法通过 `use_cache` 参数控制 KV Cache：
 
-!!!!!!! 可以增加在长序列场景，KVCache 的增加的分析，特别是现在推理都需要长序列，对显存的影响
+- `use_cache=True`（默认）：启用 KV Cache，优先保证推理速度；
+- `use_cache=False`：关闭 KV Cache，节省显存（适用于显存不足的场景）。
 
-值得注意的是，KV Cache 的显存占用不可忽视。KV Cache 的显存占用公式如下：
+### 4.3 核心优化点
+
+标准化 `Cache` 类的设计带来两大核心优势：
+
+1. 支持复杂缓存策略：如 `SinkCache`（抛弃早期 Token 以支持超长序列）、`SlidingWindowCache`（滑动窗口缓存，仅保留最近 N 个 Token 的 K/V）等，可通过子类扩展实现；
+2. 兼容模型并行与分布式推理：缓存对象可被多个 GPU 节点共享，支持跨设备缓存同步，适配大规模模型部署。
+
+## 5. KV Cache 显存开销分析
+
+KV Cache 虽能降低计算量，但会显著占用显存——其显存开销与序列长度呈线性增长，是长序列推理的核心显存瓶颈。
+
+### 5.1 显存占用公式
+
+KV Cache 的显存占用可通过以下公式精确计算：
 
 $$
-Cache_Memory = 2 * num_layers * batch_size * seq_len * hidden_size * precision_in_bytes
+\text{Cache}_\text{Memory} = 2 \times \text{num_layers} \times \text{batch_size} \times \text{seq_len} \times \text{hidden_size} \times \text{precision}_\text{bytes}
 $$
 
-其中：
+各参数含义：
 
-- `2` 代表需要保存 K/V Cache
-- `num_layers` 代表模型层数
-- `batch_size`是批次大小
-- `seq_len` 指当前需要缓存的序列长度，等于 Prompt 的长度加上已经生成的 Token 数量
-- `hidden_size` 指的是隐藏层维度
-- `precision_in_bytes` 指的是用于存储每个数值的字节数,取决于模型的精度，如 FP32 需要 4 字节。
+- `2`：需同时缓存 K 和 V 两个矩阵；
+- `num_layers`：模型的 Transformer 块层数（如 GPT-3 为 96 层）；
+- `batch_size`：推理批次大小（同时处理的请求数）；
+- `seq_len`：缓存的序列总长度（Prompt 长度 + 已生成 Token 数）；
+- `hidden_size`：模型的总隐藏层维度（如 GPT-3 为 12288）；
+- `precision_bytes`：数据精度对应的字节数（FP32=4、FP16=2、BF16=2、INT8=1、INT4=0.5）。
 
-我们以 GPT3-175B 为例估算 KV Cache 占用显存，该模型主要参数如下：
+### 5.2 典型模型量化示例
 
-| 模型    | 参数量 | 层数 | 隐藏层维度 |
-| --------  | ----------- | -----| -----|
-| GPT3     | 175B      |  96 |  12288 |
+以 GPT-3 175B 模型为例，对比不同序列长度、精度下的 KV Cache 显存占用（批次大小=16）：
 
-我们假设序列总长度为 1024，批次大小为 16，精度为 FP16，则 KV Cache 占用显存为 $2 \times 96 \times 16 \times 1024 \times 12288 \times 2 / 1024 / 1024 / 1024 = 72 GB$。
+| 模型参数       | 数值       |
+|----------------|------------|
+| 参数量         | 175B       |
+| 层数（num_layers） | 96         |
+| 隐藏层维度（hidden_size） | 12288 |
 
-这个显存占用量已经约为大模型参数量的一半，消耗了大量的显存资源，这也正是针对 KV Cache 的内存优化在大模型推理领域至关重要的原因。
+#### 常规序列长度（seq_len=1024）
 
-### 长序列场景
-当前大模型推理向着支持更长上下文发展，随着序列长度的增加，KV Cache 线性增长，KV Cache 的显存占用成为了一个核心瓶颈。我们仍以上述 GPT-3 模型为例，当我们将序列长度从常规的 1024 扩展到目前常见的 32k，其 KV Cache 的显存占用将会变为：
- $2 \times 96 \times 16 \times 32768 \times 12288 \times 2 / 1024 / 1024 / 1024 = 2304 GB = 2.25 TB$
- 经过计算，在 32k 的序列长度下 KV Cache 的显存就需要 2.25TB，这样大的显存需求使得未经优化的长序列推理几乎是不可能做到的。
+- FP32 精度：$2 \times 96 \times 16 \times 1024 \times 12288 \times 4 / 1024^3 = 144$ GB；
+- FP16/BF16 精度：$2 \times 96 \times 16 \times 1024 \times 12288 \times 2 / 1024^3 = 72$ GB；
+- INT8 量化：$2 \times 96 \times 16 \times 1024 \times 12288 \times 1 / 1024^3 = 36$ GB；
+- INT4 量化：$2 \times 96 \times 16 \times 1024 \times 12288 \times 0.5 / 1024^3 = 18$ GB。
 
-这种与序列长度成正比的显存增长，是制约大模型走向更长上下文的核心瓶颈之一。因此，如何有效管理和压缩 KV Cache，特别是在长序列场景下，成为了一个迫切需要解决的问题。因此催生了 PagedAttention，KV Cache 量化，滑动窗口注意力等一系列关键的推理优化技术。
+可见，FP16 精度下 KV Cache 显存占用已达 72 GB，约为 GPT-3 模型参数量（FP16 下约 350 GB）的 20%——这一开销在多批次、长序列场景下会急剧扩大。
 
-## 总结与思考
+### 5.3 长序列场景瓶颈
 
-1. KV Cache 通过缓存历史 Token 的 Key 和 Value 矩阵，避免自回归生成过程中的重复计算，将注意力计算复杂度从 O(T²)降至 O(T)，显著提升大模型推理效率。
+当前大模型推理逐渐向超长上下文（如 32k、64k、128k）演进，而 KV Cache 显存占用与序列长度呈线性增长，成为核心制约因素。
 
-2. Decode 阶段，模型仅需将当前 Token 的 Q 向量与缓存的 K/V 矩阵拼接，直接计算注意力输出，无需重新处理全部历史 Token（如公式 $\text{Att}_t = \text{softmax}(q_t \cdot \text{Cache}_K^T) \cdot \text{Cache}_V$ 所示）。
+仍以 GPT-3 175B 模型（batch_size=16、FP16 精度）为例，当序列长度扩展至 32k 时：
 
-3. KV Cache 显存占用公式为 $2 \times \text{层数} \times \text{批大小} \times \text{序列长} \times \text{隐藏层维度} \times \text{精度字节}$，当模型序列越长，显存消耗越高。
+$$
+\text{Cache}_\text{Memory} = 2 \times 96 \times 16 \times 32768 \times 12288 \times 2 / 1024^3 = 2304 \text{ GB} = 2.25 \text{ TB}
+$$
 
-## 本节视频
+2.25 TB 的显存需求远超当前单卡最大显存（如 A100 为 80 GB、H100 为 80/160 GB），即使采用多卡模型并行，也需数十张 GPU 才能满足——未经优化的 KV Cache 完全无法支撑超长序列推理。
 
-<html>
-<iframe src="https:XXXXXXXXXX&bvid=BV1s5KfzzEbo&cid=30712332864&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-</html>
+### 5.4 显存优化技术方向
+
+长序列场景下的 KV Cache 显存瓶颈，催生了一系列针对性优化技术：
+
+1. 量化压缩：如 FP8/INT8/INT4 量化 KV Cache，在保证精度损失可控的前提下降低显存占用；
+2. 分页管理：如 PagedAttention，将 KV Cache 拆分为固定大小的块，动态分配显存，减少碎片；
+3. 滑动窗口注意力：仅缓存最近 N 个 Token 的 KV，丢弃早期 Token（如 Llama 3 的 128k 上下文依赖此技术）；
+4. 稀疏注意力：仅计算当前 Token 与关键历史 Token 的注意力，减少 KV Cache 存储量。
+
+## 6. 总结与思考
+
+KV Cache 的本质是以空间换时间，通过缓存历史 Token 的 K、V 矩阵，将注意力计算复杂度从 $O(T^2)$ 降至 $O(T)$，是大模型推理效率提升的关键技术。
+
+Decode 阶段仅需输入当前 Token，计算其 Q 向量后，与缓存的 KV 矩阵直接进行注意力计算，无需重复处理历史序列；新 Token 的 K、V 向量会拼接至缓存，供后续步骤复用。
+
+KV Cache 显存占用公式为 $2 \times \text{num_layers} \times \text{batch_size} \times \text{seq_len} \times \text{hidden_size} \times \text{precision}_\text{bytes}$，与序列长度呈线性增长，是长序列推理的核心显存瓶颈。
 
 ## 引用与参考
 
-- https://arxiv.org/pdf/2311.18677
-- https://zhuanlan.zhihu.com/p/624740065
-- https://www.cnblogs.com/rossiXYZ/p/18799503
-- https://zhuanlan.zhihu.com/p/630832593
-- https://zhuanlan.zhihu.com/p/662498827
-!!!!!!!! 可以参考下面提供的链接，再补充一些小细节
-- https://zhuanlan.zhihu.com/p/662498827
-- https://blog.csdn.net/taoqick/article/details/137476233
-- https://blog.csdn.net/ningyanggege/article/details/134564203
+[1] Liu C, Chen Y, Zhou F, et al. Fast Inference of Large Language Models with Dynamic Speculative Decoding(Preprint/OL). (2023-11-30) (2025-11-03). https://arxiv.org/pdf/2311.18677.
+
+[2] 机器学习算法与 Python 学习。大模型推理优化： speculative decoding 原理与实践 (EB/OL). (2023-05-12) (2025-11-03). https://zhuanlan.zhihu.com/p/624740065.
+
+[3] rossiXYZ. 深入解析 vLLM 推理框架的性能优化技巧 (EB/OL). (2024-04-10) (2025-11-03). https://www.cnblogs.com/rossiXYZ/p/18799503.
+
+[4] 人工智能前沿科技。大模型分布式推理：模型并行与数据并行实践 (EB/OL). (2023-06-08) (2025-11-03). https://zhuanlan.zhihu.com/p/630832593.
+
+[5] 深度学习算法工程师。大模型 KV Cache 优化：从原理到工程实现 (EB/OL). (2023-09-15) (2025-11-03). https://zhuanlan.zhihu.com/p/662498827.
+
+Taoqick. (2024, March 18). vLLM inference framework deployment and performance tuning guide. CSDN. https://blog.csdn.net/taoqick/article/details/137476233
+
+Ningyanggege. (2023, November 10). Large model inference memory optimization: PagedAttention and video memory scheduling strategies. CSDN. https://blog.csdn.net/ningyanggege/article/details/134564203

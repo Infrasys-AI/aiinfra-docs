@@ -2,9 +2,11 @@
 
 # 01. 容器隔离从进程到命名空间(DONE)
 
-Author by: 张柯帆，ZOMI
+> Author by: 张柯帆，ZOMI
 
 容器技术的隔离本质，其核心在于利用 Linux 内核的 **Namespace** 和 **Cgroups** 两大机制。其中，Namespace 是实现“视图隔离”的关键——它让进程“误以为”自己独占了系统资源（如进程树、网络栈、文件系统），而这一切的前提，是理解“进程”这个操作系统最基本的资源载体。本文将从进程原理切入，深入剖析 Namespace 的内核逻辑，最终串联起两者如何协同构建容器的隔离边界。
+
+![](../images/03DockCloud02DockerK8s/01Container04.png)
 
 ## 1. 容器的出现
 

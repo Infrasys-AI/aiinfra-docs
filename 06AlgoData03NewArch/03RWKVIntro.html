@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="04. RWKV 基本架构原理" />
+<meta property="og:title" content="RWKV 模型架构的深度技术分析" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData03NewArch/03RWKVIntro.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 张嘉瑶!!!!!! 同样的问题，都是大模型生成的 I. RWKV 架构简介: A. 背景:对高效序列模型的探索: Transformer 架构（例如 BERT 和 GPT）在自然语言处理(NLP)及其他序列建模任务中占据主导地位，其强大之处在于能够捕捉长距离依赖关系并支持并行化训练 1 。然而，标准 Transformer 的自注意力机制存在计算和内存复杂度随序列长度呈..." />
+<meta property="og:description" content="Author by: 张嘉瑶 RWKV 架构核心机制：WKV 与内部状态拟合: 自注意力让 Transformer 能一次看全局，训练并行也很舒服，但代价是开销跟序列长度成平方增长 O(L^2) 。一旦上下文拉到很长，这个成本就会蹭蹭往上走，显存、算力、费用都扛不住。这也是为什么今天大家做超长上下文，总会撞到一堵“又贵又慢”的墙。 RWKV 的定位：把 RNN 和 Transformer 的..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: 张嘉瑶!!!!!! 同样的问题，都是大模型生成的 I. RWKV 架构简介: A. 背景:对高效序列模型的探索: Transformer 架构（例如 BERT 和 GPT）在自然语言处理(NLP)及其他序列建模任务中占据主导地位，其强大之处在于能够捕捉长距离依赖关系并支持并行化训练 1 。然..." />
-<meta name="description" content="Author by: 张嘉瑶!!!!!! 同样的问题，都是大模型生成的 I. RWKV 架构简介: A. 背景:对高效序列模型的探索: Transformer 架构（例如 BERT 和 GPT）在自然语言处理(NLP)及其他序列建模任务中占据主导地位，其强大之处在于能够捕捉长距离依赖关系并支持并行化训练 1 。然而，标准 Transformer 的自注意力机制存在计算和内存复杂度随序列长度呈..." />
+<meta property="og:image:alt" content="Author by: 张嘉瑶 RWKV 架构核心机制：WKV 与内部状态拟合: 自注意力让 Transformer 能一次看全局，训练并行也很舒服，但代价是开销跟序列长度成平方增长 O(L^2) 。一旦上下文拉到很长，这个成本就会蹭蹭往上走，显存、算力、费用都扛不住。这也是为什么今天大家做超长上下文，总会撞到一堵..." />
+<meta name="description" content="Author by: 张嘉瑶 RWKV 架构核心机制：WKV 与内部状态拟合: 自注意力让 Transformer 能一次看全局，训练并行也很舒服，但代价是开销跟序列长度成平方增长 O(L^2) 。一旦上下文拉到很长，这个成本就会蹭蹭往上走，显存、算力、费用都扛不住。这也是为什么今天大家做超长上下文，总会撞到一堵“又贵又慢”的墙。 RWKV 的定位：把 RNN 和 Transformer 的..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>04. RWKV 基本架构原理 &#8212; AIInfra AI基础设施</title>
+    <title>RWKV 模型架构的深度技术分析 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -74,17 +74,19 @@
     <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '06AlgoData03NewArch/03RWKVIntro';</script>
     <script src="https://assets.readthedocs.org/static/javascript/readthedocs-doc-embed.js"></script>
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="RWKV V5/6/7 架构演进" href="04RWKVEvolution.html" />
-    <link rel="prev" title="02.Efficient Transformer 结构" href="02Efficient.html" />
+    <link rel="next" title="RWKV-7 及其后续模型的演进、产业落地的战略分析" href="04RWKVEvolution.html" />
+    <link rel="prev" title="Efficient Transformer 结构" href="02Efficient.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 25, 2025"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
 
 <link
   rel="alternate"
@@ -244,7 +246,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03. Inference Time Scaling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
@@ -257,9 +259,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
@@ -276,6 +278,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
@@ -291,14 +294,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -315,24 +318,24 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
-
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
 </ul>
@@ -346,7 +349,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07%E5%A4%A7%E6%A8%A1%E5%9E%8BCKPT%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
@@ -359,12 +362,13 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups：容器资源控制关键(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -378,25 +382,29 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">上下文并行与长序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -410,7 +418,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
-
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -431,10 +438,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.参数高效微调算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.Reparameterization 算法原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -452,9 +459,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">02.大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/07LLM_In_Flash.html">LLM IN FLASH</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
@@ -463,6 +471,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
 </ul>
@@ -473,9 +483,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -483,9 +503,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/bitsandbytesINT8.html">bitsandbytes LLM.int8()源码阅读</a></li>
 </ul>
 </details></li>
@@ -506,14 +529,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
@@ -524,12 +546,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF实现MOE推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
@@ -537,13 +559,14 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型创新架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01Review.html">01.Transformer 回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02Efficient.html">02.Efficient Transformer 结构</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">04. RWKV 基本架构原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="05SSM.html">S4模型详解：结构化状态空间模型剖析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07MambaV2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09MoR.html">Mixture-of-Recursions, MoR 架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08RetNet.html">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
@@ -557,7 +580,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -607,7 +632,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B进行RAG代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
 </ul>
 </details></li>
@@ -843,7 +868,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>04. RWKV 基本架构原理</h1>
+    <h1>RWKV 模型架构的深度技术分析</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -853,41 +878,27 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i-rwkv">I. RWKV 架构简介</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a">A. 背景:对高效序列模型的探索</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rwkv-rnn-transformer">B. RWKV 的出现:连接 RNN 效率与 Transformer 性能</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-wkv">RWKV 架构核心机制：WKV 与内部状态拟合</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">RWKV 的核心架构原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">RWKV 核心优势的技术</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">RWKV 的演进:版本逐代分析</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">表 1: RWKV 版本演进概要</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-4">RWKV-4:奠定基础</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-5-eagle-rwkv-6-finch">RWKV-5(Eagle)与 RWKV-6(Finch):增强表达能力与自适应性</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-7-goose">RWKV-7(Goose):推进状态动态与能力边界</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-x">RWKV-X:混合架构赋能超长上下文处理</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ii-rwkv">II. RWKV 的核心架构原理</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-rwkv-receptance-weighted-key-value">A. RWKV(Receptance Weighted Key Value)机制解析</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-time-mixing">B. 时间混合(Time-Mixing)模块:捕捉时间依赖性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-channel-mixing">C. 通道混合(Channel-Mixing)模块:特征优化</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d">D. 线性计算复杂度与状态表示</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e">E. 双模式操作:可并行化训练与高效循环推理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iv">IV. 性能、应用与对比分析</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#a">A. 各版本及任务的基准性能</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#b">B. 主要应用领域</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c-rwkv-transformer">C. RWKV 与 Transformer:效率与能力的正面对比</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iii-rwkv">III. RWKV 的演进:版本逐代分析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">表 1: RWKV 版本演进概要</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-rwkv-4">A. RWKV-4:奠定基础</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rwkv-5-eagle-rwkv-6-finch">B. RWKV-5(Eagle)与 RWKV-6(Finch):增强表达能力与自适应性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-rwkv-7-goose">C. RWKV-7(Goose):推进状态动态与能力边界</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rwkv-x">D. RWKV-X:混合架构赋能超长上下文处理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">优势、局限性与未来展望</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">参考文献</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iv">IV. 性能、应用与对比分析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">A. 各版本及任务的基准性能</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b">B. 主要应用领域</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-rwkv-transformer">C. RWKV 与 Transformer:效率与能力的正面对比</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v">V. 优势、局限性与未来展望</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-rwkv">A. RWKV 架构的主要优势</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">B. 已识别的挑战与局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c">C. 未来潜在的研究与发展方向</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-rwkv">VI. 结论:RWKV 在大型语言模型领域中的定位</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#works-cited">Works Cited</a></li>
 </ul>
             </nav>
         </div>
@@ -900,78 +911,77 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section id="rwkv">
-<h1>04. RWKV 基本架构原理<a class="headerlink" href="#rwkv" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="rwkv">
+<h1>RWKV 模型架构的深度技术分析<a class="headerlink" href="#rwkv" title="Link to this heading">#</a></h1>
 <blockquote>
 <div><p>Author by: 张嘉瑶</p>
 </div></blockquote>
-<p>!!!!!!
-同样的问题，都是大模型生成的</p>
-<section id="i-rwkv">
-<h2>I. RWKV 架构简介<a class="headerlink" href="#i-rwkv" title="Link to this heading">#</a></h2>
-<section id="a">
-<h3>A. 背景:对高效序列模型的探索<a class="headerlink" href="#a" title="Link to this heading">#</a></h3>
-<p>Transformer 架构（例如 BERT 和 GPT）在自然语言处理(NLP)及其他序列建模任务中占据主导地位，其强大之处在于能够捕捉长距离依赖关系并支持并行化训练<sup>1</sup>。然而，标准 Transformer 的自注意力机制存在计算和内存复杂度随序列长度呈二次方增长(O(N²))的瓶颈<sup>1</sup>。</p>
-<p>为了缓解此问题，研究者尝试了稀疏注意力机制（如 BigBird<sup>6</sup>和 Longformer<sup>7</sup>）、线性注意力机制（如 Linear Transformers<sup>9</sup>和 Performers<sup>9</sup>）以及模型压缩技术<sup>3</sup>。与此同时，循环神经网络(RNN)具有推理时线性扩展、恒定内存消耗等优势，但也存在并行化困难、梯度消失/爆炸以及长距离依赖建模能力较弱等局限性<sup>1</sup>。</p>
-<p>这种对兼具 Transformer 能力和 RNN 效率模型的追求，推动了 RWKV 等新型架构的出现。RWKV 与 Mamba<sup>5</sup>、RetNet<sup>3</sup>等共同构成了序列建模领域的趋同演化。</p>
+<section id="rwkv-wkv">
+<h2>RWKV 架构核心机制：WKV 与内部状态拟合<a class="headerlink" href="#rwkv-wkv" title="Link to this heading">#</a></h2>
+<p>自注意力让 Transformer 能一次看全局，训练并行也很舒服，但代价是开销跟序列长度成平方增长 <span class="math notranslate nohighlight">\(O(L^2)\)</span>。一旦上下文拉到很长，这个成本就会蹭蹭往上走，显存、算力、费用都扛不住。这也是为什么今天大家做超长上下文，总会撞到一堵“又贵又慢”的墙。</p>
+<p><span class="math notranslate nohighlight">\(RWKV\)</span> 的定位：把 RNN 和 Transformer 的好处糅在一起。<span class="math notranslate nohighlight">\(RWKV\)</span> 就是冲着这个痛点来的。思路很直接：训练时尽量学 Transformer 的并行友好，推理时借 RNN 的线性效率省算力。它用了一种“线性注意力”的设计，让序列计算更像 O(L) 的流水线，目标是在不牺牲太多效果的前提下，把长序列的成本打下来。简单说，就是想要“训练快、推理省、上下文还长”的平衡解。</p>
 </section>
-<section id="b-rwkv-rnn-transformer">
-<h3>B. RWKV 的出现:连接 RNN 效率与 Transformer 性能<a class="headerlink" href="#b-rwkv-rnn-transformer" title="Link to this heading">#</a></h3>
-<p>RWKV(Receptance Weighted Key Value)旨在融合 Transformer 的并行化训练优势和 RNN 的高效推理特性<sup>13</sup>。其核心目标是在保持 Transformer 级别性能的同时，实现 RNN 式运行，显著降低长上下文处理的计算成本、内存使用和推理延迟<sup>1</sup>。</p>
-<p>RWKV 的显著特点是<strong>完全不使用自注意力机制</strong><sup>15</sup>，表明其核心思想认为自注意力的益处可通过更高效的机制（如时间混合模块）实现。该项目由彭博(Blink_DL)提出，现已成为 Linux 基金会的开源社区项目<sup>15</sup>。</p>
-</section>
-</section>
-<hr class="docutils" />
-<section id="ii-rwkv">
-<h2>II. RWKV 的核心架构原理<a class="headerlink" href="#ii-rwkv" title="Link to this heading">#</a></h2>
-<section id="a-rwkv-receptance-weighted-key-value">
-<h3>A. RWKV(Receptance Weighted Key Value)机制解析<a class="headerlink" href="#a-rwkv-receptance-weighted-key-value" title="Link to this heading">#</a></h3>
-<p>名称揭示其核心组件：</p>
-<ul class="simple">
-<li><p><strong>R(Receptance-感受态)</strong>：向量，控制允许多少过去信息影响当前状态，充当信息门控<sup>5</sup>。</p></li>
-<li><p><strong>W(Weight-权重)</strong>：可学习参数，包含位置相关衰减因子，对信息衰减建模至关重要<sup>5</sup>。</p></li>
-<li><p><strong>K(Key-键)</strong>：类似传统注意力中的“键”，代表当前词元的信息<sup>5</sup>。</p></li>
-<li><p><strong>V(Value-值)</strong>：类似传统注意力中的“值”，代表与“键”关联的信息内容<sup>5</sup>。</p></li>
-</ul>
-<p>该机制取代了 Transformer 的点积注意力<sup>1</sup>，以线性方式选择性地回忆和加权过去信息。其中**R(感受态)**尤为关键，它是一个动态学习机制，决定新信息与旧信息的整合比例。</p>
-</section>
-<section id="b-time-mixing">
-<h3>B. 时间混合(Time-Mixing)模块:捕捉时间依赖性<a class="headerlink" href="#b-time-mixing" title="Link to this heading">#</a></h3>
-<p>负责聚合序列中不同时间步的信息，扮演类似 Transformer 注意力的角色，但采用循环公式<sup>15</sup>。核心是使用 R、W、K、V 组件的<strong>指数移动加权平均</strong>：过去信息按可学习衰减率(w)衰减，新信息(k,v)被整合并由感受态(r)控制<sup>18</sup>。</p>
-<p>**词元转移(TokenShift)**机制通过插值当前与过去词元嵌入，显式访问邻近上下文信息<sup>19</sup>。</p>
-</section>
-<section id="c-channel-mixing">
-<h3>C. 通道混合(Channel-Mixing)模块:特征优化<a class="headerlink" href="#c-channel-mixing" title="Link to this heading">#</a></h3>
-<p>在词元级别操作，混合不同特征通道（嵌入维度）的信息<sup>15</sup>。类似 Transformer 的前馈网络(FFN)，同样使用词元转移和门控(R)控制信息混合<sup>18</sup>。</p>
-</section>
-<section id="d">
-<h3>D. 线性计算复杂度与状态表示<a class="headerlink" href="#d" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>线性复杂度(O(N))</strong>：训练（并行模式）和推理（循环模式）的时间复杂度均随序列长度 N 线性扩展，推理内存复杂度通常为 O(1)（仅存储当前状态）或 O(N)（保留所有中间状态）<sup>5</sup>。显著优于 Transformer 的 O(N²)。</p></li>
-<li><p><strong>状态表示</strong>：维护循环更新的隐藏状态，封装预测所需的历史信息<sup>13</sup>。状态性质（向量/矩阵值）随版本演进<sup>15</sup>。</p></li>
-</ul>
-</section>
-<section id="e">
-<h3>E. 双模式操作:可并行化训练与高效循环推理<a class="headerlink" href="#e" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>可并行化训练（“时间并行模式”）</strong>：训练时可并行处理序列所有词元<sup>1</sup>。</p></li>
-<li><p><strong>高效循环推理（“RNN 模式”）</strong>：推理时接收当前词元与前一个状态，输出下一个词元与新状态。优势：</p>
-<ul>
-<li><p>恒定词元推理时间（与上下文长度无关）</p></li>
-<li><p>恒定内存使用（仅存储当前状态，无需 Transformer 的完整 KV 缓存）<sup>15</sup></p></li>
-<li><p>理论上支持“无限”上下文<sup>15</sup></p></li>
-</ul>
-</li>
-</ul>
-<p><strong>双模式特性是 RWKV 成功的核心基石</strong>，使其能同时利用 Transformer 的并行训练优势和 RNN 的高效推理能力。</p>
-</section>
-</section>
-<hr class="docutils" />
-<section id="iii-rwkv">
-<h2>III. RWKV 的演进:版本逐代分析<a class="headerlink" href="#iii-rwkv" title="Link to this heading">#</a></h2>
-<p>RWKV 的发展反映了持续的迭代优化过程，每一版本都致力于解决前版的局限性或增强特定能力（如表达能力、长上下文处理）。</p>
 <section id="id1">
-<h3>表 1: RWKV 版本演进概要<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<h2>RWKV 的核心架构原理<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p><strong>RWKV(Receptance Weighted Key Value)机制解析</strong>
+名称揭示其核心组件：</p>
+<ul class="simple">
+<li><p><strong>R(Receptance-感受态)</strong>：向量，控制允许多少过去信息影响当前状态，充当信息门控。</p></li>
+<li><p><strong>W(Weight-权重)</strong>：可学习参数，包含位置相关衰减因子，对信息衰减建模至关重要。</p></li>
+<li><p><strong>K(Key-键)</strong>：类似传统注意力中的“键”，代表当前词元的信息。</p></li>
+<li><p><strong>V(Value-值)</strong>：类似传统注意力中的“值”，代表与“键”关联的信息内容。</p></li>
+</ul>
+<p>该机制取代了 Transformer 的点积注意力，以线性方式选择性地回忆和加权过去信息。其中<strong>R(Receptance-感受态)</strong> 尤为关键，它是一个动态学习机制，决定新信息与旧信息的整合比例。</p>
+<p><strong>第一性原理：内部模型 S 的持续拟合</strong></p>
+<ul class="simple">
+<li><p>核心想法
+RWKV 的底层信念很朴素：模型的“内心世界”（内部状态 S）要一直去贴合“外部世界”。这有点像早期的 fast weights 思路，把 RWKV 放在了更先进的循环网络家族里。</p></li>
+<li><p>把内部状态当“线性映射”
+可以把 S 理解成一个线性变换矩阵，目标是学会“从 key 到 value 的映射”。训练时，模型不断用梯度下降去微调 S，让预测出来的 value 更像真实的 value，说白了就是不停对齐外部信号的变化。</p></li>
+<li><p>会“分维度”地记忆和遗忘
+在更新 S 的公式里，每个维度都有自己的“遗忘速度”（衰减率 <span class="math notranslate nohighlight">\(w_t\)</span>）和“学习速度”（学习率 <span class="math notranslate nohighlight">\(η_t\)</span>）。这意味着模型能针对不同特征，学不同的记忆时长和更新节奏：该长期记的留久一点，该短期记的过一会儿就淡掉。正因为这种“非均匀”的记忆机制，RWKV 才能在保持线性复杂度的同时，还把效果做得不错。</p></li>
+</ul>
+<blockquote>
+<div><p>一句话总结：RWKV 一边把内部状态当作可学习的线性映射去持续贴合外部，一边用“按维度自适应的记忆/遗忘”来管控信息流，从而做到又省算力、又不太掉性能。</p>
+</div></blockquote>
+<p><strong>时间混合(Time-Mixing)模块:捕捉时间依赖性</strong></p>
+<p>简单说，RWKV 模型用了一个叫“时间混合”的模块来代替 Transformer 里的“自注意力”机制。这个模块的核心是 WKV 机制，它的好处是能高效地压缩和处理历史信息，有点像线性注意力。但用了更高效的方法，它能把之前所有的信息压缩成一个固定大小的“状态”，不用每次都回顾历史所有信息，所以效率很高。同时它通过一个带“时间衰减”的公式，让靠近当前的信息权重高，远的信息权重低，来融合过去和现在的信息，下面的公式就是把这个思想数学化了，其中 <span class="math notranslate nohighlight">\(w\)</span> 控制衰减速度，<span class="math notranslate nohighlight">\(u\)</span> 给当前词一个额外的权重加成，其中。最后，再用一个叫“接受度”的门控信号，像开关一样调节输出多少有用的内容,而不是全盘接收。</p>
+<p>我们可以把下面这个公式理解成一个“智能加权平均”的过程。它的核心思想是：在理解当前这个词的时候，离得近的词更重要，离得远的词重要性会衰减。</p>
+<div class="math notranslate nohighlight">
+\[ wkv_{t}=\frac{\sum_{i=1}^{t-1}e^{-(t-1-i)w+k_{i}}\odot v_{i}+e^{u+k_{t}}\odot v_{t}}{\sum_{i=1}^{t-1}e^{-(t-1-i)w+k_{i}}+e^{u+k_{t}}} \]</div>
+<p>它会根据信息的新旧程度（由 <span class="math notranslate nohighlight">\(w\)</span> 控制）和信息本身的重要性（由 <span class="math notranslate nohighlight">\(k\)</span> 决定），巧妙地混合过去的信息 (<span class="math notranslate nohighlight">\(v_1\)</span> 到 <span class="math notranslate nohighlight">\(v_{t-1}\)</span>)和当前的信息 (<span class="math notranslate nohighlight">\(v_t\)</span>)，最终合成一个代表“到现在为止我都知道了什么”的总结 <span class="math notranslate nohighlight">\(wkv_t\)</span>。</p>
+<p><strong>通道混合(Channel-Mixing)模块:特征优化</strong></p>
+<p>在 RWKV 模型中，Token Shift 负责在时间维度上传递信息（纵向，词与词之间），而通道混合负责在特征维度上处理信息（横向，一个词内部的各个特征之间）。它们俩配合，共同替代了 Transformer 中复杂的自注意力机制，实现了既高效又能理解上下文的序列建模。</p>
+<p>我们可以把通道混合想象成 Transformer 里的“前馈网络”。在同一个时间点上，对模型内部所有的特征通道进行信息交互和重新整合。就好像你在消化一个词的信息时，大脑里不同的区域（比如理解语义的、分析语法的、感受情绪的区域）需要立刻开个会，互相沟通一下，最终形成一个更丰富的综合理解。通道混合干的就是这个“内部开会消化”的活儿。</p>
+<p>Token Shift，负责“传递接力棒”，目的是让信息在时间上平滑流动，这是 RWKV 一个很有特色的设计。这就像一场接力赛。当前这个词 <span class="math notranslate nohighlight">\(（x_t）\)</span> 在起跑时，并不是从零开始，而是从上一个词 <span class="math notranslate nohighlight">\(（x_{t-1}）\)</span> 手里接过接力棒（一部分信息）再继续跑。参数 <span class="math notranslate nohighlight">\(μ\)</span> 就像是控制交接棒力度的手</p>
+<p>这种方式非常简单高效，确保了模型在处理序列时拥有平滑的“记忆流”，知道刚刚发生了什么，从而更好地理解上下文。</p>
+<section id="id2">
+<h3>RWKV 核心优势的技术<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p><strong>核心优势一：长文本也能又快又省</strong></p>
+<ul class="simple">
+<li><p>效率可预测（线性复杂度）：RWKV 处理文本的开销是“匀速涨”的。文本翻一倍，时间和内存大概也就翻一倍。对比之下，Transformer 是“加速涨”，文本一长成本就爆表。</p></li>
+<li><p>记忆更聚焦（状态表示）：RWKV 不用背着整包历史对话走，它只保留一个不断更新的“精简记忆包”（隐藏状态），里面都是后面推断真正需要的关键信息。</p></li>
+</ul>
+<p><strong>核心优势二：训练像并行怪兽，推理像高效译员</strong></p>
+<ul class="simple">
+<li><p>训练时（并行模式）：像超算一样，能同时看一大堆文本，学得快。</p></li>
+<li><p>推理时（循环模式）：像实时翻译器，每次只看最新输入和自己的“记忆包”，马上给结果。</p></li>
+</ul>
+<p>这套“双重模式”带来三件真好处：</p>
+<ul class="simple">
+<li><p>响应速度稳：聊多久都行，每个字出来的速度都差不多，不拖泥带水。</p></li>
+<li><p>资源占用小：不需要成堆历史缓存，内存用量小而且基本固定。</p></li>
+<li><p>上下文理论无上限：对话可以一直续，不被长度卡脖子。</p></li>
+</ul>
+<blockquote>
+<div><p>一句话总结： RWKV 的双模式设计，把 Transformer 的“学得快”和 RNN 的“用得省”合到了一起，是个很有潜力、很接地气的架构。</p>
+</div></blockquote>
+</section>
+<section id="id3">
+<h3>RWKV 的演进:版本逐代分析<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>RWKV 的发展反映了持续的迭代优化过程，每一版本都致力于解决前版的局限性或增强特定能力（如表达能力、长上下文处理）。</p>
+<section id="id4">
+<h4>表 1: RWKV 版本演进概要<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>版本(昵称)</p></th>
@@ -989,12 +999,12 @@ document.write(`
 <tr class="row-odd"><td><p>RWKV-5(Eagle)</p></td>
 <td><p>多头<strong>矩阵值状态</strong>,<strong>动态循环</strong>,重构感受态,辅助门控机制,lerp 词元转移</p></td>
 <td><p>增强表达能力,提升多语言处理能力</p></td>
-<td><p>&quot;Eagle and Finch&quot; arXiv:2404.05892<sup>15</sup></p></td>
+<td><p>&quot;Eagle and Finch&quot; arXiv:2404.05892</p></td>
 </tr>
 <tr class="row-even"><td><p>RWKV-6(Finch)</p></td>
 <td><p>数据驱动的时间混合和词元转移(ddlerp),<strong>LoRA 动态增强</strong>学习参数,数据依赖衰减因子 wt</p></td>
 <td><p>进一步增强表达能力和自适应性,提升多语言处理能力</p></td>
-<td><p>&quot;Eagle and Finch&quot; arXiv:2404.05892<sup>15</sup></p></td>
+<td><p>&quot;Eagle and Finch&quot; arXiv:2404.05892</p></td>
 </tr>
 <tr class="row-odd"><td><p>RWKV-7(Goose)</p></td>
 <td><p><strong>广义化 Delta 法则</strong>,向量值门控,上下文学习率,宽松值替换规则,<strong>动态状态演化</strong></p></td>
@@ -1010,113 +1020,141 @@ document.write(`
 </table>
 </div>
 </section>
-<section id="a-rwkv-4">
-<h3>A. RWKV-4:奠定基础<a class="headerlink" href="#a-rwkv-4" title="Link to this heading">#</a></h3>
+<section id="rwkv-4">
+<h4>RWKV-4:奠定基础<a class="headerlink" href="#rwkv-4" title="Link to this heading">#</a></h4>
 <ul class="simple">
-<li><p>首个公开发布版本，确立核心原理：堆叠残差块（包含时间混合+通道混合子块）<sup>15</sup>。</p></li>
-<li><p>时间混合块利用 R、W、K、V 向量，通过循环框架模拟自注意力<sup>15</sup>。</p></li>
-<li><p>关键改进：相对位置偏置(w) + 独立处理当前位置的参数(u)<sup>15</sup>。</p></li>
-<li><p>实现 O(T·d)计算复杂度和 O(d)内存复杂度<sup>15</sup>。</p></li>
-<li><p>“Raven”是其官方微调版本<sup>17</sup>。<strong>（注：RWKV-4 系列已不再更新）</strong><sup>17</sup>。</p></li>
+<li><p>首发版就把路数定下来了：一层层堆残差块，里面有两个小单元——时间混合和通道混合。</p></li>
+<li><p>时间混合这块用 <span class="math notranslate nohighlight">\(R/W/K/V\)</span> 四个向量，在“循环”的套路里把自注意力那种效果给模拟出来。</p></li>
+<li><p>两个关键小招：相对位置偏置 <span class="math notranslate nohighlight">\(w\)</span>，和一个专门处理“当前位置”的参数 <span class="math notranslate nohighlight">\(u\)</span>。</p></li>
+<li><p>复杂度很友好：计算是 <span class="math notranslate nohighlight">\( O(T·d)\)</span>，内存是 <span class="math notranslate nohighlight">\(O(d)\)</span>，又快又省。</p></li>
+<li><p>“Raven”是官方的微调版本。顺带说一句，<span class="math notranslate nohighlight">\(RWKV-4\)</span> 系列已经停更了。</p></li>
+</ul>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/rwkv4.jpg" alt="img" />
+</div>
+</section>
+<section id="rwkv-5-eagle-rwkv-6-finch">
+<h4>RWKV-5(Eagle)与 RWKV-6(Finch):增强表达能力与自适应性<a class="headerlink" href="#rwkv-5-eagle-rwkv-6-finch" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>矩阵化的状态表示：不再只是“一个向量装所有记忆”，而是改成“多头的矩阵状态”，表达更丰富，维度之间也能更好互动。</p></li>
+<li><p>更灵活的循环机制：更新方式更聪明、跟输入贴得更紧。像 Finch 里，衰减因子 <span class="math notranslate nohighlight">\(w_t\)</span> 不再是固定的，而是随数据变化。</p></li>
+<li><p>时间混合和信息传递升级：Eagle 重做了“感受态”，加了辅助门控和 lerp 插值；Finch 则上了数据驱动的 ddlerp，让混合更聪明。</p></li>
+<li><p>Finch 加了 LoRA：用更低的成本去“加速学习、改结构”，调参更轻便。</p></li>
+<li><p>规模和训练：Eagle 覆盖 460M 到 7.5B；Finch 有 1.6B 和 3.1B。都在一个超大的多语言语料（约 1.12 万亿 token）上练过。</p></li>
+<li><p>表现怎么样：多语言任务上能打过 Llama-2-7B；英语这边也在稳步涨（比如 EagleX 7B v2 英语 54.95%）；RWKV-6 1.5B 在同等体量里，多语言/英语都很能打。</p></li>
+</ul>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/rwkv5_6.jpg" alt="img" />
+</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p>左边这块：展示了 RWKV 的两大模块——时间混合（time-mixing）和通道混合（channel-mixing）。</p></li>
+<li><p>右上角：把时间混合模块当成 RNN 单元用。</p></li>
+<li><p>底部中间：这是 RWKV-V5 在前向计算里用的 token-shift 小模块，负责“挪一挪”上下文信息。</p></li>
+<li><p>右下角：这是 RWKV-V6 版本的 token-shift，前向里用的升级版。</p></li>
+<li><p>虚线箭头：这些是 V6 才有的连接，V5 里没有。</p></li>
 </ul>
 </section>
-<section id="b-rwkv-5-eagle-rwkv-6-finch">
-<h3>B. RWKV-5(Eagle)与 RWKV-6(Finch):增强表达能力与自适应性<a class="headerlink" href="#b-rwkv-5-eagle-rwkv-6-finch" title="Link to this heading">#</a></h3>
+<section id="rwkv-7-goose">
+<h4>RWKV-7(Goose):推进状态动态与能力边界<a class="headerlink" href="#rwkv-7-goose" title="Link to this heading">#</a></h4>
 <ul class="simple">
-<li><p><strong>矩阵值状态</strong>：从向量值状态转向多头矩阵值状态，增强表示能力和维度间交互<sup>15</sup>。</p></li>
-<li><p><strong>动态循环机制</strong>：更新规则更灵活且输入相关，增强自适应性。Finch 的衰减因子(wt)变为数据依赖型<sup>15</sup>。</p></li>
-<li><p><strong>时间混合与词元转移优化</strong>：Eagle 重构感受态+辅助门控+lerp 插值<sup>15</sup>；Finch 引入数据驱动函数(ddlerp)<sup>15</sup>。</p></li>
-<li><p><strong>Finch 引入 LoRA</strong>：动态增强学习参数，实现低开销架构调整<sup>15</sup>。</p></li>
-<li><p><strong>规模与训练</strong>：Eagle 460M-7.5B 参数；Finch 1.6B/3.1B 参数；在 RWKV World v2 数据集（1.12 万亿多语言词元）训练<sup>19</sup>。</p></li>
-<li><p><strong>性能</strong>：多语言任务优于 Llama-2-7B；英语任务持续提升(EagleX 7B v2: Eng 54.95%)<sup>19,29</sup>；RWKV-6 1.5B 在其规模的多语言/英语任务达 SOTA<sup>30</sup>。</p></li>
+<li><p>核心点子：</p>
+<ul>
+<li><p>更通用的 Delta 更新法：状态怎么改更灵活。</p></li>
+<li><p>向量级的门控：信息流精细控，想放谁进来、放多少都能调。</p></li>
+<li><p>上下文学习率：根据语境自动调“敏感度”，该快快、该稳稳。</p></li>
+<li><p>更松的值替换：更新信息更自由，不死板。</p></li>
 </ul>
+</li>
+<li><p>理论上更能打：能做状态追踪，还能识别所有正则语言，理论能力比标准 Transformer 更强。</p></li>
+<li><p>规模与训练：从 1.9 亿到 29 亿参数，在 3.1 万亿多语言 token 上练过。</p></li>
+<li><p>表现：</p>
+<ul>
+<li><p>2.9B 模型在同量级多语言任务上拿到 SOTA，英语也能跟顶尖打平。</p></li>
+<li><p>只用 4k 上下文训练，实际能跑到 8k～16k，外推不错。</p></li>
+</ul>
+</li>
+</ul>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/rwkv7.jpg" alt="img" />
+</div>
 </section>
-<section id="c-rwkv-7-goose">
-<h3>C. RWKV-7(Goose):推进状态动态与能力边界<a class="headerlink" href="#c-rwkv-7-goose" title="Link to this heading">#</a></h3>
+<section id="rwkv-x">
+<h4>RWKV-X:混合架构赋能超长上下文处理<a class="headerlink" href="#rwkv-x" title="Link to this heading">#</a></h4>
 <ul class="simple">
-<li><p><strong>核心创新</strong>：</p>
+<li><p>核心想法：短距离用 RWKV-7，长距离用稀疏注意力，整体还保持接近线性复杂度。</p>
 <ul>
-<li><p>广义化 Delta 法则：更灵活的状态更新机制。</p></li>
-<li><p>向量值门控：对信息流进行细粒度控制。</p></li>
-<li><p>上下文学习率：根据上下文调整更新敏感度。</p></li>
-<li><p>宽松值替换规则：更灵活的信息更新策略<sup>15</sup>。</p></li>
+<li><p>稀疏怎么做：把 token 分成时间块，既有粗粒度压缩，也保留细粒度，再加滑窗，既远观也近看。</p></li>
 </ul>
 </li>
-<li><p><strong>理论突破</strong>：能够执行状态追踪并识别所有正则语言，理论能力超越标准 Transformer<sup>15</sup>。</p></li>
-<li><p><strong>规模与训练</strong>：1.9 亿到 29 亿参数；在 3.1 万亿词元多语言语料库训练<sup>15</sup>。</p></li>
-<li><p><strong>性能</strong>：2.9B 模型在 3B 规模多语言任务创 SOTA，英语任务与 SOTA 持平<sup>15</sup>；4k 上下文训练模型可泛化至约 8k-16k<sup>32</sup>。</p></li>
-<li><p><strong>强烈推荐替代先前版本</strong><sup>17</sup>。</p></li>
-</ul>
-</section>
-<section id="d-rwkv-x">
-<h3>D. RWKV-X:混合架构赋能超长上下文处理<a class="headerlink" href="#d-rwkv-x" title="Link to this heading">#</a></h3>
-<ul class="simple">
-<li><p><strong>核心创新</strong>：将 RWKV-7 用于短程建模 + <strong>稀疏注意力机制</strong>用于长程上下文捕捉，保持线性复杂度<sup>21</sup>。</p>
+<li><p>解决什么痛点：补上纯 RNN（比如早期 RWKV/Mamba）在超长上下文“记不牢、理解难”的短板。</p></li>
+<li><p>效率：</p>
 <ul>
-<li><p>稀疏机制：词元组织成时间块，包含压缩粗粒度、保留细粒度、滑动窗口等路径<sup>27</sup>。</p></li>
+<li><p>训练 O(N)，推理每个 token O(1)。</p></li>
+<li><p>处理 128K 上下文时，比 FlashAttention v3 还快约 1.37 倍。</p></li>
 </ul>
 </li>
-<li><p><strong>解决痛点</strong>：克服纯 RNN 架构（如早期 RWKV/Mamba）在超长上下文回忆和理解上的局限<sup>21</sup>。</p></li>
-<li><p><strong>效率</strong>：训练 O(N)，推理每词元 O(1)<sup>21</sup>；处理 128K 词元比 FlashAttention v3 快 1.37 倍<sup>27</sup>。</p></li>
-<li><p><strong>性能</strong>：</p>
+<li><p>表现：</p>
 <ul>
-<li><p>64K 持续预训练后在 64K passkey 检索近乎完美<sup>21</sup>。</p></li>
-<li><p>长上下文任务持续优于 RWKV-7，短上下文任务性能接近<sup>21,27</sup>。</p></li>
-<li><p>可稳定解码<strong>百万级词元序列</strong><sup>21</sup>。</p></li>
+<li><p>在 64K 上下文的 passkey 检索几乎满分。</p></li>
+<li><p>长上下文显著优于 RWKV-7；短上下文也能跟上。</p></li>
+<li><p>能稳定解码百万级 token 的超长序列。</p></li>
 </ul>
 </li>
-<li><p><strong>训练策略</strong>：</p>
+<li><p>训练套路：</p>
 <ol class="arabic simple">
-<li><p>对齐预训练：仅训稀疏注意力（短上下文），冻结 RWKV-7 模块<sup>21</sup>。</p></li>
-<li><p>长上下文持续预训练：在长序列（如 64K 词元）微调所有参数，使用动态加权损失<sup>21,27</sup>。</p></li>
+<li><p>先做对齐预训：只训稀疏注意力，RWKV-7 冻住；</p></li>
+<li><p>再做长上下文持续预训：拉长到比如 64K，整体微调，损失用动态权重。</p></li>
 </ol>
 </li>
+<li><p>一句话：开源社区的快迭代，是它越跑越快的关键。</p></li>
 </ul>
-<p><strong>开源社区是 RWKV 快速演进的关键加速器</strong><sup>15</sup>。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/rwkvx.jpg" alt="img" />
+</div>
 </section>
 </section>
-<hr class="docutils" />
 <section id="iv">
-<h2>IV. 性能、应用与对比分析<a class="headerlink" href="#iv" title="Link to this heading">#</a></h2>
-<section id="id2">
-<h3>A. 各版本及任务的基准性能<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<h3>IV. 性能、应用与对比分析<a class="headerlink" href="#iv" title="Link to this heading">#</a></h3>
+<section id="a">
+<h4>A. 各版本及任务的基准性能<a class="headerlink" href="#a" title="Link to this heading">#</a></h4>
 <ul class="simple">
-<li><p><strong>语言模型困惑度</strong>：RWKV-6 1.5B 优于同等规模 Mamba 和 Transformer<sup>30</sup>；RWKV-5/6 表现有竞争力<sup>19</sup>。</p></li>
+<li><p><strong>语言模型困惑度</strong>：RWKV-6 1.5B 优于同等规模 Mamba 和 Transformer；RWKV-5/6 表现有竞争力。</p></li>
 <li><p><strong>长上下文任务</strong>：</p>
 <ul>
-<li><p>RWKV-7 (2.9B)：28K 内 passkey 高准确率，超长性能下降<sup>21</sup>。</p></li>
-<li><p><strong>RWKV-X</strong>：64K passkey 近乎完美，可处理<strong>百万词元</strong><sup>21</sup>。</p></li>
+<li><p>RWKV-7 (2.9B)：28K 内 passkey 高准确率，超长性能下降。</p></li>
+<li><p><strong>RWKV-X</strong>：64K passkey 近乎完美，可处理<strong>百万词元</strong>。</p></li>
 </ul>
 </li>
 <li><p><strong>多语言性能</strong>：</p>
 <ul>
-<li><p>RWKV-5/6 优于 Llama-2-7B<sup>19</sup>。</p></li>
-<li><p>RWKV-6 1.5B 达同规模 SOTA<sup>30</sup>；RWKV-7 (2.9B)创 3B 规模新 SOTA<sup>15</sup>。</p></li>
+<li><p>RWKV-5/6 优于 Llama-2-7B。</p></li>
+<li><p>RWKV-6 1.5B 达同规模 SOTA；RWKV-7 (2.9B)创 3B 规模新 SOTA。</p></li>
 </ul>
 </li>
 <li><p><strong>英语语言基准</strong>：</p>
 <ul>
-<li><p>RWKV-5/6 初期落后 Mistral-7B，EagleX 7B v2 提升显著(Eng 54.95%)<sup>19</sup>。</p></li>
-<li><p>RWKV-7 (2.9B)与 3B SOTA 持平<sup>15</sup>；RWKV-X 保持短上下文强性能<sup>21</sup>。</p></li>
+<li><p>RWKV-5/6 初期落后 Mistral-7B，EagleX 7B v2 提升显著(Eng 54.95%)。</p></li>
+<li><p>RWKV-7 (2.9B)与 3B SOTA 持平；RWKV-X 保持短上下文强性能。</p></li>
 </ul>
 </li>
-<li><p><strong>通用基准</strong>：涵盖指令遵循、数学、知识内化等 17 项测试<sup>15</sup>。</p></li>
+<li><p><strong>通用基准</strong>：涵盖指令遵循、数学、知识内化等 17 项测试。</p></li>
 </ul>
 <p>RWKV-X 的<strong>百万词元处理能力</strong>重新定义了长上下文边界。</p>
 </section>
 <section id="b">
-<h3>B. 主要应用领域<a class="headerlink" href="#b" title="Link to this heading">#</a></h3>
+<h4>B. 主要应用领域<a class="headerlink" href="#b" title="Link to this heading">#</a></h4>
 <ul class="simple">
-<li><p><strong>NLG</strong>：小说生成、聊天机器人、角色扮演、FAQ、RAG 系统<sup>2</sup>。</p></li>
-<li><p><strong>NLU</strong>：机器翻译、文本分类、虚拟助手、PDF 查询、知识图谱<sup>2</sup>。</p></li>
-<li><p><strong>计算机视觉</strong>：Vision-RWKV, RWKV-CLIP, VisualRWKV-7, 医学图像恢复, 3D 点云处理<sup>2</sup>。</p></li>
-<li><p><strong>时间序列分析</strong>：临床预测、光伏预测、股价预测、通用时序模型(RWKV-TS)<sup>2</sup>。</p></li>
-<li><p><strong>其他 AI 任务</strong>：代码补全、内容审核、强化学习(Decision-RWKV)、稀疏激活(SpikeGPT)<sup>2</sup>。</p></li>
+<li><p><strong>NLG</strong>：小说生成、聊天机器人、角色扮演、FAQ、RAG 系统。</p></li>
+<li><p><strong>NLU</strong>：机器翻译、文本分类、虚拟助手、PDF 查询、知识图谱。</p></li>
+<li><p><strong>计算机视觉</strong>：Vision-RWKV, RWKV-CLIP, VisualRWKV-7, 医学图像恢复, 3D 点云处理。</p></li>
+<li><p><strong>时间序列分析</strong>：临床预测、光伏预测、股价预测、通用时序模型(RWKV-TS)。</p></li>
+<li><p><strong>其他 AI 任务</strong>：代码补全、内容审核、强化学习(Decision-RWKV)、稀疏激活(SpikeGPT)。</p></li>
 </ul>
-<p><strong>架构进步与大规模数据集（如 RWKV World v2, 3.1 万亿多语言语料）共生</strong><sup>19,24</sup>。</p>
+<p><strong>架构进步与大规模数据集（如 RWKV World v2, 3.1 万亿多语言语料）共生</strong>。</p>
 </section>
 <section id="c-rwkv-transformer">
-<h3>C. RWKV 与 Transformer:效率与能力的正面对比<a class="headerlink" href="#c-rwkv-transformer" title="Link to this heading">#</a></h3>
+<h4>C. RWKV 与 Transformer:效率与能力的正面对比<a class="headerlink" href="#c-rwkv-transformer" title="Link to this heading">#</a></h4>
 <p><strong>表 2: RWKV 与标准 Transformer 对比概览</strong></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
@@ -1168,116 +1206,30 @@ document.write(`
 <p>RWKV 在多语言环境和长上下文处理（尤其 RWKV-X）展现出<strong>战略领先潜力</strong>。</p>
 </section>
 </section>
-<hr class="docutils" />
-<section id="v">
-<h2>V. 优势、局限性与未来展望<a class="headerlink" href="#v" title="Link to this heading">#</a></h2>
-<section id="a-rwkv">
-<h3>A. RWKV 架构的主要优势<a class="headerlink" href="#a-rwkv" title="Link to this heading">#</a></h3>
+<section id="id5">
+<h3>优势、局限性与未来展望<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>好的，最后我们在来总结一下。RWKV 这个模型，就像一个天赋异禀但还有点小个性的年轻人，它的优缺点都非常鲜明。</p>
+<p>它的优势相当硬核： 核心就一个字——“省”。它消耗的计算资源特别少，处理长文本的效率比 Transformer 模型能高出 10 到 100 倍，而且文本越长，这个效率优势越明显。更厉害的是，它在如此节省的情况下，性能一点也不差，最新版本在英语和多语言任务上的表现已经能媲美顶尖模型了。它最大的梦想就是拥有“无限内存”，最新的 RWKV-X 版本真的能处理长达百万词的文本，堪称“过目不忘”。</p>
+<p>不过，它也有些小毛病和局限： 它有时会“小脾气”，你提问的方式稍微一变，它的回答可能就差很远。它的“记性”是线性的，擅长记住前后顺序，但如果你突然让它回溯很久以前的一个小细节，它可能就有点吃力了。在面对需要复杂空间推理或者处理知识图谱中特别冷门的信息时，它也会犯糊涂。所以，它的“无限内存”在真正用起来时，还需要一些技巧来避免它遗忘或记混信息。</p>
+<p>那它的未来会怎样呢？ 研究人员正在想办法帮它改掉小毛病，让它变得更稳重、更聪明。同时，也在努力让它从“语言天才”变成“全能 ACE”，争取能看懂图片、听懂声音。还有一个重点就是为它量身定做更高效的“微调”工具，让它能快速适应各种具体任务。</p>
+<p>总而言之， RWKV 可不是一个普通的模型，它巧妙地融合了两种经典模型的优点，成了一个在效率上极具诱惑力的替代方案。尤其在需要处理长文本、又希望节省资源的场景下，它几乎是不二之选。它的开源和社区驱动模式，也让它成为了推动 AI 技术更加平民化、可持续化的一股重要力量。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/rwkv_future.jpg" alt="img" />
+</div>
+</section>
+<section id="id6">
+<h3>参考文献<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
 <ol class="arabic simple">
-<li><p><strong>效率（核心）</strong>：</p>
-<ul class="simple">
-<li><p>更低资源消耗（VRAM/CPU/GPU）<sup>15</sup>。</p></li>
-<li><p>长上下文计算需求降低 10-100 倍<sup>15</sup>。</p></li>
-<li><p>上下文长度线性扩展（Transformer 二次）<sup>1</sup>。</p></li>
-<li><p>恒定词元内存/推理速度<sup>15</sup>。</p></li>
-</ul>
-</li>
-<li><p><strong>性能</strong>：达到 Transformer 同级质量和泛化能力<sup>1</sup>；RWKV-7 2.9B 英语持平 SOTA，多语言创 SOTA<sup>24</sup>。</p></li>
-<li><p><strong>“无限”上下文潜力</strong>：RNN 特性理论上无限长；RWKV-X 实践达<strong>百万词元</strong><sup>15,21</sup>。</p></li>
-<li><p><strong>多语言能力</strong>：受益于多样化训练数据<sup>15</sup>。</p></li>
-<li><p><strong>无注意力设计</strong>：架构更简单<sup>15</sup>。</p></li>
-<li><p><strong>可并行化训练</strong><sup>1</sup>。</p></li>
-<li><p><strong>固有句子嵌入</strong>（提及优势）<sup>15</sup>。</p></li>
+<li><p>Peng, B., Alcaide, E., Anthony, Q., et al. (2023). RWKV: Reinventing RNNs for the Transformer Era. arXiv:2305.13048.</p></li>
+<li><p>Peng, B., Goldstein, J., Alcaide, E., et al. (2024). Eagle and Finch: RWKV with Matrix-Valued States and Dynamic Recurrence. arXiv:2404.05892.</p></li>
+<li><p>Peng, B., Zhang, D., Goldstein, J., et al. (2025). Goose: A Recurrent Model with Vector-Valued Gates and Delta Rule-based State Updates. arXiv:2503.14456.</p></li>
+<li><p>Lin, Y., Zhu, Z., Zhang, D., et al. (2025). RWKV-X: Beyond the Quadratic Barrier in Language Modeling with Hybrid RNN-Attention Architecture. arXiv:2504.21463.</p></li>
+<li><p>Vaswani, A., Shazeer, N., Parmar, N., et al. (2017). Attention Is All You Need. Advances in Neural Information Processing Systems, 30.</p></li>
+<li><p>Gu, A., &amp; Dao, T. (2023). Mamba: Linear-Time Sequence Modeling with Selective State Spaces. arXiv:2312.00752.</p></li>
+<li><p>Team, R. (2024). RWKV World v2: A 3.1 Trillion Token Multilingual Corpus. RWKV Project Documentation.</p></li>
+<li><p>Su, J. (2021). RoFormer: Enhanced Transformer with Rotary Position Embedding. arXiv:2104.09864.</p></li>
 </ol>
 </section>
-<section id="id3">
-<h3>B. 已识别的挑战与局限性<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><strong>提示敏感性</strong>：基础模型对提示格式敏感，显著影响生成结果<sup>15</sup>。</p></li>
-<li><p><strong>回溯/回顾能力</strong>：纯 RNN 架构在深度回溯或随机访问历史信息上较弱，需精心设计提示顺序<sup>15,23</sup>。</p></li>
-<li><p><strong>长上下文细节回忆</strong>：早期版本在超长跨度内回忆微小细节可能不如全注意力机制（如 LooGLE, RULER 基准）<sup>15</sup>。RWKV-X 旨在解决。</p></li>
-<li><p><strong>特定复杂任务表现</strong>：</p>
-<ul class="simple">
-<li><p>LooGLE：扩展依赖处理不佳<sup>15</sup>。</p></li>
-<li><p>RULER：随输入长度增加有效性下降<sup>15</sup>。</p></li>
-<li><p>S3EVAL：管理极长上下文场景存在局限（RWKV-X 前）<sup>15</sup>。</p></li>
-<li><p>MAGNIFICO/MANGO：空间推理和快速上下文适应不足<sup>15</sup>。</p></li>
-<li><p>Head-to-Tail：处理知识图谱中罕见信息弱<sup>15</sup>。</p></li>
-<li><p>LongICLBench：面对大量标签和长输入不足<sup>15</sup>。</p></li>
-</ul>
-</li>
-<li><p><strong>实际“无限”上下文</strong>：未经专门微调，远超训练长度时性能可能下降，信息可能被覆盖<sup>23</sup>。</p></li>
-<li><p><strong>RWKV-X 稀疏注意力的启发式风险</strong>：Top-k 块选择可能忽略语义相关依赖<sup>27</sup>。</p></li>
-<li><p><strong>安全与稳定性</strong>：对抗攻击风险、社会偏见、隐私担忧<sup>2</sup>。</p></li>
-<li><p><strong>幻觉</strong>：RWKV-6 在角色扮演等任务中有轶事报告<sup>30</sup>。</p></li>
-</ol>
-<p><strong>效率与保真度的权衡表明“一刀切”方案难存</strong>。</p>
-</section>
-<section id="c">
-<h3>C. 未来潜在的研究与发展方向<a class="headerlink" href="#c" title="Link to this heading">#</a></h3>
-<ol class="arabic simple">
-<li><p><strong>增强长序列处理</strong>：改进混合方法或开发新状态机制，提升复杂依赖处理<sup>2</sup>。</p></li>
-<li><p><strong>多模态与跨模态学习</strong>：扩展 RWKV 至文本、图像、音频等多模态整合<sup>2</sup>。</p></li>
-<li><p><strong>参数高效微调(PEFT)</strong>：专为 RWKV 开发改进的 PEFT 技术（Finch 的 LoRA 是初步尝试）<sup>2,19</sup>。</p></li>
-<li><p><strong>解决回溯与提示敏感性问题</strong>：通过架构或训练策略改进稳健性<sup>2</sup>。</p></li>
-<li><p><strong>增强状态机制</strong>：研究超越矩阵值状态或当前门控的设计<sup>2</sup>。</p></li>
-<li><p><strong>硬件加速优化</strong>：针对 CPU/GPU/AI 芯片定制实现（如 rwkv.cpp）<sup>2,22</sup>。</p></li>
-<li><p><strong>安全性、鲁棒性、偏见与公平性</strong>研究<sup>2</sup>。</p></li>
-<li><p><strong>理论理解深化</strong>：分析 RWKV 的表达能力边界（RWKV-7 识别正则语言是开端）<sup>24</sup>。</p></li>
-</ol>
-<p><strong>混合架构与协作式开放研究是核心方向</strong><sup>2,21</sup>。</p>
-</section>
-</section>
-<hr class="docutils" />
-<section id="vi-rwkv">
-<h2>VI. 结论:RWKV 在大型语言模型领域中的定位<a class="headerlink" href="#vi-rwkv" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p><strong>核心创新</strong>：独特平衡 RNN 推理效率与 Transformer 训练并行性及性能。</p></li>
-<li><p><strong>主要优势</strong>：线性扩展、长序列低资源消耗、强大多语言能力、无注意力设计。</p></li>
-<li><p><strong>演进路径</strong>：持续迭代增强表达能力，RWKV-X 混合方法突破超长上下文限制。</p></li>
-<li><p><strong>当前定位</strong>：Transformer 的<strong>可行且引人注目替代方案</strong>，尤其适用于高效率、长上下文、多语言场景。</p></li>
-<li><p><strong>潜在影响</strong>：推动 AI 向更可持续、更易获取方向发展，降低超大模型训练部署成本。</p></li>
-<li><p><strong>关键支撑</strong>：<strong>开源性质与活跃社区</strong>对持续发展至关重要。</p></li>
-</ul>
-</section>
-<hr class="docutils" />
-<section id="works-cited">
-<h2>Works Cited<a class="headerlink" href="#works-cited" title="Link to this heading">#</a></h2>
-<p>!!!!!!!!
-只引用你参考的，没有参考的不用放，真正自己去 review</p>
-<ol class="arabic simple">
-<li><p>RWKV: Reinventing RNNs for the Transformer Era - OpenReview. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://openreview.net/forum?id=7SaXczaBpG</span></code></p></li>
-<li><p>A Survey of RWKV - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/pdf/2412.14847</span></code></p></li>
-<li><p>arxiv.org. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/abs/2402.05964</span></code></p></li>
-<li><p>Sparse Transformers: An Innovative Approach... - Al-SCHOLAR. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://ai-scholar.tech/en/articles/transformer/sparseTransformer</span></code></p></li>
-<li><p>A Survey of RWKV - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/html/2412.14847v1</span></code></p></li>
-<li><p>papers.neurips.cc. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://papers.neurips.cc/paper_files/paper/2020/file/c8512d142a2d849725f31a9a7a361ab9-Paper.pdf</span></code></p></li>
-<li><p>[2004.05150] Longformer: The Long-Document Transformer. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://ar5iv.labs.arxiv.org/html/2004.05150</span></code></p></li>
-<li><p>(Open Access) Longformer: The Long-Document Transformer (2020) | Iz Beltagy - SciSpace. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://scispace.com/papers/longformer-the-long-document-transformer-18yjwxjc7v</span></code></p></li>
-<li><p>proceedings.mlr.press. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">http://proceedings.mlr.press/v119/katharopoulos20a/katharopoulos20a.pdf</span></code></p></li>
-<li><p>Linear Attention for Efficient Bidirectional Sequence Modeling - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/html/2502.16249v1</span></code></p></li>
-<li><p>[2009.14794] Rethinking Attention with Performers - ar5iv - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://ar5iv.labs.arxiv.org/html/2009.14794</span></code></p></li>
-<li><p>Efficient Transformers II: knowledge distillation&amp; fine-tuning - UiPath Documentation. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://docs.uipath.com/communications-mining/automation-cloud/latest/developer-guide/efficient-transformers-ii-knowledge-distillation--fine-tuning</span></code></p></li>
-<li><p>The RWKV language model: An RNN with the advantages of a... Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://johanwind.github.io/2023/03/23/rwkv_overview.html</span></code></p></li>
-<li><p>arxiv.org. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/abs/2312.00752</span></code></p></li>
-<li><p>arxiv.org. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/abs/2412.14847</span></code></p></li>
-<li><p>arxiv.org. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/html/2411.02795v1</span></code></p></li>
-<li><p>RWKV/RWKV-wiki: RWKV centralised docs for the community - GitHub. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://github.com/RWKV/RWKV-wiki</span></code></p></li>
-<li><p>RWKV, Explained - The Full Stack. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://fullstackdeeplearning.com/blog/posts/rwkv-explainer/</span></code></p></li>
-<li><p>[Literature Review] Eagle and Finch: RWKV with Matrix-Valued... Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://www.themoonlight.io/review/eagle-and-finch-rwkv-with-matrix-valued-states-and-dynamic-recurrence</span></code></p></li>
-<li><p>VisualRWKV: Exploring Recurrent Neural Networks for Visual Language Models - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/html/2406.13362v1</span></code></p></li>
-<li><p>RWKV-X: A Linear Complexity Hybrid Language Model - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/html/2504.21463v1</span></code></p></li>
-<li><p>RWKV/rwkv.cpp: INT4/INT5/INT8 and FP16 inference on CPU for RWKV language model - GitHub. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://github.com/RWKV/rwkv.cpp</span></code></p></li>
-<li><p>RWKV does not have context size... | Hacker News. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://news.ycombinator.com/item?id=39173243</span></code></p></li>
-<li><p>(PDF) RWKV-7&quot;Goose&quot; with Expressive Dynamic State Evolution - ResearchGate. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://www.researchgate.net/publication/389947068_RWKV-7_Goose_with_Expressive_Dynamic_State_Evolution</span></code></p></li>
-<li><p>[2503.14456] RWKV-7&quot;Goose&quot; with Expressive Dynamic State Evolution - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/abs/2503.14456</span></code></p></li>
-<li><p>[2504.21463] RWKV-X: A Linear Complexity Hybrid Language Model - arXiv. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://arxiv.org/abs/2504.21463</span></code></p></li>
-<li><p>RWKV-X combines sparse attention... - Learnopoly. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://learnopoly.com/rwkv-x-combines-sparse-attention-and-recurrent-memory-to-allow-an-effective-decoding-of-1m-with-linear-complexity/</span></code></p></li>
-<li><p>RWKV Language Model. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://wiki.rwkv.com/</span></code></p></li>
-<li><p>Eagle and Finch: RWKV with Matrix-Valued States and Dynamic Recurrence | OpenReview. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://openreview.net/forum?id=soz1SEiPeq</span></code></p></li>
-<li><p>RWKV v6, the finch series... : r/LocalLLaMA - Reddit. Accessed May 19, 2025. <code class="docutils literal notranslate"><span class="pre">https://www.reddit.com/r/LocalLLaMA/comments/1am5clf/rwkv_v6_the_finch_series_15b_model_sota_multilang/</span></code>
-31</p></li>
-</ol>
 </section>
 </section>
 
@@ -1321,7 +1273,7 @@ document.write(`
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">02.Efficient Transformer 结构</p>
+        <p class="prev-next-title">Efficient Transformer 结构</p>
       </div>
     </a>
     <a class="right-next"
@@ -1329,7 +1281,7 @@ document.write(`
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">RWKV V5/6/7 架构演进</p>
+        <p class="prev-next-title">RWKV-7 及其后续模型的演进、产业落地的战略分析</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1349,41 +1301,27 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i-rwkv">I. RWKV 架构简介</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a">A. 背景:对高效序列模型的探索</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rwkv-rnn-transformer">B. RWKV 的出现:连接 RNN 效率与 Transformer 性能</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-wkv">RWKV 架构核心机制：WKV 与内部状态拟合</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">RWKV 的核心架构原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">RWKV 核心优势的技术</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">RWKV 的演进:版本逐代分析</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">表 1: RWKV 版本演进概要</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-4">RWKV-4:奠定基础</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-5-eagle-rwkv-6-finch">RWKV-5(Eagle)与 RWKV-6(Finch):增强表达能力与自适应性</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-7-goose">RWKV-7(Goose):推进状态动态与能力边界</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#rwkv-x">RWKV-X:混合架构赋能超长上下文处理</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ii-rwkv">II. RWKV 的核心架构原理</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-rwkv-receptance-weighted-key-value">A. RWKV(Receptance Weighted Key Value)机制解析</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-time-mixing">B. 时间混合(Time-Mixing)模块:捕捉时间依赖性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-channel-mixing">C. 通道混合(Channel-Mixing)模块:特征优化</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d">D. 线性计算复杂度与状态表示</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#e">E. 双模式操作:可并行化训练与高效循环推理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#iv">IV. 性能、应用与对比分析</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#a">A. 各版本及任务的基准性能</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#b">B. 主要应用领域</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#c-rwkv-transformer">C. RWKV 与 Transformer:效率与能力的正面对比</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iii-rwkv">III. RWKV 的演进:版本逐代分析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">表 1: RWKV 版本演进概要</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-rwkv-4">A. RWKV-4:奠定基础</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b-rwkv-5-eagle-rwkv-6-finch">B. RWKV-5(Eagle)与 RWKV-6(Finch):增强表达能力与自适应性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-rwkv-7-goose">C. RWKV-7(Goose):推进状态动态与能力边界</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#d-rwkv-x">D. RWKV-X:混合架构赋能超长上下文处理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">优势、局限性与未来展望</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">参考文献</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#iv">IV. 性能、应用与对比分析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">A. 各版本及任务的基准性能</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#b">B. 主要应用领域</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c-rwkv-transformer">C. RWKV 与 Transformer:效率与能力的正面对比</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#v">V. 优势、局限性与未来展望</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-rwkv">A. RWKV 架构的主要优势</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">B. 已识别的挑战与局限性</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#c">C. 未来潜在的研究与发展方向</a></li>
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#vi-rwkv">VI. 结论:RWKV 在大型语言模型领域中的定位</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#works-cited">Works Cited</a></li>
 </ul>
   </nav></div>
 
@@ -1417,7 +1355,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 25, 2025.
+  Last updated on Nov 06, 2025.
   <br/>
 </p>
   </div>

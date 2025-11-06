@@ -1,6 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 01: 拆解 Transformer-Decoder
+# CODE 01: 拆解 Transformer-Decoder(DONE)
+
+> Author by: 周浩杰
 
 近年来，大型语言模型（LLMs）的发展令人瞩目，而它们中的绝大多数，例如著名的 GPT 系列，都构建于一种优雅而强大的架构之上——Transformer-Decoder。
 
@@ -20,6 +22,7 @@
 理论总是需要实践来验证。为了方便分析，我们首先需要用代码定义出今天的主角。我们将使用 PyTorch 来构建一个 Transformer-Decoder 模型。
 
 首先，我们定义一个配置类 `ModelArgs`，规定了模型的所有核心超参数。
+
 
 ```python
 import torch
@@ -45,6 +48,9 @@ args = ModelArgs()
 print(args)
 ```
 
+    ModelArgs(dim=512, n_layers=8, n_heads=8, vocab_size=32000, max_seq_len=2048)
+
+
 这个配置定义了一个相对小巧的模型：512 的嵌入维度、8 个 Transformer 层、8 个注意力头。
 
 ## 2. 参数量分析
@@ -68,6 +74,7 @@ $$
 
 让我们用代码来计算一下：
 
+
 ```python
 # 词嵌入层的参数
 vocab_size = args.vocab_size
@@ -76,6 +83,9 @@ dim = args.dim
 embedding_params = vocab_size * dim
 print(f"词嵌入层的参数量: {embedding_params:,}")
 ```
+
+    词嵌入层的参数量: 16,384,000
+
 
 ### 2.2 Attention 层
 
@@ -103,6 +113,7 @@ $$
 P*{attn\_per\_layer} = 4 \times d\_{model}^2
 $$
 
+
 ```python
 # 计算一层注意力模块的参数
 n_layers = args.n_layers
@@ -116,6 +127,10 @@ total_attention_params = n_layers * attention_params_per_layer
 print(f"所有 {n_layers} 层自注意力模块的总参数量: {total_attention_params:,}")
 ```
 
+    每层自注意力模块的参数量: 1,048,576
+    所有 8 层自注意力模块的总参数量: 8,388,608
+
+
 ### 2.3 FFN 层
 
 前馈网络 (Feed-Forward Network, FFN) 为模型提供了非线性能力。它通常由两个线性层和一个非线性激活函数（如 GELU 或 SiLU）组成。第一个线性层将维度从 `dim` 扩大到一个中间维度（通常是 `4 * dim`），第二个线性层再将其恢复回 `dim`。
@@ -127,6 +142,7 @@ $$
 $$
 P\_{ffn\_per\_layer} = (d\_{model} \times 4d\_{model}) + (4d\_{model} \times d\_{model}) = 8 \times d\_{model}^2
 $$
+
 
 ```python
 # 计算一层 FFN 的参数
@@ -140,6 +156,10 @@ total_ffn_params = n_layers * ffn_params_per_layer
 print(f"所有 {n_layers} 层 FFN 模块的总参数量: {total_ffn_params:,}")
 ```
 
+    每层 FFN 模块的参数量: 2,097,152
+    所有 8 层 FFN 模块的总参数量: 16,777,216
+
+
 你可以看到，FFN 部分的参数量是注意力部分的两倍，是模型参数的主要构成部分。
 
 ### 2.4 输出层
@@ -149,15 +169,20 @@ print(f"所有 {n_layers} 层 FFN 模块的总参数量: {total_ffn_params:,}")
 $$
 P\_{output} = d\_{model} \times V
 $$
-  
+
+
 ```python
 output_params = dim * vocab_size
 print(f"输出层的参数量: {output_params:,}")
 ```
 
+    输出层的参数量: 16,384,000
+
+
 ### 2.5 汇总与验证
 
 现在，将所有部分的参数加起来，得到模型的总参数量。我们还会加上一些通常被忽略但确实存在的参数，比如 LayerNorm 层的参数（每个 LayerNorm 有 weight 和 bias 两个参数，维度为 `dim`）。每个 Transformer Block 中有两个 LayerNorm。
+
 
 ```python
 # LayerNorm 参数
@@ -180,6 +205,15 @@ print(f"输出层参数: {output_params:,}")
 print("-----------------------------------------")
 print(f"模型总参数量 (估算): {total_params:,} ({total_params/1e6:.2f}M)")
 ```
+
+    词嵌入层参数: 16,384,000
+    注意力总参数: 8,388,608
+    FFN 总参数: 16,777,216
+    LayerNorm 总参数: 16,384
+    输出层参数: 16,384,000
+    -----------------------------------------
+    模型总参数量 (估算): 57,950,208 (57.95M)
+
 
 可以尝试调整 `ModelArgs` 中的配置，看看参数量是如何随之变化的。例如，将 `dim` 翻倍，参数量会大致变为原来的四倍，因为它主要受 $d\_{model}^2$ 项的影响。
 
@@ -239,6 +273,7 @@ $$
 
 让我们用代码将这些公式实现，并计算一个前向传播的总 FLOPs。
 
+
 ```python
 def estimate_flops(args: ModelArgs, batch_size: int, seq_len: int):
     # 为了简化，我们只关注主要的矩阵乘法
@@ -274,6 +309,9 @@ flops = estimate_flops(args, batch_size=1, seq_len=1024)
 print(f"对于一个序列 (B=1, S=1024) 的前向传播计算量约为: {flops/1e9:.2f} GFLOPs")
 ```
 
+    对于一个序列 (B=1, S=1024) 的前向传播计算量约为: 102.27 GFLOPs
+
+
 这个结果告诉我们，即使是这样一个小型模型，处理一个长度为 1024 的序列也需要数十亿次的浮点运算。
 
 ## 4. 显存分析
@@ -298,6 +336,7 @@ $$
 M\_{act\_attn} = B \times S \times S \times 4 \text{ bytes}
 $$
 
+
 ```python
 def estimate_activation_memory(args: ModelArgs, batch_size: int, seq_len: int, dtype_bytes=4):
     d = args.dim
@@ -315,6 +354,10 @@ def estimate_activation_memory(args: ModelArgs, batch_size: int, seq_len: int, d
 estimate_activation_memory(args, batch_size=4, seq_len=1024)
 ```
 
+    FFN 激活显存 (B=4, S=1024): 32.00 MB
+    注意力分数激活显存: 128.00 MB
+
+
 这个计算清楚地表明，序列长度 $S$ 对显存的压力是二次方的，这就是为什么在训练时我们很难使用非常长的序列。
 
 ### 4.2 KV Cache
@@ -330,6 +373,7 @@ M\_{KV\_cache} = N\_{layers} \times 2 \times B \times S \times d\_{model} \times
 $$
 
 其中 `2` 代表 Key 和 Value 两个部分。
+
 
 ```python
 def estimate_kv_cache_memory(args: ModelArgs, batch_size: int, seq_len: int, dtype_bytes=2):
@@ -349,6 +393,9 @@ kv_cache_mem = estimate_kv_cache_memory(args, batch_size=1, seq_len=max_len)
 
 print(f"当序列长度为 {max_len} 时，KV Cache 将占用: {kv_cache_mem / 1024**2:.2f} MB")
 ```
+
+    当序列长度为 2048 时，KV Cache 将占用: 32.00 MB
+
 
 这个结果解释了为什么即使在推理时，长上下文窗口也会消耗大量显存。每一层、每一个 token 的 K 和 V 状态都需要被精确地“记忆”下来。
 

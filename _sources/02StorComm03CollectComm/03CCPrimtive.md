@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 04.集合通信操作/原语/算子
+# 03.集合通信操作/原语/算子
 
 Author by: SingularityKChen
 

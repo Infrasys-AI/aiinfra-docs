@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="KV Cache 原理" />
+<meta property="og:title" content="01.KV Cache 原理分析(DONE)" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="05Infer02InferSpeedUp/01KVCache.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="Author by: 张艺蓉 随着 LLM 的发展，模型生成的 token 长度不断增加，注意力阶段计算成为推理性能瓶颈。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免在自回归生成过程中重复计算，从而显著提升推理效率。 本节旨在对 KV Cache 技术进行全面的梳理。我们将从大模型推理的基本流程出发，解释其计算瓶颈与 KV Cache 的..." />
+<meta property="og:description" content="Author by: 张艺蓉 随着 LLM 的发展，模型生成的 Token 长度不断增加， 注意力计算成为推理性能核心瓶颈 。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免自回归生成过程中重复计算历史 Token 的注意力分数，从而显著降低推理延迟、提升吞吐量。 本节旨在对 KV Cache 技术进行全面梳理。我们将从大模型推理的基本流程出..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
-<meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="Author by: 张艺蓉 随着 LLM 的发展，模型生成的 token 长度不断增加，注意力阶段计算成为推理性能瓶颈。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免在自回归生成过程中重复计算，从而显著提升推理效率。 本节旨在对 KV Cache 技术进行全面..." />
-<meta name="description" content="Author by: 张艺蓉 随着 LLM 的发展，模型生成的 token 长度不断增加，注意力阶段计算成为推理性能瓶颈。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免在自回归生成过程中重复计算，从而显著提升推理效率。 本节旨在对 KV Cache 技术进行全面的梳理。我们将从大模型推理的基本流程出发，解释其计算瓶颈与 KV Cache 的..." />
+<meta property="og:image" content="/_images/social_previews/summary_05Infer02InferSpeedUp_01KVCache_ee82fe33.png" />
+<meta property="og:image:alt" content="Author by: 张艺蓉 随着 LLM 的发展，模型生成的 Token 长度不断增加， 注意力计算成为推理性能核心瓶颈 。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免自回归生成过程中重复计算历史 Token 的注意力分数，从而显著降低推理延迟、提升吞吐量。..." />
+<meta name="description" content="Author by: 张艺蓉 随着 LLM 的发展，模型生成的 Token 长度不断增加， 注意力计算成为推理性能核心瓶颈 。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免自回归生成过程中重复计算历史 Token 的注意力分数，从而显著降低推理延迟、提升吞吐量。 本节旨在对 KV Cache 技术进行全面梳理。我们将从大模型推理的基本流程出..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>KV Cache 原理 &#8212; AIInfra AI基础设施</title>
+    <title>01.KV Cache 原理分析(DONE) &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -81,12 +81,12 @@
     <link rel="icon" href="../_static/logo-square.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Paged Attention 原理" href="06PagedAttention.html" />
-    <link rel="prev" title="大模型推理加速" href="README.html" />
+    <link rel="next" title="06.Paged Attention 原理(DONE)" href="06PagedAttention.html" />
+    <link rel="prev" title="02.大模型推理加速" href="README.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 27, 2025"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
 
 <link
   rel="alternate"
@@ -259,9 +259,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
@@ -278,6 +278,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
@@ -293,14 +294,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -317,8 +318,9 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
@@ -331,9 +333,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
 </ul>
@@ -347,7 +349,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07%E5%A4%A7%E6%A8%A1%E5%9E%8BCKPT%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
@@ -360,12 +362,13 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups：容器资源控制关键(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -379,25 +382,29 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -411,7 +418,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
-
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -432,10 +438,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.参数高效微调算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.Reparameterization 算法原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -453,9 +459,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型推理加速</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">KV Cache 原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">02.大模型推理加速</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07LLM_In_Flash.html">LLM IN FLASH</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
@@ -464,6 +471,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
@@ -475,10 +483,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -486,9 +503,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/bitsandbytesINT8.html">bitsandbytes LLM.int8()源码阅读</a></li>
 </ul>
 </details></li>
@@ -509,14 +529,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
@@ -527,12 +546,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF实现MOE推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
@@ -540,13 +559,14 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData03NewArch/README.html">大模型创新架构</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/01Review.html">01.Transformer 回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">02.Efficient Transformer 结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/03RWKVIntro.html">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/05SSM.html">S4模型详解：结构化状态空间模型剖析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">Mixture-of-Recursions, MoR 架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/08RetNet.html">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData03NewArch/CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
@@ -560,7 +580,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -610,7 +632,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B进行RAG代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
 </ul>
 </details></li>
@@ -846,7 +868,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>KV Cache 原理</h1>
+    <h1>01.KV Cache 原理分析(DONE)</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -856,24 +878,48 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">大模型推理过程</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">大模型推理回顾</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">大模型推理计算分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2. 大模型推理流程</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.1 推理阶段划分</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.2 推理计算瓶颈分析</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">无 KV Cache 时计算冗余</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">KV Cache 基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">KV Cache 具体实现</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">早期 KV Cache 实现</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cache">通过 Cache 类实现</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">KV Cache 显存分析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">长序列场景</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. KV Cache 核心原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 设计核心前提</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 优化后计算流程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cache">3.3 有无 Cache 对比</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q">3.4 为何无需缓存 Q 向量</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.5 完整工作流程</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">本节视频</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">引用与参考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. KV Cache 实现方案</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.1 早期手动拼接实现</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">缓存数据结构说明</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">4.2 标准 Cache 类实现</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Cache 类核心接口</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型集成方式</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">启用/关闭方式</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.3 核心优化点</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5. KV Cache 显存开销分析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">5.1 显存占用公式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">5.2 典型模型量化示例</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seq-len-1024">常规序列长度（seq_len=1024）</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">5.3 长序列场景瓶颈</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">5.4 显存优化技术方向</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">6. 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">引用与参考</a></li>
 </ul>
             </nav>
         </div>
@@ -886,98 +932,141 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="kv-cache">
-<h1>KV Cache 原理<a class="headerlink" href="#kv-cache" title="Link to this heading">#</a></h1>
-<p>Author by: 张艺蓉</p>
-<p>随着 LLM 的发展，模型生成的 token 长度不断增加，注意力阶段计算成为推理性能瓶颈。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免在自回归生成过程中重复计算，从而显著提升推理效率。</p>
-<p>本节旨在对 KV Cache 技术进行全面的梳理。我们将从大模型推理的基本流程出发，解释其计算瓶颈与 KV Cache 的设计动机。在此基础上，介绍 KV Cache 的原理，及其具体实现。最后，我们将对 KV Cache 的显存开销进行定量分析。</p>
+<section class="tex2jax_ignore mathjax_ignore" id="kv-cache-done">
+<h1>01.KV Cache 原理分析(DONE)<a class="headerlink" href="#kv-cache-done" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>Author by: 张艺蓉</p>
+</div></blockquote>
+<p>随着 LLM 的发展，模型生成的 Token 长度不断增加，<strong>注意力计算成为推理性能核心瓶颈</strong>。KV Cache 是解决这一问题的关键措施，它通过缓存已计算的 Key 和 Value 矩阵，避免自回归生成过程中重复计算历史 Token 的注意力分数，从而显著降低推理延迟、提升吞吐量。</p>
+<p>本节旨在对 KV Cache 技术进行全面梳理。我们将从大模型推理的基本流程出发，解析其计算瓶颈与 KV Cache 的设计动机；在此基础上，深入阐述 KV Cache 的核心原理与具体实现方案；最后通过定量分析，明确 KV Cache 的显存开销特征及长序列场景下的挑战。</p>
 <section id="id1">
-<h2>大模型推理过程<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<h2>2. 大模型推理流程<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <section id="id2">
-<h3>大模型推理回顾<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<p>我们先简要回顾一下大模型推理的过程。模型依据所有已知的历史 Token 序列 <span class="math notranslate nohighlight">\([t_1, t_2,...,t_n]\)</span>，来预测下一个最可能的 Token <span class="math notranslate nohighlight">\(t_{n+1}\)</span>，输出的 token 会与输入 tokens 拼接在一起，然后作为下一次推理的输入 <span class="math notranslate nohighlight">\([t_1, t_2,...,t_n,t_{n+1}]\)</span>，这样不断重复直到遇到终止符。</p>
-<p><img alt="大模型两阶段示意图" src="../_images/01KVCache04.jpg" />
-为实现高效推理，这个过程在实践中被划分为两个阶段：</p>
+<h3>2.1 推理阶段划分<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>大模型推理的核心是<strong>自回归生成</strong>：模型依据历史 Token 序列 <span class="math notranslate nohighlight">\([t_1, t_2,...,t_n]\)</span> 预测下一个最可能的 Token <span class="math notranslate nohighlight">\(t_{n+1}\)</span>，生成的 Token 会与输入序列拼接，作为下一轮推理的输入 <span class="math notranslate nohighlight">\([t_1, t_2,...,t_n,t_{n+1}]\)</span>，重复该过程直至遇到终止符或达到最大长度。</p>
+<p><img alt="大模型两阶段示意图" src="../_images/01KVCache04.jpg" /></p>
+<p>为实现高效推理，该过程被划分为两个核心阶段，二者在计算方式、并行度上存在显著差异：</p>
 <ol class="arabic simple">
-<li><p>Prefill 阶段（Prompt phase）：Prefill 阶段的目标是一次性地、并行地处理用户输入的全部 Prompt，计算出用于预测第一个新 Token 的初始状态。</p></li>
-<li><p>Decode 阶段（Token generation phase）：在 Prefill 阶段完成后，模型进入逐个 Token 的生成阶段。在每一步中，模型都将上一步生成的 Token 加入到历史序列中，并以此为基础预测下一个 Token，直到生成结束符或达到最大长度。</p></li>
+<li><p>Prefill 阶段（Prompt 处理阶段）：一次性并行处理用户输入的全部 Prompt，计算所有 Token 的 K、V 向量及初始注意力状态，为第一个新 Token 生成提供基础。</p></li>
+<li><p>Decode 阶段（Token 生成阶段）：逐一生成新 Token，每一步仅输入上一轮生成的单个 Token，利用历史缓存的 KV 向量计算注意力，避免重复处理已有的历史序列。</p></li>
 </ol>
-<p>!!!!!!!!!!!!!!增加图更清楚 PD 两个阶段</p>
 </section>
 <section id="id3">
-<h3>大模型推理计算分析<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>在了解了大模型的推理过程之后，现在来看在没有 KV Cache 的优化下，推理过程需要进行哪些计算。
-我们先来看单个 token 自回归推理的计算流程，它会依次经过以下核心模块：</p>
+<h3>2.2 推理计算瓶颈分析<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>在未启用 KV Cache 时，推理过程的核心计算流程如下（以单个 Token 自回归为例），各模块依次执行：</p>
 <ol class="arabic simple">
-<li><p>Embedding 层: 将输入的 Token 转换为其对应的词向量（Embedding Vector）。</p></li>
-<li><p>QKV 计算: 词向量通过与三个不同的权重矩阵（<span class="math notranslate nohighlight">\(W_q\)</span>，<span class="math notranslate nohighlight">\(W_k\)</span>，<span class="math notranslate nohighlight">\(W_v\)</span>）相乘，生成该 Token 的 Query、Key 和 Value 向量。</p></li>
-<li><p>因果注意力计算 (Causal Attention): 在计算每个时间步的注意力时，只关注当前时间步及之前的内容</p></li>
-<li><p>前馈神经网络 (FFN): 注意力计算的输出会进一步通过一个前馈神经网络，得到该层最终的输出。这个输出将作为下一层的输入，或在最后一层用于预测下一个 Token。</p></li>
+<li><p>Embedding 层：将输入 Token 映射为固定维度的词向量（Embedding Vector）。</p></li>
+<li><p>QKV 计算：词向量与权重矩阵 <span class="math notranslate nohighlight">\(W_q\)</span>、<span class="math notranslate nohighlight">\(W_k\)</span>、<span class="math notranslate nohighlight">\(W_v\)</span> 相乘，生成 Query（查询）、Key（键）、Value（值）向量。</p></li>
+<li><p>Causal Attention 层：计算当前 Token 与所有历史 Token 的注意力分数，且仅允许关注“当前及之前”的 Token（通过掩码屏蔽未来位置）。</p></li>
+<li><p>FFN 层：注意力输出经 FFN 变换后，作为当前层输出（或用于最终 Token 预测）。</p></li>
 </ol>
-<p>整个过程的核心计算是注意力计算，其基础公式如下：</p>
+<p>整个过程的核心是<strong>注意力计算</strong>，其基础公式为：</p>
 <div class="math notranslate nohighlight">
 \[
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d}}\right)V
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 \]</div>
-<p>其中，<span class="math notranslate nohighlight">\(Q\)</span> (Query), <span class="math notranslate nohighlight">\(K\)</span> (Key), <span class="math notranslate nohighlight">\(V\)</span> (Value) 矩阵由输入序列 <span class="math notranslate nohighlight">\(X\)</span> 与对应的权重矩阵 <span class="math notranslate nohighlight">\(W_Q\)</span>, <span class="math notranslate nohighlight">\(W_K\)</span>, <span class="math notranslate nohighlight">\(W_V\)</span> 相乘得到：</p>
+<p>其中，<span class="math notranslate nohighlight">\(Q\)</span>、<span class="math notranslate nohighlight">\(K\)</span>、<span class="math notranslate nohighlight">\(V\)</span> 矩阵由输入序列 <span class="math notranslate nohighlight">\(X\)</span> 与对应权重矩阵相乘得到：</p>
 <div class="math notranslate nohighlight">
 \[
 Q = X W_Q, \quad K = X W_K, \quad V = X W_V
 \]</div>
-<p>为了方便描述，我们在之后的公式 he 中忽略 scale 项 <span class="math notranslate nohighlight">\(\sqrt{d}\)</span>。假设我们输入的 prompt 是 h，最终的输出是 hello。</p>
-<p>因为这里计算的是 casual attention，根据定义，第 t 个 token 的公式表示如下：
-$<span class="math notranslate nohighlight">\(
-Att_t = \text{softmax}\left( \frac{q_t K_t^T}{\sqrt{d_k}} \right) V_t \quad \text{其中 } K_t = \begin{pmatrix} k_1 \\ \vdots \\ k_t \end{pmatrix}, V_t = \begin{pmatrix} v_1 \\ \vdots \\ v_t \end{pmatrix}
-\)</span>$</p>
-<p>为了方便理解，在之后的步骤中，我们会将上述公式展开，用 <span class="math notranslate nohighlight">\(softmaxed\)</span> 表示 softmax 对矩阵计算后的结果，来直观表示每一步的 attention 计算。</p>
-<p>第一步输入&quot;h&quot;的时候，attention 计算如下（图中 <span class="math notranslate nohighlight">\(\theta\)</span> 代表 softmax 计算后的结果）：</p>
+<p><span class="math notranslate nohighlight">\(\sqrt{d_k}\)</span> 为缩放因子（<span class="math notranslate nohighlight">\(d_k\)</span> 为 Key 向量维度），用于缓解注意力分数过大导致的 softmax 梯度消失问题，后续公式中为简化表述暂不体现。</p>
+<p>由于因果注意力的约束，第 <span class="math notranslate nohighlight">\(t\)</span> 个 Token 的注意力计算仅依赖前 <span class="math notranslate nohighlight">\(t\)</span> 个 Token 的 K、V 向量，公式可展开为：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+Att_t = \text{softmax}\left( q_t K_t^T \right) V_t \quad \text{其中 } K_t = \begin{pmatrix} k_1 \\ \vdots \\ k_t \end{pmatrix}, V_t = \begin{pmatrix} v_1 \\ \vdots \\ v_t \end{pmatrix}
+\end{split}\]</div>
+<p>为直观展示计算过程，下文用 <span class="math notranslate nohighlight">\(\text{softmaxed}(·)\)</span> 表示 softmax 运算后的结果。</p>
+<section id="kv-cache">
+<h4>无 KV Cache 时计算冗余<a class="headerlink" href="#kv-cache" title="Link to this heading">#</a></h4>
+<p>以生成序列“hello”为例，分步拆解无 KV Cache 时的注意力计算：</p>
+<ol class="arabic">
+<li><p>输入“h”（<span class="math notranslate nohighlight">\(t_1\)</span>），生成“e”（<span class="math notranslate nohighlight">\(t_2\)</span>）：</p>
 <p><img alt="without cache 计算示意图 1" src="../_images/01KVCache05.jpg" /></p>
-<p>如上图所示，计算公式如下：
-$<span class="math notranslate nohighlight">\(
-\text{Att}_1 = \text{softmaxed}(q_1 k_1^T) \cdot v_1
-\)</span>$</p>
-<p>最终计算出了 token &quot;e&quot;，然后下一步我们输入&quot;e&quot;,这个时候的 attention 计算变成了：</p>
+<p>计算公式：<span class="math notranslate nohighlight">\(\text{Att}_1 = \text{softmaxed}(q_1 k_1^T) \cdot v_1\)</span></p>
+</li>
+<li><p>输入“he”（<span class="math notranslate nohighlight">\(t_1, t_2\)</span>），生成“l”（<span class="math notranslate nohighlight">\(t_3\)</span>）：</p>
 <p><img alt="without cache 计算示意图 2" src="../_images/01KVCache06.jpg" /></p>
-<p>其计算公式为：
-$<span class="math notranslate nohighlight">\(
-\text{Att}_2 = \text{softmaxed}(q_2 k_1^T) \cdot v_1 + \text{softmaxed}(q_2 k_2^T) \cdot v_2
-\)</span>$</p>
-<p>然后我们计算出了 token&quot;l&quot;,我们下一步输入&quot;l&quot;,这个时候 attention 计算为:</p>
+<p>计算公式：<span class="math notranslate nohighlight">\(\text{Att}_2 = \text{softmaxed}(q_2 k_1^T) \cdot v_1 + \text{softmaxed}(q_2 k_2^T) \cdot v_2\)</span></p>
+</li>
+<li><p>输入“hel”（<span class="math notranslate nohighlight">\(t_1, t_2, t_3\)</span>），生成“l”（<span class="math notranslate nohighlight">\(t_4\)</span>）：</p>
 <p><img alt="without cache 计算示意图 3" src="../_images/01KVCache01.jpg" /></p>
-<p>其计算公式如下：
-$<span class="math notranslate nohighlight">\(
-\text{Att}_3 = \text{softmaxed}(q_3 k_1^T) \cdot v_1 + \text{softmaxed}(q_3 k_2^T) \cdot v_2 + \text{softmaxed}(q_3 k_3^T) \cdot v_3
-\)</span>$</p>
-<p>通过上述步骤可以看到，每一次计算当前 token 的 attention 都需要之前所有 token 的 K/V,为了能够计算这些 k/v 值,当我们不采取任何优化措施时，我们需要将之前的 token 也作为输入，这样才能够计算得到我们需要的 attention。</p>
-<p>我们可以看到这种计算模式导致总计算复杂度与生成序列长度 <span class="math notranslate nohighlight">\(T\)</span> 的平方成正比 <span class="math notranslate nohighlight">\(O(T^2)\)</span>，这样的复杂度是不能忍受的。</p>
+<p>计算公式：<span class="math notranslate nohighlight">\(\text{Att}_3 = \text{softmaxed}(q_3 k_1^T) \cdot v_1 + \text{softmaxed}(q_3 k_2^T) \cdot v_2 + \text{softmaxed}(q_3 k_3^T) \cdot v_3\)</span></p>
+</li>
+</ol>
+<p>可见，无 KV Cache 时，每一步生成新 Token 都需<strong>重新输入全部历史序列</strong>，重复计算所有历史 Token 的 K、V 向量及注意力分数。这导致总计算复杂度与生成序列长度 <span class="math notranslate nohighlight">\(T\)</span> 呈<strong>平方关系</strong>（<span class="math notranslate nohighlight">\(O(T^2)\)</span>）——当序列长度达到 1k、10k 时，计算量会呈指数级增长，推理延迟急剧升高，完全无法满足实际应用需求。</p>
+</section>
 </section>
 </section>
 <section id="id4">
-<h2>KV Cache 基本原理<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
-<p>!!!!!!! KV Cache 的原理可以参考这个增加更多的图例 https://zhuanlan.zhihu.com/p/662498827</p>
-<p>因为有了上一节的分析，我们知道了每个 token decode 阶段具体需要用到哪些东西，由于大模型的推理是 Masked Self-Attention 每个 token 只能够看到其之前的 token 信息，因此当我们输入第 <span class="math notranslate nohighlight">\(t\)</span> 个 token 的时候，<span class="math notranslate nohighlight">\(K_t\)</span>，<span class="math notranslate nohighlight">\(V_t\)</span> 计算之后就是确定的，之后计算新的 attention 的时候，前面计算的 key 和 value 值并不会改变，我们自然想到直接将之前计算出的 key 和 value 向量缓存。</p>
-<p>我们以第 3 个 token 为例，当我们缓存了之前的 K 与 V 之后，<span class="math notranslate nohighlight">\(\text{Att}_t\)</span> 计算只与当前的 <span class="math notranslate nohighlight">\(Q_t\)</span> 有关，因此，只需要将当前的 token 输入，那么 attention 矩阵计算变成了如下的流程：</p>
-<p><img alt="with cache 计算示意图" src="../_images/01KVCache02.jpg" /></p>
-<p>我们可以清楚的看到与没有 KV Cache 相比,我们只需要输入当前的 token,然后利用缓存的 KV 就可以完成 KV 的计算。</p>
-<p>下图直观的展示了是否使用 KV Cache 的计算对比。当我们不使用 KV Cache 的时候，在每一步生成 token 的过程中，都需要将之前所有的 token 作为模型输入，才能计算出之前所有 token 的 K/V 值；当我们使用 KV Cache 时，因为已经将之前所有 token 的 K/V 进行缓存，所以只需要将当前的 token 传入模型计算即可，大大降低了推理时的计算量。</p>
-<p><img alt="with cache 与 withoutcache 计算对比图" src="../_images/01KVCache07.jpg" /></p>
-<p>而从上述图解和公式中，也可以清晰的看到为什么没有 Q Cache。因为之前 token 的 Q 在之后 token 的 attention 计算中根本不会用到。</p>
-<p>最后做一下总结，KV Cache 的目的就是缓存之前 token 的 K 和 V 向量，避免重复计算，以降低推理开销，其在大模型推理过程中的总流程如下：</p>
-<p><img alt="KV Cache 流程" src="../_images/01KVCache03.jpg" /></p>
-<p>在 prefill 阶段开始保存初始的 KV Cache，之后在 decode 阶段每一次计算都将最新的使用保存的 KV Cache 与当前 token 最新的计算出的 KV 进行拼接，进行 self-attention 的计算。</p>
-</section>
+<h2>3. KV Cache 核心原理<a class="headerlink" href="#id4" title="Link to this heading">#</a></h2>
 <section id="id5">
-<h2>KV Cache 具体实现<a class="headerlink" href="#id5" title="Link to this heading">#</a></h2>
-<p>了解了 KV Cache 的原理之后，其实现变的非常简单，本质上就是在上一次缓存的 Key 和 Value 上做 concat。</p>
+<h3>3.1 设计核心前提<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>KV Cache 的优化逻辑源于一个关键观察：<strong>因果注意力中，历史 Token 的 K、V 向量是“静态不变”的</strong>。</p>
+<p>在自回归生成过程中，第 <span class="math notranslate nohighlight">\(t\)</span> 个 Token 的 K、V 向量仅由其自身的词向量和模型权重决定，与后续生成的 Token 无关。一旦计算完成，这些 K、V 向量在后续所有步骤中都不会改变，可被永久复用。</p>
+<p>基于这一前提，自然的优化思路是：<strong>将历史 Token 的 K、V 向量缓存至显存，后续生成新 Token 时，仅需计算当前 Token 的 Q 向量，直接与缓存的 K、V 矩阵进行注意力计算</strong>，无需重复处理历史序列。</p>
+</section>
 <section id="id6">
-<h3>早期 KV Cache 实现<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
-<p>!!!!!!! 给具体的代码加上中文注释哦</p>
-<p>我们以 huggingface 的 Transformer 库的 gpt2 的实现为例<a class="reference external" href="https://github.com/huggingface/transformers/blob/main/src/transformers/models/gpt2/modeling_gpt2.py">transformers/src/transformers/models/gpt2/modeling_gpt2.py</a>来看具体实现过程。</p>
-<p>早期 KV Cache 的实现如下：</p>
+<h3>3.2 优化后计算流程<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>仍以生成“hello”的第三步（输入“hel”生成“l”）为例，启用 KV Cache 后的计算流程如下：</p>
+<p><img alt="with cache 计算示意图" src="../_images/01KVCache02.jpg" /></p>
+<p>此时，注意力计算仅需两步：</p>
+<ol class="arabic simple">
+<li><p>计算当前 Token（<span class="math notranslate nohighlight">\(t_3\)</span>）的 Q 向量 <span class="math notranslate nohighlight">\(q_3\)</span>；</p></li>
+<li><p>直接调用缓存的历史 K 矩阵（<span class="math notranslate nohighlight">\(k_1, k_2\)</span>）和 V 矩阵（<span class="math notranslate nohighlight">\(v_1, v_2\)</span>），与 <span class="math notranslate nohighlight">\(q_3\)</span> 计算注意力分数，再叠加当前 Token 的 <span class="math notranslate nohighlight">\(k_3\)</span>、<span class="math notranslate nohighlight">\(v_3\)</span> 结果。</p></li>
+</ol>
+<p>计算公式简化为：</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Att}_3 = \text{softmaxed}(q_3 [\text{Cache}_K^T, k_3^T]) \cdot [\text{Cache}_V^T, v_3^T]^T
+\]</div>
+<p>其中 <span class="math notranslate nohighlight">\(\text{Cache}_K = [k_1, k_2]^T\)</span>、<span class="math notranslate nohighlight">\(\text{Cache}_V = [v_1, v_2]^T\)</span> 为缓存的历史 K、V 矩阵。</p>
+</section>
+<section id="cache">
+<h3>3.3 有无 Cache 对比<a class="headerlink" href="#cache" title="Link to this heading">#</a></h3>
+<p>下图直观展示了 KV Cache 的优化效果：</p>
+<p><img alt="with cache 与 withoutcache 计算对比图" src="../_images/01KVCache07.jpg" /></p>
+<ul class="simple">
+<li><p>无 KV Cache：每步需输入全部历史序列，重复计算所有 K、V 向量，计算量随序列长度平方增长；</p></li>
+<li><p>有 KV Cache：仅需输入当前 Token，复用历史 K、V 缓存，计算量随序列长度线性增长（<span class="math notranslate nohighlight">\(O(T)\)</span>），大幅降低推理开销。</p></li>
+</ul>
+</section>
+<section id="q">
+<h3>3.4 为何无需缓存 Q 向量<a class="headerlink" href="#q" title="Link to this heading">#</a></h3>
+<p>一个关键疑问是：为何仅缓存 K、V 而非 Q？核心原因是<strong>Q 向量的“使用场景唯一性”</strong>：</p>
+<ul class="simple">
+<li><p>K、V 向量的作用是“提供历史信息”，所有后续 Token 的注意力计算都需要调用；</p></li>
+<li><p>Q 向量的作用是“查询历史信息”，仅用于当前 Token 的注意力计算，后续 Token 生成时无需复用（每个 Token 的 Q 向量都是独立的）。</p></li>
+</ul>
+<p>缓存 Q 向量不仅无法降低计算量，还会额外占用显存，因此 KV Cache 仅聚焦于 K、V 矩阵的缓存。</p>
+</section>
+<section id="id7">
+<h3>3.5 完整工作流程<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p>KV Cache 在大模型推理中的完整流程如下：</p>
+<p><img alt="KV Cache 流程" src="../_images/01KVCache03.jpg" /></p>
+<ol class="arabic simple">
+<li><p>Prefill 阶段：并行处理输入 Prompt 的所有 Token，计算每个 Token 的 K、V 向量，缓存至显存，同时完成初始注意力计算，生成第一个新 Token；</p></li>
+<li><p>Decode 阶段：</p>
+<ul class="simple">
+<li><p>输入上一轮生成的单个 Token，计算其 Q、K、V 向量；</p></li>
+<li><p>将新 Token 的 K、V 向量拼接至缓存的 KV 矩阵中，更新 Cache；</p></li>
+<li><p>用新 Token 的 Q 向量与更新后的 KV 矩阵计算注意力分数，经 FFN 后生成下一个 Token；</p></li>
+</ul>
+</li>
+<li><p>重复 Decode 阶段，直至生成终止符或达到最大序列长度。</p></li>
+</ol>
+</section>
+</section>
+<section id="id8">
+<h2>4. KV Cache 实现方案<a class="headerlink" href="#id8" title="Link to this heading">#</a></h2>
+<p>KV Cache 的核心实现逻辑是“缓存历史 K、V 向量 + 新向量拼接更新”，随着大模型框架的发展，实现方式从早期的手动拼接演进为标准化的 Cache 类封装，灵活性和扩展性显著提升。</p>
+<section id="id9">
+<h3>4.1 早期手动拼接实现<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<p>以 Hugging Face Transformers 库中 GPT-2 的早期实现为例，KV Cache 通过元组（Tuple）存储，手动进行张量拼接更新：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 检查是否存在上一轮的缓存 (layer_past)</span>
 <span class="k">if</span> <span class="n">layer_past</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">past_key</span><span class="p">,</span> <span class="n">past_value</span> <span class="o">=</span> <span class="n">layer_past</span>
-        <span class="c1"># 将之前的 key 和当前计算出的 key 拼接</span>
+        <span class="c1"># 将之前的 key 和当前计算出的 key 拼接（维度：-2 对应序列长度维度）</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">past_key</span><span class="p">,</span> <span class="n">key</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
         <span class="c1"># 将之前的 value 和当前计算出的 value 拼接</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">past_value</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
@@ -989,28 +1078,26 @@ $<span class="math notranslate nohighlight">\(
         <span class="n">present</span> <span class="o">=</span> <span class="kc">None</span>
 </pre></div>
 </div>
-<p>在每层中，每个头的 Key 向量和 Value 向量存储在内存中。使用<code class="docutils literal notranslate"><span class="pre">layer_past</span></code>变量进行存储，其维度为<code class="docutils literal notranslate"><span class="pre">[n,</span> <span class="pre">2,</span> <span class="pre">b,</span> <span class="pre">h,</span> <span class="pre">s,</span> <span class="pre">d]</span></code>，每个维度的含义如下：</p>
+<section id="id10">
+<h4>缓存数据结构说明<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<p>早期实现中，<code class="docutils literal notranslate"><span class="pre">layer_past</span></code> 存储每层每个注意力头的 K、V 向量，维度为 <code class="docutils literal notranslate"><span class="pre">[2,</span> <span class="pre">batch_size,</span> <span class="pre">num_heads,</span> <span class="pre">seq_len,</span> <span class="pre">head_dim]</span></code>，各维度含义如下：</p>
 <ul class="simple">
-<li><p>第一维 num_layers：以每一个堆叠的 Block 为单位，例如堆叠 12 层，则一共有 12 组 Key、Value 信息。</p></li>
-<li><p>第二维 2：代表 Key 和 Value 这两个信息对象，索引 0 是 Key 向量，索引 1 是 Value 向量。</p></li>
-<li><p>第三维 batch_size：代表 batch_size，和输入需要推理的文本条数相等，如果输入是一条文本，则 b=1。</p></li>
-<li><p>第四维 num_heads：代表注意力头的数量，例如每层有 12 个头，则 h=12。</p></li>
-<li><p>第五维 seq_len：代表截止到当前 token 为止的文本长度，在每一个历史 token 位置上该 token 在每一层每个头下的 Key，Value 信息。</p></li>
-<li><p>第六维 d：代表 Key、Value 向量的映射维度，若 token 总的映射维度为 768，注意力头数为 12，则 d=768/12=64。</p></li>
+<li><p>第一维（2）：固定存储 Key（索引 0）和 Value（索引 1）；</p></li>
+<li><p>第二维（batch_size）：推理批次大小（如同时处理 16 条请求则为 16）；</p></li>
+<li><p>第三维（num_heads）：注意力头数量（如 GPT-2 每层 12 个头）；</p></li>
+<li><p>第四维（seq_len）：当前缓存的序列长度（Prompt 长度 + 已生成 Token 数）；</p></li>
+<li><p>第五维（head_dim）：单个注意力头的向量维度（如 GPT-2 总隐藏层维度 768，12 个头则为 64）。</p></li>
 </ul>
 </section>
-<section id="cache">
-<h3>通过 Cache 类实现<a class="headerlink" href="#cache" title="Link to this heading">#</a></h3>
-<p>这种直接在模型代码中通过元组（Tuple）传递之前 KV 缓存并手动<code class="docutils literal notranslate"><span class="pre">torch.cat</span></code>的方式，虽然直观，但存在几个严重的问题：</p>
-<ol class="arabic simple">
-<li><p>代码冗余：每一个支持 KV Cache 的模型都需要在自己的 Attention 模块中重复编写几乎完全相同的逻辑，一旦需要修改缓存逻辑，需要在不同的文件中进行修改。</p></li>
-<li><p>扩展性不足：随着大模型技术的发展，出现了多种不同的 KV Cache 策略，比如<code class="docutils literal notranslate"><span class="pre">SinkCache</span></code>，通过抛弃过去的 tokens，允许模型生成超出其上下文呢的长度。</p></li>
-</ol>
-<p>为了解决上述问题，huggingface transformers 库引入了<code class="docutils literal notranslate"><span class="pre">Cache</span></code> API（[transformers/src/transformers/cache_utils.py ]）(https://github.com/huggingface/transformers/blob/main/src/transformers/cache_utils.py)，将 KV 缓存封装在一个专用的<code class="docutils literal notranslate"><span class="pre">Cache</span></code>对象中，这个对象不仅负责存储数据，还负责管理自身的更新逻辑。</p>
-<p><code class="docutils literal notranslate"><span class="pre">Cache</span></code>类主要成员与函数如下：</p>
+</section>
+<section id="id11">
+<h3>4.2 标准 Cache 类实现<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<p>早期手动拼接方案存在明显缺陷：代码冗余（每个模型需重复实现拼接逻辑）、扩展性差（无法适配复杂缓存策略）。为此，Transformers 库引入了 <code class="docutils literal notranslate"><span class="pre">Cache</span></code> API（<a class="reference external" href="https://github.com/huggingface/transformers/blob/main/src/transformers/cache_utils.py">transformers/src/transformers/cache_utils.py</a>），将 KV 缓存封装为专用类，统一管理存储、更新、重排等逻辑。</p>
+<section id="id12">
+<h4>Cache 类核心接口<a class="headerlink" href="#id12" title="Link to this heading">#</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Cache</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    所有缓存类的基类、抽象类。具体的数据结构由各个子类实现。</span>
+<span class="sd">    所有缓存类的基类（抽象类），具体逻辑由子类实现</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">is_compileable</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -1025,116 +1112,155 @@ $<span class="math notranslate nohighlight">\(
         <span class="n">cache_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        更新缓存的核心方法。用新的 key_states 和 value_states 来更新指定层 (layer_idx) 的缓存。</span>
-<span class="sd">        返回:一个包含更新后、完整的 key 和 value 状态的元组。</span>
+<span class="sd">        核心更新方法：将新计算的 K/V 向量更新到指定层缓存</span>
+<span class="sd">        参数：</span>
+<span class="sd">            key_states/value_states：当前 Token 的 K/V 向量</span>
+<span class="sd">            layer_idx：当前层索引（如第 3 层 Transformer 块）</span>
+<span class="sd">            cache_kwargs：额外参数（如 cache_position 指定拼接位置）</span>
+<span class="sd">        返回：更新后的完整 K/V 向量</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Make sure to implement `update` in a subclass.&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_seq_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">layer_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;返回缓存中状态的序列长度。可以任选传入一个层索引。&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;返回指定层缓存的序列长度&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">get_max_cache_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;返回缓存对象的最大序列长度（即最大容量）。&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;返回缓存的最大容量（支持的最大序列长度）&quot;&quot;&quot;</span>
         
     <span class="k">def</span> <span class="nf">get_usable_length</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_seq_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">layer_idx</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;给定新输入的序列长度，返回缓存的可用长度。&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;根据新输入序列长度，返回当前缓存的可用长度（适配滑动窗口等策略）&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">reorder_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beam_idx</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;为集束搜索（beam search）重排缓存，根据给定的选定束索引。&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;为束搜索（Beam Search）重排缓存：根据选定的束索引调整 K/V 顺序&quot;&quot;&quot;</span>
 </pre></div>
 </div>
-<p>现在模型代码处理 KV Cache 的操作更加简单，只需要调用<code class="docutils literal notranslate"><span class="pre">update()</span></code>函数即可，具体的拼接逻辑由<code class="docutils literal notranslate"><span class="pre">Cache</span></code>类完成，如下所示：</p>
+</section>
+<section id="id13">
+<h4>模型集成方式<a class="headerlink" href="#id13" title="Link to this heading">#</a></h4>
+<p>现在模型仅需调用 <code class="docutils literal notranslate"><span class="pre">Cache</span></code> 类的 <code class="docutils literal notranslate"><span class="pre">update</span></code> 方法即可完成缓存管理，无需关注底层拼接逻辑，代码简洁且可复用：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 检查是否存在缓存对象 (past_key_value)</span>
 <span class="k">if</span> <span class="n">past_key_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">past_key_value</span><span class="p">,</span> <span class="n">EncoderDecoderCache</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">is_cross_attention</span><span class="p">:</span> <span class="c1"># 如果是交叉注意力层，则从容器中取出交叉注意力的缓存</span>
+        <span class="k">if</span> <span class="n">is_cross_attention</span><span class="p">:</span> <span class="c1"># 交叉注意力层：取出对应的交叉注意力缓存</span>
             <span class="n">past_key_value</span> <span class="o">=</span> <span class="n">past_key_value</span><span class="o">.</span><span class="n">cross_attention_cache</span>
-        <span class="k">else</span><span class="p">:</span> <span class="c1"># 否则取出普通的自注意力缓存</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># 自注意力层：取出自注意力缓存</span>
             <span class="n">past_key_value</span> <span class="o">=</span> <span class="n">past_key_value</span><span class="o">.</span><span class="n">self_attention_cache</span>
-    <span class="c1"># 准备传递给 update 方法的额外参数，如 cache_position 用于更精细的内存操作</span>
+    <span class="c1"># 缓存更新参数（cache_position 标记新 Token 的序列位置）</span>
     <span class="n">cache_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;cache_position&quot;</span><span class="p">:</span> <span class="n">cache_position</span><span class="p">}</span>
-    <span class="c1"># 调用缓存对象的 update 方法，将当前计算出的 key 和 value 更新到缓存中</span>
-    <span class="c1"># 该方法会返回拼接后完整的 key_states 和 value_states</span>
+    <span class="c1"># 调用 update 方法更新缓存，返回完整 K/V 向量</span>
     <span class="n">key_states</span><span class="p">,</span> <span class="n">value_states</span> <span class="o">=</span> <span class="n">past_key_value</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="n">key_states</span><span class="p">,</span> <span class="n">value_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_idx</span><span class="p">,</span> <span class="n">cache_kwargs</span><span class="o">=</span><span class="n">cache_kwargs</span>
     <span class="p">)</span>
 </pre></div>
 </div>
-<p>关于如何开启/关闭 KV Cache，transformers 库的<code class="docutils literal notranslate"><span class="pre">generate</span></code>方法通过<code class="docutils literal notranslate"><span class="pre">use_cache</span></code>参数来指定是否开启 KV Cache。</p>
+</section>
+<section id="id14">
+<h4>启用/关闭方式<a class="headerlink" href="#id14" title="Link to this heading">#</a></h4>
+<p>Transformers 库的 <code class="docutils literal notranslate"><span class="pre">generate</span></code> 方法通过 <code class="docutils literal notranslate"><span class="pre">use_cache</span></code> 参数控制 KV Cache：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">use_cache=True</span></code>（默认）：启用 KV Cache，优先保证推理速度；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use_cache=False</span></code>：关闭 KV Cache，节省显存（适用于显存不足的场景）。</p></li>
+</ul>
 </section>
 </section>
-<section id="id7">
-<h2>KV Cache 显存分析<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
-<p>!!!!!!! 可以增加在长序列场景，KVCache 的增加的分析，特别是现在推理都需要长序列，对显存的影响</p>
-<p>值得注意的是，KV Cache 的显存占用不可忽视。KV Cache 的显存占用公式如下：</p>
+<section id="id15">
+<h3>4.3 核心优化点<a class="headerlink" href="#id15" title="Link to this heading">#</a></h3>
+<p>标准化 <code class="docutils literal notranslate"><span class="pre">Cache</span></code> 类的设计带来两大核心优势：</p>
+<ol class="arabic simple">
+<li><p>支持复杂缓存策略：如 <code class="docutils literal notranslate"><span class="pre">SinkCache</span></code>（抛弃早期 Token 以支持超长序列）、<code class="docutils literal notranslate"><span class="pre">SlidingWindowCache</span></code>（滑动窗口缓存，仅保留最近 N 个 Token 的 K/V）等，可通过子类扩展实现；</p></li>
+<li><p>兼容模型并行与分布式推理：缓存对象可被多个 GPU 节点共享，支持跨设备缓存同步，适配大规模模型部署。</p></li>
+</ol>
+</section>
+</section>
+<section id="id16">
+<h2>5. KV Cache 显存开销分析<a class="headerlink" href="#id16" title="Link to this heading">#</a></h2>
+<p>KV Cache 虽能降低计算量，但会显著占用显存——其显存开销与序列长度呈线性增长，是长序列推理的核心显存瓶颈。</p>
+<section id="id17">
+<h3>5.1 显存占用公式<a class="headerlink" href="#id17" title="Link to this heading">#</a></h3>
+<p>KV Cache 的显存占用可通过以下公式精确计算：</p>
 <div class="math notranslate nohighlight">
 \[
-Cache_Memory = 2 * num_layers * batch_size * seq_len * hidden_size * precision_in_bytes
+\text{Cache}_\text{Memory} = 2 \times \text{num_layers} \times \text{batch_size} \times \text{seq_len} \times \text{hidden_size} \times \text{precision}_\text{bytes}
 \]</div>
-<p>其中：</p>
+<p>各参数含义：</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code> 代表需要保存 K/V Cache</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">num_layers</span></code> 代表模型层数</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code>是批次大小</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">seq_len</span></code> 指当前需要缓存的序列长度，等于 Prompt 的长度加上已经生成的 Token 数量</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">hidden_size</span></code> 指的是隐藏层维度</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">precision_in_bytes</span></code> 指的是用于存储每个数值的字节数,取决于模型的精度，如 FP32 需要 4 字节。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">2</span></code>：需同时缓存 K 和 V 两个矩阵；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_layers</span></code>：模型的 Transformer 块层数（如 GPT-3 为 96 层）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">batch_size</span></code>：推理批次大小（同时处理的请求数）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seq_len</span></code>：缓存的序列总长度（Prompt 长度 + 已生成 Token 数）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hidden_size</span></code>：模型的总隐藏层维度（如 GPT-3 为 12288）；</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">precision_bytes</span></code>：数据精度对应的字节数（FP32=4、FP16=2、BF16=2、INT8=1、INT4=0.5）。</p></li>
 </ul>
-<p>我们以 GPT3-175B 为例估算 KV Cache 占用显存，该模型主要参数如下：</p>
+</section>
+<section id="id18">
+<h3>5.2 典型模型量化示例<a class="headerlink" href="#id18" title="Link to this heading">#</a></h3>
+<p>以 GPT-3 175B 模型为例，对比不同序列长度、精度下的 KV Cache 显存占用（批次大小=16）：</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>模型</p></th>
-<th class="head"><p>参数量</p></th>
-<th class="head"><p>层数</p></th>
-<th class="head"><p>隐藏层维度</p></th>
+<tr class="row-odd"><th class="head"><p>模型参数</p></th>
+<th class="head"><p>数值</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>GPT3</p></td>
+<tr class="row-even"><td><p>参数量</p></td>
 <td><p>175B</p></td>
+</tr>
+<tr class="row-odd"><td><p>层数（num_layers）</p></td>
 <td><p>96</p></td>
+</tr>
+<tr class="row-even"><td><p>隐藏层维度（hidden_size）</p></td>
 <td><p>12288</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>我们假设序列总长度为 1024，批次大小为 16，精度为 FP16，则 KV Cache 占用显存为 <span class="math notranslate nohighlight">\(2 \times 96 \times 16 \times 1024 \times 12288 \times 2 / 1024 / 1024 / 1024 = 72 GB\)</span>。</p>
-<p>这个显存占用量已经约为大模型参数量的一半，消耗了大量的显存资源，这也正是针对 KV Cache 的内存优化在大模型推理领域至关重要的原因。</p>
-<section id="id8">
-<h3>长序列场景<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
-<p>当前大模型推理向着支持更长上下文发展，随着序列长度的增加，KV Cache 线性增长，KV Cache 的显存占用成为了一个核心瓶颈。我们仍以上述 GPT-3 模型为例，当我们将序列长度从常规的 1024 扩展到目前常见的 32k，其 KV Cache 的显存占用将会变为：
- <span class="math notranslate nohighlight">\(2 \times 96 \times 16 \times 32768 \times 12288 \times 2 / 1024 / 1024 / 1024 = 2304 GB = 2.25 TB\)</span>
- 经过计算，在 32k 的序列长度下 KV Cache 的显存就需要 2.25TB，这样大的显存需求使得未经优化的长序列推理几乎是不可能做到的。</p>
-<p>这种与序列长度成正比的显存增长，是制约大模型走向更长上下文的核心瓶颈之一。因此，如何有效管理和压缩 KV Cache，特别是在长序列场景下，成为了一个迫切需要解决的问题。因此催生了 PagedAttention，KV Cache 量化，滑动窗口注意力等一系列关键的推理优化技术。</p>
+<section id="seq-len-1024">
+<h4>常规序列长度（seq_len=1024）<a class="headerlink" href="#seq-len-1024" title="Link to this heading">#</a></h4>
+<ul class="simple">
+<li><p>FP32 精度：<span class="math notranslate nohighlight">\(2 \times 96 \times 16 \times 1024 \times 12288 \times 4 / 1024^3 = 144\)</span> GB；</p></li>
+<li><p>FP16/BF16 精度：<span class="math notranslate nohighlight">\(2 \times 96 \times 16 \times 1024 \times 12288 \times 2 / 1024^3 = 72\)</span> GB；</p></li>
+<li><p>INT8 量化：<span class="math notranslate nohighlight">\(2 \times 96 \times 16 \times 1024 \times 12288 \times 1 / 1024^3 = 36\)</span> GB；</p></li>
+<li><p>INT4 量化：<span class="math notranslate nohighlight">\(2 \times 96 \times 16 \times 1024 \times 12288 \times 0.5 / 1024^3 = 18\)</span> GB。</p></li>
+</ul>
+<p>可见，FP16 精度下 KV Cache 显存占用已达 72 GB，约为 GPT-3 模型参数量（FP16 下约 350 GB）的 20%——这一开销在多批次、长序列场景下会急剧扩大。</p>
 </section>
 </section>
-<section id="id9">
-<h2>总结与思考<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<section id="id19">
+<h3>5.3 长序列场景瓶颈<a class="headerlink" href="#id19" title="Link to this heading">#</a></h3>
+<p>当前大模型推理逐渐向超长上下文（如 32k、64k、128k）演进，而 KV Cache 显存占用与序列长度呈线性增长，成为核心制约因素。</p>
+<p>仍以 GPT-3 175B 模型（batch_size=16、FP16 精度）为例，当序列长度扩展至 32k 时：</p>
+<div class="math notranslate nohighlight">
+\[
+\text{Cache}_\text{Memory} = 2 \times 96 \times 16 \times 32768 \times 12288 \times 2 / 1024^3 = 2304 \text{ GB} = 2.25 \text{ TB}
+\]</div>
+<p>2.25 TB 的显存需求远超当前单卡最大显存（如 A100 为 80 GB、H100 为 80/160 GB），即使采用多卡模型并行，也需数十张 GPU 才能满足——未经优化的 KV Cache 完全无法支撑超长序列推理。</p>
+</section>
+<section id="id20">
+<h3>5.4 显存优化技术方向<a class="headerlink" href="#id20" title="Link to this heading">#</a></h3>
+<p>长序列场景下的 KV Cache 显存瓶颈，催生了一系列针对性优化技术：</p>
 <ol class="arabic simple">
-<li><p>KV Cache 通过缓存历史 Token 的 Key 和 Value 矩阵，避免自回归生成过程中的重复计算，将注意力计算复杂度从 O(T²)降至 O(T)，显著提升大模型推理效率。</p></li>
-<li><p>Decode 阶段，模型仅需将当前 Token 的 Q 向量与缓存的 K/V 矩阵拼接，直接计算注意力输出，无需重新处理全部历史 Token（如公式 <span class="math notranslate nohighlight">\(\text{Att}_t = \text{softmax}(q_t \cdot \text{Cache}_K^T) \cdot \text{Cache}_V\)</span> 所示）。</p></li>
-<li><p>KV Cache 显存占用公式为 <span class="math notranslate nohighlight">\(2 \times \text{层数} \times \text{批大小} \times \text{序列长} \times \text{隐藏层维度} \times \text{精度字节}\)</span>，当模型序列越长，显存消耗越高。</p></li>
+<li><p>量化压缩：如 FP8/INT8/INT4 量化 KV Cache，在保证精度损失可控的前提下降低显存占用；</p></li>
+<li><p>分页管理：如 PagedAttention，将 KV Cache 拆分为固定大小的块，动态分配显存，减少碎片；</p></li>
+<li><p>滑动窗口注意力：仅缓存最近 N 个 Token 的 KV，丢弃早期 Token（如 Llama 3 的 128k 上下文依赖此技术）；</p></li>
+<li><p>稀疏注意力：仅计算当前 Token 与关键历史 Token 的注意力，减少 KV Cache 存储量。</p></li>
 </ol>
 </section>
-<section id="id10">
-<h2>本节视频<a class="headerlink" href="#id10" title="Link to this heading">#</a></h2>
-<html>
-<iframe src="https:XXXXXXXXXX&bvid=BV1s5KfzzEbo&cid=30712332864&p=1&as_wide=1&high_quality=1&danmaku=0&t=30&autoplay=0" width="100%" height="500" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-</html>
 </section>
-<section id="id11">
-<h2>引用与参考<a class="headerlink" href="#id11" title="Link to this heading">#</a></h2>
-<ul class="simple">
-<li><p>https://arxiv.org/pdf/2311.18677</p></li>
-<li><p>https://zhuanlan.zhihu.com/p/624740065</p></li>
-<li><p>https://www.cnblogs.com/rossiXYZ/p/18799503</p></li>
-<li><p>https://zhuanlan.zhihu.com/p/630832593</p></li>
-<li><p>https://zhuanlan.zhihu.com/p/662498827
-!!!!!!!! 可以参考下面提供的链接，再补充一些小细节</p></li>
-<li><p>https://zhuanlan.zhihu.com/p/662498827</p></li>
-<li><p>https://blog.csdn.net/taoqick/article/details/137476233</p></li>
-<li><p>https://blog.csdn.net/ningyanggege/article/details/134564203</p></li>
-</ul>
+<section id="id21">
+<h2>6. 总结与思考<a class="headerlink" href="#id21" title="Link to this heading">#</a></h2>
+<p>KV Cache 的本质是以空间换时间，通过缓存历史 Token 的 K、V 矩阵，将注意力计算复杂度从 <span class="math notranslate nohighlight">\(O(T^2)\)</span> 降至 <span class="math notranslate nohighlight">\(O(T)\)</span>，是大模型推理效率提升的关键技术。</p>
+<p>Decode 阶段仅需输入当前 Token，计算其 Q 向量后，与缓存的 KV 矩阵直接进行注意力计算，无需重复处理历史序列；新 Token 的 K、V 向量会拼接至缓存，供后续步骤复用。</p>
+<p>KV Cache 显存占用公式为 <span class="math notranslate nohighlight">\(2 \times \text{num_layers} \times \text{batch_size} \times \text{seq_len} \times \text{hidden_size} \times \text{precision}_\text{bytes}\)</span>，与序列长度呈线性增长，是长序列推理的核心显存瓶颈。</p>
+</section>
+<section id="id22">
+<h2>引用与参考<a class="headerlink" href="#id22" title="Link to this heading">#</a></h2>
+<p>[1] Liu C, Chen Y, Zhou F, et al. Fast Inference of Large Language Models with Dynamic Speculative Decoding(Preprint/OL). (2023-11-30) (2025-11-03). https://arxiv.org/pdf/2311.18677.</p>
+<p>[2] 机器学习算法与 Python 学习。大模型推理优化： speculative decoding 原理与实践 (EB/OL). (2023-05-12) (2025-11-03). https://zhuanlan.zhihu.com/p/624740065.</p>
+<p>[3] rossiXYZ. 深入解析 vLLM 推理框架的性能优化技巧 (EB/OL). (2024-04-10) (2025-11-03). https://www.cnblogs.com/rossiXYZ/p/18799503.</p>
+<p>[4] 人工智能前沿科技。大模型分布式推理：模型并行与数据并行实践 (EB/OL). (2023-06-08) (2025-11-03). https://zhuanlan.zhihu.com/p/630832593.</p>
+<p>[5] 深度学习算法工程师。大模型 KV Cache 优化：从原理到工程实现 (EB/OL). (2023-09-15) (2025-11-03). https://zhuanlan.zhihu.com/p/662498827.</p>
+<p>Taoqick. (2024, March 18). vLLM inference framework deployment and performance tuning guide. CSDN. https://blog.csdn.net/taoqick/article/details/137476233</p>
+<p>Ningyanggege. (2023, November 10). Large model inference memory optimization: PagedAttention and video memory scheduling strategies. CSDN. https://blog.csdn.net/ningyanggege/article/details/134564203</p>
 </section>
 </section>
 
@@ -1178,7 +1304,7 @@ Cache_Memory = 2 * num_layers * batch_size * seq_len * hidden_size * precision_i
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">大模型推理加速</p>
+        <p class="prev-next-title">02.大模型推理加速</p>
       </div>
     </a>
     <a class="right-next"
@@ -1186,7 +1312,7 @@ Cache_Memory = 2 * num_layers * batch_size * seq_len * hidden_size * precision_i
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Paged Attention 原理</p>
+        <p class="prev-next-title">06.Paged Attention 原理(DONE)</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -1206,24 +1332,48 @@ Cache_Memory = 2 * num_layers * batch_size * seq_len * hidden_size * precision_i
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">大模型推理过程</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">大模型推理回顾</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">大模型推理计算分析</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">2. 大模型推理流程</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.1 推理阶段划分</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.2 推理计算瓶颈分析</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#kv-cache">无 KV Cache 时计算冗余</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">KV Cache 基本原理</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">KV Cache 具体实现</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">早期 KV Cache 实现</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cache">通过 Cache 类实现</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">KV Cache 显存分析</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">长序列场景</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3. KV Cache 核心原理</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1 设计核心前提</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.2 优化后计算流程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cache">3.3 有无 Cache 对比</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q">3.4 为何无需缓存 Q 向量</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.5 完整工作流程</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">总结与思考</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">本节视频</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">引用与参考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4. KV Cache 实现方案</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.1 早期手动拼接实现</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">缓存数据结构说明</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">4.2 标准 Cache 类实现</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">Cache 类核心接口</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">模型集成方式</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id14">启用/关闭方式</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id15">4.3 核心优化点</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id16">5. KV Cache 显存开销分析</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id17">5.1 显存占用公式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id18">5.2 典型模型量化示例</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#seq-len-1024">常规序列长度（seq_len=1024）</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">5.3 长序列场景瓶颈</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id20">5.4 显存优化技术方向</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id21">6. 总结与思考</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id22">引用与参考</a></li>
 </ul>
   </nav></div>
 
@@ -1257,7 +1407,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 27, 2025.
+  Last updated on Nov 06, 2025.
   <br/>
 </p>
   </div>

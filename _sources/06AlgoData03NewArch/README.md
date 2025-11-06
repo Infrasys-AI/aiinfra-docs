@@ -34,7 +34,7 @@
 05SSM
 06Mamba
 07MambaV2
-08ResNet
+08RetNet
 09MoR
 CODE01RWKV
 CODE02Mamba

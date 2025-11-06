@@ -1,10 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
 # K8S 容器持网络
-Author by: 何晨阳，ZOMI
 
-!!!!!!!!!
-1）注意 markdown 的格式，看我修改和提交的内容；2）看上去基本上是大模型生成的，尽可能用自己的语言和自己的理解去写内容，才有骨肉；3）成段落，不要用大模型的列表和总结展现形式，一定要自己深入核心技术，去挖掘自己以前不懂的东西。4）图很重要，图是理解的很重要一步，自己理解了，然后自己画图，这才是最重要最核心的内容。
+> Author by: 何晨阳
 
 要了解容器网络，首先要了解容器网络和传统物理机、虚拟机在架构设计和实现上的本质区别。
 
@@ -22,15 +20,15 @@ Author by: 何晨阳，ZOMI
 
 ### Overlay 网络
 
-提到 Overlay 网络，首先对比一下 Overlay 网络与 Underlay 网络的区别
+提到 Overlay 网络，首先对比一下常见的两种网络类型，Overlay网络与Underlay网络的区别，架构设计如下图所示。
 
 ![Overlay 网络与 Underlay 网络](../images/03DockCloud03DiveintoK8s/03overlay.png)
 
-Overlay 使用 Underlay 网络进行数据包进行数据传输，Overlay 通过在 Underlay 网络上部署虚拟化设备，实现对网络流量的控制和管理。
+Overlay 使用 Underlay 网络进行数据包进行数据传输，Overlay通过在Underlay网络上部署虚拟化设备，实现对网络流量的控制和管理。
 
-通过 Overlay 技术，可以在 Underlay 网络上构建多个逻辑网络，实现不同网络之间的隔离和灵活性，如虚拟专用网络、负载均衡等。
+通过Overlay技术，可以在Underlay网络上构建多个逻辑网络，实现不同网络之间的隔离和灵活性，如虚拟专用网络、负载均衡等。
 
-Overlay 网络多用于多租户云环境，Underlay 网络多用于高性能计算、传统企业网络。
+Overlay网络多用于多租户云环境，Underlay网络多用于高性能计算、传统企业网络。
 
 ### BGP 路由
 
@@ -59,19 +57,19 @@ Flannel 部署在每个节点上，具备以下功能：
 
 ### UDP 模式
 
-作为最早支持的后端，核心是通过 TUN 设备 flannel0 实现。TUN 设备是工作在第三层的虚拟网络设备，用于在操作系统内核和用户应用程序之间传递 IP 包。
+作为最早支持的后端，核心是通过TUN设备flannel0实现。TUN设备是工作在第三层的虚拟网络设备，用于在操作系统内核和用户应用程序之间传递 IP 包。
 
-相比两台宿主机直接通信，多出了 flannelId 的处理过程，由于使用 TUN 设备，仅在发出 IP 包的过程就要经过三次用户态到内核态的数据拷贝，所以性能非常差。
+相比两台宿主机直接通信，多出了flannelId的处理过程，由于使用TUN设备，仅在发出IP包的过程就要经过三次用户态到内核态的数据拷贝，所以性能非常差。
 
-以 flanel0 为例，操作系统将一个 IP 包发给 flanel0，flanel0 把 IP 包发给创建这个设备的应用程序：flanel 进程（内核态->用户态）
-相反，flanel 进程向 flanel0 发送一个 IP 包，IP 包会出现在宿主机的网络栈中，然后根据宿主机的路由表进行下一步处理（用户态->内核态）
-当 IP 包从容器经过 docker0 出现在宿主机，又根据路由表进入 flanel0 设备后，宿主机上的 flanneld 进程就会收到这个 IP 包
+以flanel0为例，操作系统将一个IP包发给 flanel0，flanel0把IP包发给创建这个设备的应用程序：flanel进程（内核态->用户态）
+相反，flanel进程向 flanel0发送一个IP包，IP包会出现在宿主机的网络栈中，然后根据宿主机的路由表进行下一步处理（用户态->内核态）
+当IP包从容器经过docker0出现在宿主机，又根据路由表进入flanel0设备后，宿主机上的flanneld进程就会收到这个 IP包。
 
 ![Overlay 网络与 Underlay 网络](../images/03DockCloud03DiveintoK8s/03flanneludp.png)
 
 ### VXLAN 模式（默认 性能较好）
 
-VXLAN 是 Linux 本身支持的一种网络虚拟化技术，可以完全在内核态实现封装和解封装工作，从而通过“隧道”机制，构建 Overlay 网络。
+VXLAN是Linux本身支持的一种网络虚拟化技术，可以完全在内核态实现封装和解封装工作，从而通过“隧道”机制，构建 Overlay 网络。
 
 VXLAN 的设计思想是在现有三层网络之上，构建一层虚拟的，由 VXLAN 模块维护的二层网络，使得连接在这个 VXLAN 二层网络上的主机，都可以像在同一个局域网里那样自由通信。
 
@@ -79,11 +77,11 @@ VXLAN 的设计思想是在现有三层网络之上，构建一层虚拟的，�
 
 ![Flannel 网络](../images/03DockCloud03DiveintoK8s/03flannel_vxlan.png)
 
-flanel.1 设备，就是 VXLAN 的 VTEP，即有 IP 地址，也有 MAC 地址
+flanel.1 设备，就是 VXLAN 的 VTEP，即有IP地址，也有MAC地址。
 
-与 UPD 模式类似，当 container-发出请求后，上的地址 10.1.16.3 的 IP 包，会先出现在 docker 网桥，再路由到本机的 flannel.1 设备进行处理（进站）
+与UDP模式类似，当container-1发出请求后，发往地址10.1.16.3的IP包，会先出现在 docker 网桥，再路由到本机的 flannel.1设备进行处理（进站）
 
-为了能够将“原始 IP 包”封装并发送到正常的主机，VXLAN 需要找到隧道的出口：上的宿主机的 VTEP 设备，这个设备信息，由宿主机的 flanneld 进程维护
+为了能够将“原始IP包”封装并发送到正常的主机，VXLAN 需要找到隧道的出口：上的宿主机的 VTEP 设备，这个设备信息，由宿主机的 flanneld 进程维护
 
 ### host-gw 模式（高性能）
 
@@ -119,7 +117,7 @@ Calico 默认配置使用的是 Node-to-Node Mesh 模式，每台宿主机上的
 
 Calico 使用的 tunl0 设备是一个 IP 隧道设备，IP 包进入 IP 隧道设备之后，就会被 Linux 内核的 IPIP 驱动接管。IPIP 驱动会将这个 IP 包直接封装在一个宿主机网络的 IP 包中。这样 Node 2 的 IP 包，就被伪装成一个从 Node 1 到 Node 2 的 IP 包。
 
-因此使用 IPIP 模式的时候，集群网络性能会因为额外的封包解包而下降。
+因此使用IPIP模式的时候，集群网络性能会因为额外的封包解包而下降。
 
 ![Flannel 网络](../images/03DockCloud03DiveintoK8s/03calico_ipip.png)
 
@@ -136,6 +134,7 @@ Cilium 的优势有哪些？
 - 中断处理：频繁的切换中断会导致较高的性能开销，从而会产生时延。
 - 内存拷贝：通过 DMA 将网络数据拷贝到内核缓冲区，再拷贝到用户控件，这个耗时占到了整个数据包处理流程的一半以上。
 - 局部性失效：目前主流处理器都是多个 CPU 核心的，如果一个数据包的处理跨多个 CPU 核心，就可能造成缓存失效。
+
 ![Cilium 对比图](../images/03DockCloud03DiveintoK8s/03cilium_bpf.png)
 
 适用场景：
@@ -163,7 +162,9 @@ Cilium 的优势有哪些？
 
 ## 总结与思考
 
-!!!!!!!!!!!!!!
+从k8s网络的发展可以看出，其正在从连通性组件向高性能、安全性方向演进。在技术层面上，通过 eBPF、服务网络重塑数据面。在场景与功能支持上，逐步支撑如边缘计算、AI/GPU 异构计算。
+
+未来，k8s 网络将更深度的融入 AI 基础设施，成为智能算力的核心调度层。
 
 ## 参考与引用
 

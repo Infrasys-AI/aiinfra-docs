@@ -1,6 +1,6 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# 大模型推理加速
+# 02.大模型推理加速
 
 本次大纲内容主要围绕......
 
@@ -28,6 +28,7 @@ xxx
 
 01KVCache
 06PagedAttention
+07LLM_In_Flash
 Code01KVCache
 Code02PageAttention
 Code03StreamingLLM

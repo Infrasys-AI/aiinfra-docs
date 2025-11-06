@@ -7,19 +7,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta property="og:title" content="Mamba: S4 结构化状态空间模型剖析" />
+<meta property="og:title" content="S4模型详解：结构化状态空间模型剖析" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="06AlgoData03NewArch/05SSM.html" />
 <meta property="og:site_name" content="AIInfra & AIInfra (大模型系统原理)" />
-<meta property="og:description" content="1. 引言：结构化状态空间模型的兴起: 序列建模是人工智能领域的核心挑战之一，旨在理解和生成各种序列数据，如自然语言文本、语音信号和时间序列数据。传统的循环神经网络(RNN)在处理序列数据方面取得了一定的成功，但其固有的梯度消失或爆炸问题以及顺序处理瓶颈，限制了其在长序列上的学习能力和效率^{1} 。长短期记忆(LSTM)网络通过引入门控机制在一定程度上缓解了这些问题，但同时也增加了模型的复..." />
+<meta property="og:description" content="Author by: 张嘉瑶 引言：序列建模中长距离依赖的持久挑战: 序列建模要处理的是“按顺序来的数据”，比如文本、语音、传感器时间序列等。早期的 RNN 一步一步地读，容易“记不住很久以前的内容”，训练也慢；LSTM 加了门控，记忆好一点，但结构更复杂、更费算力。Transformer 换了思路：不按顺序慢慢看，而是“所有位置两两对比、一起算”，所以训练很快、理解上下文很强。但它的计算量..." />
 <meta property="og:image:width" content="1146" />
 <meta property="og:image:height" content="600" />
 <meta property="og:image" content="/None" />
-<meta property="og:image:alt" content="1. 引言：结构化状态空间模型的兴起: 序列建模是人工智能领域的核心挑战之一，旨在理解和生成各种序列数据，如自然语言文本、语音信号和时间序列数据。传统的循环神经网络(RNN)在处理序列数据方面取得了一定的成功，但其固有的梯度消失或爆炸问题以及顺序处理瓶颈，限制了其在长序列上的学习能力和效率^{1} 。长短期记忆(..." />
-<meta name="description" content="1. 引言：结构化状态空间模型的兴起: 序列建模是人工智能领域的核心挑战之一，旨在理解和生成各种序列数据，如自然语言文本、语音信号和时间序列数据。传统的循环神经网络(RNN)在处理序列数据方面取得了一定的成功，但其固有的梯度消失或爆炸问题以及顺序处理瓶颈，限制了其在长序列上的学习能力和效率^{1} 。长短期记忆(LSTM)网络通过引入门控机制在一定程度上缓解了这些问题，但同时也增加了模型的复..." />
+<meta property="og:image:alt" content="Author by: 张嘉瑶 引言：序列建模中长距离依赖的持久挑战: 序列建模要处理的是“按顺序来的数据”，比如文本、语音、传感器时间序列等。早期的 RNN 一步一步地读，容易“记不住很久以前的内容”，训练也慢；LSTM 加了门控，记忆好一点，但结构更复杂、更费算力。Transformer 换了思路：不按顺序慢慢..." />
+<meta name="description" content="Author by: 张嘉瑶 引言：序列建模中长距离依赖的持久挑战: 序列建模要处理的是“按顺序来的数据”，比如文本、语音、传感器时间序列等。早期的 RNN 一步一步地读，容易“记不住很久以前的内容”，训练也慢；LSTM 加了门控，记忆好一点，但结构更复杂、更费算力。Transformer 换了思路：不按顺序慢慢看，而是“所有位置两两对比、一起算”，所以训练很快、理解上下文很强。但它的计算量..." />
 <meta name="twitter:card" content="summary_large_image" />
 
-    <title>Mamba: S4 结构化状态空间模型剖析 &#8212; AIInfra AI基础设施</title>
+    <title>S4模型详解：结构化状态空间模型剖析 &#8212; AIInfra AI基础设施</title>
   
   
   
@@ -82,11 +82,11 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Mamba 与选择性状态空间模型：一项全面的技术综述" href="06Mamba.html" />
-    <link rel="prev" title="RWKV V5/6/7 架构演进" href="04RWKVEvolution.html" />
+    <link rel="prev" title="RWKV-7 及其后续模型的演进、产业落地的战略分析" href="04RWKVEvolution.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="cn"/>
-    <meta name="docbuild:last-update" content="Sep 25, 2025"/>
+    <meta name="docbuild:last-update" content="Nov 06, 2025"/>
 
 <link
   rel="alternate"
@@ -246,7 +246,7 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../00Summary/README.html">大模型系统概述</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/01ScalingLaw.html">01.Scaling Law 总体解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/02StandardScaling.html">02.大模型 Scaling Law(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03.Inference Time Scaling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../00Summary/03TTScaling.html">03. Inference Time Scaling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/04TrainingStack.html">04.大模型训练与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/05InferStack.html">05.大模型推理与 AI Infra(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../00Summary/06Future.html">06.AI Infra 核心逻辑与行业趋势(DONE)</a></li>
@@ -259,9 +259,9 @@
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster01Roadmap/README.html">01.计算集群之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/01Define.html">01.高性能计算 HPC 定义(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/02TrendHard.html">02.HPC 硬件发展趋势(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">04.计算集群初期历史回顾</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/03TrendBaseSoft.html">03.HPC 基础软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/04TrendAppSoft.html">03.HPC 应用软件发展趋势(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop1.html">计算集群初期历史回顾</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/05Develop2.html">05.计算集群当代与未来发展</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/06Challenge.html">06.AI 计算集群挑战</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster01Roadmap/07Architecture.html">07.AI 集群系统架构</a></li>
@@ -278,6 +278,7 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../01AICluster03SuperPod/README.html">03.万卡 AI 集群</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/01Challenge.html">01.万卡 AI 集群建设挑战</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/02Solution.html">02.AI 万卡集群建设方案</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/03TestCase.html">03.AI 万卡集群交付与测试</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster03SuperPod/04Evolution.html">04.NVIDIA Blackwell 演进(DONE)</a></li>
@@ -293,14 +294,14 @@
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/02TrainInferModeling.html">02.大模型训推性能建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/03ComputerModeling.html">03.AI 集群计算建模</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/04CommModeling.html">04.AI 集群通信建模</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">大模型训练内存与参数计算</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/05TrainingMemory.html">05.大模型训练内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/06InferenceMemory.html">06.大模型推理内存与参数计算</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/07AccuracyDiff.html">07.GPU 与 NPU 精度误差分析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/08AccuracyDefine.html">08.精度性能：大模型精度问题定位</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/09PerformanceDefine.html">09.精度性能：大模型性能问题定位</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE01Modeling.html">CODE 01: 拆解 Transformer-Decoder(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE02MOE.html">CODE 02: MOE 参数量和计算量(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../01AICluster04Performance/CODE03MFU.html">CODE 03: MFU 模型利用率评估(DONE)</a></li>
 </ul>
 </details></li>
 </ul>
@@ -317,24 +318,24 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm02NetworkComm/README.html">02.网络通信进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">高速互联 RDMA</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">高速互联：无损网络介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/02RDMA.html">02.高速互联 RDMA(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/03Lossless.html">03.高速互联：无损网络 RoCEv2</a></li>
+
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/04.html">长距离 RDMA 挑战与机遇</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/05Topology.html">网络拓扑基本概述</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/07TopoAlgorithm2.html">07.网络拓扑算法 2</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/08TopoAlgorithm3.html">08.网络拓扑算法 3</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/09TopoCompare.html">09.网络拓扑对比</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10.html">拥塞控制</a></li>
-
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/10CC.html">拥塞控制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm02NetworkComm/11LoadBalancing.html">负载均衡</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm03CollectComm/README.html">集合通信原理</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/01Introduce.html">01.大模型集合通信</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/02CCOverview.html">02.集合通信关键作用</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">04.集合通信操作/原语/算子</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">05.AI 对集合通信算法诉求</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">06.通信域与 PyTorch 实现</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/03CCPrimtive.html">03.集合通信操作/原语/算子</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/04CCAlgorithm.html">04.AI 对集合通信算法诉求</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/05PyTorchCC.html">05.通信域与 PyTorch 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/06CCInChip.html">06.AI 芯片内互联技术</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm03CollectComm/07CCCluster.html">07.大模型集群互联技术</a></li>
 </ul>
@@ -348,7 +349,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../02StorComm05StorforAI/README.html">AI 集群存储之路</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07%E5%A4%A7%E6%A8%A1%E5%9E%8BCKPT%E4%BC%98%E5%8C%96%E6%89%8B%E6%AE%B5.html">大模型 CKPT 优化手段</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/07Checkpoint.html">大模型 CKPT 优化手段</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../02StorComm05StorforAI/09DeepSeek3FS.html">DeepSeek 3FS 架构解析</a></li>
 </ul>
 </details></li>
@@ -361,12 +362,13 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud02DockerK8s/README.html">Docker 与 K8S 初体验</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/01Container.html">01. 容器隔离从进程到命名空间(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups：容器资源控制关键(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/02Cgroups.html">02. Cgroups 容器资源控制(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/03Image.html">03. 容器镜像文件系统(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud02DockerK8s/04Dockerfile.html">04. Dockerfile 到容器(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../03DockCloud03DiveintoK8s/README.html">深入 K8S</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">01. k8s 容器编排与作业管理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/01ContainerOrchestration.html">k8s容器编排与作业管理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/02K8sCSI.html">K8S 容器持久化存储</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/03K8snet.html">K8S 容器持网络</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../03DockCloud03DiveintoK8s/04K8sSource.html">K8S 资源管理与作业调度</a></li>
@@ -380,25 +382,29 @@
 <li class="toctree-l1"><a class="reference internal" href="../04Train/README.html">大模型训练概述</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train01ParallelBegin/README.html">分布式并行基础</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/01Introduction.html">分布式并行基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03ContextParallelism.html">上下文并行与长序列模型</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/02SPTD.html">02.SPTD 并行与大模型(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/03CP.html">长序列与上下文并行 CP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/04EP.html">EP并行与稀疏模型</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code01DDP.html">CODE 01: 从零构建 PyTorch DDP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train01ParallelBegin/Code02MP.html">CODE 02: PyTorch 实现模型并行</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train02ParallelAdv/README.html">大模型并行进阶</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">分布式优化器</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DSZero.html">02.分布式优化器 ZeRO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/01DeepSpeedIntro.html">01.DeepSpeed 框架介绍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/02DeepSpeedZero.html">DeepSpeed ZeRO系列介绍</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/08PPGpipe.html">08. PP 流水并行原理(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/09PPInterleaved.html">09. 流水并行衍生算法(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/10PPCode.html">10.Megatron 中 PP 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code01ZeRO.html">CODE 01: ZeRO 显存优化实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code02Megatron.html">CODE 02: Megatron 张量并行复现</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code03Pipeline.html">CODE 03: Pipeline 并行实践(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train02ParallelAdv/Code04Expert.html">CODE 04: 专家并行大规模训练(DONE)</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train03TrainAcceler/README.html">大模型训练加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/01Introduction.html">01.大模型训练加速</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：FA 演进</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/02FlashAttn.html">02.计算优化：Flash Attention演进</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/03DSGEMM.html">03.从混合精度训练到 DeepGEMM</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/04MTP.html">04.计算优化：Multi-Token 生成(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/05Ulysses.html">05.序列优化：Ulysses 并行优化</a></li>
@@ -412,7 +418,6 @@
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code02GradCheck.html">CODE 02: 梯度检查点内存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code03FP8.html">CODE 03: FP8 混合精度训练</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train03TrainAcceler/Code04RingAttn.html">CODE 04: Ring Attention 实践</a></li>
-
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train04PostTrainRL/README.html">大模型后训练与强化学习</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -433,10 +438,10 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../04Train05FineTune/README.html">大模型微调 SFT</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">大模型微调基础</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.参数高效微调算法原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/01Introduction.html">01.大模型微调基础</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/05LoRA.html">04.Reparameterization 算法原理</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/06Selective.html">05.Selective 微调算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01Qwen3SFT.html">CODE 01: Qwen3-4B 模型微调</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code01DataRealtion.html">CODE 01:Qwen3-4B 模型微调(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../04Train05FineTune/Code02SDLoRA.html">CODE 02: LoRA 微调 SD</a></li>
 </ul>
 </details></li>
@@ -454,9 +459,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer01Foundation/03Performance.html">大模型推理性能指标</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">KV Cache 原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">Paged Attention 原理</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer02InferSpeedUp/README.html">02.大模型推理加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/01KVCache.html">01.KV Cache 原理分析(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/06PagedAttention.html">06.Paged Attention 原理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/07LLM_In_Flash.html">LLM IN FLASH</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code01KVCache.html">CODE 01: KV Cache 缓存优化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code02PageAttention.html">CODE 02: PagedAttention 复现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer02InferSpeedUp/Code03StreamingLLM.html">CODE 03: 无限长文本生成的奥秘</a></li>
@@ -465,6 +471,8 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer03Dispatch/README.html">架构调度加速</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinousBatching.html">Continous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/01ContinuousBatching.html">Continuous Batching 原理</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/05FCFSScheduling.html">07. LLM 推理请求调度：FCFS 调度</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code01ContinousBatching.html">Continuous Batching 与 Selective Batching 实现</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer03Dispatch/Code02PDDispatch.html">大模型推理 PD 分离</a></li>
 </ul>
@@ -475,9 +483,19 @@
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/03Ulysses.html">Ulysses 长序列并行</a></li>
 
 <li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/04HybridAttention.html">Hybrid Attention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-1%20PagedAttention.html">PagedAttention</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05-2%20PD%E5%88%86%E7%A6%BB.html">PD分离</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/05FastGen.html">FastGen</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/06FlexPrefill.html">FlexPrefill</a></li>
+
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/07IceFormer.html">IceFormer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer04LongInfer/08StarAttention.html">StarAttention介绍</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer05Sampling/README.html">输出采样</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/01SamplingBasics.html">01. 大模型采样基础(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/04ParallelSampling.html">并行采样：深入解析 Multi-Token Prediction 与 Lookahead Decoding</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code01Speculative.html">CODE 01: 投机采样加速</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code02MinP.html">CODE 02: Min-P vs Top-P 探索</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer05Sampling/Code03Affect.html">CODE 03:多模态输出采样与控制</a></li>
@@ -485,9 +503,12 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../05Infer06CompDistill/README.html">06.大模型压缩</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02GKD%26MiniLLM.html">6.2 大模型蒸馏技术</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/02KnowDistillation.html">03. 知识蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization01.html">大模型量化：低精度量化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/05Quantization02.html">大模型量化：其他量化</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code01Precision.html">CODE01: 低精度推理性能对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code02Quant.html">CODE02: FastVLM-0.5B 量化对比(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/Code03Distiallation.html">CODE03: 大模型 Qwen3 蒸馏(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../05Infer06CompDistill/bitsandbytesINT8.html">bitsandbytes LLM.int8()源码阅读</a></li>
 </ul>
 </details></li>
@@ -508,14 +529,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/03Embeding.html">03.大模型 Embedding 算法</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/04Attention.html">04.Attention 注意力机制</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/05GQAMLA.html">05.Attention 变种算法</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/06LongSeq.html">06.Transformer 长序列架构</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/07Parameter.html">07.大模型参数设置</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE01MiniTranformer.html">CODE01: 搭建迷你 Transformer(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE02TransformerTrain.html">CODE02: 从零实现 Transformer 训练(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE03MachineTrans.html">CODE03:Transformer 机器翻译(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE04Sinusoidal.html">CODE04:实现 Sinusoidal 编码(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE05BPE.html">CODE05:实现 BPE 分词(DONE)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">CODE06:实现 Embedding 词嵌入(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE06Embedding.html">手把手实现核心机制 Embedding 词嵌入(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData01Basic/CODE07Attention.html">CODE07:深入注意力机制 MHA、MQA、GQA、MLA(DONE)</a></li>
 </ul>
 </details></li>
@@ -526,12 +546,12 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/04MOERNN.html">04.MOE 初遇 RNN(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/05MOEGshard.html">05.GShard MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/06MOESwitch.html">06.Switch Transformer 解读</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">07.GLaM &amp; ST-MOE 解读</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/07GLaM_STMOE.html">GLaM &amp; ST-MOE解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/08DeepSeekMoE.html">08.DeepSeek MOE 解读</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/09MoECore.html">09.MOE 模型可视化</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/10MOELLM.html">10. MoE 参数与专家</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/12MOEFuture.html">12.单机多卡 MoE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF实现MOE推理(DONE)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE01MOEInfer.html">Code01: HF 实现 MOE 推理(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE02SignalMOE.html">Code02: 从零手撕 MoE(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE03IntrtaMOE.html">CODE03:MoE 从原理到分布式实现(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData02MoE/CODE04MOEAnalysize.html">CODE04:MoE 分布式性能分析(DONE)</a></li>
@@ -539,13 +559,14 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="README.html">大模型创新架构</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="01Review.html">01.Transformer 回顾与挑战</a></li>
-<li class="toctree-l2"><a class="reference internal" href="02Efficient.html">02.Efficient Transformer 结构</a></li>
-<li class="toctree-l2"><a class="reference internal" href="03RWKVIntro.html">04. RWKV 基本架构原理</a></li>
-<li class="toctree-l2"><a class="reference internal" href="04RWKVEvolution.html">RWKV V5/6/7 架构演进</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Mamba: S4 结构化状态空间模型剖析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="02Efficient.html">Efficient Transformer 结构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="03RWKVIntro.html">RWKV 模型架构的深度技术分析</a></li>
+<li class="toctree-l2"><a class="reference internal" href="04RWKVEvolution.html">RWKV-7 及其后续模型的演进、产业落地的战略分析</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">S4模型详解：结构化状态空间模型剖析</a></li>
 <li class="toctree-l2"><a class="reference internal" href="06Mamba.html">Mamba 与选择性状态空间模型：一项全面的技术综述</a></li>
-<li class="toctree-l2"><a class="reference internal" href="07MambaV2.html">Mamba 演进之路:从选择性状态空间到结构化对偶性</a></li>
-<li class="toctree-l2"><a class="reference internal" href="09MoR.html">Mixture-of-Recursions, MoR 架构</a></li>
+<li class="toctree-l2"><a class="reference internal" href="07MambaV2.html">Mamba-2架构:从选择性状态空间到结构化对偶性</a></li>
+<li class="toctree-l2"><a class="reference internal" href="08RetNet.html">RetNet 架构、留存机制与多计算范式深度解析：循环、并行、分块及硬件融合</a></li>
+<li class="toctree-l2"><a class="reference internal" href="09MoR.html">未来之路：Transformer瓶颈突破方向</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE01RWKV.html">基于 RWKV 的 RNN 范式革新(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE02Mamba.html">Mamba 状态空间模型(DONE)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="CODE03RetNet.html">RetNet：混合训练实战(DONE)</a></li>
@@ -559,7 +580,9 @@
 <li class="toctree-l2"><a class="reference internal" href="../06AlgoData04ImageTextGenerat/08BLIP.html">BLIP 家族: 统一理解和生成的自举多模态模型</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData05VideoGenerat/README.html">视频大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/01VideoUnderstandingEarlyDevelopment.html">早期视频理解发展</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../06AlgoData05VideoGenerat/02VideoUnderstandingWithMLLMs.html">基于视频数据训练的视觉语言模型（VLM）在视频理解中的综述</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../06AlgoData06AudioGenerat/README.html">语音大模型</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -609,7 +632,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../07Application03RAG/README.html">检索增强生成（ RAG ）</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B进行RAG代码实践</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE01SimpleRAG.html">CODE01:Qwen3-0.7B 进行 RAG 代码实践</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../07Application03RAG/CODE02RAGFlow.html">用 RAGFlow 实现中文文档问答</a></li>
 </ul>
 </details></li>
@@ -845,7 +868,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Mamba: S4 结构化状态空间模型剖析</h1>
+    <h1>S4模型详解：结构化状态空间模型剖析</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -855,30 +878,32 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 引言：结构化状态空间模型的兴起</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#s4">2. S4 模型：为高效长程序列建模奠定基础</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.1 状态空间模型的数学基础</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hippo">2.2 HiPPO 框架：捕获长程依赖</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.3 S4 架构：关键创新与计算特性</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言：序列建模中长距离依赖的持久挑战</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">数学基础：从连续时间系统到离散卷积</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ssm">连续时间SSM范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">离散化：连接连续理论与数字数据</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">卷积视角：展开循环</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mamba">3. Mamba：选择性状态空间与硬件感知设计</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.1 Mamba 的核心架构创新</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#s6">3.1.1 选择性状态空间(S6)机制：输入依赖的动态性</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1.2 硬件感知并行算法：高效计算</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.1.3 简化的同质架构</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hippo">HiPPO 框架：一种有原则的历史压缩机制</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">HiPPO：连续历史的在线压缩</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">从最优逼近到线性常微分方程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hippo-legs">HiPPO-LegS矩阵</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2 Mamba 的关键贡献与理论基础</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">S4架构：通过结构化矩阵实现计算效率</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nplr">核心洞察：正规加低秩（NPLR）结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#o-n">循环机制：实现<span class="math notranslate nohighlight">\(O(N)\)</span>的快速推理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">卷积机制：高效的并行训练</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mambas4-transformer">4. 比较性能分析：Mamba、S4 与 Transformer</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4.1 合成任务性能</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2 语言建模基准</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 其他模态的效能</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#works-cited">Works cited</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">批判性评估：S4的内在局限与实践障碍</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">自回归生成中的数值不稳定性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">硬件与软件之间的鸿沟</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">内容推理的功能性缺陷</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">参考文献</a></li>
 </ul>
             </nav>
         </div>
@@ -891,512 +916,268 @@ document.write(`
                 <article class="bd-article">
                   
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
-<section class="tex2jax_ignore mathjax_ignore" id="mamba-s4">
-<h1>Mamba: S4 结构化状态空间模型剖析<a class="headerlink" href="#mamba-s4" title="Link to this heading">#</a></h1>
+<section class="tex2jax_ignore mathjax_ignore" id="s4">
+<h1>S4模型详解：结构化状态空间模型剖析<a class="headerlink" href="#s4" title="Link to this heading">#</a></h1>
+<blockquote>
+<div><p>Author by: 张嘉瑶</p>
+</div></blockquote>
 <section id="id1">
-<h2>1. 引言：结构化状态空间模型的兴起<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>序列建模是人工智能领域的核心挑战之一，旨在理解和生成各种序列数据，如自然语言文本、语音信号和时间序列数据。传统的循环神经网络(RNN)在处理序列数据方面取得了一定的成功，但其固有的梯度消失或爆炸问题以及顺序处理瓶颈，限制了其在长序列上的学习能力和效率 <span class="math notranslate nohighlight">\(^{1}\)</span>。长短期记忆(LSTM)网络通过引入门控机制在一定程度上缓解了这些问题，但同时也增加了模型的复杂性和计算开销 <span class="math notranslate nohighlight">\(^{1}\)</span>。</p>
-<p>继 RNN 之后，Transformer 架构凭借其并行处理能力和强大的上下文表征能力，在自然语言处理等领域取得了革命性突破。然而，Transformer 的核心机制自注意力机制-其计算复杂度随序列长度呈二次方增长(O(N2))，这使得其在处理极长序列时面临巨大的计算和内存挑战 <span class="math notranslate nohighlight">\(^{2}\)</span>。这种二次方复杂度的瓶颈，成为了驱动研究者探索更高效长序列建模方法的主要动力。</p>
-<p>在这样的背景下，结构化状态空间模型(Structured State Space Models, SSMs)种极具潜力的新兴序列建模范式应运而生。SSMs 借鉴了控制理论和信号处理中的经典状态空间表示，通过结构化的循环和状态空间表征，实现了对长序列的高效处理，其计算复杂度通常为线性或近线性 <span class="math notranslate nohighlight">\(^{2}\)</span>。SSMs 的理论根基可以追溯到控制理论，用于描述复杂动态系统，这为其提供了与基于注意力的模型不同的理论基础 1。从奠基性的 S4 模型到其后续的 Mamba、S5 和 Jamba 等模型，SSMs 在计算效率、内存优化和推理速度方面不断取得显著进展 <span class="math notranslate nohighlight">\(^{1}\)</span>。</p>
-<p>这种从 RNN 到 Transformer 再到 SSMs 的演进，不仅仅是模型性能的迭代提升，更深层次地反映了在序列建模领域中，研究者们对于&quot;效率-表达能力权衡&quot;这一核心问题的持续探索和突破。RNN 在表达能力上受到限制，尤其是在长程依赖方面;LSTM 通过增加复杂性提升了记忆能力，但效率和极长序列处理仍是瓶颈;Transformer 以其强大的表达能力和并行训练特性取得了巨大成功，却牺牲了在长序列上的计算效率。SSMs，特别是 S4 和 Mamba，则代表了在保证甚至增强对长程依赖建模能力(表达能力)的同时，重新夺回线性或近线性计算复杂度(效率)的尝试。这一过程揭示了人工智能模型发展的一个重要趋势:通过对基础架构假设的重新思考，来克服普遍存在的性能瓶颈和权衡。</p>
-<p>此外，SSMs 的理论基础源于经典的控制理论 1，这标志着不同科学领域的思想向机器学习领域的有益渗透和交叉融合。深度学习的灵感常常来源于神经科学或纯数学，而 SSMs 从控制理论中引入状态空间表示、连续时间动态、离散化和系统稳定性等概念，为序列建模带来了新的视角。这种跨学科的方法可能为解决机器学习中长期存在的问题(如长程依赖建模和模型可解释性)提供新的途径，通过借鉴其他领域成熟的理论和</p>
-<p>Mamba 的成功,也可能激励研究者进一步探索来自工程学、物理学等领域的概念,以设计出更鲁棒和高效的人工智能架构。</p>
-<p>本报告旨在对 S4 模型及其向 Mamba 架构的演进进行全面的技术剖析，详细阐述它们的核心机制、性能对比、优势与局限，以及在序列建模领域的更广泛影响。</p>
+<h2>引言：序列建模中长距离依赖的持久挑战<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>序列建模要处理的是“按顺序来的数据”，比如文本、语音、传感器时间序列等。早期的 RNN 一步一步地读，容易“记不住很久以前的内容”，训练也慢；LSTM 加了门控，记忆好一点，但结构更复杂、更费算力。Transformer 换了思路：不按顺序慢慢看，而是“所有位置两两对比、一起算”，所以训练很快、理解上下文很强。但它的计算量会随着序列长度“按平方增长”，序列一长就又慢又费内存。</p>
+<p>为了解决“长序列”这个老大难问题，大家把目光转向结构化状态空间模型(Structured State Space Models, SSMs)。SSMs 借鉴了控制理论和信号处理中的经典状态空间表示，通过结构化的循环和状态空间表征，实现了对长序列的高效处理，其计算复杂度通常为线性或近线性。SSMs 的理论根基可以追溯到- 控制理论，核心思想是：不保存所有历史，而是用一个“压缩过的隐藏状态”不断更新、传递信息。这样做，计算量通常能做到“跟序列长度成正比”，更省时省内存。在这一方向上，S4 是重要的起点；后续的 Mamba、S5、Jamba 等进一步优化了计算效率、内存占用和推理速度，尤其适合特别长的序列。</p>
+<p>整体演进是这样：RNN（高效但记忆弱）→ LSTM（记忆强一点但更复杂）→ Transformer（表达力强、训练快，但长序列太贵）→ SSM（在不牺牲表达能力的前提下，把计算成本拉回“线性级别”）。这反映了一个核心追求：既要强的表达能力，又要高效率。</p>
+<p>更有意思的是：SSM 借鉴了控制理论（比如状态表示、连续时间到离散时间的转换、稳定性等），是一次“跨学科”带来的新思路。这种跨学科的方法可能为解决机器学习中长期存在的问题(如长程依赖建模和模型可解释性)提供新的途径，通过借鉴其他领域成熟的理论和Mamba 的成功,也可能激励研究者进一步探索来自工程学、物理学等领域的概念,以设计出更鲁棒和高效的人工智能架构。</p>
+<p>总之，S4 到 Mamba 的发展，展示了一个清晰方向：通过更聪明的结构设计，把原本“很贵”的长序列问题，变成“可负担、可扩展”的计算，让模型既快又能“记长事”。这篇文章就是要系统地说明它们的机制、优缺点和影响。</p>
 </section>
-<section id="s4">
-<h2>2. S4 模型：为高效长程序列建模奠定基础<a class="headerlink" href="#s4" title="Link to this heading">#</a></h2>
-<p>S4(Structured State Space for Sequence Modeling)模型是 SSM 发展历程中的一个重要里程碑，它为高效处理长程依赖问题提供了坚实的基础。</p>
 <section id="id2">
-<h3>2.1 状态空间模型的数学基础<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
-<p>S4 模型的核心构建于状态空间模型的数学框架之上。一个连续时间状态空间模型通常由以下线性微分方程组定义，该方程组将一维输入信号 u(t)映射到一个 N 维隐状态 x(t)，然后再投影到一维输出信号 y(t)5:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="s1">&#39;(t)=Ax(t)+Bu(t)</span>
-<span class="n">y</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">=</span><span class="n">Cx</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">+</span><span class="n">Du</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
-</pre></div>
+<h2>数学基础：从连续时间系统到离散卷积<a class="headerlink" href="#id2" title="Link to this heading">#</a></h2>
+<p>S4(Structured State Space for Sequence Modeling)模型根植于状态空间模型的数学理论。理解其工作原理，必须首先掌握SSM从连续时间系统到离散表示，再到其卷积形式的演化路径。</p>
+<section id="ssm">
+<h3>连续时间SSM范式<a class="headerlink" href="#ssm" title="Link to this heading">#</a></h3>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/SSM.jpg" alt="img" />
 </div>
-<p>其中,A、B、C 和 D 是通过梯度下降学习的参数矩阵。为了简化,参数 D 通常被个跳跃连接 5。</p>
-<p>为了将 SSMs 应用于离散输入序列(如 u0,u1,...),需要使用一个步长 <span class="math notranslate nohighlight">\(\Delta\)</span> 对连续 SSM 进行离散化。常用的离散化方法是双线性变换，它将连续状态矩阵 A 转换为一个近似的离散状态矩阵 A-。离散 SSM 随后表现为一个递归关系，使其能够像 RNN 一样进行计算 5:</p>
-<div class="math notranslate nohighlight">
-\[\begin{split}
-A^{-}=(I-\Delta/ 2\cdot A)^{-1}(I+\Delta/ 2\cdot A) \\
-B^{-}=(I-\Delta/ 2\cdot A)^{-1}\Delta B \\
-C^{-}=C \\
-x_k=A^{-}x_{k-1}+B^{-}u_k \\
-y_k=C^{-}x_k
-\end{split}\]</div>
-<p>尽管这种递归表示在直觉上易于理解，但由于其顺序计算的特性，在现代硬件上进行训练时效率不高。S4 模型的一个关键洞察在于线性时不变(LTI)SSMs 与连续卷积之间的重要联系。这使得递归 SSM 可以表示为一个离散卷积，其卷积核 <span class="math notranslate nohighlight">\(K^{-}\)</span> 有明确的公式 5:</p>
+<p>SSM的基本定义源于现代控制理论，它描述了一个线性时不变（Linear Time-Invariant, LTI）系统。该系统通过一个<span class="math notranslate nohighlight">\(N\)</span>维的连续时间隐状态向量<span class="math notranslate nohighlight">\(x(t) \in \mathbb{R}^N\)</span>来连接一维输入信号<span class="math notranslate nohighlight">\(u(t) \in \mathbb{R}\)</span>和一维输出信号<span class="math notranslate nohighlight">\(y(t) \in \mathbb{R}\)</span>。其动态过程由以下一对线性常微分方程（ODE）刻画：</p>
 <div class="math notranslate nohighlight">
 \[
-K^{-}\in\mathbb{R}^L=(C^{-}B^{-},C^{-}A^{-}B^{-},...,C^{-}A^{L-1}B^{-})
+\dot{x}(t) = A x(t) + B u(t)
 \]</div>
-<p>这种从类似 RNN 的递归到类似 CNN 的卷积的转换是一项核心创新，它使得模型能够利用快速傅里叶变换(FFT)对长序列进行高效训练。而模型的递归形式则更适合于自回归推理 4。S4 模型在递归和卷积表示之间的这种对偶性是其能够兼顾训练效率和推理效率的关键。RNN 固有的顺序性使其在并行硬件上的训练速度较慢,而 CNN 虽然高度可并行化训练,但在自回归不那么自然。S4 模型由于其 LTI 特性，拥有这种双重性质 4。离散化导向递归形式，而 LTI 特性允许这种递归展开为全局卷积。这种对偶性使得 S4 能够利用两者的优势:通过基于 FFT 的卷积进行并行训练，以及通过递归状态更新进行高效的自回归推理。这突显了一个重要的观点:架构创新往往在于发现能够释放计算效率的数学等价性。</p>
-</section>
-<section id="hippo">
-<h3>2.2 HiPPO 框架：捕获长程依赖<a class="headerlink" href="#hippo" title="Link to this heading">#</a></h3>
-<p>基础 SSMs 在实际应用中面临的一个主要挑战是其在长序列上表现不佳，这通常归因于梯度消失或爆炸问题。S4 通过引入 HiPPO(High-order Polynomial Projection Operator)理论来解决这个问题，这是一种用于连续时间记忆的理论框架 <span class="math notranslate nohighlight">\(^{1}\)</span>。</p>
-<p>HiPPO 框架指定了一类特殊的矩阵 A(即 HiPPO 矩阵)，这些矩阵能够使潜状态 x(t)有效地记忆输入 u(t)的历史信息。它通过将过去的信息投影到一个多项式基项式)上，从而维持一个压缩但富有表达能力的记忆表示。HiPPO 矩阵的有效性在于，它产生的隐状态通过追踪勒让德多项式的系数来记忆其历史。这些系数使得模型能够逼近所有先前的历史，HiPPO 矩阵在每一步更新这些系数 <span class="math notranslate nohighlight">\(^{5}\)</span>。一个显著的例子是，在序列 MNIST 分类任务中,仅仅将一个随机初始化的 A 矩阵替换为 HiPPO 矩阵,就能将模型性能从 60%提升到 98%，这充分证明了 HiPPO 的重要性 5。</p>
-<p>HiPPO 为 SSMs 中的记忆机制提供了一种有原则的方法，超越了启发式的门控机制。与 LSTM/GRU 中通过学习得到的门控机制不同，HiPPO 提供了一种数学上推导出的长时记忆方法。LSTM 使用门(输入门、遗忘门、输出门)来控制信息流，但其学习过程是数据驱动的，可能缺乏透明度。HiPPO 的设计目标是通过将历史信息投影到最优的多项式基上来保留过去的信息 <span class="math notranslate nohighlight">\(^{1}\)</span>，这是一种更结构化、理论基础更坚实的记忆方法。HiPPO 矩阵 A 的特定结构并非随意设定，而是源于对连续信号进行最优在线压缩的目标。这预示着在神经网络记忆机制设计中，一种向更具理论原则性的方法转变的趋势，可能催生出更鲁棒和易于理解的模型。HiPPO 的成功 <span class="math notranslate nohighlight">\(^{5}\)</span> 验证了这一方向的正确性。</p>
+<div class="math notranslate nohighlight">
+\[
+y(t) = C x(t) + D u(t)
+\]</div>
+<p><strong>其中：</strong></p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\dot{x}(t)\)</span> 是状态向量 <span class="math notranslate nohighlight">\(x(t)\)</span> 对时间 <span class="math notranslate nohighlight">\(t\)</span> 的导数。</p></li>
+<li><p><span class="math notranslate nohighlight">\(A \in \mathbb{R}^{N \times N}\)</span> 是<strong>状态矩阵</strong>，它决定了系统内部状态的演化动态。</p></li>
+<li><p><span class="math notranslate nohighlight">\(B \in \mathbb{R}^{N \times 1}\)</span> 是<strong>输入矩阵</strong>，它描述了外部输入如何影响状态。</p></li>
+<li><p><span class="math notranslate nohighlight">\(C \in \mathbb{R}^{1 \times N}\)</span> 是<strong>输出矩阵</strong>，它描述了如何从状态中读取输出。</p></li>
+<li><p><span class="math notranslate nohighlight">\(D \in \mathbb{R}^{1 \times 1}\)</span> 是<strong>直通矩阵</strong>，允许输入直接影响输出。在许多序列建模应用中，可以将其视为一个跳跃连接，通常设为 <span class="math notranslate nohighlight">\(0\)</span> 以便于分析。</p></li>
+</ul>
+<p>这些矩阵<span class="math notranslate nohighlight">\((A, B, C, D)\)</span>是模型的参数，通过数据驱动的方式学习得到。这种连续时间的表述是SSM的一个核心特征，它暗示了模型具有处理不同采样率信号的潜力，因为它在理论上是分辨率无关的 。</p>
 </section>
 <section id="id3">
-<h3>2.3 S4 架构：关键创新与计算特性<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
-<p>S4 通过引入优化的参数化方法(结构化矩阵)，在保持状态空间建模优势的同时，显著降低了内存开销 <span class="math notranslate nohighlight">\(^{1}\)</span>。然而，即便使用了 HiPPO 初始化，朴素地计算卷积核 <span class="math notranslate nohighlight">\(K^{-}\)</span>(涉及 <span class="math notranslate nohighlight">\(A^{-}\)</span> 的重复矩阵乘法)仍然会导致 O(N2L)的运算量和 O(NL)的空间复杂度，这对于长序列来说计算成本过高 5。</p>
-<p>S4 通过专注于具有特殊结构的 SSMs-一复数空间中的对角加低秩(Diagonal Plus Low-Rank, DPLR)结构来克服这一计算瓶颈。一个 DPLR SSM 被定义为 <span class="math notranslate nohighlight">\((\wedge\)</span>-PQ<span class="math notranslate nohighlight">\(\cdot\)</span>,B,C)，其中 <span class="math notranslate nohighlight">\(\wedge\)</span> 是对角矩阵，而 P,Q,B,C 是向量(假设秩为 1)。S4 通过三个步骤实现了对核计算的加速 <span class="math notranslate nohighlight">\(^{5}\)</span>:</p>
-<ol class="arabic simple">
-<li><p>截断生成函数(Truncated Generating Function):S4 不是直接计算 <span class="math notranslate nohighlight">\({ K}^{-}\)</span>，而是通过评估其截断生成函数来计算其频谱。这将问题从矩阵幂运算转化为矩阵求逆运算，后者可以更有效地计算。</p></li>
-<li><p>对角情况下的柯西核(Cauchy Kernel for Diagonal Case):对于对角矩阵 A=\的情况，生成函数可以写成一种包含柯西核的形式。这有效地用加权点积替换了矩阵求逆，从而大大提高了计算速度。</p></li>
-<li><p>低秩校正的伍德伯里恒等式(Woodbury Identity for Low-Rank Correction):为了放宽对角假设并包含低秩分量(P,Q)，应用了伍德伯里恒等式。该恒等式允许对角加秩-1 项的逆以对角项的逆来表示，从而有效地将问题简化回高效的对角情况。</p></li>
-</ol>
-<p>此外，HiPPO 矩阵本身虽然不是直接的 DPLR 结构，但它是正规加低秩(NormalPlus Low-Rank,NPLR)结构。正规矩阵是酉可对角化的,这使得 NPLR 矩阵从 SSM 模型的角度来看，本质上等同于 DPLR 矩阵。S4 利用这一点，首先将 HiPPO 矩阵写成正规加低秩项，然后将其对角化以提取 DPLR 项。一个额外的简化是低秩分量可以绑定为 P=Q，这有助于提高稳定性 5。</p>
-<p>通过这些结构化计算,S4 实现了亚二次复杂度(O(NlogN))1。同时,S4 与现代硬件加速器(如 GPU 和 TPU)兼容，支持高效并行化，能够处理数万个词元长度的序列而不会消耗过多内存 1。S4 在诸如长程竞技场(LongRange Arena,LRA)等长程依赖基准测试中取得了当前最优结果 1。</p>
-<p>DPLR 结构的引入并非微小的优化，而是使 S4 在处理长序列时计算上可行的关键因素。核心 SSM 方程虽然简单，但将其朴素地应用于长序列速度过慢 5。HiPPO 矩阵虽然对记忆有益,但也需要计算上易于管理。DPLR 结构(以及 HiPPO 的 NPLR 特性)使得复杂的矩阵运算(特别是卷积核的计算)能够分解为使用柯西核和伍德伯里恒等式等技术的高效步骤 5。可以说，没有 DPLR，S4 可能仍停留在理论层面。这凸显了算法和结构创新在深度学习中与概念创新同等重要。</p>
-<p>下表总结了 RNN/LSTM、Transformer 和 S4 在关键架构和计算特性上的对比:</p>
-<p><strong>表 T1:核心序列模型的架构与计算特性对比</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>特性</p></th>
-<th class="head"><p>RNN/LSTM</p></th>
-<th class="head"><p>Transformer</p></th>
-<th class="head"><p>S4(Structured State Space)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>核心机制</p></td>
-<td><p>循环连接,门控机制 (LSTM)</p></td>
-<td><p>自注意力机制,位置编码</p></td>
-<td><p>状态空间模型(SSM) +HiPPO 初始化</p></td>
-</tr>
-<tr class="row-odd"><td><p>输入依赖性(参数)</p></td>
-<td><p>时不变(权重共享)</p></td>
-<td><p>输入依赖(通过注意力权重)</p></td>
-<td><p>时不变(固定 A,B,C 矩阵)</p></td>
-</tr>
-<tr class="row-even"><td><p>长程依赖处理</p></td>
-<td><p>梯度消失/爆炸, LSTM 有所缓解</p></td>
-<td><p>优秀,但受限于上下文窗口和二次复杂度</p></td>
-<td><p>通过 HiPPO 和 SSM 结构高效捕获</p></td>
-</tr>
-<tr class="row-odd"><td><p>训练复杂度</p></td>
-<td><p>O(L·D2)(顺序)</p></td>
-<td><p>O(L2·D)(并行,自注意力瓶颈)</p></td>
-<td><p>O((L+N)log(L+N))或 O(L·N)(卷积模式,FFT)</p></td>
-</tr>
-<tr class="row-even"><td><p>推理复杂度</p></td>
-<td><p>O(L·D2)(自回归时 O(D2)每步)</p></td>
-<td><p>O(L2·D)(自回归时 O(L·D)每步,有 KV 缓存)</p></td>
-<td><p>O(L·N)(自回归时 O(N)每步,递归模式)</p></td>
-</tr>
-<tr class="row-odd"><td><p>并行性(训练)</p></td>
-<td><p>有限(沿时间维度顺序)</p></td>
-<td><p>高(层内并行)</p></td>
-<td><p>高(卷积模式)</p></td>
-</tr>
-<tr class="row-even"><td><p>内存(训练)</p></td>
-<td><p>O(D)或 O(L·D) (BPTT)</p></td>
-<td><p>O(L2+L·D)</p></td>
-<td><p>O(L·N)或 O(L+N)</p></td>
-</tr>
-<tr class="row-odd"><td><p>内存(推理/KV 缓存)</p></td>
-<td><p>O(D)(隐状态)</p></td>
-<td><p>O(L·D)(KV 缓存)</p></td>
-<td><p>O(N)(隐状态)</p></td>
-</tr>
-</tbody>
-</table>
+<h3>离散化：连接连续理论与数字数据<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>深度学习模型处理的是离散的序列数据（如单词ID或音频采样点），而非连续信号。因此，必须将连续时间的SSM方程进行离散化，将其转换为一个处理离散序列<span class="math notranslate nohighlight">\((u_0, u_1, \dots)\)</span>的离散时间系统。S4论文中采用了一种称为双线性变换（Bilinear Transform）的离散化方法。给定一个固定的步长<span class="math notranslate nohighlight">\(\Delta\)</span>，该变换将连续系统参数<span class="math notranslate nohighlight">\((A, B)\)</span>映射到离散系统参数<span class="math notranslate nohighlight">\((\overline{A}, \overline{B})\)</span>。离散化后的SSM具有以下循环更新形式</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Discrete_SSM.jpg" alt="img" />
 </div>
-<p><em>注:L 为序列长度，D 为模型维度/隐藏层大小，N 为 S4 的状态维度。复杂度为近似值，具体取决于实现。资料来源:1。</em></p>
-<p>此表清晰地展示了 S4 模型在解决 RNN 和 Transformer 局限性方面的努力，并为理解 Mamba 如何进一步改进 S4 奠定了基础。</p>
+<div class="math notranslate nohighlight">
+\[
+x_k = \bar{A} x_{k-1} + \bar{B} u_k
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+y_k = C x_k
+\]</div>
+<p>其中，我们假定 <span class="math notranslate nohighlight">\(\bar{C} = C\)</span> 且 <span class="math notranslate nohighlight">\(\bar{D}\)</span> 项被忽略。离散矩阵 <span class="math notranslate nohighlight">\(\bar{A}\)</span> 和 <span class="math notranslate nohighlight">\(\bar{B}\)</span> 通过以下公式（双线性变换/塔斯廷法）与原始连续矩阵 <span class="math notranslate nohighlight">\(A\)</span>, <span class="math notranslate nohighlight">\(B\)</span> 及采样周期 <span class="math notranslate nohighlight">\(\Delta\)</span> 关联：</p>
+<div class="math notranslate nohighlight">
+\[
+\bar{A} = (I - \frac{\Delta}{2}A)^{-1}(I + \frac{\Delta}{2}A)
+\]</div>
+<div class="math notranslate nohighlight">
+\[
+\bar{B} = (I - \frac{\Delta}{2}A)^{-1} \Delta B
+\]</div>
+<p>这个离散形式的方程揭示了SSM的循环特性。它与RNN的更新规则在形式上高度相似：当前状态<span class="math notranslate nohighlight">\(x_k\)</span>由前一时刻的状态<span class="math notranslate nohighlight">\(x_{k-1}\)</span>和当前输入<span class="math notranslate nohighlight">\(u_k\)</span>共同决定。这一特性使得SSM能够以自回归的方式进行高效推理，每生成一个新 token，只需进行一次状态更新。</p>
 </section>
-</section>
-<section id="mamba">
-<h2>3. Mamba：选择性状态空间与硬件感知设计<a class="headerlink" href="#mamba" title="Link to this heading">#</a></h2>
-<p>尽管 S4 模型在长序列建模方面取得了显著进展，但其依赖于静态、时不变参数(LTI 特性)的特性，使其在处理信息密集型数据或需要基于内容进行推理的任务时表现欠佳 1。S4 的 LTI 特性意味着 SSM 参数(A,B,C)是固定的，不会根据输入序列进行调整。Mamba 在 S4 的基础上，通过引入动态的、输入依赖的参数化方法，实现了能力的巨大</p>
-<p>Mamba 在 S4 的基础上，通过引入动态的、输入依赖的参数化方法，实现了能力的巨大提升 1。这是 Mamba 相较于 S4 的核心概念飞跃。</p>
 <section id="id4">
-<h3>3.1 Mamba 的核心架构创新<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
-<p>Mamba 架构的核心创新在于其选择性状态空间机制和为之配套的硬件感知并行算法。</p>
-<section id="s6">
-<h4>3.1.1 选择性状态空间(S6)机制：输入依赖的动态性<a class="headerlink" href="#s6" title="Link to this heading">#</a></h4>
-<p>Mamba 最核心的改进是使其 SSM 参数(特别是离散化步长△、输入矩阵 B 和输出矩阵 C)成为当前输入 x 的函数 4。这一机制使得模型能够&quot;根据当前词元选择性地沿序列长度维度传播或遗忘信息&quot;7。这种数据依赖的选择机制能够动态地过滤输入，通过关注相关信息并丢弃无关数据，显著改善了长程依赖的建模能力 1。</p>
-<p>选择机制对于处理离散模态(如文本和 DNA)至关重要，在这些领域，S4 的静态特性是一个弱点 <span class="math notranslate nohighlight">\(^{7}\)</span>。Mamba 通过使参数 <span class="math notranslate nohighlight">\(\Delta(x), B(x), C(x)\)</span> 随输入 x 变化,根本性地改变了 S4 中所有词元都按相同&quot;规则&quot;(固定的 A,B,C 矩阵)处理的模式。这意味着模型可以根据当前输入决定保留多少过去的状态(通过△),以及如何将当前输入转换到状态将状态转换到输出(通过 C)。这种做法在理念上更接近于注意力机制(其中交互是输入依赖的),但它是通过具有线性扩展性的循环机制实现的。其结果是 M&quot;基于内容的推理&quot;7,这是 Transformer 相较于先前 SSMs 的主要优势,也使得 Mamba 适用于像语言建模这样复杂、信息密集的任务。</p>
-<p>根据 8 中的算法 2(SSM+Selection，或称 S6 机制)，这些输入依赖参数的具体形式为:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>sB(x)=LinearN(x)
-sC(x)=LinearN(x)
-sΔ(x)=BroadcastD(Linear1(x))
-T△=softplus
-</pre></div>
+<h3>卷积视角：展开循环<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>LTI系统的美妙之处在于其固有的对偶性。除了循环表示，离散化的SSM还可以被精确地表示为一个卷积操作。通过将循环方程从一个零初始状态 <span class="math notranslate nohighlight">\(x_{-1}=0\)</span> 开始迭代展开，我们可以观察到任意时刻的输出 <span class="math notranslate nohighlight">\(y_{k}\)</span> 是所有历史输入 <span class="math notranslate nohighlight">\((u_{0},u_{1},\dots,u_{k})\)</span> 的线性组合：</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Conv_SSM.jpg" alt="img" />
 </div>
-<p>其中 Lineard 是一个参数化的到维度 d 的投影。</p>
-<p>Mamba 中的选择性 SSM 递归在特定条件下(例如 N=1,A=-1,B=1,s△=Linear(xt),=softplus)会退化为一个门控循环单元:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gt</span><span class="o">=</span><span class="n">o</span><span class="p">(</span><span class="n">Linear</span><span class="p">(</span><span class="n">xt</span><span class="p">))</span>
-<span class="n">ht</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">gt</span><span class="p">)</span><span class="n">ht</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="n">gt</span> <span class="n">xt</span>
-</pre></div>
+<div class="math notranslate nohighlight">
+\[
+y_{k}=\overline{C B}u_{k}+\overline{C A B}u_{k-1}+\cdots+\overline{C A}^{k}\overline{B}u_{0}
+\]</div>
+<p>这正是离散卷积的定义。因此，整个输出序列 <span class="math notranslate nohighlight">\(y\)</span> 可以被写成输入序列 <span class="math notranslate nohighlight">\(u\)</span> 与一个特定卷积核 <span class="math notranslate nohighlight">\(\overline{K}\)</span> 的卷积：</p>
+<div class="math notranslate nohighlight">
+\[
+y=\overline{K}*u
+\]</div>
+<p>这个卷积核 <span class="math notranslate nohighlight">\(\overline{K}\)</span>，也称为SSM滤波器或脉冲响应，完全由离散系统矩阵 <span class="math notranslate nohighlight">\((\overline{A},\overline{B},\overline{C})\)</span> 定义。其第 <span class="math notranslate nohighlight">\(i\)</span> 个元素（从0开始）为：</p>
+<div class="math notranslate nohighlight">
+\[
+\overline{K}_{i}=\overline{C A}^{i}\overline{B}
+\]</div>
+<p>卷积视角的意义极为重大。根据卷积定理，时域上的卷积等价于频域上的逐元素乘法。这意味着，我们可以先通过快速傅里叶变换（FFT）将输入序列<span class="math notranslate nohighlight">\(u\)</span>和卷积核<span class="math notranslate nohighlight">\(\overline{K}\)</span>转换到频域，然后进行廉价的逐元素相乘，最后通过逆快速傅里叶变换（iFFT）得到最终的输出序列<span class="math notranslate nohighlight">\(y\)</span>。由于FFT算法的复杂度为<span class="math notranslate nohighlight">\(O(L \log L)\)</span>，这使得SSM的训练过程可以像CNN一样高效地并行化，从而避免了RNN训练时的顺序瓶颈。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Conv_SSM2.jpg" alt="img" />
 </div>
-<p>这种联系表明，SSM 中的 <span class="math notranslate nohighlight">\(\Delta\)</span> 参数扮演了类似于 RNN 门控机制的广义角色，控制着模型是关注当前输入还是忽略当前输入并保持先前状态的平衡 8。一个大的 <span class="math notranslate nohighlight">\(\Delta\)</span> 会重置状态并关注当前输入，而一个小的 <span class="math notranslate nohighlight">\(\Delta\)</span> 则会保持状态并忽略当前输入。使 B 和 C 也具有选择性，则允许模型更细致地控制输入是否进入状态以及状态是否进入输出，从而根据内容和上下文调节循环动态。</p>
+<p>SSM的这种对偶性，即同时拥有循环和卷积两种等价表示，并非巧合，而是LTI系统的一个基本性质。序列建模领域的历史演进在某种程度上体现了循环模型（如RNN）与卷积模型（如TCN）之间的范式竞争。RNN擅长生成但训练缓慢，而CNN训练快速但感受野受限。S4的构建者敏锐地意识到，SSM的对偶性恰好完美地映射到了深度学习模型的两种核心操作模式：用于推理的序贯生成和用于训练的并行计算。因此，SSM框架为这两种看似对立的范式提供了一座坚实的数学桥梁，使得模型能够同时继承两者的核心优势：用于推理的<span class="math notranslate nohighlight">\(O(1)\)</span>循环更新和用于训练的基于FFT的并行计算。S4模型的精髓就在于成功地将这一理论桥梁转化为一个实际可行且高效的深度学习架构。</p>
 </section>
+</section>
+<section id="hippo">
+<h2>HiPPO 框架：一种有原则的历史压缩机制<a class="headerlink" href="#hippo" title="Link to this heading">#</a></h2>
+<p>尽管SSM在理论上提供了一个优雅的框架，但实践表明，简单地使用随机初始化的SSM矩阵<span class="math notranslate nohighlight">\((A, B, C)\)</span>，其性能往往不尽如人意，甚至会重蹈RNN梯度不稳定的覆辙，无法有效捕捉长距离依赖 [5, 15]。这表明，SSM的性能高度依赖于其参数矩阵的特定结构。S4成功的关键之一，便是引入了HiPPO框架来构建一个具有优良记忆特性的状态矩阵<span class="math notranslate nohighlight">\(A\)</span>。</p>
 <section id="id5">
-<h4>3.1.2 硬件感知并行算法：高效计算<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
-<p>输入依赖的选择性使得 Mamba 的 SSM 变为时变系统，从而破坏了 S4 赖以进行高效卷积训练的 LTI 特性 <span class="math notranslate nohighlight">\(^{3}\)</span>。Mamba 通过设计一种硬件感知的并行算法来克服这一挑战,该算法使用扫描(scan)操作以循环方式计算模型，并针对现代 GPU 进行了优化 <span class="math notranslate nohighlight">\(^{1}\)</span>。</p>
-<p>Mamba 的成功并不仅仅归功于选择性 SSM 的思想，同样重要的是其算法与硬件能力的务实协同设计。选择机制打破了 S4 的卷积技巧 <span class="math notranslate nohighlight">\(^{8}\)</span>，如果没有高效的替代方案，模型将会非常缓慢。并行扫描、核融合和重计算等技术是明确为利用 GPU 内存层级 HBM)和并行性而设计的 <span class="math notranslate nohighlight">\(^{8}\)</span>，这与 FlashAttention 背后的理念相似 <span class="math notranslate nohighlight">\(^{12}\)</span>。这标志着深度学习中的算法创新必须与硬件感知的实现齐头并进，才能取得最先进的结果，这是一级&quot;的模型设计方法。一个潜在的更深远影响是，未来的模型开发可能越来越需要同时具备机器学习理论和系统/硬件优化方面的专业知识。</p>
-<p>该硬件感知算法主要利用了三种经典技术 <span class="math notranslate nohighlight">\(^{8}\)</span>:</p>
-<ol class="arabic simple">
-<li><p>核融合(Kernel Fusion):离散化、扫描以及与 C 矩阵相乘等步骤被融合成单个计算核,而不是作为独立的、需要在 HBM(高带宽内存)和 SRAM(静态随机存取存储器)之间读写大型中间张量的操作。这减少了 O(N)(SSM 状态维度 N)倍的内存 I/O，带来了显著的速度提升(例如 20-40 倍)。具体过程包括:从 HBM 读取 <span class="math notranslate nohighlight">\(\Delta\)</span>,A,B,C 到快速的 SRAM;在 SRAM 中执行离散化得到 <span class="math notranslate nohighlight">\(A_{-}^{-},B_{-}^{-}\)</span>;执行并行关联扫描，在 SRAM 中得到中间状态;与 C 相乘并求和，得到输出，然后写回 HBM。如果序列长度 L 过长无法完全放入 SRAM，序列会被切分成块，对每个块执行融合扫描。</p></li>
-<li><p>并行扫描(ParallelScan):为了避免递归的顺序性，采用了功耗高效的并行扫描算法(如 Blelloch 扫描)，以在序列长度维度上并行化计算。</p></li>
-<li><p>重计算(Recomputation):反向传播所需的中间状态在反向传递过程中，当输入从 HBM 加载到 SRAM 时重新计算，而不是存储起来。这避免了存储大量中间状态导致的内存爆炸，并使得融合选择性扫描层的内存需求与使用 FlashAttention 的优化 Transformer 实现相当。每个选择性 SSM 层每个词元大约存储 16 字节的激活值。</p></li>
-</ol>
-<p>这种硬件感知设计使 Mamba 在序列长度上实现了线性时间复杂度 O(L)1。</p>
+<h3>HiPPO：连续历史的在线压缩<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<p>HiPPO（High-order Polynomial Projection Operator，高阶多项式投影算子）是一个通用的数学框架，其核心目标是在线地将一个连续的、无限长的输入历史函数<span class="math notranslate nohighlight">\(f(t)\)</span>压缩成一个固定大小的向量表示。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/HippoOrigin.jpg" alt="img" />
+</div>
+<p>HiPPO的核心思想是，在任意时刻<span class="math notranslate nohighlight">\(t\)</span>，它都试图找到一个最优的多项式<span class="math notranslate nohighlight">\(g(t)\)</span>（例如，阶数为<span class="math notranslate nohighlight">\(N-1\)</span>），来逼近截至当前时刻的全部历史函数<span class="math notranslate nohighlight">\(f_{\le t}\)</span>。这种逼近的“最优性”是根据一个随时间变化的度量<span class="math notranslate nohighlight">\(\mu(t)\)</span>来定义的，该度量决定了历史中不同时间点的重要性。这个过程可以被形式化为一个在线函数逼近问题。</p>
 </section>
 <section id="id6">
-<h4>3.1.3 简化的同质架构<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
-<p>Mamba 通过将先前 SSM 架构的设计与 Transformer 的 MLP 块的理念相结合，形成了一个单一的、同质的 Mamba 块，从而简化了以往的深度序列模型架构 4。这个块通常使用 SiLU/Swish 激活函数。这种统一的块取代了 Transformer 中更为复杂的注意力和 MLP 块 9。这种简化的架构可能预示着向更参数高效和结构同质的设计的转变。Transformer 拥有独特的注意力和 MLP 块，各自有其参数和计算模式。Mamba 将这些功能集成到一个更同质的结构中 <span class="math notranslate nohighlight">\(^{8}\)</span>。这可能有助于简化模型缩放、实现更均匀的参数分布，并由于块内计算模式更规则而可能更好地利用硬件。Mamba 能够在没有独立的复杂注意力头或大型 MLP 块的情况下取得强大性能 <span class="math notranslate nohighlight">\(^{9}\)</span>，这表明选择性 SSM 本身具有高度的表达能力。</p>
+<h3>从最优逼近到线性常微分方程<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>HiPPO框架最核心的理论成果是证明了：描述这个最优多项式逼近的<span class="math notranslate nohighlight">\(N\)</span>个系数<span class="math notranslate nohighlight">\(c(t)\)</span>的演化过程，可以被一个线性常微分方程（ODE）精确刻画：</p>
+<div class="math notranslate nohighlight">
+\[
+c^{\prime}(t) = A c(t) + B f(t)
+\]</div>
+<p>这个方程的形式与SSM的状态方程<span class="math notranslate nohighlight">\(x'(t) = Ax(t) + Bu(t)\)</span>完全一致。这意味着，HiPPO框架为SSM的状态矩阵<span class="math notranslate nohighlight">\(A\)</span>和输入矩阵<span class="math notranslate nohighlight">\(B\)</span>提供了一种基于第一性原理的构造方法。通过这种方式得到的矩阵<span class="math notranslate nohighlight">\(A\)</span>被称为“HiPPO矩阵”。它不再是一个随机矩阵，而是内含了对历史进行最优压缩的动态属性。</p>
+</section>
+<section id="hippo-legs">
+<h3>HiPPO-LegS矩阵<a class="headerlink" href="#hippo-legs" title="Link to this heading">#</a></h3>
+<p>S4模型具体采用的是HiPPO框架下的一个特定变体，称为HiPPO-LegS（Legendre Scaled）。</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/Hippo.jpg" alt="img" />
+</div>
+<p>该变体有以下两个关键特征：</p>
+<ol class="arabic simple">
+<li><p>基函数：它使用勒让德多项式（Legendre polynomials）作为逼近历史函数的多项式基。</p></li>
+<li><p>度量：它采用一种随时间缩放的度量，这种度量会给近期的数据点赋予更高的权重，但同时确保整个历史都被纳入考量，而不是像滑动窗口那样丢弃旧信息。</p></li>
+</ol>
+<p>通过HiPPO-LegS推导出的<span class="math notranslate nohighlight">\(N \times N\)</span>状态矩阵<span class="math notranslate nohighlight">\(A\)</span>具有一个明确的数学形式：</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+A_{n k} = 
+\begin{cases} 
+(2n+1)^{1/2}(2k+1)^{1/2} &amp; \text{if } n &gt; k \\
+n + 1 &amp; \text{if } n = k \\
+0 &amp; \text{if } n &lt; k
+\end{cases}
+\end{split}\]</div>
+<p>此处的<span class="math notranslate nohighlight">\(A\)</span>矩阵是一个下三角矩阵。实验证明，仅仅将一个标准SSM中的随机矩阵<span class="math notranslate nohighlight">\(A\)</span>替换为这个特定的HiPPO-LegS矩阵，就能使其在长距离依赖任务上的性能得到巨大提升。这为S4的构建提供了坚实的经验基础。</p>
+<p>传统的RNN将记忆视为一个离散的、局部的状态转移过程：$<span class="math notranslate nohighlight">\(state_{new} = f(state_{old}, input_{current})\)</span>$这种机制在数学上缺乏深层解释，并且其局部性是导致梯度消失的根源。HiPPO框架则从一个根本不同的角度重新定义了记忆。它不再关注离散的状态转移，而是提出了一个全局性的问题：“如何用一个固定维度的系数向量，最优地逼近过去全部的连续函数历史？”。</p>
+<p>HiPPO推导出的ODE，<span class="math notranslate nohighlight">\(c'(t) = Ac(t) + Bf(t)\)</span>，并非一个启发式的更新规则，而是对“最优系数如何随新数据的到来而演化”这一问题的解析解。因此，HiPPO矩阵<span class="math notranslate nohighlight">\(A\)</span>不仅仅是一个“好的初始化”，它是一个精确的线性算子，支配着一个最优、连续历史压缩方案的内在动力学。这为SSM的结构提供了比LSTM或GRU的门控机制更为严谨和深刻的理论依据，而S4模型正是建立在这一坚实的理论基石之上。</p>
 </section>
 </section>
 <section id="id7">
-<h3>3.2 Mamba 的关键贡献与理论基础<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
-<p>Mamba 是首个在预训练和下游任务中均能达到 Transformer 级别性能的线性时间序列模型 <span class="math notranslate nohighlight">\(^{4}\)</span>。它能够有效地建模长程依赖，在真实数据上的性能随序列长度增加而提升，可处理长达百万的序列。其核心的选择机制赋予了模型进行内容感知推理的能力，这是以往与注意力机制相关联的关键能力。</p>
-<p>下表 T1(修订版)更新了核心序列模型的对比，加入了 Mamba:</p>
-<p><strong>表 T1(修订版):核心序列模型的架构与计算特性对比</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>特性</p></th>
-<th class="head"><p>RNN/LSTM</p></th>
-<th class="head"><p>Transformer</p></th>
-<th class="head"><p>S4(Structured State Space)</p></th>
-<th class="head"><p>Mamba</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>核心机制</p></td>
-<td><p>循环连接,门控机制(LSTM)</p></td>
-<td><p>自注意力机制,位置编码</p></td>
-<td><p>状态空间模型(SSM)+HiPPO 初始化</p></td>
-<td><p>选择性 SSM(S6),硬件感知扫描</p></td>
-</tr>
-<tr class="row-odd"><td><p>输入依赖性(参数)</p></td>
-<td><p>时不变(权重共享)</p></td>
-<td><p>输入依赖(通过注意力权重)</p></td>
-<td><p>时不变(固定 A,B,C 矩阵)</p></td>
-<td><p>输入依赖(选择性参数△(x),B(x),C(x))</p></td>
-</tr>
-<tr class="row-even"><td><p>长程依赖处理</p></td>
-<td><p>梯度消失/爆炸, LSTM 有所缓解</p></td>
-<td><p>优秀,但受限于上下文窗口和二次复杂度</p></td>
-<td><p>通过 HiPPO 和 SSM 结构高效捕获</p></td>
-<td><p>通过选择机制和 SSM 结构高效捕获,可扩展至百万长度</p></td>
-</tr>
-<tr class="row-odd"><td><p>训练复杂度</p></td>
-<td><p>O(L·D2)(顺序)</p></td>
-<td><p>O(L2·D)(并行,自注意力瓶颈)</p></td>
-<td><p>O((L+N)log(L+N))或 O(L·N)(卷积模式,FFT)</p></td>
-<td><p>O(L·D·N)(并行扫描,实际线性 O(L))</p></td>
-</tr>
-<tr class="row-even"><td><p>推理复杂度</p></td>
-<td><p>O(L·D2)(自回归时 O(D2)每步)</p></td>
-<td><p>O(L2·D)(自回归时 O(L·D)每步,有 KV 缓存)</p></td>
-<td><p>O(L·N)(自回归时 O(N)每步,递归模式)</p></td>
-<td><p>O(L·D·N)(自回归时 O(D·N)每步,无 KV 缓存)</p></td>
-</tr>
-<tr class="row-odd"><td><p>并行性(训练)</p></td>
-<td><p>有限(沿时间维度顺序)</p></td>
-<td><p>高(层内并行)</p></td>
-<td><p>高(卷积模式)</p></td>
-<td><p>高(并行扫描)</p></td>
-</tr>
-<tr class="row-even"><td><p>内存(训练)</p></td>
-<td><p>O(D)或 O(L·D)(BPTT)</p></td>
-<td><p>O(L2+L·D)</p></td>
-<td><p>O(L·N)或 O(L+N)</p></td>
-<td><p>O(L·D)(与 FlashAttention 类似,有重计算)</p></td>
-</tr>
-<tr class="row-odd"><td><p>内存(推理/KV 缓存)</p></td>
-<td><p>O(D)(隐状态)</p></td>
-<td><p>O(L·D)(KV 缓存)</p></td>
-<td><p>O(N)(隐状态)</p></td>
-<td><p>O(D·N)(隐状态,无 KV 缓存)</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><em>注:L 为序列长度，D 为模型维度/隐藏层大小，N 为 S4/Mamba 的状态维度。Mamba 的训练复杂度由于硬件感知算法，实际表现为关于 L 的线性。资料来源:1。</em></p>
-<p>此表通过加入 Mamba,可以直接比较四种主要架构。它清晰地突出了 Mamba 独特的特性组合:输入依赖的参数(类似 Transformer，不同于 S4)和线性复杂度(类似 S4，不同于 Transformer)。这张表有力地总结了 Mamba 在技术版图中的定位，强调了其关键创新以及它如何试图结合先前模型的优点同时缓解其弱点。</p>
+<h2>S4架构：通过结构化矩阵实现计算效率<a class="headerlink" href="#id7" title="Link to this heading">#</a></h2>
+<p>HiPPO框架为SSM提供了捕捉长距离依赖的理论保障，但直接使用HiPPO矩阵在计算上是不可行的，因为其状态更新需要<span class="math notranslate nohighlight">\(O(N^2)\)</span>的计算复杂度。S4模型的真正突破在于，其作者发现并利用了HiPPO矩阵内部隐藏的特殊数学结构，从而设计出了一系列极其高效的算法。</p>
+<section id="nplr">
+<h3>核心洞察：正规加低秩（NPLR）结构<a class="headerlink" href="#nplr" title="Link to this heading">#</a></h3>
+<p>S4论文的核心发现是，所有HiPPO框架推导出的矩阵都具有一种称为“正规加低秩”（Normal Plus Low-Rank, NPLR）的结构 1。一个矩阵<span class="math notranslate nohighlight">\(A\)</span>是NPLR的，意味着它可以被分解为一个正规矩阵和一个低秩矩阵的和。</p>
+<p>更具体地，S4证明了HiPPO矩阵<span class="math notranslate nohighlight">\(A\)</span>可以表示为：</p>
+<div class="math notranslate nohighlight">
+\[
+A = V\Lambda V^{*} - PQ^{\top}
+\]</div>
+<p>其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(V \in \mathbb{C}^{N \times N}\)</span> 是一个酉矩阵（<span class="math notranslate nohighlight">\(V^{*}V = I\)</span>）</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Lambda \in \mathbb{C}^{N \times N}\)</span> 是一个对角矩阵</p></li>
+<li><p><span class="math notranslate nohighlight">\(P, Q \in \mathbb{R}^{N \times r}\)</span> 是低秩矩阵，其中秩r非常小（对于HiPPO-LegS，r=1）</p></li>
+</ul>
+<p><span class="math notranslate nohighlight">\(V\Lambda V^{*}\)</span>部分代表一个正规矩阵（因为所有正规矩阵都可以被酉对角化），而<span class="math notranslate nohighlight">\(-PQ^{\top}\)</span>是低秩部分。在SSM中，相似变换（矩阵共轭）是一种等价关系，即参数组<span class="math notranslate nohighlight">\((A, B, C)\)</span>和<span class="math notranslate nohighlight">\((V^{-1}AV, V^{-1}B, CV)\)</span>定义的系统是等价的。利用这一点，我们可以对系统进行基变换，从而在不失一般性的前提下，将状态矩阵<span class="math notranslate nohighlight">\(A\)</span>视为一个更简单的形式：“对角加低秩”（Diagonal Plus Low-Rank, DPLR）：</p>
+<div class="math notranslate nohighlight">
+\[
+A = \Lambda - P Q^{*}
+\]</div>
+<p>这一结构性洞察是S4所有效率优化的基石。它将一个看似复杂稠密的HiPPO矩阵，转化为一个由极其简单的对角部分和微小的低秩扰动构成的结构，为后续的算法优化打开了大门。</p>
 </section>
+<section id="o-n">
+<h3>循环机制：实现<span class="math notranslate nohighlight">\(O(N)\)</span>的快速推理<a class="headerlink" href="#o-n" title="Link to this heading">#</a></h3>
+<p>在推理阶段，模型采用SSM的循环形式，其计算瓶颈在于每一步都需要计算矩阵-向量乘积<span class="math notranslate nohighlight">\(\overline{A}x_{k-1}\)</span>。对于一个稠密矩阵<span class="math notranslate nohighlight">\(\overline{A}\)</span>，这需要<span class="math notranslate nohighlight">\(O(N^2)\)</span>的计算量。S4利用DPLR结构将这一复杂度降低到了线性级别<span class="math notranslate nohighlight">\(O(N)\)</span>。</p>
+<p>首先，由于<span class="math notranslate nohighlight">\(A = \Lambda - PQ^{*}\)</span>是DPLR形式，那么<span class="math notranslate nohighlight">\(I + \frac{\Delta}{2}A\)</span>显然也是DPLR形式。一个DPLR矩阵与向量的乘积可以在<span class="math notranslate nohighlight">\(O(N)\)</span>时间内完成。</p>
+<p>关键的挑战在于计算逆矩阵项<span class="math notranslate nohighlight">\((I - \frac{\Delta}{2}A)^{-1}\)</span>与向量的乘积。直接求逆是昂贵的。S4通过应用**伍德伯里矩阵恒等式（Woodbury Matrix Identity）**巧妙地解决了这个问题。</p>
+<p>伍德伯里恒等式指出：</p>
+<div class="math notranslate nohighlight">
+\[
+(M + UV^{\top})^{-1} = M^{-1} - M^{-1}U(I + V^{\top}M^{-1}U)^{-1}V^{\top}M^{-1}
+\]</div>
+<p>将<span class="math notranslate nohighlight">\(I - \frac{\Delta}{2}A = (I - \frac{\Delta}{2}\Lambda) + \frac{\Delta}{2}PQ^{*}\)</span>代入恒等式，其中：</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(M = I - \frac{\Delta}{2}\Lambda\)</span>是一个对角矩阵，其逆矩阵<span class="math notranslate nohighlight">\(M^{-1}\)</span>的计算是<span class="math notranslate nohighlight">\(O(N)\)</span>的</p></li>
+<li><p>恒等式右侧的内层逆矩阵<span class="math notranslate nohighlight">\((I + \dots)^{-1}\)</span>作用于一个<span class="math notranslate nohighlight">\(r \times r\)</span>的小矩阵上，计算成本极低</p></li>
+</ul>
+<p><strong>最终的表达式表明，<span class="math notranslate nohighlight">\((I - \frac{\Delta}{2}A)^{-1}\)</span>与一个向量的乘积也可以在<span class="math notranslate nohighlight">\(O(N)\)</span>时间内完成。</strong></p>
+<p>因此，整个<span class="math notranslate nohighlight">\(\overline{A}x_{k-1}\)</span>的计算复杂度被成功降至<span class="math notranslate nohighlight">\(O(N)\)</span>，使得S4的自回归推理速度极快。</p>
 </section>
-<section id="mambas4-transformer">
-<h2>4. 比较性能分析：Mamba、S4 与 Transformer<a class="headerlink" href="#mambas4-transformer" title="Link to this heading">#</a></h2>
-<p>Mamba 架构在多种基准测试和任务中展现了其强大的性能和效率优势，尤其是在处理长序列和需要选择性信息处理的场景下。</p>
 <section id="id8">
-<h3>4.1 合成任务性能<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
-<p>合成任务通常被设计用来严格测试模型在特定能力方面的表现，如记忆、选择性处理和模式识别。</p>
-<ul class="simple">
-<li><p><strong>选择性复制任务(Selective Copying Task)</strong>:此任务要求模型根据随机间隔的指令选择性地记住或忽略输入序列中的某些词元 <span class="math notranslate nohighlight">\(^{8}\)</span>。结果显示，采用 S6 选择机制的 Mamba 取得了近乎完美的准确率(99.8%)，显著优于未使用选择机制的 S4(18.3%)。同样，将 S6 机制应用于 Hyena 架构也使其准确率从 30.1%提升至 99.7%<span class="math notranslate nohighlight">\(^{8}\)</span>。这些结果直接验证了 Mamba 选择机制的有效性。</p></li>
-</ul>
-<p><strong>表 T2:Mamba 在选择性复制任务上的性能</strong></p>
+<h3>卷积机制：高效的并行训练<a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p>训练阶段的瓶颈在于计算长度为<span class="math notranslate nohighlight">\(L\)</span>的SSM卷积核<span class="math notranslate nohighlight">\(\overline{K}\)</span>。朴素的计算方法（通过<span class="math notranslate nohighlight">\(\overline{K}_i = \overline{C}\overline{A}^i\overline{B}\)</span>）需要<span class="math notranslate nohighlight">\(O(N^2L)\)</span>的复杂度，完全不可行。S4设计了一套精妙的算法，将复杂度降低到接近线性的<span class="math notranslate nohighlight">\(\tilde{O}(N+L)\)</span>。</p>
+<p>下表解析了S4高效卷积核计算算法的核心数学工具及其在算法中扮演的角色。</p>
+<p><strong>表1：S4卷积核计算算法的构成要素</strong></p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
-<tr class="row-odd"><th class="head"><p>模型架构</p></th>
-<th class="head"><p>SSM 层</p></th>
-<th class="head"><p>准确率(%)</p></th>
+<tr class="row-odd"><th class="head"><p>数学工具</p></th>
+<th class="head"><p>在S4算法中的作用</p></th>
+<th class="head"><p>带来的复杂度效益</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>S4</p></td>
-<td><p>无门控 S4</p></td>
-<td><p>18.3</p></td>
+<tr class="row-even"><td><p><strong>生成函数</strong></p></td>
+<td><p>将时域的卷积核计算问题，转化为在频域对生成函数进行求值的问题</p></td>
+<td><p>使得可以利用FFT/iFFT，将问题核心从矩阵幂转移到函数求值</p></td>
 </tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>无门控 S6</p></td>
-<td><p>97.0</p></td>
+<tr class="row-odd"><td><p><strong>伍德伯里矩阵恒等式</strong></p></td>
+<td><p>利用A矩阵的DPLR结构，将复杂的矩阵求逆运算分解为对角矩阵求逆和低秩项运算</p></td>
+<td><p>避免了<span class="math notranslate nohighlight">\(O(N^{3})\)</span>的求逆操作，使得每次函数求值能在<span class="math notranslate nohighlight">\(O(N)\)</span>内完成</p></td>
 </tr>
-<tr class="row-even"><td><p>H3</p></td>
-<td><p>H3 S4</p></td>
-<td><p>57.0</p></td>
+<tr class="row-even"><td><p><strong>柯西矩阵</strong></p></td>
+<td><p>识别出在所有单位根上批量求值生成函数的代数结构，将其形式化为柯西矩阵与向量的乘积</p></td>
+<td><p>将问题规约到一个已有快速算法的经典数值问题上</p></td>
 </tr>
-<tr class="row-odd"><td><p>Hyena</p></td>
-<td><p>H3 Hyena</p></td>
-<td><p>30.1</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>H3 S6</p></td>
-<td><p>99.7</p></td>
-</tr>
-<tr class="row-odd"><td><p></p></td>
-<td><p>Mamba S4</p></td>
-<td><p>56.4</p></td>
-</tr>
-<tr class="row-even"><td><p></p></td>
-<td><p>Mamba Hyena</p></td>
-<td><p>28.4</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mamba</p></td>
-<td><p>Mamba S6</p></td>
-<td><p>99.8</p></td>
+<tr class="row-odd"><td><p><strong>快速傅里叶变换(FFT/iFFT)</strong></p></td>
+<td><p>在计算出频域的核函数值后，高效地(<span class="math notranslate nohighlight">\(O(L\log L)\)</span>)将其转换回时域的卷积核</p></td>
+<td><p>实现了时域与频域之间的高效转换，是整个并行计算流程的最后一环</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p><em>资料来源:[8]</em></p>
-<ul class="simple">
-<li><p><strong>归纳头外推任务(InductionHeadsExtrapolation)</strong>:此任务评估模型识别序列中重复模式并将其推广到远超训练长度序列的能力。模型在固定长度(如 256)的序列上训练,然后在更长序列(最长可达 100 万以上)上测试 <span class="math notranslate nohighlight">\(^{8}\)</span>。Mamba(74K 参数)不仅完美解决了该任务，并且能够完美外推到百万长度的序列。相比之下，多种 Transformer 的注意力头变体(MHA-Abs,MHA-RoPE,MHA-xPos)以及 Hyena 模型在序列长度超过训练长度 2 倍后性能显著下降或完全失效 <span class="math notranslate nohighlight">\(^{8}\)</span>。这突显了 Mamba 在长上下文外推方面的卓越能力。</p></li>
-</ul>
-<p><strong>表 T3:Mamba 在归纳头外推任务上的性能(部分结果)</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>模型</p></th>
-<th class="head"><p>参数</p></th>
-<th class="head"><p>测试准确率(%) &#64;序列长度 26</p></th>
-<th class="head"><p>...</p></th>
-<th class="head"><p>220(约 1M)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>MHA-Abs</p></td>
-<td><p>137K</p></td>
-<td><p>√</p></td>
-<td><p></p></td>
-<td><p>X</p></td>
-</tr>
-<tr class="row-odd"><td><p>MHA-RoPE</p></td>
-<td><p>137K</p></td>
-<td><p>√</p></td>
-<td><p>...</p></td>
-<td><p>X</p></td>
-</tr>
-<tr class="row-even"><td><p>H3</p></td>
-<td><p>153K</p></td>
-<td><p>√</p></td>
-<td><p>.**</p></td>
-<td><p>7.4</p></td>
-</tr>
-<tr class="row-odd"><td><p>Hyena</p></td>
-<td><p>69M*</p></td>
-<td><p>97.7</p></td>
-<td><p>...</p></td>
-<td><p>9.8</p></td>
-</tr>
-<tr class="row-even"><td><p>Mamba</p></td>
-<td><p>74K</p></td>
-<td><p>√</p></td>
-<td><p>...</p></td>
-<td><p>√</p></td>
-</tr>
-</tbody>
-</table>
+<p>综上所述，通过这一系列精巧的数学变换，S4成功地将卷积核的计算从<span class="math notranslate nohighlight">\(O(N^2L)\)</span>的灾难性复杂度降低到了高效的<span class="math notranslate nohighlight">\(\tilde{O}(N+L) + O(L \log L)\)</span>，从而实现了高效的并行化训练。</p>
+<p>S4模型的构建过程堪称通过数学等价性进行算法优化的典范。它始于一个计算成本极高的目标——计算一个由矩阵幂定义的卷积核。S4并未对此进行任何近似，而是通过一连串精确的数学变换，每一步都解锁了一种更高效的计算范式：</p>
+<div align="center">
+  <img src="../images/06AlgoData03NewArch/S4.jpg" alt="img" />
 </div>
-<p><em>注:√表示完美解决任务, X 表示失败。</em></p>
-<p><em>资料来源:[8]</em></p>
-<p>Mamba 在这些合成任务上的表现，尤其是在那些直接考验其核心架构创新(如选择性和长程记忆)的任务上的成功，是意料之中的，但也是对其设计有效性的关键验证。</p>
+<ol class="arabic simple">
+<li><p>循环 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 卷积：利用LTI系统性质，将序贯计算转化为可并行的卷积。</p></li>
+<li><p>卷积 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 频域乘积：利用卷积定理，引入FFT，将问题转移到频域。</p></li>
+<li><p>矩阵逆 <span class="math notranslate nohighlight">\(\rightarrow\)</span> DPLR矩阵逆：利用伍德伯里恒等式，利用<span class="math notranslate nohighlight">\(A\)</span>矩阵的隐藏结构来分解复杂的求逆运算。</p></li>
+<li><p>函数求值 <span class="math notranslate nohighlight">\(\rightarrow\)</span> 柯西矩阵乘积：通过观察代数结构，将频域上的批量求值问题与经典的快速算法问题联系起来。</p></li>
+</ol>
+<p>最终得到的算法在计算上与朴素版本的结果完全等价，但速度却快了几个数量级。S4的卓越之处不仅在于最终的架构，更在于其背后严谨而巧妙的、环环相扣的数学推导与算法设计。</p>
+</section>
 </section>
 <section id="id9">
-<h3>4.2 语言建模基准<a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
-<p>在语言建模任务上，Mamba 同样展现了与更成熟的 Transformer 架构相竞争甚至超越的潜力。</p>
-<ul class="simple">
-<li><p><strong>零样本评估(Zero-shot Evaluations)</strong>：在 Pile 等大规模文本语料库上预训练后，Mamba 模型在多个下游零样本评估任务中表现出色 <span class="math notranslate nohighlight">\(^{8}\)</span>。例如，Mamba-130M、Mamba-370M、Mamba-790M、Mamba-1.4B 和 Mamba-2.8B 等不同规模的 Mamba 模型，在 Pile 困惑度、LAMBADA、HellaSwag、PIQA、Arc 和 WinoGrande 等基准上，通常优于同等规模的 Pythia 模型。更重要的是，Mamba 模型常常能够匹敌参数量两倍于自身的 Transformer 基线模型（如 Pythia、RWKV）的性能 <span class="math notranslate nohighlight">\(^{4}\)</span>。例如，Mamba-1.4B 在平均准确率上与 Pythia-2.8B 或 RWKV-3B 相当。Mamba 被认为是首个在预训练困惑度和下游评估中均能真正达到 Transformer 级别性能的线性时间序列模型。</p></li>
-</ul>
-<p><strong>表 T4：Mamba 语言建模零样本评估总结（部分对比）</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>模型</p></th>
-<th class="head"><p>Pile ppl↓</p></th>
-<th class="head"><p>LAMBADA acc↑</p></th>
-<th class="head"><p>HellaSwag acc<span class="math notranslate nohighlight">\(\uparrow\)</span></p></th>
-<th class="head"><p>平均准确率↑</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Pythia-160M</p></td>
-<td><p>29.64</p></td>
-<td><p>33.0</p></td>
-<td><p>30.2</p></td>
-<td><p>40.6</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mamba-130M</p></td>
-<td><p>10.56</p></td>
-<td><p>44.3</p></td>
-<td><p>35.3</p></td>
-<td><p>44.7</p></td>
-</tr>
-<tr class="row-even"><td><p>Pythia-1.4B</p></td>
-<td><p>7.51</p></td>
-<td><p>61.7</p></td>
-<td><p>52.1</p></td>
-<td><p>55.2</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mamba-1.4B</p></td>
-<td><p>6.80</p></td>
-<td><p>64.9</p></td>
-<td><p>59.1</p></td>
-<td><p>59.7</p></td>
-</tr>
-<tr class="row-even"><td><p>Pythia-2.8B</p></td>
-<td><p>6.73</p></td>
-<td><p>64.7</p></td>
-<td><p>59.3</p></td>
-<td><p>59.1</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mamba-2.8B</p></td>
-<td><p>6.22</p></td>
-<td><p>69.2</p></td>
-<td><p>66.1</p></td>
-<td><p>63.3</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><em>资料来源：[8]</em></p>
-<p>&quot;Mamba 以线性成本实现 Transformer 级别质量&quot;的论断具有颠覆性，但&quot;质量&quot;是多方面且依赖于具体情境的。Mamba 匹敌两倍于其规模的 Transformer 模型 <span class="math notranslate nohighlight">\(^{4}\)</span> 是一个强有力的声明。&quot;质量&quot;通常通过困惑度和下游任务准确率来衡量 <span class="math notranslate nohighlight">\(^{8}\)</span>，Mamba 在这些方面表现出色。然而，Transformer 拥有一个丰富的生态系统，包括各种涌现能力、微调行为和可解释性工具（即使有限），这些对于 Mamba 而言尚未得到充分探索或确立 <span class="math notranslate nohighlight">\(^{8}\)</span> 也承认这是一个局限。该论断主要指的是在既定基准上的性能。Mamba 是否能复制非常大型 Transformer 的所有细微行为或&quot;理解&quot;能力，仍是一个开放的研究领域。因此，尽管 Mamba 提供了极具吸引力的效率-性能权衡，但更广泛的&quot;质量&quot;比较将随着 Mamba 模型规模的扩大以及对其复杂推理、上下文学习和其他高级能力的更广泛研究而演变。</p>
-<ul class="simple">
-<li><p><strong>预训练效率</strong>：Mamba 在预训练阶段展现出显著的计算效率优势。在相同规模（如 1.4B 参数）下，Mamba 的训练时间比 Transformer 快约 2-3 倍，这主要得益于其线性时间复杂度和优化的硬件感知设计 <span class="math notranslate nohighlight">\(^{8}\)</span>。随着序列长度增加，这种效率优势更加明显，在处理超过 8K 词元的序列时，Mamba 的训练速度优势可达到 5 倍以上 <span class="math notranslate nohighlight">\(^{4}\)</span>。</p></li>
-<li><p><strong>上下文长度扩展性</strong>：Mamba 在处理长上下文时展现出卓越的扩展性。当上下文长度从 2K 扩展到 32K 时，Mamba 的困惑度仅略有增加（&lt;5%），而 Transformer 的困惑度则显著上升（&gt;15%）<span class="math notranslate nohighlight">\(^{8}\)</span>。这种特性使 Mamba 特别适合需要长上下文理解的应用场景，如长文档处理、代码生成和基因组分析。</p></li>
-<li><p><strong>多语言能力</strong>：在多语言基准测试中，Mamba 同样展现出强大性能。在涵盖 12 种语言的 XTREME 基准测试上，Mamba-2.8B 的性能优于同等规模的 Transformer 模型，尤其在资源较少的语言上优势更为明显 <span class="math notranslate nohighlight">\(^{8}\)</span>。这表明 Mamba 的选择性机制能够更有效地处理不同语言的语法结构和语义特征。</p></li>
-<li><p><strong>知识密集型任务</strong>：在需要事实知识回忆的任务（如 TriviaQA 和 Natural Questions）上，Mamba 的性能与 Transformer 相当或略优，特别是在答案信息位于长文档末端的场景中 <span class="math notranslate nohighlight">\(^{8}\)</span>。这验证了 Mamba 的选择性机制能够有效识别和保留关键信息，同时过滤无关内容。</p></li>
-<li><p><strong>指令微调适应性</strong>：经过指令微调的 Mamba 模型（如 Mamba-Chat）在对话任务中展现出与 Transformer 相当的响应质量 <span class="math notranslate nohighlight">\(^{8}\)</span>。然而，社区反馈表明，在多轮对话一致性方面仍需进一步优化，当前模型偶尔会出现上下文连贯性问题 <span class="math notranslate nohighlight">\(^{19}\)</span>。这提示需要开发针对 SSM 架构的特定微调技术。</p></li>
-</ul>
-</section>
+<h2>批判性评估：S4的内在局限与实践障碍<a class="headerlink" href="#id9" title="Link to this heading">#</a></h2>
+<p>尽管S4在理论和算法上取得了巨大成功，但它并非完美无缺。后续的研究和应用揭示了其在数值稳定性、硬件适配性和功能表达能力方面存在的一些根本性局限。</p>
 <section id="id10">
-<h3>4.3 其他模态的效能<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
-<p>Mamba 的优势不仅限于文本处理，还在音频、基因组学、视觉和时间序列等多种模态中得到验证。</p>
-<ul class="simple">
-<li><p><strong>音频（如 SC09 语音生成）</strong>：在无条件语音生成任务 SC09 上，一个 6.1M 参数的 Mamba 模型在负对数似然（NLL）、弗雷歇初始距离（FID）、初始得分（IS）、修正初始得分（mIS）和幅度调制（AM）等多项指标上均优于 5.8M 参数的基于 SSM 的先进模型 SaShiMi<span class="math notranslate nohighlight">\(^{8}\)</span>。一个更大的 24.3M 参数 Mamba 模型进一步显著提升了保真度指标。消融实验 <span class="math notranslate nohighlight">\(^{8}\)</span> 表明，在音频生成模型的外部和中心阶段，Mamba 块的性能始终优于 S4+MLP 和 MHA+MLP 组合。</p></li>
-</ul>
-<p><strong>表 T5：Mamba 在 SC09 无条件语音生成任务上的性能（部分对比）</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>模型</p></th>
-<th class="head"><p>参数</p></th>
-<th class="head"><p>NLL↓</p></th>
-<th class="head"><p>FID↓</p></th>
-<th class="head"><p>IS↑</p></th>
-<th class="head"><p>mIS<span class="math notranslate nohighlight">\(\uparrow\)</span></p></th>
-<th class="head"><p>AM↓</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>SaShiMi</p></td>
-<td><p>5.8M</p></td>
-<td><p>1.873</p></td>
-<td><p>1.99</p></td>
-<td><p>5.13</p></td>
-<td><p>42.57</p></td>
-<td><p>0.74</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mamba</p></td>
-<td><p>6.1M</p></td>
-<td><p>1.852</p></td>
-<td><p>0.94</p></td>
-<td><p>6.26</p></td>
-<td><p>88.54</p></td>
-<td><p>0.52</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><em>资料来源：[8]</em></p>
-<ul class="simple">
-<li><p><strong>基因组学（如人类基因组 HG38，大型猿类 DNA 分类）</strong>：在人类基因组（HG38）预训练任务中，Mamba 展现出比 HyenaDNA 和 Transformer++更好的规模扩展定律，用大约 3-4 倍更少的参数即可达到后两者的性能水平 <span class="math notranslate nohighlight">\(^{8}\)</span>。Mamba 能够有效利用长达 100 万长度的上下文进行基因组学建模，而 HyenaDNA 的性能则随着序列长度增加而恶化 <span class="math notranslate nohighlight">\(^{8}\)</span>。在大型猿类 DNA 分类任务中，Mamba 模型在不同序列长度下均表现出更高的准确率，尤其是在较长序列上优势更为明显。例如，7M 参数的 Mamba 在序列长度 2^20（约 100 万）时准确率达到 81.31%，而 1.4M 参数的 HyenaDNA 仅为 54.87%。</p></li>
-</ul>
-<p><strong>表 T6：Mamba 在大型猿类 DNA 分类任务上的性能（部分对比）</strong></p>
-<div class="pst-scrollable-table-container"><table class="table">
-<thead>
-<tr class="row-odd"><th class="head"><p>模型</p></th>
-<th class="head"><p>参数</p></th>
-<th class="head"><p>准确率(%)&#64;序列长度 2^10</p></th>
-<th class="head"><p>...</p></th>
-<th class="head"><p>2^20(约 1M)</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>HyenaDNA 1.4M</p></td>
-<td><p>1.4M</p></td>
-<td><p>28.04</p></td>
-<td><p>...</p></td>
-<td><p>54.87</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mamba 1.4M</p></td>
-<td><p>1.4M</p></td>
-<td><p>31.47</p></td>
-<td><p>...</p></td>
-<td><p>71.67</p></td>
-</tr>
-<tr class="row-even"><td><p>Mamba 7M</p></td>
-<td><p>7M</p></td>
-<td><p>30.00</p></td>
-<td><p>...</p></td>
-<td><p>81.31</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><em>资料来源：[8]</em></p>
-<ul class="simple">
-<li><p><strong>视觉（如 Vision Mamba-Vim, Mamba-ND, SiMBA）</strong>：Vision Mamba（Vim）将 SSM 与双向 Mamba 块集成用于视觉序列编码，减少了视觉任务中自注意力的计算需求 <span class="math notranslate nohighlight">\(^{11}\)</span>。Vim 在 ImageNet 分类、COCO 目标检测和 ADE20k 语义分割等任务上展现了增强的性能和效率，能够以较低的计算资源处理高分辨率图像。Mamba-ND 通过层间交替序列顺序将 Mamba 扩展到多维数据（图像、视频），在图像分类、动作识别、天气预报和 3D 分割等任务上以更少的参数超越了 Transformer 模型 <span class="math notranslate nohighlight">\(^{3}\)</span>。SiMBA 是一种混合架构，使用 Mamba 进行序列建模，使用 EinFFT 进行通道建模，旨在解决 Mamba 在 ImageNet 等大型视觉数据集上扩展时的不稳定性问题，并声称优于 V-Mamba 和 Vision Mamba<span class="math notranslate nohighlight">\(^{6}\)</span>。</p></li>
-<li><p><strong>时间序列预测（MambaTS）</strong>：MambaTS 通过减轻置换不变性偏差和通过优化的扫描机制增强变量选择，在时间序列预测方面优于基于 Transformer 的架构 <span class="math notranslate nohighlight">\(^{1}\)</span>。在 ETTh1、ETTh2 等标准时间序列数据集上，MambaTS 的预测误差比 Autoformer 低 15-20%，同时推理速度快 3 倍以上。</p></li>
-</ul>
-<p>Mamba 的优势并非在所有任务类型中都是均一的；它在那些长上下文和选择性信息处理至关重要的任务中表现最为突出。在语言、音频和基因组学中，序列通常很长，并且包含嵌入在嘈杂上下文中的稀疏关键信息。Mamba&quot;过滤掉不相关信息并无限期记住相关信息&quot;的能力 <span class="math notranslate nohighlight">\(^{8}\)</span> 自然非常适合这些场景。基因组学中上下文长度扩展性的优势 <span class="math notranslate nohighlight">\(^{8}\)</span>（相较于性能下降的 HyenaDNA）有力地支持了这一点。这意味着对于那些全局、密集交互在较短序列上至关重要的任务，如果计算成本不是主要限制，Transformer 可能仍然具有很强的竞争力，甚至更可取。随着序列长度的增加以及对选择性信息处理需求的提高，Mamba 的优势愈发明显。</p>
-<p>混合模型（如 Jamba<span class="math notranslate nohighlight">\(^{11}\)</span> 和 SiMBA<span class="math notranslate nohighlight">\(^{6}\)</span>）的出现表明，Mamba 的组件是强大的基础模块，但纯 Mamba 可能并非万能药。Jamba 结合了 Mamba 和 Transformer 层，旨在利用 Mamba 处理长上下文的效率，同时可能保留注意力层的一些密集交互能力 <span class="math notranslate nohighlight">\(^{1}\)</span>。SiMBA 则解决了 Mamba 在大型视觉模型中报告的不稳定性问题 <span class="math notranslate nohighlight">\(^{6}\)</span>。这表明未来可能不是 Mamba 完全取代 Transformer，而是出现更细致的架构，根据特定模态或任务，策略性地结合不同基础模块（SSMs、注意力、卷积）的优势。</p>
+<h3>自回归生成中的数值不稳定性<a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>S4的一个关键问题是，虽然其卷积形式在训练时表现稳定，但在切换到循环形式进行自回归生成时，可能会出现数值不稳定的情况。</p>
+<p>论文《It's Raw! Audio Generation with State-Space Models》深入探究了这一现象，并从经典控制理论的角度给出了解释。一个连续时间LTI系统稳定的充分必要条件是其状态矩阵<span class="math notranslate nohighlight">\(A\)</span>为赫尔维茨矩阵（Hurwitz matrix），即其所有特征值的实部均为负数。然而，S4所采用的HiPPO-LegS矩阵以及其NPLR参数化方法，并不能保证学习到的矩阵<span class="math notranslate nohighlight">\(A\)</span>满足这一条件。这导致在循环迭代过程中，状态向量<span class="math notranslate nohighlight">\(x_k\)</span>的范数可能指数级增长，最终导致数值溢出。</p>
+<p>为了解决这个问题，后续研究提出了一些修正方案，例如在NPLR分解中施加更强的约束，将<span class="math notranslate nohighlight">\(A = \Lambda - PQ^{*}\)</span>的形式改为<span class="math notranslate nohighlight">\(A = \Lambda - PP^{*}\)</span>，这有助于增强模型的稳定性 。这一问题凸显了理论模型在有限精度计算机上实现时可能出现的微妙而关键的差异。</p>
 </section>
-<section id="works-cited">
-<h3>Works cited<a class="headerlink" href="#works-cited" title="Link to this heading">#</a></h3>
+<section id="id11">
+<h3>硬件与软件之间的鸿沟<a class="headerlink" href="#id11" title="Link to this heading">#</a></h3>
+<p>S4训练效率的理论基石是存在近线性的柯西矩阵-向量乘积快速算法。然而，理论上的高效并不总能转化为实践中的高速。这些快速算法通常非常复杂，并且在主流的深度学习框架和硬件加速器（如GPU）上没有得到原生的、高度优化的支持 。</p>
+<p>这意味着，实际的S4实现在很大程度上无法达到理论上的<span class="math notranslate nohighlight">\(\tilde{O}(N+L)\)</span>速度，其性能会受到具体实现和硬件库的限制。这种“硬件鸿沟”使得S4的实际训练速度可能不如理论分析那般理想。这也成为了后续模型（如Mamba）发展的一个重要动机，Mamba的设计从一开始就考虑了GPU的内存层级结构和计算特性，是一种“硬件感知”的架构设计 。</p>
+</section>
+<section id="id12">
+<h3>内容推理的功能性缺陷<a class="headerlink" href="#id12" title="Link to this heading">#</a></h3>
+<p>S4最根本的限制源于其线性时不变（LTI）的本质。LTI系统意味着其动态特性（由矩阵<span class="math notranslate nohighlight">\(A, B, C\)</span>决定）是固定的，不随输入内容的变化而改变。这使得S4成为一个强大的信号处理器，但却是一个相对较弱的语言理解模型。</p>
+<p>论文《Hungry Hungry Hippos: Towards Language Modeling with State Space Models》（H3）通过一系列精心设计的综合性任务，精准地指出了S4的功能缺陷。研究发现，S4难以完成两类对注意力机制而言轻而易举的任务:</p>
 <ol class="arabic simple">
-<li><p>www.arxiv.org, accessed May 21, 2025, https://www.arxiv.org/pdf/2503.18970</p></li>
-<li><p>[2503.18970] A Survey on Structured State Space Sequence (S4) Models - arXiv, accessed May 21, 2025, https://arxiv.org/abs/2503.18970</p></li>
-<li><p>Mamba-ND: Selective State Space Modeling for Multi-Dimensional Data, accessed May 21, 2025, https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/04811.pdf</p></li>
-<li><p>MAMBA: LINEAR-TIME SEQUENCE MODELING WITH SELECTIVE STATE SPACES - OpenReview, accessed May 21, 2025, https://openreview.net/pdf?id=AL1fq05o7H</p></li>
-<li><p>The Annotated S4, accessed May 21, 2025, https://srush.github.io/annotated-s4/</p></li>
-<li><p>arXiv:2403.15360v2 [cs.CV] 24 Apr 2024, accessed May 21, 2025, https://arxiv.org/pdf/2403.15360</p></li>
-<li><p>Mamba: Linear-Time Sequence Modeling with Selective State Spaces - OpenReview, accessed May 21, 2025, https://openreview.net/forum?id=tEYskw1VY2</p></li>
-<li><p>arxiv.org, accessed May 21, 2025, https://arxiv.org/abs/2312.00752</p></li>
-<li><p>An Introduction to the Mamba LLM Architecture: A New Paradigm in Machine Learning, accessed May 21, 2025, https://www.datacamp.com/tutorial/introduction-to-the-mamba-llm-architecture</p></li>
-<li><p>Mamba: Linear-Time Sequence Modeling with Selective State Spaces - Arxiv Dives, accessed May 21, 2025, https://www.oxen.ai/blog/mamba-linear-time-sequence-modeling-with-selective-state-spaces-arxiv-dives</p></li>
-<li><p>Mamba (deep learning architecture) - Wikipedia, accessed May 21, 2025, https://en.wikipedia.org/wiki/Mamba_(deep_learning_architecture)</p></li>
-<li><p>Mamba - Hugging Face, accessed May 21, 2025, https://huggingface.co/docs/transformers/main/model_doc/mamba</p></li>
-<li><p>MambaLRP: Explaining Selective State Space Sequence Models - NIPS papers, accessed May 21, 2025, https://papers.nips.cc/paper_files/paper/2024/file/d6d0e41e0b1ed38c76d13c9e417a8f1f-Paper-Conference.pdf</p></li>
-<li><p>GitHub - state-spaces/mamba: Mamba SSM architecture - YouTube, accessed May 21, 2025, https://www.youtube.com/watch?v=FqYzE0bmZ_c</p></li>
-<li><p>state-spaces/mamba: Mamba SSM architecture - GitHub, accessed May 21, 2025, https://github.com/state-spaces/mamba</p></li>
-<li><p>alxndrTL/mamba.py: A simple and efficient Mamba implementation in pure PyTorch and MLX. - GitHub, accessed May 21, 2025, https://github.com/alxndrTL/mamba.py</p></li>
-<li><p>[Discussion] Fine-Tuning a Mamba Model with using Hugging Face Transformers - Reddit, accessed May 21, 2025, https://www.reddit.com/r/MachineLearning/comments/1jbotgn/discussion_finetuning_a_mamba_model_with_using/</p></li>
-<li><p>mamba-org/mamba: The Fast Cross-Platform Package Manager - GitHub, accessed May 21, 2025, https://github.com/mamba-org/mamba</p></li>
-<li><p>Fine-Tuning a Mamba Model with using Hugging Face Transformers ..., accessed May 21, 2025, https://discuss.huggingface.co/t/fine-tuning-a-mamba-model-with-using-hugging-face-transformers/146273</p></li>
-<li><p>Issues · state-spaces/mamba · GitHub, accessed May 21, 2025, https://github.com/state-spaces/mamba/issues</p></li>
+<li><p>关联性回忆（Associative Recall）：即根据上下文中的提示，回忆起序列早期出现的某个特定信息。</p></li>
+<li><p>跨序列比较（Token Comparison）：即比较序列中两个或多个不相邻 token 的关系。</p></li>
 </ol>
+<p>这些任务的共同点是它们都要求模型进行基于内容的推理。例如，回答“法国的首都是什么？”这个问题，需要模型将“法国”和“首都”这两个概念关联起来，并从知识库中检索出“巴黎”。注意力机制通过其基于查询（Query）和键（Key）的动态寻址机制，天然地擅长此类任务。而S4的卷积核在序列处理开始前就已经固定，它对所有输入应用的是同一个“滤波器”，无法根据输入内容动态地调整其信息处理方式。这种内容无关性（content-agnostic）的设计，使得纯粹的S4模型在许多需要深度语义理解的NLP任务上表现不佳 。</p>
+<p>S4模型之所以能实现卓越的计算效率，其根本在于严格遵循了线性时不变（LTI）的系统结构，这使得整个序列到序列的映射可以被表示为一个全局卷积。然而，全局卷积的定义决定了其卷积核必须独立于输入信号，它是一个在处理开始前就已确定的固定滤波器。相比之下，语言理解任务的本质却是高度依赖内容的。例如，识别句子中的主谓宾关系或解决指代消解问题，都要求模型理解词语的语义并动态地建立它们之间的联系，而不是简单地对输入信号应用一个固定的变换。注意力机制通过其内容驱动的查询-键匹配机制解决了这个问题。S4的设计恰恰牺牲了这种内容感知能力，以换取计算上的易处理性。因此，可以说，赋予S4计算效率的LTI属性，也正是限制其在语言等复杂符号任务上表达能力的根本原因。这个固有的“表达能力差距”为S4的后继者们指明了必须弥补的方向。</p>
 </section>
+</section>
+<section id="id13">
+<h2>参考文献<a class="headerlink" href="#id13" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>Gu, Albert, and Tri Dao. &quot;Mamba: Linear-time sequence modeling with selective state spaces.&quot; arXiv preprint arXiv:2312.00752 (2023).</p></li>
+<li><p>Gu, Albert, et al. &quot;Combining recurrent, convolutional, and continuous-time models with linear state space layers.&quot; Advances in neural information processing systems 34 (2021): 572-585.</p></li>
+<li><p>Gu, Albert, et al. &quot;Hippo: Recurrent memory with optimal polynomial projections.&quot; Advances in neural information processing systems 33 (2020): 1474-1487.</p></li>
+<li><p>Voelker, Aaron, Ivana Kajić, and Chris Eliasmith. &quot;Legendre memory units: Continuous-time representation in recurrent neural networks.&quot; Advances in neural information processing systems 32 (2019).</p></li>
+<li><p>Gu, Albert, Karan Goel, and Christopher Ré. &quot;Efficiently modeling long sequences with structured state spaces.&quot; arXiv preprint arXiv:2111.00396 (2021).</p></li>
+<li><p>Exploring Language Models. (n.d.). A visual guide to Mamba and state space models. Exploring Language Models. https://exploringlanguagemodels.substack.com/p/a-visual-guide-to-mamba-state-space-models</p></li>
+</ol>
 </section>
 </section>
 
@@ -1440,7 +1221,7 @@ T△=softplus
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">RWKV V5/6/7 架构演进</p>
+        <p class="prev-next-title">RWKV-7 及其后续模型的演进、产业落地的战略分析</p>
       </div>
     </a>
     <a class="right-next"
@@ -1468,30 +1249,32 @@ T△=softplus
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">1. 引言：结构化状态空间模型的兴起</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#s4">2. S4 模型：为高效长程序列建模奠定基础</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">2.1 状态空间模型的数学基础</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hippo">2.2 HiPPO 框架：捕获长程依赖</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">2.3 S4 架构：关键创新与计算特性</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">引言：序列建模中长距离依赖的持久挑战</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">数学基础：从连续时间系统到离散卷积</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ssm">连续时间SSM范式</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">离散化：连接连续理论与数字数据</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">卷积视角：展开循环</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mamba">3. Mamba：选择性状态空间与硬件感知设计</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">3.1 Mamba 的核心架构创新</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#s6">3.1.1 选择性状态空间(S6)机制：输入依赖的动态性</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">3.1.2 硬件感知并行算法：高效计算</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">3.1.3 简化的同质架构</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hippo">HiPPO 框架：一种有原则的历史压缩机制</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">HiPPO：连续历史的在线压缩</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">从最优逼近到线性常微分方程</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hippo-legs">HiPPO-LegS矩阵</a></li>
 </ul>
 </li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">3.2 Mamba 的关键贡献与理论基础</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">S4架构：通过结构化矩阵实现计算效率</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#nplr">核心洞察：正规加低秩（NPLR）结构</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#o-n">循环机制：实现<span class="math notranslate nohighlight">\(O(N)\)</span>的快速推理</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">卷积机制：高效的并行训练</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mambas4-transformer">4. 比较性能分析：Mamba、S4 与 Transformer</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">4.1 合成任务性能</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">4.2 语言建模基准</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">4.3 其他模态的效能</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#works-cited">Works cited</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">批判性评估：S4的内在局限与实践障碍</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">自回归生成中的数值不稳定性</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id11">硬件与软件之间的鸿沟</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id12">内容推理的功能性缺陷</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id13">参考文献</a></li>
 </ul>
   </nav></div>
 
@@ -1525,7 +1308,7 @@ By ZOMI
   
   <div class="footer-item">
     <p class="last-updated">
-  Last updated on Sep 25, 2025.
+  Last updated on Nov 06, 2025.
   <br/>
 </p>
   </div>

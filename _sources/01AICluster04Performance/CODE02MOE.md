@@ -1,6 +1,8 @@
 <!--Copyright © ZOMI 适用于[License](https://github.com/Infrasys-AI/AIInfra)版权许可-->
 
-# CODE 02: MOE 参数量和计算量
+# CODE 02: MOE 参数量和计算量(DONE)
+
+> Author by: 周浩杰
 
 在深度学习领域，模型规模的增长往往带来性能的提升，但同时也伴随着计算成本的急剧增加。混合专家模型（Mixture of Experts, MOE）作为一种稀疏激活的模型结构，通过仅激活部分"专家"网络来在保持参数量的同时控制计算量，成为了大模型领域的重要技术突破。
 
@@ -28,13 +30,15 @@ MOE 模型的核心思想是将一个复杂的任务分解为多个子任务，�
 
 那么 MOE 模型的总参数量为：
 
-```
+
+```python
 总参数量 = N × E + G
 ```
 
 这个公式很直观：所有专家的参数加上门控网络的参数。与同等参数量的密集模型相比，MOE 可以拥有更多的总参数，但实际计算时只使用其中的一部分。
 
 让我们用代码来实现一个简单的参数量计算：
+
 
 ```python
 def calculate_moe_parameters(num_experts, expert_params, gate_params):
@@ -55,6 +59,7 @@ def calculate_moe_parameters(num_experts, expert_params, gate_params):
 
 现在，让我们用一个例子来计算：
 
+
 ```python
 # 假设我们有 8 个专家，每个专家有 1000 万个参数
 # 门控网络有 100 万个参数
@@ -70,6 +75,10 @@ dense_model_params = 25_000_000  # 25M
 print(f"密集模型参数量: {dense_model_params:,}")
 ```
 
+    MOE 模型总参数量: 81,000,000
+    密集模型参数量: 25,000,000
+
+
 从上面的计算可以看出，MOE 模型可以拥有比同计算量的密集模型多得多的参数，这也是 MOE 能够在保持计算效率的同时提升模型能力的关键。
 
 计算量（通常用 FLOPs，即浮点运算次数来衡量）的评估要比参数量复杂一些，因为它不仅取决于模型结构，还与输入数据和激活的专家数量有关。
@@ -78,7 +87,8 @@ print(f"密集模型参数量: {dense_model_params:,}")
 
 在推理阶段，对于每个输入样本，MOE 模型只会激活一部分专家（通常是固定数量 K 的专家）。因此，推理阶段的计算量为：
 
-```
+
+```python
 推理计算量 = K × E_flops + G_flops
 ```
 
@@ -89,6 +99,7 @@ print(f"密集模型参数量: {dense_model_params:,}")
 - G_flops 是门控网络处理一个样本的计算量
 
 让我们实现推理计算量的评估函数：
+
 
 ```python
 def calculate_inference_flops(num_active_experts, expert_flops_per_sample, gate_flops_per_sample):
@@ -116,17 +127,20 @@ def calculate_inference_flops(num_active_experts, expert_flops_per_sample, gate_
 
 在训练阶段，对于每个输入样本，计算量为：
 
-```
+
+```python
 训练计算量 = K × (E_flops + E_backward_flops) + (G_flops + G_backward_flops)
 ```
 
 其中，带_backward 后缀的项表示反向传播的计算量。在简化情况下，我们可以假设反向传播的计算量大约是前向传播的 2 倍，因此：
 
-```
+
+```python
 训练计算量 ≈ K × 3 × E_flops + 3 × G_flops
 ```
 
 让我们实现训练计算量的评估函数：
+
 
 ```python
 def calculate_training_flops(num_active_experts, expert_flops_per_sample, gate_flops_per_sample):
@@ -152,6 +166,7 @@ def calculate_training_flops(num_active_experts, expert_flops_per_sample, gate_f
 ## 5. 实验对比与分析
 
 现在，让我们通过一个完整的例子来对比 MOE 模型和密集模型在参数量和计算量上的差异：
+
 
 ```python
 # 模型参数设置
@@ -186,6 +201,15 @@ print(f"MOE 训练计算量: {moe_training_flops:,} FLOPs/样本")
 print(f"训练计算量是推理的 {moe_training_flops / moe_inference_flops:.2f} 倍")
 ```
 
+    MOE 模型总参数量: 81,000,000
+    对比密集模型参数量: 20,400,000
+    MOE 参数量是密集模型的 3.97 倍
+    
+    MOE 推理计算量: 102,000,000 FLOPs/样本
+    MOE 训练计算量: 306,000,000 FLOPs/样本
+    训练计算量是推理的 3.00 倍
+
+
 从上面的实验结果可以看出：
 
 1. MOE 模型可以在保持推理计算量与密集模型相当的情况下，拥有多得多的参数量（通常是数倍）
@@ -196,6 +220,7 @@ print(f"训练计算量是推理的 {moe_training_flops / moe_inference_flops:.2
 在实际应用中，我们通常会批处理多个样本。这时候，MOE 模型的计算效率优势会更加明显。
 
 让我们扩展一下我们的计算函数，考虑批处理的情况：
+
 
 ```python
 def calculate_batch_inference_flops(batch_size, num_active_experts, expert_flops_per_sample, gate_flops_per_sample):
@@ -212,6 +237,10 @@ batch_inference_flops = calculate_batch_inference_flops(batch_size, num_active_e
 print(f"批处理推理计算量 ({batch_size}样本): {batch_inference_flops:,} FLOPs")
 print(f"平均每个样本: {batch_inference_flops / batch_size:,} FLOPs")
 ```
+
+    批处理推理计算量 (32样本): 3,264,000,000 FLOPs
+    平均每个样本: 102,000,000.0 FLOPs
+
 
 批处理情况下，每个样本的平均计算量与单个样本的计算量基本一致，这表明 MOE 模型在批处理场景下同样保持高效。
 

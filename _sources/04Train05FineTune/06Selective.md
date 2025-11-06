@@ -12,7 +12,6 @@
 ### U-Diff-Pruning
 
 **U-Diff-Pruning**（无结构差分剪枝）：对于每个新任务，学习一个非常稀疏的“差分向量”（diff vector） $δ_τ$ ，这个向量被加到原始参数上，从而使模型适应新任务。
-
 $$
 \theta_\tau=\theta+\delta_\tau
 $$
